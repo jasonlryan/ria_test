@@ -1,0 +1,1240 @@
+1. If you were to look for a new job, what are the most important things a new employer / role could offer you?
+    Generous salary /bonus/ compensation:
+        Region: (north: 40%, northeast: 42%, central_west: 38%, southeast: 45%, south: 57%)
+        Age: (18-24: 43%, 25-34: 41%, 35-44: 47%, 45-54: 47%, 55-65: 57%)
+        Gender: (female: 48%, male: 43%)
+        Org_size: (fewer_than_10: 48%, 10_to_49: 39%, 50_to_99: 38%, 100_to_249: 37%, 250_to_499: 57%, 500_to_999: 49%, 1000_or_more: 48%)
+        Sector: (business_administration: 43%, technology: 43%, education: 60%, financial_services: 45%, government: 53%, marketing_services: 37%, retail: 52%, telecommunications: 57%, other: 47%)
+        Job_level: (CEO: 41%, senior_executive: 38%, senior_leader: 41%, mid_level_leader: 42%, first_level_supervisor: 46%, individual_contributor: 54%)
+        Relationship_status: ()
+        Education: (secondary: 42%, tertiary: 42%, undergraduate: 51%, postgraduate: 47%, doctorate: 29%)
+1. If you were to look for a new job, what are the most important things a new employer / role could offer you?
+    Flexible working hours:
+        Region: (north: 29%, northeast: 36%, central_west: 32%, southeast: 39%, south: 42%)
+        Age: (18-24: 34%, 25-34: 33%, 35-44: 39%, 45-54: 45%, 55-65: 42%)
+        Gender: (female: 40%, male: 36%)
+        Org_size: (fewer_than_10: 41%, 10_to_49: 39%, 50_to_99: 29%, 100_to_249: 30%, 250_to_499: 36%, 500_to_999: 37%, 1000_or_more: 43%)
+        Sector: (business_administration: 38%, technology: 32%, education: 54%, financial_services: 47%, government: 51%, marketing_services: 40%, retail: 36%, telecommunications: 50%, other: 39%)
+        Job_level: (CEO: 39%, senior_executive: 30%, senior_leader: 36%, mid_level_leader: 31%, first_level_supervisor: 38%, individual_contributor: 44%)
+        Relationship_status: ()
+        Education: (secondary: 35%, tertiary: 38%, undergraduate: 39%, postgraduate: 39%, doctorate: 34%)
+1. If you were to look for a new job, what are the most important things a new employer / role could offer you?
+    Excellent learning and development opportunities:
+        Region: (north: 24%, northeast: 34%, central_west: 30%, southeast: 35%, south: 33%)
+        Age: (18-24: 23%, 25-34: 33%, 35-44: 34%, 45-54: 38%, 55-65: 37%)
+        Gender: (female: 36%, male: 32%)
+        Org_size: (fewer_than_10: 35%, 10_to_49: 34%, 50_to_99: 29%, 100_to_249: 21%, 250_to_499: 36%, 500_to_999: 35%, 1000_or_more: 39%)
+        Sector: (business_administration: 28%, technology: 35%, education: 31%, financial_services: 25%, government: 22%, marketing_services: 34%, retail: 43%, telecommunications: 43%, other: 38%)
+        Job_level: (CEO: 32%, senior_executive: 33%, senior_leader: 38%, mid_level_leader: 29%, first_level_supervisor: 30%, individual_contributor: 38%)
+        Relationship_status: ()
+        Education: (secondary: 30%, tertiary: 26%, undergraduate: 39%, postgraduate: 36%, doctorate: 24%)
+1. If you were to look for a new job, what are the most important things a new employer / role could offer you?
+    Full-time remote working:
+        Region: (north: 16%, northeast: 22%, central_west: 16%, southeast: 24%, south: 25%)
+        Age: (18-24: 12%, 25-34: 23%, 35-44: 26%, 45-54: 20%, 55-65: 22%)
+        Gender: (female: 24%, male: 22%)
+        Org_size: (fewer_than_10: 25%, 10_to_49: 17%, 50_to_99: 21%, 100_to_249: 20%, 250_to_499: 17%, 500_to_999: 23%, 1000_or_more: 29%)
+        Sector: (business_administration: 13%, technology: 34%, education: 22%, financial_services: 27%, government: 18%, marketing_services: 31%, retail: 22%, telecommunications: 23%, other: 25%)
+        Job_level: (CEO: 25%, senior_executive: 21%, senior_leader: 19%, mid_level_leader: 20%, first_level_supervisor: 22%, individual_contributor: 26%)
+        Relationship_status: ()
+        Education: (secondary: 19%, tertiary: 21%, undergraduate: 20%, postgraduate: 26%, doctorate: 24%)
+1. If you were to look for a new job, what are the most important things a new employer / role could offer you?
+    Job is in field/industry that I like:
+        Region: (north: 20%, northeast: 23%, central_west: 17%, southeast: 23%, south: 26%)
+        Age: (18-24: 22%, 25-34: 22%, 35-44: 21%, 45-54: 25%, 55-65: 26%)
+        Gender: (female: 24%, male: 22%)
+        Org_size: (fewer_than_10: 23%, 10_to_49: 17%, 50_to_99: 23%, 100_to_249: 21%, 250_to_499: 29%, 500_to_999: 25%, 1000_or_more: 25%)
+        Sector: (business_administration: 15%, technology: 26%, education: 21%, financial_services: 25%, government: 33%, marketing_services: 14%, retail: 23%, telecommunications: 13%, other: 23%)
+        Job_level: (CEO: 28%, senior_executive: 26%, senior_leader: 24%, mid_level_leader: 22%, first_level_supervisor: 20%, individual_contributor: 21%)
+        Relationship_status: ()
+        Education: (secondary: 19%, tertiary: 18%, undergraduate: 22%, postgraduate: 25%, doctorate: 26%)
+1. If you were to look for a new job, what are the most important things a new employer / role could offer you?
+    Generous non-salary/bonus/compensation benefits and rewards:
+        Region: (north: 18%, northeast: 19%, central_west: 15%, southeast: 23%, south: 24%)
+        Age: (18-24: 17%, 25-34: 20%, 35-44: 23%, 45-54: 25%, 55-65: 18%)
+        Gender: (female: 24%, male: 19%)
+        Org_size: (fewer_than_10: 18%, 10_to_49: 30%, 50_to_99: 13%, 100_to_249: 19%, 250_to_499: 21%, 500_to_999: 21%, 1000_or_more: 23%)
+        Sector: (business_administration: 20%, technology: 16%, education: 18%, financial_services: 22%, government: 29%, marketing_services: 9%, retail: 23%, telecommunications: 17%, other: 20%)
+        Job_level: (CEO: 18%, senior_executive: 14%, senior_leader: 18%, mid_level_leader: 28%, first_level_supervisor: 24%, individual_contributor: 23%)
+        Relationship_status: ()
+        Education: (secondary: 19%, tertiary: 25%, undergraduate: 23%, postgraduate: 22%, doctorate: 11%)
+1. If you were to look for a new job, what are the most important things a new employer / role could offer you?
+    High job security (i.e., stable company/employer):
+        Region: (north: 11%, northeast: 23%, central_west: 19%, southeast: 21%, south: 26%)
+        Age: (18-24: 9%, 25-34: 20%, 35-44: 25%, 45-54: 21%, 55-65: 26%)
+        Gender: (female: 23%, male: 20%)
+        Org_size: (fewer_than_10: 22%, 10_to_49: 20%, 50_to_99: 20%, 100_to_249: 24%, 250_to_499: 16%, 500_to_999: 21%, 1000_or_more: 23%)
+        Sector: (business_administration: 18%, technology: 24%, education: 29%, financial_services: 22%, government: 18%, marketing_services: 20%, retail: 29%, telecommunications: 27%, other: 21%)
+        Job_level: (CEO: 24%, senior_executive: 23%, senior_leader: 21%, mid_level_leader: 12%, first_level_supervisor: 26%, individual_contributor: 20%)
+        Relationship_status: ()
+        Education: (secondary: 17%, tertiary: 21%, undergraduate: 20%, postgraduate: 23%, doctorate: 26%)
+1. If you were to look for a new job, what are the most important things a new employer / role could offer you?
+    Hybrid working options:
+        Region: (north: 20%, northeast: 18%, central_west: 17%, southeast: 22%, south: 19%)
+        Age: (18-24: 20%, 25-34: 17%, 35-44: 23%, 45-54: 21%, 55-65: 21%)
+        Gender: (female: 22%, male: 18%)
+        Org_size: (fewer_than_10: 15%, 10_to_49: 20%, 50_to_99: 18%, 100_to_249: 19%, 250_to_499: 19%, 500_to_999: 25%, 1000_or_more: 27%)
+        Sector: (business_administration: 16%, technology: 25%, education: 28%, financial_services: 24%, government: 16%, marketing_services: 20%, retail: 17%, telecommunications: 23%, other: 20%)
+        Job_level: (CEO: 16%, senior_executive: 23%, senior_leader: 24%, mid_level_leader: 15%, first_level_supervisor: 25%, individual_contributor: 19%)
+        Relationship_status: ()
+        Education: (secondary: 11%, tertiary: 18%, undergraduate: 20%, postgraduate: 25%, doctorate: 18%)
+1. If you were to look for a new job, what are the most important things a new employer / role could offer you?
+    To be a part of a culture and value system that I respect:
+        Region: (north: 20%, northeast: 16%, central_west: 7%, southeast: 18%, south: 19%)
+        Age: (18-24: 12%, 25-34: 17%, 35-44: 14%, 45-54: 21%, 55-65: 21%)
+        Gender: (female: 17%, male: 16%)
+        Org_size: (fewer_than_10: 14%, 10_to_49: 14%, 50_to_99: 15%, 100_to_249: 16%, 250_to_499: 20%, 500_to_999: 18%, 1000_or_more: 22%)
+        Sector: (business_administration: 13%, technology: 20%, education: 13%, financial_services: 8%, government: 18%, marketing_services: 23%, retail: 23%, telecommunications: 10%, other: 14%)
+        Job_level: (CEO: 18%, senior_executive: 18%, senior_leader: 24%, mid_level_leader: 13%, first_level_supervisor: 18%, individual_contributor: 13%)
+        Relationship_status: ()
+        Education: (secondary: 13%, tertiary: 25%, undergraduate: 15%, postgraduate: 17%, doctorate: 18%)
+1. If you were to look for a new job, what are the most important things a new employer / role could offer you?
+    Short commute to office:
+        Region: (north: 16%, northeast: 9%, central_west: 22%, southeast: 15%, south: 12%)
+        Age: (18-24: 17%, 25-34: 11%, 35-44: 14%, 45-54: 18%, 55-65: 17%)
+        Gender: (female: 15%, male: 13%)
+        Org_size: (fewer_than_10: 15%, 10_to_49: 17%, 50_to_99: 9%, 100_to_249: 16%, 250_to_499: 6%, 500_to_999: 8%, 1000_or_more: 18%)
+        Sector: (business_administration: 13%, technology: 10%, education: 10%, financial_services: 18%, government: 27%, marketing_services: 11%, retail: 9%, telecommunications: 7%, other: 18%)
+        Job_level: (CEO: 11%, senior_executive: 13%, senior_leader: 12%, mid_level_leader: 15%, first_level_supervisor: 10%, individual_contributor: 20%)
+        Relationship_status: ()
+        Education: (secondary: 13%, tertiary: 16%, undergraduate: 18%, postgraduate: 13%, doctorate: 13%)
+1. If you were to look for a new job, what are the most important things a new employer / role could offer you?
+    Excellent sustainability policies and practices within the company:
+        Region: (north: 7%, northeast: 16%, central_west: 10%, southeast: 14%, south: 9%)
+        Age: (18-24: 10%, 25-34: 12%, 35-44: 12%, 45-54: 12%, 55-65: 25%)
+        Gender: (female: 12%, male: 13%)
+        Org_size: (fewer_than_10: 8%, 10_to_49: 14%, 50_to_99: 13%, 100_to_249: 13%, 250_to_499: 17%, 500_to_999: 15%, 1000_or_more: 15%)
+        Sector: (business_administration: 15%, technology: 15%, education: 22%, financial_services: 16%, government: 11%, marketing_services: 17%, retail: 4%, telecommunications: 20%, other: 8%)
+        Job_level: (CEO: 10%, senior_executive: 18%, senior_leader: 12%, mid_level_leader: 8%, first_level_supervisor: 15%, individual_contributor: 13%)
+        Relationship_status: ()
+        Education: (secondary: 10%, tertiary: 14%, undergraduate: 14%, postgraduate: 14%, doctorate: 13%)
+1. If you were to look for a new job, what are the most important things a new employer / role could offer you?
+    Plentiful opportunities for lateral moves and trying new things:
+        Region: (north: 16%, northeast: 16%, central_west: 9%, southeast: 13%, south: 9%)
+        Age: (18-24: 15%, 25-34: 13%, 35-44: 12%, 45-54: 13%, 55-65: 16%)
+        Gender: (female: 16%, male: 10%)
+        Org_size: (fewer_than_10: 15%, 10_to_49: 11%, 50_to_99: 14%, 100_to_249: 16%, 250_to_499: 16%, 500_to_999: 14%, 1000_or_more: 7%)
+        Sector: (business_administration: 15%, technology: 13%, education: 13%, financial_services: 10%, government: 9%, marketing_services: 14%, retail: 17%, telecommunications: 23%, other: 14%)
+        Job_level: (CEO: 14%, senior_executive: 11%, senior_leader: 10%, mid_level_leader: 10%, first_level_supervisor: 14%, individual_contributor: 14%)
+        Relationship_status: ()
+        Education: (secondary: 13%, tertiary: 14%, undergraduate: 14%, postgraduate: 12%, doctorate: 21%)
+1. If you were to look for a new job, what are the most important things a new employer / role could offer you?
+    Excellent diversity and inclusion within the company:
+        Region: (north: 9%, northeast: 12%, central_west: 10%, southeast: 14%, south: 13%)
+        Age: (18-24: 13%, 25-34: 16%, 35-44: 12%, 45-54: 10%, 55-65: 12%)
+        Gender: (female: 14%, male: 12%)
+        Org_size: (fewer_than_10: 9%, 10_to_49: 11%, 50_to_99: 12%, 100_to_249: 10%, 250_to_499: 14%, 500_to_999: 22%, 1000_or_more: 15%)
+        Sector: (business_administration: 15%, technology: 16%, education: 16%, financial_services: 18%, government: 2%, marketing_services: 9%, retail: 6%, telecommunications: 3%, other: 12%)
+        Job_level: (CEO: 12%, senior_executive: 16%, senior_leader: 19%, mid_level_leader: 15%, first_level_supervisor: 10%, individual_contributor: 11%)
+        Relationship_status: ()
+        Education: (secondary: 8%, tertiary: 10%, undergraduate: 11%, postgraduate: 15%, doctorate: 24%)
+1. If you were to look for a new job, what are the most important things a new employer / role could offer you?
+    Colleagues I enjoy working with:
+        Region: (north: 11%, northeast: 10%, central_west: 9%, southeast: 13%, south: 11%)
+        Age: (18-24: 11%, 25-34: 11%, 35-44: 11%, 45-54: 13%, 55-65: 17%)
+        Gender: (female: 12%, male: 11%)
+        Org_size: (fewer_than_10: 9%, 10_to_49: 14%, 50_to_99: 13%, 100_to_249: 9%, 250_to_499: 10%, 500_to_999: 12%, 1000_or_more: 15%)
+        Sector: (business_administration: 4%, technology: 10%, education: 22%, financial_services: 8%, government: 24%, marketing_services: 17%, retail: 14%, telecommunications: 17%, other: 14%)
+        Job_level: (CEO: 10%, senior_executive: 13%, senior_leader: 12%, mid_level_leader: 12%, first_level_supervisor: 9%, individual_contributor: 14%)
+        Relationship_status: ()
+        Education: (secondary: 10%, tertiary: 13%, undergraduate: 11%, postgraduate: 12%, doctorate: 21%)
+1. If you were to look for a new job, what are the most important things a new employer / role could offer you?
+    Status and respect for my position in the company:
+        Region: (north: 9%, northeast: 14%, central_west: 12%, southeast: 10%, south: 8%)
+        Age: (18-24: 9%, 25-34: 9%, 35-44: 11%, 45-54: 12%, 55-65: 11%)
+        Gender: (female: 10%, male: 11%)
+        Org_size: (fewer_than_10: 8%, 10_to_49: 10%, 50_to_99: 9%, 100_to_249: 11%, 250_to_499: 14%, 500_to_999: 15%, 1000_or_more: 10%)
+        Sector: (business_administration: 8%, technology: 10%, education: 10%, financial_services: 12%, government: 7%, marketing_services: 11%, retail: 13%, telecommunications: 7%, other: 12%)
+        Job_level: (CEO: 9%, senior_executive: 21%, senior_leader: 10%, mid_level_leader: 9%, first_level_supervisor: 13%, individual_contributor: 6%)
+        Relationship_status: ()
+        Education: (secondary: 11%, tertiary: 9%, undergraduate: 10%, postgraduate: 10%, doctorate: 21%)
+1. If you were to look for a new job, what are the most important things a new employer / role could offer you?
+    Brand is well-known and respected:
+        Region: (north: 11%, northeast: 10%, central_west: 9%, southeast: 10%, south: 9%)
+        Age: (18-24: 10%, 25-34: 11%, 35-44: 8%, 45-54: 9%, 55-65: 13%)
+        Gender: (female: 8%, male: 11%)
+        Org_size: (fewer_than_10: 9%, 10_to_49: 9%, 50_to_99: 11%, 100_to_249: 11%, 250_to_499: 13%, 500_to_999: 7%, 1000_or_more: 10%)
+        Sector: (business_administration: 7%, technology: 10%, education: 9%, financial_services: 6%, government: 9%, marketing_services: 6%, retail: 13%, telecommunications: 10%, other: 12%)
+        Job_level: (CEO: 9%, senior_executive: 14%, senior_leader: 9%, mid_level_leader: 13%, first_level_supervisor: 8%, individual_contributor: 8%)
+        Relationship_status: ()
+        Education: (secondary: 11%, tertiary: 5%, undergraduate: 8%, postgraduate: 10%, doctorate: 5%)
+1. If you were to look for a new job, what are the most important things a new employer / role could offer you?
+    Full-time in the office:
+        Region: (north: 7%, northeast: 11%, central_west: 14%, southeast: 8%, south: 9%)
+        Age: (18-24: 10%, 25-34: 10%, 35-44: 10%, 45-54: 8%, 55-65: 7%)
+        Gender: (female: 8%, male: 10%)
+        Org_size: (fewer_than_10: 6%, 10_to_49: 7%, 50_to_99: 15%, 100_to_249: 13%, 250_to_499: 10%, 500_to_999: 12%, 1000_or_more: 9%)
+        Sector: (business_administration: 10%, technology: 13%, education: 9%, financial_services: 10%, government: 7%, marketing_services: 6%, retail: 6%, telecommunications: 3%, other: 10%)
+        Job_level: (CEO: 12%, senior_executive: 8%, senior_leader: 16%, mid_level_leader: 12%, first_level_supervisor: 8%, individual_contributor: 6%)
+        Relationship_status: ()
+        Education: (secondary: 9%, tertiary: 10%, undergraduate: 8%, postgraduate: 8%, doctorate: 21%)
+1. If you were to look for a new job, what are the most important things a new employer / role could offer you?
+    Low number of recent layoffs:
+        Region: (north: 11%, northeast: 9%, central_west: 6%, southeast: 9%, south: 8%)
+        Age: (18-24: 7%, 25-34: 10%, 35-44: 9%, 45-54: 8%, 55-65: 11%)
+        Gender: (female: 8%, male: 10%)
+        Org_size: (fewer_than_10: 6%, 10_to_49: 12%, 50_to_99: 13%, 100_to_249: 9%, 250_to_499: 6%, 500_to_999: 10%, 1000_or_more: 9%)
+        Sector: (business_administration: 7%, technology: 10%, education: 13%, financial_services: 10%, government: 4%, marketing_services: 3%, retail: 7%, telecommunications: 13%, other: 12%)
+        Job_level: (CEO: 7%, senior_executive: 9%, senior_leader: 6%, mid_level_leader: 15%, first_level_supervisor: 10%, individual_contributor: 8%)
+        Relationship_status: ()
+        Education: (secondary: 7%, tertiary: 12%, undergraduate: 12%, postgraduate: 8%, doctorate: 11%)
+1. If you were to look for a new job, what are the most important things a new employer / role could offer you?
+    Hiring manager I respect and trust:
+        Region: (north: 4%, northeast: 9%, central_west: 11%, southeast: 9%, south: 5%)
+        Age: (18-24: 11%, 25-34: 8%, 35-44: 9%, 45-54: 7%, 55-65: 8%)
+        Gender: (female: 8%, male: 9%)
+        Org_size: (fewer_than_10: 7%, 10_to_49: 5%, 50_to_99: 6%, 100_to_249: 14%, 250_to_499: 10%, 500_to_999: 8%, 1000_or_more: 12%)
+        Sector: (business_administration: 9%, technology: 11%, education: 4%, financial_services: 4%, government: 13%, marketing_services: 17%, retail: 9%, telecommunications: 20%, other: 4%)
+        Job_level: (CEO: 6%, senior_executive: 10%, senior_leader: 9%, mid_level_leader: 9%, first_level_supervisor: 13%, individual_contributor: 6%)
+        Relationship_status: ()
+        Education: (secondary: 11%, tertiary: 4%, undergraduate: 6%, postgraduate: 9%, doctorate: 8%)
+1. If you were to look for a new job, what are the most important things a new employer / role could offer you?
+    Other (please specify):
+        Region: (northeast: 1%, southeast: 1%)
+        Age: (35-44: 1%, 55-65: 1%)
+        Gender: (female: 1%, male: 0%)
+        Org_size: (fewer_than_10: 1%, 10_to_49: 1%, 100_to_249: 1%)
+        Sector: (other: 2%)
+        Job_level: (CEO: 2%, first_level_supervisor: 0%)
+        Relationship_status: ()
+        Education: (secondary: 0%, postgraduate: 1%)
+2. When considering the below options which are most likely to make you stay at your current company?
+    Generous salary / compensation:
+        Region: (north: 36%, northeast: 41%, central_west: 42%, southeast: 43%, south: 48%)
+        Age: (18-24: 34%, 25-34: 44%, 35-44: 44%, 45-54: 41%, 55-65: 51%)
+        Gender: (female: 43%, male: 43%)
+        Org_size: (fewer_than_10: 41%, 10_to_49: 42%, 50_to_99: 35%, 100_to_249: 45%, 250_to_499: 46%, 500_to_999: 44%, 1000_or_more: 49%)
+        Sector: (business_administration: 39%, technology: 48%, education: 47%, financial_services: 47%, government: 49%, marketing_services: 37%, retail: 46%, telecommunications: 60%, other: 42%)
+        Job_level: (CEO: 39%, senior_executive: 36%, senior_leader: 41%, mid_level_leader: 39%, first_level_supervisor: 45%, individual_contributor: 49%)
+        Relationship_status: ()
+        Education: (secondary: 37%, tertiary: 42%, undergraduate: 42%, postgraduate: 47%, doctorate: 42%)
+2. When considering the below options which are most likely to make you stay at your current company?
+    Total flexibility of working hours:
+        Region: (north: 22%, northeast: 28%, central_west: 22%, southeast: 31%, south: 34%)
+        Age: (18-24: 27%, 25-34: 27%, 35-44: 30%, 45-54: 33%, 55-65: 34%)
+        Gender: (female: 33%, male: 27%)
+        Org_size: (fewer_than_10: 39%, 10_to_49: 25%, 50_to_99: 23%, 100_to_249: 32%, 250_to_499: 26%, 500_to_999: 25%, 1000_or_more: 28%)
+        Sector: (business_administration: 28%, technology: 33%, education: 32%, financial_services: 27%, government: 24%, marketing_services: 37%, retail: 30%, telecommunications: 33%, other: 35%)
+        Job_level: (CEO: 39%, senior_executive: 30%, senior_leader: 32%, mid_level_leader: 31%, first_level_supervisor: 24%, individual_contributor: 28%)
+        Relationship_status: ()
+        Education: (secondary: 25%, tertiary: 22%, undergraduate: 38%, postgraduate: 31%, doctorate: 26%)
+2. When considering the below options which are most likely to make you stay at your current company?
+    Excellent learning and development opportunities:
+        Region: (north: 29%, northeast: 26%, central_west: 23%, southeast: 33%, south: 25%)
+        Age: (18-24: 20%, 25-34: 26%, 35-44: 32%, 45-54: 32%, 55-65: 38%)
+        Gender: (female: 30%, male: 29%)
+        Org_size: (fewer_than_10: 25%, 10_to_49: 30%, 50_to_99: 29%, 100_to_249: 27%, 250_to_499: 30%, 500_to_999: 36%, 1000_or_more: 31%)
+        Sector: (business_administration: 24%, technology: 33%, education: 35%, financial_services: 25%, government: 22%, marketing_services: 26%, retail: 32%, telecommunications: 33%, other: 30%)
+        Job_level: (CEO: 31%, senior_executive: 32%, senior_leader: 33%, mid_level_leader: 19%, first_level_supervisor: 29%, individual_contributor: 30%)
+        Relationship_status: ()
+        Education: (secondary: 22%, tertiary: 22%, undergraduate: 26%, postgraduate: 35%, doctorate: 32%)
+2. When considering the below options which are most likely to make you stay at your current company?
+    High job security (of employment contract):
+        Region: (north: 36%, northeast: 28%, central_west: 25%, southeast: 26%, south: 15%)
+        Age: (18-24: 23%, 25-34: 25%, 35-44: 26%, 45-54: 24%, 55-65: 26%)
+        Gender: (female: 24%, male: 26%)
+        Org_size: (fewer_than_10: 15%, 10_to_49: 21%, 50_to_99: 28%, 100_to_249: 25%, 250_to_499: 36%, 500_to_999: 34%, 1000_or_more: 30%)
+        Sector: (business_administration: 20%, technology: 32%, education: 31%, financial_services: 27%, government: 33%, marketing_services: 14%, retail: 33%, telecommunications: 17%, other: 20%)
+        Job_level: (CEO: 18%, senior_executive: 37%, senior_leader: 22%, mid_level_leader: 24%, first_level_supervisor: 31%, individual_contributor: 21%)
+        Relationship_status: ()
+        Education: (secondary: 21%, tertiary: 22%, undergraduate: 19%, postgraduate: 29%, doctorate: 29%)
+2. When considering the below options which are most likely to make you stay at your current company?
+    Clear career advancement opportunities and processes:
+        Region: (north: 22%, northeast: 24%, central_west: 26%, southeast: 25%, south: 23%)
+        Age: (18-24: 27%, 25-34: 24%, 35-44: 24%, 45-54: 25%, 55-65: 29%)
+        Gender: (female: 26%, male: 23%)
+        Org_size: (fewer_than_10: 18%, 10_to_49: 22%, 50_to_99: 20%, 100_to_249: 29%, 250_to_499: 33%, 500_to_999: 20%, 1000_or_more: 37%)
+        Sector: (business_administration: 25%, technology: 25%, education: 34%, financial_services: 31%, government: 18%, marketing_services: 17%, retail: 29%, telecommunications: 33%, other: 28%)
+        Job_level: (CEO: 18%, senior_executive: 26%, senior_leader: 31%, mid_level_leader: 19%, first_level_supervisor: 27%, individual_contributor: 26%)
+        Relationship_status: ()
+        Education: (secondary: 22%, tertiary: 25%, undergraduate: 28%, postgraduate: 24%, doctorate: 29%)
+2. When considering the below options which are most likely to make you stay at your current company?
+    Colleagues I enjoy working with:
+        Region: (north: 13%, northeast: 22%, central_west: 17%, southeast: 19%, south: 20%)
+        Age: (18-24: 18%, 25-34: 22%, 35-44: 18%, 45-54: 16%, 55-65: 25%)
+        Gender: (female: 18%, male: 20%)
+        Org_size: (fewer_than_10: 15%, 10_to_49: 25%, 50_to_99: 21%, 100_to_249: 15%, 250_to_499: 21%, 500_to_999: 20%, 1000_or_more: 20%)
+        Sector: (business_administration: 19%, technology: 17%, education: 31%, financial_services: 12%, government: 33%, marketing_services: 26%, retail: 13%, telecommunications: 13%, other: 17%)
+        Job_level: (CEO: 15%, senior_executive: 15%, senior_leader: 14%, mid_level_leader: 25%, first_level_supervisor: 22%, individual_contributor: 21%)
+        Relationship_status: ()
+        Education: (secondary: 17%, tertiary: 23%, undergraduate: 23%, postgraduate: 19%, doctorate: 13%)
+2. When considering the below options which are most likely to make you stay at your current company?
+    Status and respect for my position in the company:
+        Region: (north: 20%, northeast: 22%, central_west: 25%, southeast: 17%, south: 15%)
+        Age: (18-24: 12%, 25-34: 22%, 35-44: 16%, 45-54: 19%, 55-65: 18%)
+        Gender: (female: 20%, male: 17%)
+        Org_size: (fewer_than_10: 17%, 10_to_49: 15%, 50_to_99: 18%, 100_to_249: 21%, 250_to_499: 20%, 500_to_999: 20%, 1000_or_more: 22%)
+        Sector: (business_administration: 18%, technology: 21%, education: 15%, financial_services: 16%, government: 18%, marketing_services: 17%, retail: 26%, telecommunications: 13%, other: 20%)
+        Job_level: (CEO: 25%, senior_executive: 20%, senior_leader: 23%, mid_level_leader: 16%, first_level_supervisor: 20%, individual_contributor: 13%)
+        Relationship_status: ()
+        Education: (secondary: 13%, tertiary: 18%, undergraduate: 16%, postgraduate: 22%, doctorate: 26%)
+2. When considering the below options which are most likely to make you stay at your current company?
+    Full-time remote working:
+        Region: (north: 11%, northeast: 19%, central_west: 14%, southeast: 18%, south: 17%)
+        Age: (18-24: 20%, 25-34: 16%, 35-44: 19%, 45-54: 16%, 55-65: 16%)
+        Gender: (female: 20%, male: 15%)
+        Org_size: (fewer_than_10: 23%, 10_to_49: 11%, 50_to_99: 15%, 100_to_249: 16%, 250_to_499: 20%, 500_to_999: 17%, 1000_or_more: 16%)
+        Sector: (business_administration: 14%, technology: 19%, education: 15%, financial_services: 16%, government: 13%, marketing_services: 37%, retail: 14%, telecommunications: 33%, other: 19%)
+        Job_level: (CEO: 24%, senior_executive: 17%, senior_leader: 9%, mid_level_leader: 17%, first_level_supervisor: 16%, individual_contributor: 18%)
+        Relationship_status: ()
+        Education: (secondary: 19%, tertiary: 22%, undergraduate: 17%, postgraduate: 17%, doctorate: 11%)
+2. When considering the below options which are most likely to make you stay at your current company?
+    Hybrid working options:
+        Region: (north: 9%, northeast: 15%, central_west: 19%, southeast: 19%, south: 17%)
+        Age: (18-24: 13%, 25-34: 16%, 35-44: 18%, 45-54: 16%, 55-65: 26%)
+        Gender: (female: 17%, male: 17%)
+        Org_size: (fewer_than_10: 16%, 10_to_49: 14%, 50_to_99: 17%, 100_to_249: 16%, 250_to_499: 10%, 500_to_999: 20%, 1000_or_more: 23%)
+        Sector: (business_administration: 12%, technology: 21%, education: 22%, financial_services: 27%, government: 16%, marketing_services: 17%, retail: 14%, telecommunications: 20%, other: 21%)
+        Job_level: (CEO: 21%, senior_executive: 14%, senior_leader: 23%, mid_level_leader: 16%, first_level_supervisor: 16%, individual_contributor: 15%)
+        Relationship_status: ()
+        Education: (secondary: 11%, tertiary: 14%, undergraduate: 18%, postgraduate: 21%, doctorate: 13%)
+2. When considering the below options which are most likely to make you stay at your current company?
+    To be a part of a culture and value system that I respect:
+        Region: (north: 24%, northeast: 17%, central_west: 16%, southeast: 15%, south: 21%)
+        Age: (18-24: 12%, 25-34: 15%, 35-44: 18%, 45-54: 20%, 55-65: 18%)
+        Gender: (female: 18%, male: 16%)
+        Org_size: (fewer_than_10: 15%, 10_to_49: 17%, 50_to_99: 13%, 100_to_249: 13%, 250_to_499: 20%, 500_to_999: 22%, 1000_or_more: 20%)
+        Sector: (business_administration: 14%, technology: 17%, education: 13%, financial_services: 20%, government: 11%, marketing_services: 11%, retail: 25%, telecommunications: 10%, other: 17%)
+        Job_level: (CEO: 14%, senior_executive: 23%, senior_leader: 25%, mid_level_leader: 16%, first_level_supervisor: 16%, individual_contributor: 15%)
+        Relationship_status: ()
+        Education: (secondary: 14%, tertiary: 14%, undergraduate: 19%, postgraduate: 18%, doctorate: 26%)
+2. When considering the below options which are most likely to make you stay at your current company?
+    Excellent sustainability policies and practices within the company:
+        Region: (north: 22%, northeast: 18%, central_west: 14%, southeast: 15%, south: 12%)
+        Age: (18-24: 4%, 25-34: 17%, 35-44: 15%, 45-54: 15%, 55-65: 24%)
+        Gender: (female: 15%, male: 16%)
+        Org_size: (fewer_than_10: 12%, 10_to_49: 17%, 50_to_99: 16%, 100_to_249: 11%, 250_to_499: 16%, 500_to_999: 19%, 1000_or_more: 18%)
+        Sector: (business_administration: 25%, technology: 16%, education: 13%, financial_services: 12%, government: 16%, marketing_services: 20%, retail: 14%, telecommunications: 17%, other: 10%)
+        Job_level: (CEO: 19%, senior_executive: 23%, senior_leader: 17%, mid_level_leader: 12%, first_level_supervisor: 15%, individual_contributor: 11%)
+        Relationship_status: ()
+        Education: (secondary: 14%, tertiary: 13%, undergraduate: 14%, postgraduate: 17%, doctorate: 21%)
+2. When considering the below options which are most likely to make you stay at your current company?
+    Short commute to office:
+        Region: (north: 27%, northeast: 11%, central_west: 11%, southeast: 16%, south: 14%)
+        Age: (18-24: 17%, 25-34: 13%, 35-44: 15%, 45-54: 17%, 55-65: 16%)
+        Gender: (female: 16%, male: 14%)
+        Org_size: (fewer_than_10: 13%, 10_to_49: 16%, 50_to_99: 13%, 100_to_249: 22%, 250_to_499: 16%, 500_to_999: 18%, 1000_or_more: 13%)
+        Sector: (business_administration: 17%, technology: 14%, education: 15%, financial_services: 18%, government: 27%, marketing_services: 9%, retail: 10%, telecommunications: 17%, other: 14%)
+        Job_level: (CEO: 13%, senior_executive: 13%, senior_leader: 15%, mid_level_leader: 12%, first_level_supervisor: 13%, individual_contributor: 20%)
+        Relationship_status: ()
+        Education: (secondary: 10%, tertiary: 21%, undergraduate: 15%, postgraduate: 16%, doctorate: 16%)
+2. When considering the below options which are most likely to make you stay at your current company?
+    Generous non-financial benefits:
+        Region: (north: 9%, northeast: 14%, central_west: 11%, southeast: 16%, south: 15%)
+        Age: (18-24: 15%, 25-34: 11%, 35-44: 16%, 45-54: 17%, 55-65: 17%)
+        Gender: (female: 14%, male: 16%)
+        Org_size: (fewer_than_10: 13%, 10_to_49: 19%, 50_to_99: 14%, 100_to_249: 16%, 250_to_499: 13%, 500_to_999: 19%, 1000_or_more: 12%)
+        Sector: (business_administration: 7%, technology: 13%, education: 21%, financial_services: 25%, government: 13%, marketing_services: 20%, retail: 17%, telecommunications: 13%, other: 20%)
+        Job_level: (CEO: 12%, senior_executive: 13%, senior_leader: 13%, mid_level_leader: 15%, first_level_supervisor: 15%, individual_contributor: 17%)
+        Relationship_status: ()
+        Education: (secondary: 17%, tertiary: 10%, undergraduate: 16%, postgraduate: 13%, doctorate: 24%)
+2. When considering the below options which are most likely to make you stay at your current company?
+    Excellent diversity and inclusion within the company:
+        Region: (north: 11%, northeast: 15%, central_west: 4%, southeast: 15%, south: 13%)
+        Age: (18-24: 12%, 25-34: 13%, 35-44: 15%, 45-54: 10%, 55-65: 16%)
+        Gender: (female: 13%, male: 14%)
+        Org_size: (fewer_than_10: 9%, 10_to_49: 11%, 50_to_99: 13%, 100_to_249: 23%, 250_to_499: 19%, 500_to_999: 19%, 1000_or_more: 13%)
+        Sector: (business_administration: 14%, technology: 16%, education: 6%, financial_services: 16%, government: 11%, marketing_services: 11%, retail: 9%, telecommunications: 13%, other: 19%)
+        Job_level: (CEO: 18%, senior_executive: 20%, senior_leader: 13%, mid_level_leader: 9%, first_level_supervisor: 13%, individual_contributor: 11%)
+        Relationship_status: ()
+        Education: (secondary: 13%, tertiary: 13%, undergraduate: 13%, postgraduate: 14%, doctorate: 21%)
+2. When considering the below options which are most likely to make you stay at your current company?
+    Low number of recent layoffs:
+        Region: (north: 9%, northeast: 13%, central_west: 10%, southeast: 13%, south: 15%)
+        Age: (18-24: 10%, 25-34: 13%, 35-44: 11%, 45-54: 17%, 55-65: 14%)
+        Gender: (female: 13%, male: 13%)
+        Org_size: (fewer_than_10: 10%, 10_to_49: 15%, 50_to_99: 12%, 100_to_249: 15%, 250_to_499: 13%, 500_to_999: 11%, 1000_or_more: 16%)
+        Sector: (business_administration: 20%, technology: 10%, education: 19%, financial_services: 8%, government: 13%, marketing_services: 11%, retail: 10%, telecommunications: 10%, other: 17%)
+        Job_level: (CEO: 11%, senior_executive: 10%, senior_leader: 15%, mid_level_leader: 16%, first_level_supervisor: 13%, individual_contributor: 14%)
+        Relationship_status: ()
+        Education: (secondary: 12%, tertiary: 13%, undergraduate: 11%, postgraduate: 14%, doctorate: 13%)
+2. When considering the below options which are most likely to make you stay at your current company?
+    Manager I respect and trust:
+        Region: (north: 9%, northeast: 9%, central_west: 14%, southeast: 12%, south: 17%)
+        Age: (18-24: 16%, 25-34: 11%, 35-44: 12%, 45-54: 14%, 55-65: 11%)
+        Gender: (female: 13%, male: 12%)
+        Org_size: (fewer_than_10: 11%, 10_to_49: 15%, 50_to_99: 8%, 100_to_249: 11%, 250_to_499: 13%, 500_to_999: 8%, 1000_or_more: 18%)
+        Sector: (business_administration: 12%, technology: 11%, education: 18%, financial_services: 16%, government: 4%, marketing_services: 11%, retail: 7%, telecommunications: 13%, other: 13%)
+        Job_level: (CEO: 6%, senior_executive: 10%, senior_leader: 14%, mid_level_leader: 12%, first_level_supervisor: 16%, individual_contributor: 14%)
+        Relationship_status: ()
+        Education: (secondary: 13%, tertiary: 6%, undergraduate: 13%, postgraduate: 13%, doctorate: 8%)
+2. When considering the below options which are most likely to make you stay at your current company?
+    Brand is well known and respected:
+        Region: (north: 11%, northeast: 13%, central_west: 17%, southeast: 10%, south: 13%)
+        Age: (18-24: 7%, 25-34: 12%, 35-44: 12%, 45-54: 13%, 55-65: 11%)
+        Gender: (female: 10%, male: 13%)
+        Org_size: (fewer_than_10: 6%, 10_to_49: 15%, 50_to_99: 7%, 100_to_249: 9%, 250_to_499: 21%, 500_to_999: 18%, 1000_or_more: 13%)
+        Sector: (business_administration: 10%, technology: 16%, education: 15%, financial_services: 6%, government: 11%, retail: 12%, telecommunications: 10%, other: 12%)
+        Job_level: (CEO: 9%, senior_executive: 14%, senior_leader: 13%, mid_level_leader: 18%, first_level_supervisor: 12%, individual_contributor: 10%)
+        Relationship_status: ()
+        Education: (secondary: 13%, tertiary: 10%, undergraduate: 12%, postgraduate: 11%, doctorate: 16%)
+2. When considering the below options which are most likely to make you stay at your current company?
+    Full-time in the office:
+        Region: (north: 2%, northeast: 11%, central_west: 12%, southeast: 11%, south: 9%)
+        Age: (18-24: 10%, 25-34: 11%, 35-44: 11%, 45-54: 8%, 55-65: 11%)
+        Gender: (female: 10%, male: 11%)
+        Org_size: (fewer_than_10: 8%, 10_to_49: 11%, 50_to_99: 7%, 100_to_249: 9%, 250_to_499: 11%, 500_to_999: 14%, 1000_or_more: 11%)
+        Sector: (business_administration: 8%, technology: 11%, education: 7%, financial_services: 8%, government: 7%, marketing_services: 14%, retail: 13%, telecommunications: 10%, other: 12%)
+        Job_level: (CEO: 9%, senior_executive: 14%, senior_leader: 14%, mid_level_leader: 14%, first_level_supervisor: 10%, individual_contributor: 6%)
+        Relationship_status: ()
+        Education: (secondary: 12%, tertiary: 9%, undergraduate: 9%, postgraduate: 10%, doctorate: 16%)
+2. When considering the below options which are most likely to make you stay at your current company?
+    Other (please specify):
+        Region: (southeast: 1%, south: 1%)
+        Age: (18-24: 1%, 25-34: 0%, 35-44: 1%, 45-54: 1%, 55-65: 3%)
+        Gender: (female: 1%, male: 1%)
+        Org_size: (fewer_than_10: 2%, 10_to_49: 1%)
+        Sector: (financial_services: 2%, other: 1%)
+        Job_level: (CEO: 2%, mid_level_leader: 1%, individual_contributor: 1%)
+        Relationship_status: ()
+        Education: (secondary: 1%, undergraduate: 1%, postgraduate: 1%)
+3. When considering the below options, which are most likely to make you leave your current company?
+    Low salary / compensation:
+        Region: (north: 36%, northeast: 37%, central_west: 42%, southeast: 46%, south: 50%)
+        Age: (18-24: 32%, 25-34: 41%, 35-44: 44%, 45-54: 51%, 55-65: 53%)
+        Gender: (female: 46%, male: 42%)
+        Org_size: (fewer_than_10: 47%, 10_to_49: 42%, 50_to_99: 39%, 100_to_249: 41%, 250_to_499: 50%, 500_to_999: 38%, 1000_or_more: 46%)
+        Sector: (business_administration: 38%, technology: 46%, education: 56%, financial_services: 47%, government: 44%, marketing_services: 37%, retail: 49%, telecommunications: 57%, other: 42%)
+        Job_level: (CEO: 41%, senior_executive: 38%, senior_leader: 42%, mid_level_leader: 48%, first_level_supervisor: 40%, individual_contributor: 51%)
+        Relationship_status: ()
+        Education: (secondary: 35%, tertiary: 48%, undergraduate: 49%, postgraduate: 47%, doctorate: 29%)
+3. When considering the below options, which are most likely to make you leave your current company?
+    Lack of career advancement opportunities:
+        Region: (north: 38%, northeast: 36%, central_west: 20%, southeast: 40%, south: 36%)
+        Age: (18-24: 34%, 25-34: 37%, 35-44: 39%, 45-54: 34%, 55-65: 38%)
+        Gender: (female: 39%, male: 35%)
+        Org_size: (fewer_than_10: 36%, 10_to_49: 33%, 50_to_99: 26%, 100_to_249: 33%, 250_to_499: 53%, 500_to_999: 36%, 1000_or_more: 43%)
+        Sector: (business_administration: 38%, technology: 41%, education: 41%, financial_services: 39%, government: 33%, marketing_services: 29%, retail: 43%, telecommunications: 40%, other: 33%)
+        Job_level: (CEO: 32%, senior_executive: 34%, senior_leader: 39%, mid_level_leader: 32%, first_level_supervisor: 33%, individual_contributor: 44%)
+        Relationship_status: ()
+        Education: (secondary: 37%, tertiary: 38%, undergraduate: 38%, postgraduate: 37%, doctorate: 34%)
+3. When considering the below options, which are most likely to make you leave your current company?
+    Inadequate non-financial benefits:
+        Region: (north: 24%, northeast: 26%, central_west: 20%, southeast: 28%, south: 29%)
+        Age: (18-24: 17%, 25-34: 24%, 35-44: 32%, 45-54: 29%, 55-65: 28%)
+        Gender: (female: 28%, male: 26%)
+        Org_size: (fewer_than_10: 24%, 10_to_49: 28%, 50_to_99: 24%, 100_to_249: 23%, 250_to_499: 31%, 500_to_999: 29%, 1000_or_more: 31%)
+        Sector: (business_administration: 24%, technology: 29%, education: 34%, financial_services: 29%, government: 18%, marketing_services: 34%, retail: 29%, telecommunications: 47%, other: 30%)
+        Job_level: (CEO: 23%, senior_executive: 27%, senior_leader: 24%, mid_level_leader: 32%, first_level_supervisor: 29%, individual_contributor: 28%)
+        Relationship_status: ()
+        Education: (secondary: 23%, tertiary: 29%, undergraduate: 26%, postgraduate: 30%, doctorate: 21%)
+3. When considering the below options, which are most likely to make you leave your current company?
+    Lack of job security (employment contract):
+        Region: (north: 24%, northeast: 27%, central_west: 26%, southeast: 26%, south: 18%)
+        Age: (18-24: 15%, 25-34: 28%, 35-44: 24%, 45-54: 24%, 55-65: 29%)
+        Gender: (female: 23%, male: 26%)
+        Org_size: (fewer_than_10: 21%, 10_to_49: 24%, 50_to_99: 21%, 100_to_249: 27%, 250_to_499: 26%, 500_to_999: 31%, 1000_or_more: 27%)
+        Sector: (business_administration: 26%, technology: 25%, education: 32%, financial_services: 27%, government: 20%, marketing_services: 31%, retail: 26%, telecommunications: 27%, other: 25%)
+        Job_level: (CEO: 28%, senior_executive: 28%, senior_leader: 31%, mid_level_leader: 27%, first_level_supervisor: 20%, individual_contributor: 22%)
+        Relationship_status: ()
+        Education: (secondary: 20%, tertiary: 14%, undergraduate: 27%, postgraduate: 28%, doctorate: 24%)
+3. When considering the below options, which are most likely to make you leave your current company?
+    Inflexible working hours policy:
+        Region: (north: 18%, northeast: 17%, central_west: 25%, southeast: 25%, south: 19%)
+        Age: (18-24: 24%, 25-34: 16%, 35-44: 23%, 45-54: 27%, 55-65: 24%)
+        Gender: (female: 24%, male: 20%)
+        Org_size: (fewer_than_10: 21%, 10_to_49: 21%, 50_to_99: 17%, 100_to_249: 26%, 250_to_499: 23%, 500_to_999: 26%, 1000_or_more: 22%)
+        Sector: (business_administration: 15%, technology: 22%, education: 32%, financial_services: 25%, government: 33%, marketing_services: 20%, retail: 17%, telecommunications: 30%, other: 22%)
+        Job_level: (CEO: 22%, senior_executive: 23%, senior_leader: 30%, mid_level_leader: 21%, first_level_supervisor: 21%, individual_contributor: 20%)
+        Relationship_status: ()
+        Education: (secondary: 19%, tertiary: 18%, undergraduate: 26%, postgraduate: 22%, doctorate: 29%)
+3. When considering the below options, which are most likely to make you leave your current company?
+    Long or difficult commute to office:
+        Region: (north: 16%, northeast: 19%, central_west: 30%, southeast: 22%, south: 21%)
+        Age: (18-24: 17%, 25-34: 23%, 35-44: 20%, 45-54: 25%, 55-65: 22%)
+        Gender: (female: 25%, male: 19%)
+        Org_size: (fewer_than_10: 20%, 10_to_49: 22%, 50_to_99: 22%, 100_to_249: 23%, 250_to_499: 20%, 500_to_999: 19%, 1000_or_more: 25%)
+        Sector: (business_administration: 21%, technology: 18%, education: 16%, financial_services: 27%, government: 38%, marketing_services: 17%, retail: 26%, telecommunications: 23%, other: 23%)
+        Job_level: (CEO: 19%, senior_executive: 18%, senior_leader: 13%, mid_level_leader: 19%, first_level_supervisor: 27%, individual_contributor: 25%)
+        Relationship_status: ()
+        Education: (secondary: 20%, tertiary: 21%, undergraduate: 24%, postgraduate: 22%, doctorate: 16%)
+3. When considering the below options, which are most likely to make you leave your current company?
+    Poor company culture or values:
+        Region: (north: 20%, northeast: 20%, central_west: 17%, southeast: 22%, south: 19%)
+        Age: (18-24: 15%, 25-34: 22%, 35-44: 22%, 45-54: 20%, 55-65: 21%)
+        Gender: (female: 21%, male: 21%)
+        Org_size: (fewer_than_10: 21%, 10_to_49: 17%, 50_to_99: 16%, 100_to_249: 25%, 250_to_499: 20%, 500_to_999: 27%, 1000_or_more: 21%)
+        Sector: (business_administration: 20%, technology: 20%, education: 26%, financial_services: 16%, government: 11%, marketing_services: 26%, retail: 25%, telecommunications: 23%, other: 23%)
+        Job_level: (CEO: 21%, senior_executive: 26%, senior_leader: 22%, mid_level_leader: 17%, first_level_supervisor: 23%, individual_contributor: 18%)
+        Relationship_status: ()
+        Education: (secondary: 17%, tertiary: 21%, undergraduate: 22%, postgraduate: 22%, doctorate: 29%)
+3. When considering the below options, which are most likely to make you leave your current company?
+    Inadequate learning and development opportunities:
+        Region: (north: 31%, northeast: 18%, central_west: 22%, southeast: 20%, south: 19%)
+        Age: (18-24: 27%, 25-34: 19%, 35-44: 19%, 45-54: 21%, 55-65: 18%)
+        Gender: (female: 21%, male: 20%)
+        Org_size: (fewer_than_10: 19%, 10_to_49: 19%, 50_to_99: 19%, 100_to_249: 19%, 250_to_499: 20%, 500_to_999: 27%, 1000_or_more: 20%)
+        Sector: (business_administration: 22%, technology: 20%, education: 21%, financial_services: 31%, government: 16%, marketing_services: 20%, retail: 17%, telecommunications: 17%, other: 21%)
+        Job_level: (CEO: 19%, senior_executive: 25%, senior_leader: 29%, mid_level_leader: 16%, first_level_supervisor: 17%, individual_contributor: 19%)
+        Relationship_status: ()
+        Education: (secondary: 20%, tertiary: 21%, undergraduate: 21%, postgraduate: 20%, doctorate: 24%)
+3. When considering the below options, which are most likely to make you leave your current company?
+    High number of recent layoffs:
+        Region: (north: 18%, northeast: 18%, central_west: 20%, southeast: 17%, south: 12%)
+        Age: (18-24: 17%, 25-34: 16%, 35-44: 16%, 45-54: 18%, 55-65: 14%)
+        Gender: (female: 16%, male: 17%)
+        Org_size: (fewer_than_10: 12%, 10_to_49: 15%, 50_to_99: 13%, 100_to_249: 23%, 250_to_499: 14%, 500_to_999: 25%, 1000_or_more: 18%)
+        Sector: (business_administration: 17%, technology: 20%, education: 21%, financial_services: 16%, government: 13%, marketing_services: 9%, retail: 16%, telecommunications: 17%, other: 19%)
+        Job_level: (CEO: 11%, senior_executive: 18%, senior_leader: 22%, mid_level_leader: 17%, first_level_supervisor: 15%, individual_contributor: 18%)
+        Relationship_status: ()
+        Education: (secondary: 19%, tertiary: 13%, undergraduate: 18%, postgraduate: 15%, doctorate: 24%)
+3. When considering the below options, which are most likely to make you leave your current company?
+    Lack of diversity and inclusion within the company:
+        Region: (north: 16%, northeast: 17%, central_west: 15%, southeast: 17%, south: 14%)
+        Age: (18-24: 13%, 25-34: 21%, 35-44: 12%, 45-54: 18%, 55-65: 14%)
+        Gender: (female: 16%, male: 16%)
+        Org_size: (fewer_than_10: 16%, 10_to_49: 13%, 50_to_99: 16%, 100_to_249: 14%, 250_to_499: 23%, 500_to_999: 16%, 1000_or_more: 19%)
+        Sector: (business_administration: 17%, technology: 20%, education: 16%, financial_services: 12%, government: 13%, marketing_services: 14%, retail: 17%, telecommunications: 20%, other: 17%)
+        Job_level: (CEO: 16%, senior_executive: 21%, senior_leader: 20%, mid_level_leader: 17%, first_level_supervisor: 13%, individual_contributor: 15%)
+        Relationship_status: ()
+        Education: (secondary: 17%, tertiary: 12%, undergraduate: 14%, postgraduate: 17%, doctorate: 29%)
+3. When considering the below options, which are most likely to make you leave your current company?
+    Full-time in-office attendance is being mandated:
+        Region: (north: 7%, northeast: 17%, central_west: 19%, southeast: 15%, south: 21%)
+        Age: (18-24: 16%, 25-34: 16%, 35-44: 18%, 45-54: 16%, 55-65: 12%)
+        Gender: (female: 17%, male: 15%)
+        Org_size: (fewer_than_10: 14%, 10_to_49: 19%, 50_to_99: 17%, 100_to_249: 16%, 250_to_499: 17%, 500_to_999: 10%, 1000_or_more: 19%)
+        Sector: (business_administration: 15%, technology: 15%, education: 22%, financial_services: 22%, government: 13%, marketing_services: 20%, retail: 12%, telecommunications: 20%, other: 17%)
+        Job_level: (CEO: 17%, senior_executive: 17%, senior_leader: 11%, mid_level_leader: 12%, first_level_supervisor: 20%, individual_contributor: 16%)
+        Relationship_status: ()
+        Education: (secondary: 15%, tertiary: 8%, undergraduate: 18%, postgraduate: 16%, doctorate: 32%)
+3. When considering the below options, which are most likely to make you leave your current company?
+    No allowance for full-time remote working:
+        Region: (north: 11%, northeast: 11%, central_west: 17%, southeast: 17%, south: 15%)
+        Age: (18-24: 16%, 25-34: 14%, 35-44: 17%, 45-54: 16%, 55-65: 9%)
+        Gender: (female: 16%, male: 14%)
+        Org_size: (fewer_than_10: 13%, 10_to_49: 19%, 50_to_99: 12%, 100_to_249: 19%, 250_to_499: 11%, 500_to_999: 14%, 1000_or_more: 17%)
+        Sector: (business_administration: 16%, technology: 18%, education: 15%, financial_services: 8%, government: 22%, marketing_services: 20%, retail: 10%, telecommunications: 13%, other: 16%)
+        Job_level: (CEO: 15%, senior_executive: 18%, senior_leader: 17%, mid_level_leader: 16%, first_level_supervisor: 15%, individual_contributor: 13%)
+        Relationship_status: ()
+        Education: (secondary: 16%, tertiary: 12%, undergraduate: 15%, postgraduate: 15%, doctorate: 16%)
+3. When considering the below options, which are most likely to make you leave your current company?
+    Personal challenges with colleagues or manager:
+        Region: (north: 13%, northeast: 18%, central_west: 10%, southeast: 13%, south: 17%)
+        Age: (18-24: 20%, 25-34: 14%, 35-44: 16%, 45-54: 12%, 55-65: 8%)
+        Gender: (female: 15%, male: 13%)
+        Org_size: (fewer_than_10: 17%, 10_to_49: 14%, 50_to_99: 16%, 100_to_249: 19%, 250_to_499: 10%, 500_to_999: 11%, 1000_or_more: 12%)
+        Sector: (business_administration: 11%, technology: 14%, education: 15%, financial_services: 14%, government: 9%, marketing_services: 20%, retail: 20%, telecommunications: 17%, other: 15%)
+        Job_level: (CEO: 16%, senior_executive: 14%, senior_leader: 16%, mid_level_leader: 12%, first_level_supervisor: 14%, individual_contributor: 14%)
+        Relationship_status: ()
+        Education: (secondary: 13%, tertiary: 16%, undergraduate: 16%, postgraduate: 15%, doctorate: 8%)
+3. When considering the below options, which are most likely to make you leave your current company?
+    Poor sustainability policies and practices within the company:
+        Region: (north: 4%, northeast: 12%, central_west: 7%, southeast: 11%, south: 13%)
+        Age: (18-24: 6%, 25-34: 11%, 35-44: 11%, 45-54: 11%, 55-65: 12%)
+        Gender: (female: 10%, male: 12%)
+        Org_size: (fewer_than_10: 5%, 10_to_49: 13%, 50_to_99: 9%, 100_to_249: 12%, 250_to_499: 17%, 500_to_999: 11%, 1000_or_more: 15%)
+        Sector: (business_administration: 15%, technology: 15%, education: 12%, financial_services: 8%, government: 11%, marketing_services: 9%, retail: 9%, telecommunications: 7%, other: 9%)
+        Job_level: (CEO: 7%, senior_executive: 13%, senior_leader: 14%, mid_level_leader: 16%, first_level_supervisor: 11%, individual_contributor: 9%)
+        Relationship_status: ()
+        Education: (secondary: 7%, tertiary: 8%, undergraduate: 13%, postgraduate: 12%, doctorate: 18%)
+3. When considering the below options, which are most likely to make you leave your current company?
+    Employer will relocate to a different area:
+        Region: (north: 7%, northeast: 11%, central_west: 9%, southeast: 10%, south: 11%)
+        Age: (18-24: 10%, 25-34: 9%, 35-44: 11%, 45-54: 10%, 55-65: 13%)
+        Gender: (female: 8%, male: 12%)
+        Org_size: (fewer_than_10: 6%, 10_to_49: 14%, 50_to_99: 9%, 100_to_249: 12%, 250_to_499: 11%, 500_to_999: 12%, 1000_or_more: 9%)
+        Sector: (business_administration: 15%, technology: 9%, education: 6%, financial_services: 8%, government: 11%, marketing_services: 11%, retail: 13%, telecommunications: 20%, other: 9%)
+        Job_level: (CEO: 8%, senior_executive: 15%, senior_leader: 11%, mid_level_leader: 15%, first_level_supervisor: 10%, individual_contributor: 7%)
+        Relationship_status: ()
+        Education: (secondary: 12%, tertiary: 8%, undergraduate: 11%, postgraduate: 9%, doctorate: 8%)
+3. When considering the below options, which are most likely to make you leave your current company?
+    Lack of affordable childcare during working hours:
+        Region: (north: 9%, northeast: 9%, central_west: 7%, southeast: 8%, south: 5%)
+        Age: (18-24: 7%, 25-34: 8%, 35-44: 10%, 45-54: 3%, 55-65: 7%)
+        Gender: (female: 7%, male: 8%)
+        Org_size: (fewer_than_10: 3%, 10_to_49: 8%, 50_to_99: 8%, 100_to_249: 10%, 250_to_499: 17%, 500_to_999: 12%, 1000_or_more: 6%)
+        Sector: (business_administration: 15%, technology: 8%, education: 6%, financial_services: 8%, government: 11%, marketing_services: 6%, retail: 7%, telecommunications: 3%, other: 7%)
+        Job_level: (CEO: 12%, senior_executive: 8%, senior_leader: 10%, mid_level_leader: 9%, first_level_supervisor: 6%, individual_contributor: 5%)
+        Relationship_status: ()
+        Education: (secondary: 7%, tertiary: 8%, undergraduate: 8%, postgraduate: 8%, doctorate: 11%)
+3. When considering the below options, which are most likely to make you leave your current company?
+    Other (please specify):
+        Region: (north: 2%, northeast: 2%, central_west: 2%, southeast: 2%, south: 1%)
+        Age: (18-24: 1%, 25-34: 1%, 35-44: 2%, 45-54: 1%, 55-65: 7%)
+        Gender: (female: 2%, male: 2%)
+        Org_size: (fewer_than_10: 3%, 10_to_49: 2%, 50_to_99: 1%, 1000_or_more: 2%)
+        Sector: (technology: 1%, financial_services: 4%, marketing_services: 3%, retail: 1%, telecommunications: 3%, other: 2%)
+        Job_level: (CEO: 4%, senior_leader: 1%, mid_level_leader: 1%, first_level_supervisor: 1%, individual_contributor: 2%)
+        Relationship_status: ()
+        Education: (secondary: 3%, tertiary: 3%, undergraduate: 1%, postgraduate: 1%, doctorate: 3%)
+4. To what extent do you agree or disagree with the following statements? - The values a company promotes are extremely important to me
+    NET: Agree:
+        Region: (north: 78%, northeast: 85%, central_west: 77%, southeast: 83%, south: 79%)
+        Age: (18-24: 70%, 25-34: 83%, 35-44: 82%, 45-54: 84%, 55-65: 87%)
+        Gender: (female: 87%, male: 77%)
+        Org_size: (fewer_than_10: 84%, 10_to_49: 83%, 50_to_99: 82%, 100_to_249: 74%, 250_to_499: 90%, 500_to_999: 90%, 1000_or_more: 75%)
+        Sector: (business_administration: 82%, technology: 83%, education: 85%, financial_services: 84%, government: 64%, marketing_services: 89%, retail: 87%, telecommunications: 90%, other: 83%)
+        Job_level: (CEO: 86%, senior_executive: 78%, senior_leader: 79%, mid_level_leader: 79%, first_level_supervisor: 86%, individual_contributor: 81%)
+        Relationship_status: ()
+        Education: (secondary: 83%, tertiary: 79%, undergraduate: 80%, postgraduate: 83%, doctorate: 84%)
+4. To what extent do you agree or disagree with the following statements? - The values a company promotes are extremely important to me
+    NET: Disagree:
+        Region: (north: 9%, northeast: 5%, central_west: 9%, southeast: 4%, south: 3%)
+        Age: (18-24: 13%, 25-34: 4%, 35-44: 4%, 45-54: 3%, 55-65: 5%)
+        Gender: (female: 3%, male: 6%)
+        Org_size: (fewer_than_10: 4%, 10_to_49: 4%, 50_to_99: 9%, 100_to_249: 8%, 250_to_499: 3%, 500_to_999: 2%, 1000_or_more: 4%)
+        Sector: (business_administration: 7%, technology: 4%, education: 3%, government: 4%, retail: 3%, other: 4%)
+        Job_level: (CEO: 6%, senior_executive: 7%, senior_leader: 7%, mid_level_leader: 4%, first_level_supervisor: 2%, individual_contributor: 5%)
+        Relationship_status: ()
+        Education: (secondary: 4%, tertiary: 8%, undergraduate: 6%, postgraduate: 4%, doctorate: 5%)
+4. To what extent do you agree or disagree with the following statements? - The ability to work flexibly and from wherever I want is critical to my work-life balance
+    NET: Agree:
+        Region: (north: 87%, northeast: 81%, central_west: 78%, southeast: 82%, south: 77%)
+        Age: (18-24: 80%, 25-34: 83%, 35-44: 82%, 45-54: 80%, 55-65: 75%)
+        Gender: (female: 85%, male: 78%)
+        Org_size: (fewer_than_10: 86%, 10_to_49: 84%, 50_to_99: 77%, 100_to_249: 75%, 250_to_499: 81%, 500_to_999: 81%, 1000_or_more: 78%)
+        Sector: (business_administration: 84%, technology: 83%, education: 85%, financial_services: 73%, government: 64%, marketing_services: 89%, retail: 86%, telecommunications: 83%, other: 82%)
+        Job_level: (CEO: 88%, senior_executive: 79%, senior_leader: 75%, mid_level_leader: 79%, first_level_supervisor: 83%, individual_contributor: 80%)
+        Relationship_status: ()
+        Education: (secondary: 84%, tertiary: 81%, undergraduate: 76%, postgraduate: 82%, doctorate: 82%)
+4. To what extent do you agree or disagree with the following statements? - The ability to work flexibly and from wherever I want is critical to my work-life balance
+    NET: Disagree:
+        Region: (north: 4%, northeast: 6%, central_west: 6%, southeast: 5%, south: 5%)
+        Age: (18-24: 6%, 25-34: 6%, 35-44: 4%, 45-54: 6%, 55-65: 8%)
+        Gender: (female: 5%, male: 6%)
+        Org_size: (fewer_than_10: 4%, 10_to_49: 6%, 50_to_99: 8%, 100_to_249: 7%, 250_to_499: 6%, 500_to_999: 3%, 1000_or_more: 7%)
+        Sector: (business_administration: 5%, technology: 3%, education: 7%, financial_services: 8%, government: 9%, retail: 3%, telecommunications: 7%, other: 7%)
+        Job_level: (CEO: 4%, senior_executive: 9%, senior_leader: 11%, mid_level_leader: 4%, first_level_supervisor: 4%, individual_contributor: 5%)
+        Relationship_status: ()
+        Education: (secondary: 6%, tertiary: 6%, undergraduate: 7%, postgraduate: 5%, doctorate: 8%)
+4. To what extent do you agree or disagree with the following statements? - It is important that a company understands the importance of the benefits that come alongside a salary
+    NET: Agree:
+        Region: (north: 87%, northeast: 86%, central_west: 78%, southeast: 89%, south: 88%)
+        Age: (18-24: 78%, 25-34: 88%, 35-44: 88%, 45-54: 87%, 55-65: 91%)
+        Gender: (female: 91%, male: 83%)
+        Org_size: (fewer_than_10: 87%, 10_to_49: 88%, 50_to_99: 81%, 100_to_249: 81%, 250_to_499: 96%, 500_to_999: 92%, 1000_or_more: 88%)
+        Sector: (business_administration: 90%, technology: 89%, education: 85%, financial_services: 76%, government: 84%, marketing_services: 83%, retail: 94%, telecommunications: 90%, other: 86%)
+        Job_level: (CEO: 87%, senior_executive: 81%, senior_leader: 85%, mid_level_leader: 83%, first_level_supervisor: 93%, individual_contributor: 89%)
+        Relationship_status: ()
+        Education: (secondary: 86%, tertiary: 91%, undergraduate: 85%, postgraduate: 89%, doctorate: 84%)
+4. To what extent do you agree or disagree with the following statements? - It is important that a company understands the importance of the benefits that come alongside a salary
+    NET: Disagree:
+        Region: (north: 2%, northeast: 3%, central_west: 7%, southeast: 2%, south: 2%)
+        Age: (18-24: 6%, 25-34: 2%, 35-44: 2%, 45-54: 3%, 55-65: 1%)
+        Gender: (female: 1%, male: 4%)
+        Org_size: (fewer_than_10: 3%, 10_to_49: 2%, 50_to_99: 8%, 100_to_249: 4%, 500_to_999: 2%, 1000_or_more: 2%)
+        Sector: (business_administration: 3%, technology: 3%, financial_services: 4%, government: 4%, marketing_services: 3%, telecommunications: 3%, other: 4%)
+        Job_level: (CEO: 2%, senior_executive: 4%, senior_leader: 7%, mid_level_leader: 2%, first_level_supervisor: 2%, individual_contributor: 2%)
+        Relationship_status: ()
+        Education: (secondary: 4%, tertiary: 1%, undergraduate: 5%, postgraduate: 2%, doctorate: 3%)
+4. To what extent do you agree or disagree with the following statements? - I would stay at a job if it paid me the salary I want, even if I hated the role
+    NET: Agree:
+        Region: (north: 53%, northeast: 60%, central_west: 60%, southeast: 52%, south: 53%)
+        Age: (18-24: 55%, 25-34: 59%, 35-44: 57%, 45-54: 49%, 55-65: 41%)
+        Gender: (female: 54%, male: 56%)
+        Org_size: (fewer_than_10: 48%, 10_to_49: 55%, 50_to_99: 53%, 100_to_249: 59%, 250_to_499: 60%, 500_to_999: 63%, 1000_or_more: 55%)
+        Sector: (business_administration: 57%, technology: 60%, education: 59%, financial_services: 59%, government: 33%, marketing_services: 49%, retail: 57%, telecommunications: 57%, other: 47%)
+        Job_level: (CEO: 55%, senior_executive: 63%, senior_leader: 52%, mid_level_leader: 51%, first_level_supervisor: 59%, individual_contributor: 50%)
+        Relationship_status: ()
+        Education: (secondary: 57%, tertiary: 43%, undergraduate: 53%, postgraduate: 56%, doctorate: 58%)
+4. To what extent do you agree or disagree with the following statements? - I would stay at a job if it paid me the salary I want, even if I hated the role
+    NET: Disagree:
+        Region: (north: 31%, northeast: 24%, central_west: 20%, southeast: 28%, south: 30%)
+        Age: (18-24: 26%, 25-34: 23%, 35-44: 25%, 45-54: 31%, 55-65: 42%)
+        Gender: (female: 30%, male: 24%)
+        Org_size: (fewer_than_10: 33%, 10_to_49: 25%, 50_to_99: 27%, 100_to_249: 18%, 250_to_499: 27%, 500_to_999: 21%, 1000_or_more: 27%)
+        Sector: (business_administration: 26%, technology: 25%, education: 22%, financial_services: 22%, government: 31%, marketing_services: 37%, retail: 30%, telecommunications: 23%, other: 30%)
+        Job_level: (CEO: 30%, senior_executive: 21%, senior_leader: 29%, mid_level_leader: 26%, first_level_supervisor: 25%, individual_contributor: 29%)
+        Relationship_status: ()
+        Education: (secondary: 23%, tertiary: 43%, undergraduate: 26%, postgraduate: 26%, doctorate: 32%)
+4. To what extent do you agree or disagree with the following statements? - I would stay at a job if it allowed me flexibility, even if I hated the role
+    NET: Agree:
+        Region: (north: 51%, northeast: 59%, central_west: 64%, southeast: 53%, south: 51%)
+        Age: (18-24: 49%, 25-34: 61%, 35-44: 57%, 45-54: 48%, 55-65: 43%)
+        Gender: (female: 55%, male: 54%)
+        Org_size: (fewer_than_10: 53%, 10_to_49: 54%, 50_to_99: 53%, 100_to_249: 58%, 250_to_499: 47%, 500_to_999: 67%, 1000_or_more: 53%)
+        Sector: (business_administration: 62%, technology: 60%, education: 53%, financial_services: 57%, government: 40%, marketing_services: 46%, retail: 58%, telecommunications: 50%, other: 46%)
+        Job_level: (CEO: 59%, senior_executive: 63%, senior_leader: 49%, mid_level_leader: 61%, first_level_supervisor: 59%, individual_contributor: 46%)
+        Relationship_status: ()
+        Education: (secondary: 60%, tertiary: 44%, undergraduate: 53%, postgraduate: 54%, doctorate: 61%)
+4. To what extent do you agree or disagree with the following statements? - I would stay at a job if it allowed me flexibility, even if I hated the role
+    NET: Disagree:
+        Region: (north: 36%, northeast: 23%, central_west: 19%, southeast: 27%, south: 28%)
+        Age: (18-24: 28%, 25-34: 22%, 35-44: 24%, 45-54: 29%, 55-65: 43%)
+        Gender: (female: 29%, male: 24%)
+        Org_size: (fewer_than_10: 32%, 10_to_49: 28%, 50_to_99: 24%, 100_to_249: 24%, 250_to_499: 29%, 500_to_999: 17%, 1000_or_more: 24%)
+        Sector: (business_administration: 21%, technology: 23%, education: 26%, financial_services: 22%, government: 31%, marketing_services: 29%, retail: 29%, telecommunications: 13%, other: 36%)
+        Job_level: (CEO: 25%, senior_executive: 22%, senior_leader: 30%, mid_level_leader: 22%, first_level_supervisor: 24%, individual_contributor: 31%)
+        Relationship_status: ()
+        Education: (secondary: 20%, tertiary: 40%, undergraduate: 27%, postgraduate: 26%, doctorate: 32%)
+4. To what extent do you agree or disagree with the following statements? - I would stay at a job if it granted me opportunities to progress and upskill quickly, even if I hated the current role
+    NET: Agree:
+        Region: (north: 76%, northeast: 73%, central_west: 67%, southeast: 68%, south: 69%)
+        Age: (18-24: 76%, 25-34: 72%, 35-44: 69%, 45-54: 68%, 55-65: 58%)
+        Gender: (female: 67%, male: 72%)
+        Org_size: (fewer_than_10: 68%, 10_to_49: 70%, 50_to_99: 67%, 100_to_249: 73%, 250_to_499: 67%, 500_to_999: 82%, 1000_or_more: 64%)
+        Sector: (business_administration: 73%, technology: 72%, education: 66%, financial_services: 73%, government: 58%, marketing_services: 71%, retail: 65%, telecommunications: 77%, other: 64%)
+        Job_level: (CEO: 68%, senior_executive: 80%, senior_leader: 68%, mid_level_leader: 68%, first_level_supervisor: 69%, individual_contributor: 67%)
+        Relationship_status: ()
+        Education: (secondary: 72%, tertiary: 70%, undergraduate: 66%, postgraduate: 69%, doctorate: 74%)
+4. To what extent do you agree or disagree with the following statements? - I would stay at a job if it granted me opportunities to progress and upskill quickly, even if I hated the current role
+    NET: Disagree:
+        Region: (north: 13%, northeast: 13%, central_west: 9%, southeast: 18%, south: 18%)
+        Age: (18-24: 12%, 25-34: 11%, 35-44: 16%, 45-54: 20%, 55-65: 29%)
+        Gender: (female: 21%, male: 11%)
+        Org_size: (fewer_than_10: 20%, 10_to_49: 17%, 50_to_99: 18%, 100_to_249: 10%, 250_to_499: 17%, 500_to_999: 8%, 1000_or_more: 16%)
+        Sector: (business_administration: 15%, technology: 15%, education: 16%, financial_services: 20%, government: 16%, marketing_services: 14%, retail: 17%, telecommunications: 3%, other: 20%)
+        Job_level: (CEO: 19%, senior_executive: 10%, senior_leader: 14%, mid_level_leader: 15%, first_level_supervisor: 15%, individual_contributor: 18%)
+        Relationship_status: ()
+        Education: (secondary: 15%, tertiary: 18%, undergraduate: 16%, postgraduate: 16%, doctorate: 16%)
+4. To what extent do you agree or disagree with the following statements? - I feel supported and encouraged to learn new skills and work on my own professional development
+    NET: Agree:
+        Region: (north: 78%, northeast: 78%, central_west: 74%, southeast: 76%, south: 74%)
+        Age: (18-24: 74%, 25-34: 79%, 35-44: 76%, 45-54: 76%, 55-65: 71%)
+        Gender: (female: 80%, male: 73%)
+        Org_size: (fewer_than_10: 76%, 10_to_49: 77%, 50_to_99: 75%, 100_to_249: 74%, 250_to_499: 77%, 500_to_999: 81%, 1000_or_more: 75%)
+        Sector: (business_administration: 76%, technology: 86%, education: 76%, financial_services: 71%, government: 58%, marketing_services: 77%, retail: 81%, telecommunications: 67%, other: 75%)
+        Job_level: (CEO: 82%, senior_executive: 82%, senior_leader: 76%, mid_level_leader: 69%, first_level_supervisor: 80%, individual_contributor: 70%)
+        Relationship_status: ()
+        Education: (secondary: 76%, tertiary: 73%, undergraduate: 73%, postgraduate: 77%, doctorate: 87%)
+4. To what extent do you agree or disagree with the following statements? - I feel supported and encouraged to learn new skills and work on my own professional development
+    NET: Disagree:
+        Region: (north: 13%, northeast: 5%, central_west: 6%, southeast: 8%, south: 11%)
+        Age: (18-24: 11%, 25-34: 7%, 35-44: 7%, 45-54: 11%, 55-65: 8%)
+        Gender: (female: 10%, male: 7%)
+        Org_size: (fewer_than_10: 9%, 10_to_49: 10%, 50_to_99: 7%, 100_to_249: 7%, 250_to_499: 14%, 500_to_999: 4%, 1000_or_more: 7%)
+        Sector: (business_administration: 8%, technology: 3%, education: 10%, financial_services: 12%, government: 13%, marketing_services: 11%, retail: 9%, telecommunications: 10%, other: 8%)
+        Job_level: (CEO: 5%, senior_executive: 5%, senior_leader: 10%, mid_level_leader: 9%, first_level_supervisor: 6%, individual_contributor: 12%)
+        Relationship_status: ()
+        Education: (secondary: 9%, tertiary: 19%, undergraduate: 9%, postgraduate: 6%, doctorate: 3%)
+4. To what extent do you agree or disagree with the following statements? - I feel confident I could easily find a new role if I left my current company in the next few months
+    NET: Agree:
+        Region: (north: 64%, northeast: 74%, central_west: 69%, southeast: 65%, south: 62%)
+        Age: (18-24: 56%, 25-34: 71%, 35-44: 68%, 45-54: 65%, 55-65: 57%)
+        Gender: (female: 66%, male: 68%)
+        Org_size: (fewer_than_10: 61%, 10_to_49: 69%, 50_to_99: 63%, 100_to_249: 76%, 250_to_499: 71%, 500_to_999: 75%, 1000_or_more: 63%)
+        Sector: (business_administration: 73%, technology: 73%, education: 59%, financial_services: 53%, government: 47%, marketing_services: 71%, retail: 72%, telecommunications: 57%, other: 60%)
+        Job_level: (CEO: 67%, senior_executive: 78%, senior_leader: 74%, mid_level_leader: 63%, first_level_supervisor: 69%, individual_contributor: 59%)
+        Relationship_status: ()
+        Education: (secondary: 67%, tertiary: 65%, undergraduate: 65%, postgraduate: 67%, doctorate: 76%)
+4. To what extent do you agree or disagree with the following statements? - I feel confident I could easily find a new role if I left my current company in the next few months
+    NET: Disagree:
+        Region: (north: 11%, northeast: 10%, central_west: 14%, southeast: 12%, south: 17%)
+        Age: (18-24: 18%, 25-34: 10%, 35-44: 11%, 45-54: 15%, 55-65: 16%)
+        Gender: (female: 13%, male: 11%)
+        Org_size: (fewer_than_10: 15%, 10_to_49: 10%, 50_to_99: 20%, 100_to_249: 12%, 250_to_499: 4%, 500_to_999: 5%, 1000_or_more: 14%)
+        Sector: (business_administration: 7%, technology: 9%, education: 12%, financial_services: 14%, government: 27%, marketing_services: 9%, retail: 12%, telecommunications: 7%, other: 20%)
+        Job_level: (CEO: 13%, senior_executive: 9%, senior_leader: 7%, mid_level_leader: 15%, first_level_supervisor: 12%, individual_contributor: 15%)
+        Relationship_status: ()
+        Education: (secondary: 11%, tertiary: 16%, undergraduate: 14%, postgraduate: 12%, doctorate: 11%)
+4. To what extent do you agree or disagree with the following statements? - I feel excited and positive about how emerging technologies like AI will change the way I work
+    NET: Agree:
+        Region: (north: 76%, northeast: 73%, central_west: 60%, southeast: 72%, south: 67%)
+        Age: (18-24: 65%, 25-34: 72%, 35-44: 72%, 45-54: 71%, 55-65: 68%)
+        Gender: (female: 70%, male: 72%)
+        Org_size: (fewer_than_10: 67%, 10_to_49: 72%, 50_to_99: 67%, 100_to_249: 65%, 250_to_499: 86%, 500_to_999: 78%, 1000_or_more: 70%)
+        Sector: (business_administration: 73%, technology: 81%, education: 60%, financial_services: 65%, government: 62%, marketing_services: 80%, retail: 70%, telecommunications: 70%, other: 71%)
+        Job_level: (CEO: 76%, senior_executive: 74%, senior_leader: 75%, mid_level_leader: 74%, first_level_supervisor: 74%, individual_contributor: 61%)
+        Relationship_status: ()
+        Education: (secondary: 69%, tertiary: 74%, undergraduate: 66%, postgraduate: 72%, doctorate: 84%)
+4. To what extent do you agree or disagree with the following statements? - I feel excited and positive about how emerging technologies like AI will change the way I work
+    NET: Disagree:
+        Region: (north: 13%, northeast: 7%, central_west: 10%, southeast: 9%, south: 10%)
+        Age: (18-24: 16%, 25-34: 10%, 35-44: 9%, 45-54: 6%, 55-65: 8%)
+        Gender: (female: 11%, male: 8%)
+        Org_size: (fewer_than_10: 12%, 10_to_49: 8%, 50_to_99: 14%, 100_to_249: 10%, 250_to_499: 3%, 500_to_999: 5%, 1000_or_more: 9%)
+        Sector: (business_administration: 4%, technology: 7%, education: 15%, financial_services: 10%, government: 11%, marketing_services: 9%, retail: 9%, telecommunications: 13%, other: 8%)
+        Job_level: (CEO: 8%, senior_executive: 8%, senior_leader: 7%, mid_level_leader: 9%, first_level_supervisor: 8%, individual_contributor: 12%)
+        Relationship_status: ()
+        Education: (secondary: 9%, tertiary: 14%, undergraduate: 10%, postgraduate: 8%, doctorate: 11%)
+4. To what extent do you agree or disagree with the following statements? - I think using AI in my role will bolster my value in the next three years
+    NET: Agree:
+        Region: (north: 58%, northeast: 67%, central_west: 63%, southeast: 62%, south: 54%)
+        Age: (18-24: 54%, 25-34: 61%, 35-44: 68%, 45-54: 62%, 55-65: 51%)
+        Gender: (female: 62%, male: 62%)
+        Org_size: (fewer_than_10: 55%, 10_to_49: 57%, 50_to_99: 58%, 100_to_249: 67%, 250_to_499: 71%, 500_to_999: 66%, 1000_or_more: 70%)
+        Sector: (business_administration: 65%, technology: 77%, education: 53%, financial_services: 53%, government: 47%, marketing_services: 66%, retail: 65%, telecommunications: 70%, other: 58%)
+        Job_level: (CEO: 69%, senior_executive: 70%, senior_leader: 66%, mid_level_leader: 64%, first_level_supervisor: 64%, individual_contributor: 50%)
+        Relationship_status: ()
+        Education: (secondary: 62%, tertiary: 58%, undergraduate: 55%, postgraduate: 64%, doctorate: 74%)
+4. To what extent do you agree or disagree with the following statements? - I think using AI in my role will bolster my value in the next three years
+    NET: Disagree:
+        Region: (north: 22%, northeast: 15%, central_west: 16%, southeast: 11%, south: 16%)
+        Age: (18-24: 18%, 25-34: 16%, 35-44: 9%, 45-54: 13%, 55-65: 17%)
+        Gender: (female: 14%, male: 12%)
+        Org_size: (fewer_than_10: 17%, 10_to_49: 16%, 50_to_99: 11%, 100_to_249: 11%, 250_to_499: 7%, 500_to_999: 10%, 1000_or_more: 11%)
+        Sector: (business_administration: 11%, technology: 8%, education: 19%, financial_services: 18%, government: 13%, marketing_services: 14%, retail: 12%, telecommunications: 13%, other: 14%)
+        Job_level: (CEO: 14%, senior_executive: 9%, senior_leader: 7%, mid_level_leader: 10%, first_level_supervisor: 12%, individual_contributor: 19%)
+        Relationship_status: ()
+        Education: (secondary: 13%, tertiary: 17%, undergraduate: 14%, postgraduate: 13%, doctorate: 8%)
+4. To what extent do you agree or disagree with the following statements? - I feel certain that my role will be replaced by AI/tech in the next three years
+    NET: Agree:
+        Region: (north: 42%, northeast: 42%, central_west: 35%, southeast: 40%, south: 32%)
+        Age: (18-24: 37%, 25-34: 40%, 35-44: 43%, 45-54: 36%, 55-65: 26%)
+        Gender: (female: 38%, male: 39%)
+        Org_size: (fewer_than_10: 34%, 10_to_49: 43%, 50_to_99: 42%, 100_to_249: 45%, 250_to_499: 31%, 500_to_999: 45%, 1000_or_more: 36%)
+        Sector: (business_administration: 45%, technology: 38%, education: 32%, financial_services: 45%, government: 18%, marketing_services: 40%, retail: 45%, telecommunications: 40%, other: 33%)
+        Job_level: (CEO: 46%, senior_executive: 48%, senior_leader: 34%, mid_level_leader: 43%, first_level_supervisor: 38%, individual_contributor: 32%)
+        Relationship_status: ()
+        Education: (secondary: 47%, tertiary: 27%, undergraduate: 33%, postgraduate: 38%, doctorate: 50%)
+4. To what extent do you agree or disagree with the following statements? - I feel certain that my role will be replaced by AI/tech in the next three years
+    NET: Disagree:
+        Region: (north: 40%, northeast: 34%, central_west: 36%, southeast: 40%, south: 44%)
+        Age: (18-24: 48%, 25-34: 37%, 35-44: 38%, 45-54: 39%, 55-65: 46%)
+        Gender: (female: 40%, male: 38%)
+        Org_size: (fewer_than_10: 39%, 10_to_49: 37%, 50_to_99: 37%, 100_to_249: 33%, 250_to_499: 53%, 500_to_999: 37%, 1000_or_more: 40%)
+        Sector: (business_administration: 31%, technology: 45%, education: 47%, financial_services: 37%, government: 44%, marketing_services: 34%, retail: 39%, telecommunications: 23%, other: 42%)
+        Job_level: (CEO: 35%, senior_executive: 33%, senior_leader: 44%, mid_level_leader: 37%, first_level_supervisor: 43%, individual_contributor: 40%)
+        Relationship_status: ()
+        Education: (secondary: 28%, tertiary: 51%, undergraduate: 42%, postgraduate: 41%, doctorate: 47%)
+4. To what extent do you agree or disagree with the following statements? - Leaders value people over profits
+    NET: Agree:
+        Region: (north: 53%, northeast: 56%, central_west: 59%, southeast: 53%, south: 46%)
+        Age: (18-24: 52%, 25-34: 54%, 35-44: 57%, 45-54: 48%, 55-65: 49%)
+        Gender: (female: 53%, male: 53%)
+        Org_size: (fewer_than_10: 47%, 10_to_49: 58%, 50_to_99: 54%, 100_to_249: 55%, 250_to_499: 50%, 500_to_999: 60%, 1000_or_more: 54%)
+        Sector: (business_administration: 61%, technology: 57%, education: 40%, financial_services: 55%, government: 42%, marketing_services: 46%, retail: 59%, telecommunications: 57%, other: 47%)
+        Job_level: (CEO: 60%, senior_executive: 66%, senior_leader: 49%, mid_level_leader: 48%, first_level_supervisor: 57%, individual_contributor: 45%)
+        Relationship_status: ()
+        Education: (secondary: 54%, tertiary: 58%, undergraduate: 51%, postgraduate: 51%, doctorate: 71%)
+4. To what extent do you agree or disagree with the following statements? - Leaders value people over profits
+    NET: Disagree:
+        Region: (north: 24%, northeast: 23%, central_west: 22%, southeast: 25%, south: 28%)
+        Age: (18-24: 27%, 25-34: 26%, 35-44: 21%, 45-54: 27%, 55-65: 33%)
+        Gender: (female: 26%, male: 24%)
+        Org_size: (fewer_than_10: 31%, 10_to_49: 22%, 50_to_99: 23%, 100_to_249: 19%, 250_to_499: 33%, 500_to_999: 20%, 1000_or_more: 24%)
+        Sector: (business_administration: 18%, technology: 20%, education: 34%, financial_services: 33%, government: 33%, marketing_services: 29%, retail: 26%, telecommunications: 37%, other: 20%)
+        Job_level: (CEO: 21%, senior_executive: 16%, senior_leader: 24%, mid_level_leader: 20%, first_level_supervisor: 24%, individual_contributor: 35%)
+        Relationship_status: ()
+        Education: (secondary: 25%, tertiary: 29%, undergraduate: 27%, postgraduate: 25%, doctorate: 16%)
+4. To what extent do you agree or disagree with the following statements? - Connection with my colleagues is one of the most important things about my job
+    NET: Agree:
+        Region: (north: 69%, northeast: 75%, central_west: 72%, southeast: 73%, south: 68%)
+        Age: (18-24: 65%, 25-34: 71%, 35-44: 79%, 45-54: 68%, 55-65: 70%)
+        Gender: (female: 76%, male: 69%)
+        Org_size: (fewer_than_10: 66%, 10_to_49: 74%, 50_to_99: 76%, 100_to_249: 73%, 250_to_499: 77%, 500_to_999: 81%, 1000_or_more: 71%)
+        Sector: (business_administration: 76%, technology: 74%, education: 75%, financial_services: 73%, government: 60%, marketing_services: 86%, retail: 65%, telecommunications: 70%, other: 71%)
+        Job_level: (CEO: 78%, senior_executive: 73%, senior_leader: 68%, mid_level_leader: 76%, first_level_supervisor: 73%, individual_contributor: 68%)
+        Relationship_status: ()
+        Education: (secondary: 72%, tertiary: 74%, undergraduate: 68%, postgraduate: 73%, doctorate: 87%)
+4. To what extent do you agree or disagree with the following statements? - Connection with my colleagues is one of the most important things about my job
+    NET: Disagree:
+        Region: (north: 7%, northeast: 9%, central_west: 12%, southeast: 9%, south: 14%)
+        Age: (18-24: 16%, 25-34: 11%, 35-44: 8%, 45-54: 12%, 55-65: 8%)
+        Gender: (female: 8%, male: 12%)
+        Org_size: (fewer_than_10: 12%, 10_to_49: 9%, 50_to_99: 13%, 100_to_249: 7%, 250_to_499: 6%, 500_to_999: 5%, 1000_or_more: 12%)
+        Sector: (business_administration: 7%, technology: 10%, education: 13%, financial_services: 10%, government: 13%, marketing_services: 3%, retail: 13%, telecommunications: 10%, other: 10%)
+        Job_level: (CEO: 8%, senior_executive: 11%, senior_leader: 10%, mid_level_leader: 6%, first_level_supervisor: 8%, individual_contributor: 14%)
+        Relationship_status: ()
+        Education: (secondary: 9%, tertiary: 10%, undergraduate: 13%, postgraduate: 10%, doctorate: 5%)
+4. To what extent do you agree or disagree with the following statements? - I feel that the job I do reflects my value to society
+    NET: Agree:
+        Region: (north: 64%, northeast: 79%, central_west: 77%, southeast: 76%, south: 75%)
+        Age: (18-24: 72%, 25-34: 76%, 35-44: 77%, 45-54: 75%, 55-65: 76%)
+        Gender: (female: 79%, male: 73%)
+        Org_size: (fewer_than_10: 71%, 10_to_49: 77%, 50_to_99: 78%, 100_to_249: 77%, 250_to_499: 81%, 500_to_999: 83%, 1000_or_more: 74%)
+        Sector: (business_administration: 80%, technology: 80%, education: 79%, financial_services: 65%, government: 71%, marketing_services: 86%, retail: 86%, telecommunications: 67%, other: 72%)
+        Job_level: (CEO: 82%, senior_executive: 81%, senior_leader: 78%, mid_level_leader: 71%, first_level_supervisor: 79%, individual_contributor: 69%)
+        Relationship_status: ()
+        Education: (secondary: 75%, tertiary: 71%, undergraduate: 71%, postgraduate: 79%, doctorate: 79%)
+4. To what extent do you agree or disagree with the following statements? - I feel that the job I do reflects my value to society
+    NET: Disagree:
+        Region: (north: 9%, northeast: 4%, central_west: 10%, southeast: 5%, south: 6%)
+        Age: (18-24: 11%, 25-34: 6%, 35-44: 4%, 45-54: 5%, 55-65: 5%)
+        Gender: (female: 6%, male: 5%)
+        Org_size: (fewer_than_10: 6%, 10_to_49: 10%, 50_to_99: 7%, 100_to_249: 4%, 250_to_499: 4%, 500_to_999: 3%, 1000_or_more: 4%)
+        Sector: (business_administration: 8%, technology: 4%, education: 10%, financial_services: 8%, government: 4%, retail: 1%, telecommunications: 7%, other: 5%)
+        Job_level: (CEO: 3%, senior_executive: 5%, senior_leader: 6%, mid_level_leader: 8%, first_level_supervisor: 5%, individual_contributor: 7%)
+        Relationship_status: ()
+        Education: (secondary: 7%, tertiary: 12%, undergraduate: 5%, postgraduate: 4%, doctorate: 3%)
+4. To what extent do you agree or disagree with the following statements? - It is important to me that the organization I work for prioritizes people over profit
+    NET: Agree:
+        Region: (north: 69%, northeast: 82%, central_west: 74%, southeast: 76%, south: 75%)
+        Age: (18-24: 74%, 25-34: 78%, 35-44: 75%, 45-54: 77%, 55-65: 78%)
+        Gender: (female: 78%, male: 75%)
+        Org_size: (fewer_than_10: 71%, 10_to_49: 79%, 50_to_99: 78%, 100_to_249: 69%, 250_to_499: 83%, 500_to_999: 81%, 1000_or_more: 79%)
+        Sector: (business_administration: 73%, technology: 80%, education: 75%, financial_services: 80%, government: 71%, marketing_services: 83%, retail: 80%, telecommunications: 87%, other: 73%)
+        Job_level: (CEO: 72%, senior_executive: 80%, senior_leader: 77%, mid_level_leader: 73%, first_level_supervisor: 80%, individual_contributor: 76%)
+        Relationship_status: ()
+        Education: (secondary: 77%, tertiary: 68%, undergraduate: 74%, postgraduate: 78%, doctorate: 84%)
+4. To what extent do you agree or disagree with the following statements? - It is important to me that the organization I work for prioritizes people over profit
+    NET: Disagree:
+        Region: (north: 13%, northeast: 5%, central_west: 4%, southeast: 5%, south: 7%)
+        Age: (18-24: 9%, 25-34: 5%, 35-44: 6%, 45-54: 5%, 55-65: 1%)
+        Gender: (female: 7%, male: 4%)
+        Org_size: (fewer_than_10: 8%, 10_to_49: 7%, 50_to_99: 6%, 100_to_249: 3%, 250_to_499: 9%, 500_to_999: 2%, 1000_or_more: 3%)
+        Sector: (business_administration: 8%, technology: 6%, education: 1%, financial_services: 2%, government: 7%, retail: 4%, telecommunications: 3%, other: 3%)
+        Job_level: (CEO: 8%, senior_executive: 4%, senior_leader: 7%, mid_level_leader: 6%, first_level_supervisor: 2%, individual_contributor: 6%)
+        Relationship_status: ()
+        Education: (secondary: 5%, tertiary: 14%, undergraduate: 3%, postgraduate: 5%, doctorate: 3%)
+4. To what extent do you agree or disagree with the following statements? - My current role leaves me feeling fulfilled
+    NET: Agree:
+        Region: (north: 73%, northeast: 78%, central_west: 63%, southeast: 72%, south: 64%)
+        Age: (18-24: 63%, 25-34: 70%, 35-44: 74%, 45-54: 73%, 55-65: 74%)
+        Gender: (female: 74%, male: 70%)
+        Org_size: (fewer_than_10: 65%, 10_to_49: 73%, 50_to_99: 72%, 100_to_249: 70%, 250_to_499: 76%, 500_to_999: 81%, 1000_or_more: 73%)
+        Sector: (business_administration: 71%, technology: 78%, education: 76%, financial_services: 63%, government: 51%, marketing_services: 74%, retail: 77%, telecommunications: 67%, other: 67%)
+        Job_level: (CEO: 82%, senior_executive: 73%, senior_leader: 73%, mid_level_leader: 71%, first_level_supervisor: 79%, individual_contributor: 59%)
+        Relationship_status: ()
+        Education: (secondary: 71%, tertiary: 68%, undergraduate: 68%, postgraduate: 73%, doctorate: 87%)
+4. To what extent do you agree or disagree with the following statements? - My current role leaves me feeling fulfilled
+    NET: Disagree:
+        Region: (north: 11%, northeast: 7%, central_west: 17%, southeast: 11%, south: 16%)
+        Age: (18-24: 16%, 25-34: 13%, 35-44: 10%, 45-54: 10%, 55-65: 11%)
+        Gender: (female: 14%, male: 9%)
+        Org_size: (fewer_than_10: 14%, 10_to_49: 14%, 50_to_99: 14%, 100_to_249: 7%, 250_to_499: 9%, 500_to_999: 8%, 1000_or_more: 10%)
+        Sector: (business_administration: 10%, technology: 7%, education: 12%, financial_services: 14%, government: 18%, marketing_services: 9%, retail: 7%, telecommunications: 23%, other: 14%)
+        Job_level: (CEO: 7%, senior_executive: 7%, senior_leader: 11%, mid_level_leader: 8%, first_level_supervisor: 9%, individual_contributor: 19%)
+        Relationship_status: ()
+        Education: (secondary: 12%, tertiary: 19%, undergraduate: 13%, postgraduate: 10%, doctorate: 8%)
+4. To what extent do you agree or disagree with the following statements? - I am totally competent and deliver what is needed in my role
+    NET: Agree:
+        Region: (north: 87%, northeast: 84%, central_west: 89%, southeast: 86%, south: 88%)
+        Age: (18-24: 77%, 25-34: 89%, 35-44: 84%, 45-54: 91%, 55-65: 84%)
+        Gender: (female: 89%, male: 84%)
+        Org_size: (fewer_than_10: 86%, 10_to_49: 89%, 50_to_99: 83%, 100_to_249: 84%, 250_to_499: 90%, 500_to_999: 91%, 1000_or_more: 84%)
+        Sector: (business_administration: 88%, technology: 85%, education: 91%, financial_services: 90%, government: 78%, marketing_services: 94%, retail: 90%, telecommunications: 83%, other: 86%)
+        Job_level: (CEO: 85%, senior_executive: 82%, senior_leader: 80%, mid_level_leader: 89%, first_level_supervisor: 92%, individual_contributor: 87%)
+        Relationship_status: ()
+        Education: (secondary: 85%, tertiary: 83%, undergraduate: 86%, postgraduate: 88%, doctorate: 82%)
+4. To what extent do you agree or disagree with the following statements? - I am totally competent and deliver what is needed in my role
+    NET: Disagree:
+        Region: (north: 4%, northeast: 4%, central_west: 4%, southeast: 3%, south: 3%)
+        Age: (18-24: 6%, 25-34: 2%, 35-44: 3%, 45-54: 3%, 55-65: 1%)
+        Gender: (female: 2%, male: 4%)
+        Org_size: (fewer_than_10: 4%, 10_to_49: 2%, 50_to_99: 8%, 100_to_249: 3%, 250_to_499: 1%, 500_to_999: 2%, 1000_or_more: 2%)
+        Sector: (business_administration: 4%, technology: 2%, education: 1%, government: 4%, retail: 1%, telecommunications: 3%, other: 3%)
+        Job_level: (CEO: 5%, senior_executive: 3%, senior_leader: 5%, mid_level_leader: 4%, first_level_supervisor: 2%, individual_contributor: 2%)
+        Relationship_status: ()
+        Education: (secondary: 4%, tertiary: 6%, undergraduate: 3%, postgraduate: 2%, doctorate: 5%)
+4. To what extent do you agree or disagree with the following statements? - I have imposter syndrome and feel I am stretched too far beyond my abilities
+    NET: Agree:
+        Region: (north: 38%, northeast: 40%, central_west: 47%, southeast: 37%, south: 32%)
+        Age: (18-24: 44%, 25-34: 39%, 35-44: 43%, 45-54: 31%, 55-65: 24%)
+        Gender: (female: 38%, male: 37%)
+        Org_size: (fewer_than_10: 33%, 10_to_49: 40%, 50_to_99: 44%, 100_to_249: 42%, 250_to_499: 33%, 500_to_999: 47%, 1000_or_more: 34%)
+        Sector: (business_administration: 49%, technology: 38%, education: 32%, financial_services: 37%, government: 20%, marketing_services: 40%, retail: 36%, telecommunications: 30%, other: 33%)
+        Job_level: (CEO: 39%, senior_executive: 43%, senior_leader: 29%, mid_level_leader: 38%, first_level_supervisor: 43%, individual_contributor: 34%)
+        Relationship_status: ()
+        Education: (secondary: 41%, tertiary: 29%, undergraduate: 38%, postgraduate: 37%, doctorate: 45%)
+4. To what extent do you agree or disagree with the following statements? - I have imposter syndrome and feel I am stretched too far beyond my abilities
+    NET: Disagree:
+        Region: (north: 40%, northeast: 38%, central_west: 35%, southeast: 42%, south: 40%)
+        Age: (18-24: 35%, 25-34: 37%, 35-44: 38%, 45-54: 46%, 55-65: 54%)
+        Gender: (female: 41%, male: 40%)
+        Org_size: (fewer_than_10: 42%, 10_to_49: 43%, 50_to_99: 40%, 100_to_249: 35%, 250_to_499: 49%, 500_to_999: 32%, 1000_or_more: 40%)
+        Sector: (business_administration: 30%, technology: 39%, education: 46%, financial_services: 41%, government: 44%, marketing_services: 29%, retail: 36%, telecommunications: 53%, other: 46%)
+        Job_level: (CEO: 39%, senior_executive: 33%, senior_leader: 49%, mid_level_leader: 39%, first_level_supervisor: 40%, individual_contributor: 41%)
+        Relationship_status: ()
+        Education: (secondary: 36%, tertiary: 44%, undergraduate: 39%, postgraduate: 43%, doctorate: 29%)
+5. To what extent do you agree or disagree with the following statements when thinking about expressing yourself freely at work? - I feel that I can be my full self around my co-workers.
+    NET: Agree:
+        Region: (north: 67%, northeast: 79%, central_west: 68%, southeast: 73%, south: 72%)
+        Age: (18-24: 62%, 25-34: 75%, 35-44: 74%, 45-54: 73%, 55-65: 72%)
+        Gender: (female: 74%, male: 73%)
+        Org_size: (fewer_than_10: 66%, 10_to_49: 72%, 50_to_99: 78%, 100_to_249: 76%, 250_to_499: 83%, 500_to_999: 80%, 1000_or_more: 74%)
+        Sector: (business_administration: 75%, technology: 79%, education: 69%, financial_services: 76%, government: 82%, marketing_services: 83%, retail: 75%, telecommunications: 57%, other: 67%)
+        Job_level: (CEO: 75%, senior_executive: 78%, senior_leader: 73%, mid_level_leader: 74%, first_level_supervisor: 79%, individual_contributor: 66%)
+        Relationship_status: ()
+        Education: (secondary: 71%, tertiary: 71%, undergraduate: 70%, postgraduate: 76%, doctorate: 79%)
+5. To what extent do you agree or disagree with the following statements when thinking about expressing yourself freely at work? - I feel that I can be my full self around my co-workers.
+    NET: Disagree:
+        Region: (north: 22%, northeast: 8%, central_west: 10%, southeast: 13%, south: 15%)
+        Age: (18-24: 18%, 25-34: 12%, 35-44: 11%, 45-54: 13%, 55-65: 9%)
+        Gender: (female: 14%, male: 10%)
+        Org_size: (fewer_than_10: 16%, 10_to_49: 14%, 50_to_99: 12%, 100_to_249: 12%, 250_to_499: 11%, 500_to_999: 5%, 1000_or_more: 11%)
+        Sector: (business_administration: 10%, technology: 7%, education: 18%, financial_services: 8%, government: 13%, marketing_services: 6%, retail: 10%, telecommunications: 17%, other: 14%)
+        Job_level: (CEO: 10%, senior_executive: 6%, senior_leader: 18%, mid_level_leader: 8%, first_level_supervisor: 10%, individual_contributor: 17%)
+        Relationship_status: ()
+        Education: (secondary: 12%, tertiary: 19%, undergraduate: 15%, postgraduate: 11%, doctorate: 5%)
+5. To what extent do you agree or disagree with the following statements when thinking about expressing yourself freely at work? - I’m comfortable discussing my personal life with my colleagues
+    NET: Agree:
+        Region: (north: 38%, northeast: 62%, central_west: 46%, southeast: 52%, south: 45%)
+        Age: (18-24: 46%, 25-34: 53%, 35-44: 55%, 45-54: 50%, 55-65: 39%)
+        Gender: (female: 47%, male: 56%)
+        Org_size: (fewer_than_10: 39%, 10_to_49: 50%, 50_to_99: 53%, 100_to_249: 59%, 250_to_499: 60%, 500_to_999: 64%, 1000_or_more: 56%)
+        Sector: (business_administration: 54%, technology: 59%, education: 41%, financial_services: 47%, government: 44%, marketing_services: 43%, retail: 55%, telecommunications: 37%, other: 48%)
+        Job_level: (CEO: 54%, senior_executive: 64%, senior_leader: 55%, mid_level_leader: 54%, first_level_supervisor: 53%, individual_contributor: 41%)
+        Relationship_status: ()
+        Education: (secondary: 52%, tertiary: 42%, undergraduate: 42%, postgraduate: 54%, doctorate: 79%)
+5. To what extent do you agree or disagree with the following statements when thinking about expressing yourself freely at work? - I’m comfortable discussing my personal life with my colleagues
+    NET: Disagree:
+        Region: (north: 40%, northeast: 23%, central_west: 30%, southeast: 28%, south: 38%)
+        Age: (18-24: 32%, 25-34: 28%, 35-44: 26%, 45-54: 32%, 55-65: 38%)
+        Gender: (female: 34%, male: 25%)
+        Org_size: (fewer_than_10: 40%, 10_to_49: 30%, 50_to_99: 32%, 100_to_249: 23%, 250_to_499: 26%, 500_to_999: 19%, 1000_or_more: 24%)
+        Sector: (business_administration: 24%, technology: 25%, education: 37%, financial_services: 24%, government: 31%, marketing_services: 34%, retail: 25%, telecommunications: 50%, other: 35%)
+        Job_level: (CEO: 27%, senior_executive: 19%, senior_leader: 28%, mid_level_leader: 29%, first_level_supervisor: 28%, individual_contributor: 37%)
+        Relationship_status: ()
+        Education: (secondary: 31%, tertiary: 44%, undergraduate: 35%, postgraduate: 25%, doctorate: 13%)
+5. To what extent do you agree or disagree with the following statements when thinking about expressing yourself freely at work? - If a problem in my personal life is affecting my work/performance, I feel comfortable telling my manager about it
+    NET: Agree:
+        Region: (north: 56%, northeast: 67%, central_west: 60%, southeast: 64%, south: 61%)
+        Age: (18-24: 46%, 25-34: 64%, 35-44: 68%, 45-54: 64%, 55-65: 61%)
+        Gender: (female: 61%, male: 66%)
+        Org_size: (fewer_than_10: 55%, 10_to_49: 67%, 50_to_99: 68%, 100_to_249: 60%, 250_to_499: 71%, 500_to_999: 73%, 1000_or_more: 63%)
+        Sector: (business_administration: 61%, technology: 67%, education: 62%, financial_services: 65%, government: 56%, marketing_services: 66%, retail: 61%, telecommunications: 57%, other: 61%)
+        Job_level: (CEO: 62%, senior_executive: 75%, senior_leader: 62%, mid_level_leader: 71%, first_level_supervisor: 67%, individual_contributor: 55%)
+        Relationship_status: ()
+        Education: (secondary: 62%, tertiary: 57%, undergraduate: 61%, postgraduate: 65%, doctorate: 74%)
+5. To what extent do you agree or disagree with the following statements when thinking about expressing yourself freely at work? - If a problem in my personal life is affecting my work/performance, I feel comfortable telling my manager about it
+    NET: Disagree:
+        Region: (north: 27%, northeast: 11%, central_west: 17%, southeast: 19%, south: 22%)
+        Age: (18-24: 30%, 25-34: 17%, 35-44: 15%, 45-54: 19%, 55-65: 22%)
+        Gender: (female: 20%, male: 17%)
+        Org_size: (fewer_than_10: 24%, 10_to_49: 16%, 50_to_99: 19%, 100_to_249: 18%, 250_to_499: 16%, 500_to_999: 10%, 1000_or_more: 18%)
+        Sector: (business_administration: 18%, technology: 14%, education: 21%, financial_services: 20%, government: 27%, marketing_services: 26%, retail: 16%, telecommunications: 23%, other: 18%)
+        Job_level: (CEO: 16%, senior_executive: 8%, senior_leader: 21%, mid_level_leader: 13%, first_level_supervisor: 18%, individual_contributor: 25%)
+        Relationship_status: ()
+        Education: (secondary: 19%, tertiary: 29%, undergraduate: 22%, postgraduate: 16%, doctorate: 8%)
+5. To what extent do you agree or disagree with the following statements when thinking about expressing yourself freely at work? - I feel that my ideas and opinions will be welcomed by company leaders
+    NET: Agree:
+        Region: (north: 67%, northeast: 78%, central_west: 72%, southeast: 72%, south: 68%)
+        Age: (18-24: 61%, 25-34: 75%, 35-44: 74%, 45-54: 71%, 55-65: 70%)
+        Gender: (female: 75%, male: 70%)
+        Org_size: (fewer_than_10: 66%, 10_to_49: 72%, 50_to_99: 80%, 100_to_249: 71%, 250_to_499: 81%, 500_to_999: 81%, 1000_or_more: 71%)
+        Sector: (business_administration: 76%, technology: 80%, education: 75%, financial_services: 69%, government: 60%, marketing_services: 71%, retail: 68%, telecommunications: 67%, other: 65%)
+        Job_level: (CEO: 75%, senior_executive: 86%, senior_leader: 70%, mid_level_leader: 79%, first_level_supervisor: 78%, individual_contributor: 60%)
+        Relationship_status: ()
+        Education: (secondary: 71%, tertiary: 71%, undergraduate: 66%, postgraduate: 75%, doctorate: 84%)
+5. To what extent do you agree or disagree with the following statements when thinking about expressing yourself freely at work? - I feel that my ideas and opinions will be welcomed by company leaders
+    NET: Disagree:
+        Region: (north: 20%, northeast: 7%, central_west: 12%, southeast: 10%, south: 12%)
+        Age: (18-24: 18%, 25-34: 10%, 35-44: 9%, 45-54: 10%, 55-65: 8%)
+        Gender: (female: 10%, male: 10%)
+        Org_size: (fewer_than_10: 12%, 10_to_49: 13%, 50_to_99: 11%, 100_to_249: 8%, 250_to_499: 9%, 500_to_999: 7%, 1000_or_more: 9%)
+        Sector: (business_administration: 13%, technology: 3%, education: 13%, financial_services: 10%, government: 22%, marketing_services: 11%, retail: 4%, telecommunications: 13%, other: 10%)
+        Job_level: (CEO: 9%, senior_executive: 6%, senior_leader: 14%, mid_level_leader: 7%, first_level_supervisor: 6%, individual_contributor: 16%)
+        Relationship_status: ()
+        Education: (secondary: 9%, tertiary: 21%, undergraduate: 14%, postgraduate: 8%, doctorate: 8%)
+5. To what extent do you agree or disagree with the following statements when thinking about expressing yourself freely at work? - I am comfortable talking to my manager about needs related to my health and wellbeing
+    NET: Agree:
+        Region: (north: 60%, northeast: 71%, central_west: 62%, southeast: 71%, south: 68%)
+        Age: (18-24: 49%, 25-34: 68%, 35-44: 73%, 45-54: 72%, 55-65: 67%)
+        Gender: (female: 66%, male: 72%)
+        Org_size: (fewer_than_10: 61%, 10_to_49: 64%, 50_to_99: 69%, 100_to_249: 71%, 250_to_499: 77%, 500_to_999: 80%, 1000_or_more: 73%)
+        Sector: (business_administration: 64%, technology: 80%, education: 63%, financial_services: 69%, government: 76%, marketing_services: 69%, retail: 65%, telecommunications: 60%, other: 65%)
+        Job_level: (CEO: 67%, senior_executive: 78%, senior_leader: 72%, mid_level_leader: 68%, first_level_supervisor: 76%, individual_contributor: 60%)
+        Relationship_status: ()
+        Education: (secondary: 68%, tertiary: 64%, undergraduate: 65%, postgraduate: 70%, doctorate: 89%)
+5. To what extent do you agree or disagree with the following statements when thinking about expressing yourself freely at work? - I am comfortable talking to my manager about needs related to my health and wellbeing
+    NET: Disagree:
+        Region: (north: 20%, northeast: 13%, central_west: 16%, southeast: 15%, south: 17%)
+        Age: (18-24: 23%, 25-34: 15%, 35-44: 12%, 45-54: 16%, 55-65: 16%)
+        Gender: (female: 17%, male: 13%)
+        Org_size: (fewer_than_10: 21%, 10_to_49: 19%, 50_to_99: 9%, 100_to_249: 14%, 250_to_499: 14%, 500_to_999: 8%, 1000_or_more: 11%)
+        Sector: (business_administration: 19%, technology: 8%, education: 25%, financial_services: 14%, government: 11%, marketing_services: 14%, retail: 12%, telecommunications: 23%, other: 17%)
+        Job_level: (CEO: 16%, senior_executive: 9%, senior_leader: 16%, mid_level_leader: 14%, first_level_supervisor: 11%, individual_contributor: 20%)
+        Relationship_status: ()
+        Education: (secondary: 16%, tertiary: 19%, undergraduate: 18%, postgraduate: 14%, doctorate: 3%)
+6. To what extent do you think your company is committed to greater inclusion and social responsibility? - Is your company committed to Diversity, Equity & Inclusion (DE&I) in the workplace?
+    NET: Not committed narly/quite enough:
+        Region: (north: 33%, northeast: 28%, central_west: 44%, southeast: 28%, south: 31%)
+        Age: (18-24: 38%, 25-34: 30%, 35-44: 30%, 45-54: 29%, 55-65: 21%)
+        Gender: (female: 30%, male: 30%)
+        Org_size: (fewer_than_10: 34%, 10_to_49: 37%, 50_to_99: 34%, 100_to_249: 23%, 250_to_499: 27%, 500_to_999: 27%, 1000_or_more: 23%)
+        Sector: (business_administration: 36%, technology: 28%, education: 24%, financial_services: 24%, government: 36%, marketing_services: 31%, retail: 28%, telecommunications: 27%, other: 27%)
+        Job_level: (CEO: 25%, senior_executive: 29%, senior_leader: 24%, mid_level_leader: 28%, first_level_supervisor: 32%, individual_contributor: 35%)
+        Relationship_status: ()
+        Education: (secondary: 33%, tertiary: 23%, undergraduate: 31%, postgraduate: 30%, doctorate: 21%)
+6. To what extent do you think your company is committed to greater inclusion and social responsibility? - Is your company committed to Diversity, Equity & Inclusion (DE&I) in the workplace?
+    NET: Slightly / far too committed:
+        Region: (north: 18%, northeast: 31%, central_west: 22%, southeast: 27%, south: 25%)
+        Age: (18-24: 22%, 25-34: 27%, 35-44: 30%, 45-54: 23%, 55-65: 22%)
+        Gender: (female: 29%, male: 25%)
+        Org_size: (fewer_than_10: 18%, 10_to_49: 18%, 50_to_99: 26%, 100_to_249: 36%, 250_to_499: 26%, 500_to_999: 42%, 1000_or_more: 32%)
+        Sector: (business_administration: 21%, technology: 34%, education: 29%, financial_services: 35%, government: 13%, marketing_services: 26%, retail: 26%, telecommunications: 33%, other: 28%)
+        Job_level: (CEO: 32%, senior_executive: 38%, senior_leader: 36%, mid_level_leader: 20%, first_level_supervisor: 28%, individual_contributor: 17%)
+        Relationship_status: ()
+        Education: (secondary: 19%, tertiary: 29%, undergraduate: 27%, postgraduate: 28%, doctorate: 47%)
+6. To what extent do you think your company is committed to greater inclusion and social responsibility? - Is your company committed to corporate social responsibility and sustainability goals?
+    NET: Not committed narly/quite enough:
+        Region: (north: 33%, northeast: 25%, central_west: 41%, southeast: 26%, south: 32%)
+        Age: (18-24: 41%, 25-34: 30%, 35-44: 26%, 45-54: 27%, 55-65: 21%)
+        Gender: (female: 29%, male: 28%)
+        Org_size: (fewer_than_10: 35%, 10_to_49: 33%, 50_to_99: 32%, 100_to_249: 26%, 250_to_499: 30%, 500_to_999: 19%, 1000_or_more: 21%)
+        Sector: (business_administration: 36%, technology: 18%, education: 21%, financial_services: 24%, government: 36%, marketing_services: 34%, retail: 30%, telecommunications: 37%, other: 30%)
+        Job_level: (CEO: 23%, senior_executive: 28%, senior_leader: 21%, mid_level_leader: 29%, first_level_supervisor: 29%, individual_contributor: 35%)
+        Relationship_status: ()
+        Education: (secondary: 32%, tertiary: 30%, undergraduate: 32%, postgraduate: 26%, doctorate: 24%)
+6. To what extent do you think your company is committed to greater inclusion and social responsibility? - Is your company committed to corporate social responsibility and sustainability goals?
+    NET: Slightly / far too committed:
+        Region: (north: 13%, northeast: 33%, central_west: 22%, southeast: 29%, south: 23%)
+        Age: (18-24: 18%, 25-34: 30%, 35-44: 30%, 45-54: 25%, 55-65: 24%)
+        Gender: (female: 28%, male: 28%)
+        Org_size: (fewer_than_10: 17%, 10_to_49: 19%, 50_to_99: 29%, 100_to_249: 38%, 250_to_499: 27%, 500_to_999: 46%, 1000_or_more: 33%)
+        Sector: (business_administration: 28%, technology: 38%, education: 22%, financial_services: 39%, government: 13%, marketing_services: 29%, retail: 23%, telecommunications: 23%, other: 26%)
+        Job_level: (CEO: 34%, senior_executive: 42%, senior_leader: 34%, mid_level_leader: 21%, first_level_supervisor: 31%, individual_contributor: 15%)
+        Relationship_status: ()
+        Education: (secondary: 23%, tertiary: 21%, undergraduate: 26%, postgraduate: 31%, doctorate: 39%)
+7. How confident are you in the senior leadership in your company? Please remember your answers are confidential!
+    NET: Confident:
+        Region: (north: 84%, northeast: 88%, central_west: 88%, southeast: 87%, south: 88%)
+        Age: (18-24: 78%, 25-34: 89%, 35-44: 88%, 45-54: 85%, 55-65: 89%)
+        Gender: (female: 86%, male: 88%)
+        Org_size: (fewer_than_10: 85%, 10_to_49: 85%, 50_to_99: 91%, 100_to_249: 95%, 250_to_499: 93%, 500_to_999: 89%, 1000_or_more: 84%)
+        Sector: (business_administration: 90%, technology: 92%, education: 78%, financial_services: 84%, government: 82%, marketing_services: 94%, retail: 96%, telecommunications: 80%, other: 86%)
+        Job_level: (CEO: 91%, senior_executive: 92%, senior_leader: 91%, mid_level_leader: 88%, first_level_supervisor: 90%, individual_contributor: 79%)
+        Relationship_status: ()
+        Education: (secondary: 89%, tertiary: 79%, undergraduate: 87%, postgraduate: 87%, doctorate: 89%)
+7. How confident are you in the senior leadership in your company? Please remember your answers are confidential!
+    NET: Unconfident:
+        Region: (north: 13%, northeast: 12%, central_west: 10%, southeast: 12%, south: 11%)
+        Age: (18-24: 20%, 25-34: 9%, 35-44: 11%, 45-54: 14%, 55-65: 9%)
+        Gender: (female: 12%, male: 11%)
+        Org_size: (fewer_than_10: 13%, 10_to_49: 14%, 50_to_99: 7%, 100_to_249: 5%, 250_to_499: 7%, 500_to_999: 10%, 1000_or_more: 14%)
+        Sector: (business_administration: 10%, technology: 8%, education: 21%, financial_services: 16%, government: 18%, marketing_services: 6%, retail: 3%, telecommunications: 13%, other: 10%)
+        Job_level: (CEO: 7%, senior_executive: 8%, senior_leader: 8%, mid_level_leader: 11%, first_level_supervisor: 10%, individual_contributor: 18%)
+        Relationship_status: ()
+        Education: (secondary: 9%, tertiary: 18%, undergraduate: 12%, postgraduate: 12%, doctorate: 8%)
+18. Thinking about how motivated you are in your current role, to what extent do you agree with the following statements.
+    NET: Agree:
+        Region: (north: 67%, northeast: 81%, central_west: 67%, southeast: 71%, south: 67%)
+        Age: (18-24: 60%, 25-34: 72%, 35-44: 72%, 45-54: 74%, 55-65: 80%)
+        Gender: (female: 72%, male: 72%)
+        Org_size: (fewer_than_10: 69%, 10_to_49: 73%, 50_to_99: 74%, 100_to_249: 77%, 250_to_499: 74%, 500_to_999: 78%, 1000_or_more: 66%)
+        Sector: (business_administration: 79%, technology: 80%, education: 68%, financial_services: 61%, government: 60%, marketing_services: 86%, retail: 72%, telecommunications: 73%, other: 65%)
+        Job_level: (CEO: 80%, senior_executive: 86%, senior_leader: 69%, mid_level_leader: 68%, first_level_supervisor: 76%, individual_contributor: 61%)
+        Relationship_status: ()
+        Education: (secondary: 74%, tertiary: 60%, undergraduate: 68%, postgraduate: 73%, doctorate: 87%)
+18. Thinking about how motivated you are in your current role, to what extent do you agree with the following statements.
+    NET: Disagree:
+        Region: (north: 16%, northeast: 9%, central_west: 9%, southeast: 12%, south: 14%)
+        Age: (18-24: 17%, 25-34: 11%, 35-44: 12%, 45-54: 10%, 55-65: 11%)
+        Gender: (female: 14%, male: 9%)
+        Org_size: (fewer_than_10: 13%, 10_to_49: 13%, 50_to_99: 7%, 100_to_249: 7%, 250_to_499: 14%, 500_to_999: 8%, 1000_or_more: 14%)
+        Sector: (business_administration: 9%, technology: 5%, education: 16%, financial_services: 16%, government: 18%, marketing_services: 9%, retail: 6%, telecommunications: 13%, other: 15%)
+        Job_level: (CEO: 5%, senior_executive: 7%, senior_leader: 16%, mid_level_leader: 11%, first_level_supervisor: 8%, individual_contributor: 19%)
+        Relationship_status: ()
+        Education: (secondary: 8%, tertiary: 21%, undergraduate: 15%, postgraduate: 11%, doctorate: 3%)
+18. Thinking about how motivated you are in your current role, to what extent do you agree with the following statements.
+    NET: Agree:
+        Region: (north: 64%, northeast: 76%, central_west: 58%, southeast: 67%, south: 65%)
+        Age: (18-24: 57%, 25-34: 69%, 35-44: 67%, 45-54: 68%, 55-65: 74%)
+        Gender: (female: 67%, male: 68%)
+        Org_size: (fewer_than_10: 61%, 10_to_49: 70%, 50_to_99: 74%, 100_to_249: 73%, 250_to_499: 66%, 500_to_999: 77%, 1000_or_more: 63%)
+        Sector: (business_administration: 75%, technology: 78%, education: 60%, financial_services: 63%, government: 40%, marketing_services: 69%, retail: 65%, telecommunications: 60%, other: 62%)
+        Job_level: (CEO: 79%, senior_executive: 83%, senior_leader: 69%, mid_level_leader: 69%, first_level_supervisor: 73%, individual_contributor: 49%)
+        Relationship_status: ()
+        Education: (secondary: 66%, tertiary: 60%, undergraduate: 66%, postgraduate: 68%, doctorate: 87%)
+18. Thinking about how motivated you are in your current role, to what extent do you agree with the following statements.
+    NET: Disagree:
+        Region: (north: 16%, northeast: 8%, central_west: 16%, southeast: 13%, south: 17%)
+        Age: (18-24: 11%, 25-34: 14%, 35-44: 13%, 45-54: 14%, 55-65: 12%)
+        Gender: (female: 16%, male: 10%)
+        Org_size: (fewer_than_10: 15%, 10_to_49: 13%, 50_to_99: 9%, 100_to_249: 7%, 250_to_499: 13%, 500_to_999: 11%, 1000_or_more: 17%)
+        Sector: (business_administration: 10%, technology: 9%, education: 19%, financial_services: 20%, government: 22%, marketing_services: 17%, retail: 9%, telecommunications: 13%, other: 13%)
+        Job_level: (CEO: 6%, senior_executive: 8%, senior_leader: 15%, mid_level_leader: 11%, first_level_supervisor: 10%, individual_contributor: 22%)
+        Relationship_status: ()
+        Education: (secondary: 10%, tertiary: 18%, undergraduate: 14%, postgraduate: 15%, doctorate: 3%)
+18. Thinking about how motivated you are in your current role, to what extent do you agree with the following statements.
+    NET: Agree:
+        Region: (north: 69%, northeast: 77%, central_west: 67%, southeast: 71%, south: 70%)
+        Age: (18-24: 62%, 25-34: 70%, 35-44: 74%, 45-54: 70%, 55-65: 76%)
+        Gender: (female: 72%, male: 70%)
+        Org_size: (fewer_than_10: 69%, 10_to_49: 71%, 50_to_99: 66%, 100_to_249: 71%, 250_to_499: 77%, 500_to_999: 80%, 1000_or_more: 70%)
+        Sector: (business_administration: 74%, technology: 80%, education: 60%, financial_services: 73%, government: 51%, marketing_services: 80%, retail: 77%, telecommunications: 70%, other: 67%)
+        Job_level: (CEO: 78%, senior_executive: 84%, senior_leader: 76%, mid_level_leader: 74%, first_level_supervisor: 74%, individual_contributor: 57%)
+        Relationship_status: ()
+        Education: (secondary: 71%, tertiary: 65%, undergraduate: 68%, postgraduate: 73%, doctorate: 84%)
+18. Thinking about how motivated you are in your current role, to what extent do you agree with the following statements.
+    NET: Disagree:
+        Region: (north: 16%, northeast: 9%, central_west: 9%, southeast: 10%, south: 13%)
+        Age: (18-24: 16%, 25-34: 10%, 35-44: 10%, 45-54: 10%, 55-65: 12%)
+        Gender: (female: 12%, male: 9%)
+        Org_size: (fewer_than_10: 11%, 10_to_49: 12%, 50_to_99: 8%, 100_to_249: 11%, 250_to_499: 13%, 500_to_999: 9%, 1000_or_more: 9%)
+        Sector: (business_administration: 13%, technology: 4%, education: 15%, financial_services: 8%, government: 22%, marketing_services: 14%, retail: 6%, telecommunications: 10%, other: 13%)
+        Job_level: (CEO: 6%, senior_executive: 4%, senior_leader: 9%, mid_level_leader: 10%, first_level_supervisor: 8%, individual_contributor: 17%)
+        Relationship_status: ()
+        Education: (secondary: 8%, tertiary: 18%, undergraduate: 12%, postgraduate: 10%, doctorate: 5%)
+18. Thinking about how motivated you are in your current role, to what extent do you agree with the following statements.
+    NET: Agree:
+        Region: (north: 71%, northeast: 84%, central_west: 77%, southeast: 77%, south: 76%)
+        Age: (18-24: 70%, 25-34: 77%, 35-44: 78%, 45-54: 82%, 55-65: 82%)
+        Gender: (female: 79%, male: 77%)
+        Org_size: (fewer_than_10: 76%, 10_to_49: 80%, 50_to_99: 79%, 100_to_249: 84%, 250_to_499: 80%, 500_to_999: 86%, 1000_or_more: 71%)
+        Sector: (business_administration: 78%, technology: 84%, education: 74%, financial_services: 75%, government: 60%, marketing_services: 94%, retail: 86%, telecommunications: 73%, other: 76%)
+        Job_level: (CEO: 82%, senior_executive: 88%, senior_leader: 77%, mid_level_leader: 81%, first_level_supervisor: 82%, individual_contributor: 68%)
+        Relationship_status: ()
+        Education: (secondary: 76%, tertiary: 73%, undergraduate: 80%, postgraduate: 79%, doctorate: 79%)
+18. Thinking about how motivated you are in your current role, to what extent do you agree with the following statements.
+    NET: Disagree:
+        Region: (north: 18%, northeast: 5%, central_west: 10%, southeast: 8%, south: 11%)
+        Age: (18-24: 6%, 25-34: 10%, 35-44: 9%, 45-54: 7%, 55-65: 7%)
+        Gender: (female: 11%, male: 6%)
+        Org_size: (fewer_than_10: 9%, 10_to_49: 7%, 50_to_99: 7%, 100_to_249: 5%, 250_to_499: 6%, 500_to_999: 7%, 1000_or_more: 12%)
+        Sector: (business_administration: 7%, technology: 4%, education: 15%, financial_services: 10%, government: 20%, retail: 6%, telecommunications: 7%, other: 9%)
+        Job_level: (CEO: 5%, senior_executive: 3%, senior_leader: 9%, mid_level_leader: 4%, first_level_supervisor: 7%, individual_contributor: 14%)
+        Relationship_status: ()
+        Education: (secondary: 7%, tertiary: 17%, undergraduate: 8%, postgraduate: 8%, doctorate: 5%)
+18. Thinking about how motivated you are in your current role, to what extent do you agree with the following statements.
+    NET: Agree:
+        Region: (north: 64%, northeast: 79%, central_west: 69%, southeast: 72%, south: 68%)
+        Age: (18-24: 72%, 25-34: 71%, 35-44: 72%, 45-54: 72%, 55-65: 78%)
+        Gender: (female: 72%, male: 73%)
+        Org_size: (fewer_than_10: 70%, 10_to_49: 72%, 50_to_99: 69%, 100_to_249: 75%, 250_to_499: 77%, 500_to_999: 79%, 1000_or_more: 71%)
+        Sector: (business_administration: 71%, technology: 80%, education: 75%, financial_services: 63%, government: 71%, marketing_services: 77%, retail: 70%, telecommunications: 67%, other: 67%)
+        Job_level: (CEO: 78%, senior_executive: 83%, senior_leader: 77%, mid_level_leader: 75%, first_level_supervisor: 74%, individual_contributor: 60%)
+        Relationship_status: ()
+        Education: (secondary: 74%, tertiary: 64%, undergraduate: 63%, postgraduate: 75%, doctorate: 84%)
+18. Thinking about how motivated you are in your current role, to what extent do you agree with the following statements.
+    NET: Disagree:
+        Region: (north: 20%, northeast: 8%, central_west: 19%, southeast: 12%, south: 13%)
+        Age: (18-24: 11%, 25-34: 13%, 35-44: 12%, 45-54: 12%, 55-65: 9%)
+        Gender: (female: 15%, male: 10%)
+        Org_size: (fewer_than_10: 13%, 10_to_49: 16%, 50_to_99: 14%, 100_to_249: 8%, 250_to_499: 9%, 500_to_999: 9%, 1000_or_more: 12%)
+        Sector: (business_administration: 13%, technology: 7%, education: 19%, financial_services: 10%, government: 13%, marketing_services: 14%, retail: 7%, telecommunications: 10%, other: 9%)
+        Job_level: (CEO: 5%, senior_executive: 7%, senior_leader: 12%, mid_level_leader: 11%, first_level_supervisor: 13%, individual_contributor: 18%)
+        Relationship_status: ()
+        Education: (secondary: 11%, tertiary: 23%, undergraduate: 14%, postgraduate: 11%, doctorate: 5%)
+18. Thinking about how motivated you are in your current role, to what extent do you agree with the following statements.
+    NET: Agree:
+        Region: (north: 67%, northeast: 81%, central_west: 74%, southeast: 71%, south: 72%)
+        Age: (18-24: 68%, 25-34: 73%, 35-44: 75%, 45-54: 71%, 55-65: 76%)
+        Gender: (female: 75%, male: 72%)
+        Org_size: (fewer_than_10: 70%, 10_to_49: 71%, 50_to_99: 75%, 100_to_249: 79%, 250_to_499: 76%, 500_to_999: 80%, 1000_or_more: 71%)
+        Sector: (business_administration: 75%, technology: 81%, education: 66%, financial_services: 59%, government: 58%, marketing_services: 80%, retail: 81%, telecommunications: 63%, other: 72%)
+        Job_level: (CEO: 83%, senior_executive: 81%, senior_leader: 75%, mid_level_leader: 74%, first_level_supervisor: 77%, individual_contributor: 60%)
+        Relationship_status: ()
+        Education: (secondary: 73%, tertiary: 70%, undergraduate: 73%, postgraduate: 73%, doctorate: 79%)
+18. Thinking about how motivated you are in your current role, to what extent do you agree with the following statements.
+    NET: Disagree:
+        Region: (north: 18%, northeast: 7%, central_west: 9%, southeast: 9%, south: 15%)
+        Age: (18-24: 15%, 25-34: 9%, 35-44: 9%, 45-54: 10%, 55-65: 11%)
+        Gender: (female: 10%, male: 10%)
+        Org_size: (fewer_than_10: 11%, 10_to_49: 11%, 50_to_99: 7%, 100_to_249: 3%, 250_to_499: 13%, 500_to_999: 10%, 1000_or_more: 11%)
+        Sector: (business_administration: 12%, technology: 5%, education: 12%, financial_services: 20%, government: 18%, marketing_services: 6%, retail: 4%, telecommunications: 17%, other: 7%)
+        Job_level: (CEO: 5%, senior_executive: 8%, senior_leader: 12%, mid_level_leader: 7%, first_level_supervisor: 6%, individual_contributor: 17%)
+        Relationship_status: ()
+        Education: (secondary: 9%, tertiary: 13%, undergraduate: 10%, postgraduate: 10%, doctorate: 13%)
+18. Thinking about how motivated you are in your current role, to what extent do you agree with the following statements.
+    NET: Agree:
+        Region: (north: 64%, northeast: 78%, central_west: 72%, southeast: 69%, south: 64%)
+        Age: (18-24: 70%, 25-34: 71%, 35-44: 70%, 45-54: 67%, 55-65: 70%)
+        Gender: (female: 70%, male: 70%)
+        Org_size: (fewer_than_10: 66%, 10_to_49: 72%, 50_to_99: 69%, 100_to_249: 71%, 250_to_499: 77%, 500_to_999: 79%, 1000_or_more: 64%)
+        Sector: (business_administration: 76%, technology: 76%, education: 56%, financial_services: 63%, government: 44%, marketing_services: 66%, retail: 80%, telecommunications: 63%, other: 67%)
+        Job_level: (CEO: 76%, senior_executive: 84%, senior_leader: 73%, mid_level_leader: 66%, first_level_supervisor: 70%, individual_contributor: 60%)
+        Relationship_status: ()
+        Education: (secondary: 73%, tertiary: 65%, undergraduate: 71%, postgraduate: 67%, doctorate: 84%)
+18. Thinking about how motivated you are in your current role, to what extent do you agree with the following statements.
+    NET: Disagree:
+        Region: (north: 22%, northeast: 8%, central_west: 10%, southeast: 10%, south: 12%)
+        Age: (18-24: 15%, 25-34: 12%, 35-44: 10%, 45-54: 9%, 55-65: 8%)
+        Gender: (female: 13%, male: 8%)
+        Org_size: (fewer_than_10: 12%, 10_to_49: 11%, 50_to_99: 14%, 100_to_249: 5%, 250_to_499: 11%, 500_to_999: 9%, 1000_or_more: 10%)
+        Sector: (business_administration: 7%, technology: 5%, education: 24%, financial_services: 14%, government: 24%, marketing_services: 11%, retail: 6%, telecommunications: 10%, other: 7%)
+        Job_level: (CEO: 6%, senior_executive: 3%, senior_leader: 8%, mid_level_leader: 12%, first_level_supervisor: 12%, individual_contributor: 15%)
+        Relationship_status: ()
+        Education: (secondary: 8%, tertiary: 17%, undergraduate: 11%, postgraduate: 11%, doctorate: 11%)
+18. Thinking about how motivated you are in your current role, to what extent do you agree with the following statements.
+    NET: Agree:
+        Region: (north: 58%, northeast: 76%, central_west: 63%, southeast: 69%, south: 73%)
+        Age: (18-24: 68%, 25-34: 72%, 35-44: 71%, 45-54: 68%, 55-65: 63%)
+        Gender: (female: 71%, male: 69%)
+        Org_size: (fewer_than_10: 68%, 10_to_49: 69%, 50_to_99: 71%, 100_to_249: 70%, 250_to_499: 73%, 500_to_999: 81%, 1000_or_more: 64%)
+        Sector: (business_administration: 73%, technology: 80%, education: 56%, financial_services: 65%, government: 40%, marketing_services: 77%, retail: 74%, telecommunications: 73%, other: 68%)
+        Job_level: (CEO: 81%, senior_executive: 80%, senior_leader: 74%, mid_level_leader: 75%, first_level_supervisor: 70%, individual_contributor: 56%)
+        Relationship_status: ()
+        Education: (secondary: 73%, tertiary: 64%, undergraduate: 64%, postgraduate: 71%, doctorate: 82%)
+18. Thinking about how motivated you are in your current role, to what extent do you agree with the following statements.
+    NET: Disagree:
+        Region: (north: 27%, northeast: 10%, central_west: 15%, southeast: 12%, south: 15%)
+        Age: (18-24: 17%, 25-34: 12%, 35-44: 11%, 45-54: 14%, 55-65: 18%)
+        Gender: (female: 14%, male: 12%)
+        Org_size: (fewer_than_10: 14%, 10_to_49: 16%, 50_to_99: 12%, 100_to_249: 10%, 250_to_499: 10%, 500_to_999: 9%, 1000_or_more: 15%)
+        Sector: (business_administration: 11%, technology: 6%, education: 19%, financial_services: 18%, government: 31%, marketing_services: 11%, retail: 13%, telecommunications: 13%, other: 10%)
+        Job_level: (CEO: 5%, senior_executive: 8%, senior_leader: 8%, mid_level_leader: 14%, first_level_supervisor: 13%, individual_contributor: 22%)
+        Relationship_status: ()
+        Education: (secondary: 10%, tertiary: 25%, undergraduate: 13%, postgraduate: 13%, doctorate: 5%)

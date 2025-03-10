@@ -1,0 +1,53 @@
+.chat-bubble {
+  @apply rounded px-3 py-2;
+}
+
+.user {
+  @apply text-primary bg-white self-end border-2 border-secondary max-w-md;
+}
+
+.chatbot {
+  @apply bg-primary text-white self-start max-w-2xl;
+}
+
+.chatbot h1 {
+  @apply text-2xl font-bold my-2;
+}
+
+.chatbot h2 {
+  @apply text-xl font-bold my-2;
+}
+
+.chatbot h3 {
+  @apply text-lg font-bold my-2;
+}
+
+.chatbot p {
+  @apply mb-2;
+}
+
+.chatbot ul,
+ol,
+.chatbot li {
+  @apply mb-2;
+}
+
+.chatbot ul {
+  @apply list-disc pl-4;
+}
+
+/* Theres got to be a better way! */
+.chatbot ul > li > ul {
+  @apply list-square;
+}
+.chatbot ul > li > ul > li > ul > li {
+  @apply list-roman;
+}
+
+.chatbot ol {
+  @apply list-decimal pl-4;
+}
+
+.chatbot hr {
+  @apply my-4 border border-white;
+}
