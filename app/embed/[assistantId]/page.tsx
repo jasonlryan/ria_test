@@ -18,20 +18,25 @@ import Nav from "../../../components/Nav";
 import PromptInput from "../../../components/PromptInput";
 // Helpers
 import { parseResponse } from "../../../utils/helpers";
+import chatConfig from "../../../config/chat.config.json";
 
 function Embed({ params: { assistantId } }) {
-  // assistantId = "asst_0rwtZ6opRArKCMavVqIxU2na";
-
-  // Magnus LIVE ID
-  if (assistantId === "asst_MgRnSzOzQxrR3KNSjMczF3mY") {
-    assistantId = "asst_QlWfgko8ESiJS9qiOlfNjDCK";
-  }
+  const title = "WORKFORCE 2025";
+  const description =
+    "Explore insights from our comprehensive workforce survey with RIA, your AI research assistant";
 
   const [loading, setLoading] = useState(false);
   // Message being streamed
   const [streamingMessage, setStreamingMessage] = useState(null);
   // Whole chat
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([
+    {
+      id: "welcome",
+      role: "assistant",
+      content: chatConfig.welcomeMessage,
+      createdAt: new Date(),
+    },
+  ]);
   const messageId = useRef(0);
   // User prompt
   const [prompt, setPrompt] = useState("");
@@ -40,15 +45,37 @@ function Embed({ params: { assistantId } }) {
 
   // Reset chat
   const refreshChat = () => {
-    setMessages(() => []);
+    setMessages(() => [
+      {
+        id: "welcome",
+        role: "assistant",
+        content: chatConfig.welcomeMessage,
+        createdAt: new Date(),
+      },
+    ]);
     setThreadId(() => null);
   };
 
   // TODO: Move this into a helper function.
-  const sendPrompt = async (threadId?: string) => {
-    track("Question", { question: prompt });
+  const sendPrompt = async (threadId?: string, immediateQuestion?: string) => {
+    // Use immediateQuestion if provided, otherwise use prompt state
+    const questionText = immediateQuestion || prompt || "";
 
-    // Clear streaming message, need to do this or it will show the previous message before the new one. We can add to the content if we want to show a thinking message.
+    // Don't send if question is empty
+    if (!questionText.trim()) return;
+
+    // Track analytics
+    track("Question", { question: questionText });
+
+    // Reset prompt immediately to prevent double submissions
+    if (!immediateQuestion) {
+      setPrompt("");
+    }
+
+    // Set loading state
+    setLoading(true);
+
+    // Clear streaming message
     setStreamingMessage({
       id: "Thinking...",
       role: "assistant",
@@ -56,92 +83,133 @@ function Embed({ params: { assistantId } }) {
       createdAt: new Date(),
     });
 
-    // Set loading to show bubbles / wait for response to come in.
-    setLoading(true);
-
-    // add user message to list of messages.
+    // Add user message to chat
     messageId.current++;
-    setMessages([
-      ...messages,
+    setMessages((prevMessages) => [
+      ...prevMessages,
       {
         id: messageId.current.toString(),
         role: "user",
-        content: prompt,
+        content: questionText,
         createdAt: new Date(),
       },
     ]);
 
-    // Reset the prompt.
-    setPrompt("");
+    try {
+      // Send request to API
+      const response = await fetch("/api/chat-assistant", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          assistantId: assistantId,
+          threadId: threadId,
+          content: questionText,
+        }),
+      });
 
-    // post new message to server and stream OpenAI Assistant response.
-    const response = await fetch("/api/chat-assistant", {
-      method: "POST",
-      body: JSON.stringify({
-        assistantId: assistantId,
-        threadId: threadId,
-        content: prompt,
-      }),
-    });
+      if (!response.ok) {
+        throw new Error(`API responded with status: ${response.status}`);
+      }
 
-    // If no response body, return early.
-    if (!response.body) {
-      return;
-    }
+      if (!response.body) {
+        throw new Error("No response body received");
+      }
 
-    // Using the AssistantStream to stream the response from the OpenAI API. Updated the openai package to v4.53.0 (latest) for this.
-    // https://platform.openai.com/docs/api-reference/assistants-streaming
-    // https://github.com/openai/openai-node/blob/master/helpers.md#assistant-events
+      // Process streaming response
+      const runner = AssistantStream.fromReadableStream(response.body);
 
-    const runner = AssistantStream.fromReadableStream(response.body);
+      runner.on("messageCreated", (message) => {
+        if (message.thread_id) {
+          setThreadId(message.thread_id);
+        }
+      });
 
-    runner.on("messageCreated", (message) => {
-      setThreadId(message.thread_id);
-    });
+      runner.on("textDelta", (_delta, contentSnapshot) => {
+        if (contentSnapshot && contentSnapshot.value) {
+          setStreamingMessage((prev) => ({
+            ...prev,
+            content: parseResponse(contentSnapshot.value),
+          }));
+        }
+      });
 
-    runner.on("textDelta", (_delta, contentSnapshot) => {
-      const newStreamingMessage = {
-        ...streamingMessage,
-        content: parseResponse(contentSnapshot.value),
-      };
-      setStreamingMessage(newStreamingMessage);
-    });
+      runner.on("messageDone", (message) => {
+        let finalContent = "";
 
-    runner.on("messageDone", (message) => {
-      // get final message content
-      const finalContent =
-        message.content[0].type == "text" ? message.content[0].text.value : "";
+        if (
+          message.content &&
+          message.content.length > 0 &&
+          message.content[0].type === "text"
+        ) {
+          finalContent = message.content[0].text.value;
+        }
 
-      // add assistant message to list of messages
+        // Add assistant message to chat
+        messageId.current++;
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            id: messageId.current.toString(),
+            role: "assistant",
+            content: parseResponse(finalContent),
+            createdAt: new Date(),
+          },
+        ]);
+
+        // Reset states
+        setLoading(false);
+        setStreamingMessage(null);
+
+        // Scroll to bottom
+        setTimeout(scroll, 100);
+      });
+
+      runner.on("error", (error) => {
+        console.error("Stream error:", error);
+
+        // Add error message to chat
+        messageId.current++;
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            id: messageId.current.toString(),
+            role: "assistant",
+            content: "Sorry, an error occurred while processing your request.",
+            createdAt: new Date(),
+          },
+        ]);
+
+        // Reset states
+        setLoading(false);
+        setStreamingMessage(null);
+
+        // Scroll to bottom
+        setTimeout(scroll, 100);
+      });
+    } catch (error) {
+      console.error("Request error:", error);
+
+      // Add error message to chat
       messageId.current++;
       setMessages((prevMessages) => [
         ...prevMessages,
         {
           id: messageId.current.toString(),
           role: "assistant",
-          content: parseResponse(finalContent),
+          content: "Sorry, an error occurred while sending your request.",
           createdAt: new Date(),
         },
       ]);
 
-      // When message is done, remove streaming message / loading.
+      // Reset states
       setLoading(false);
-    });
+      setStreamingMessage(null);
 
-    // Will need to do something more with the error, but for now just console log it, show error message in chat.
-    runner.on("error", (error) => {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          id: messageId.current.toString(),
-          role: "assistant",
-          content: "Sorry, an error occurred!",
-          createdAt: new Date(),
-        },
-      ]);
-      console.error(error);
-      setLoading(false);
-    });
+      // Scroll to bottom
+      setTimeout(scroll, 100);
+    }
   };
 
   // Auto scroll to bottom of message list. Scroll as message is being streamed.
@@ -155,48 +223,125 @@ function Embed({ params: { assistantId } }) {
     scroll();
   }, [streamingMessage]);
 
+  const handleStarterQuestion = (question: string) => {
+    if (loading) return;
+
+    // Don't set prompt for starter questions, send directly
+    sendPrompt(threadId, question);
+  };
+
   return (
-    <div className="h-screen w-screen p-4 flex flex-col bg-white">
-      <Nav refreshChat={refreshChat} />
-      <div
-        className="flex flex-col gap-6 w-full h-full overflow-y-auto scroll-smooth py-4"
-        ref={messageListRef}
-      >
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`${
-              msg.role == "assistant" ? "chatbot" : "user"
-            } chat-bubble`}
-          >
-            <Markdown>{msg.content}</Markdown>
+    <div className="min-h-screen w-full bg-white flex flex-col">
+      {/* Hero Section */}
+      <div className="hero-section">
+        <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8 lg:py-10 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+              {title}
+            </h1>
+            <p className="mt-4 text-base sm:text-lg md:text-xl text-white max-w-3xl mx-auto">
+              {description}
+            </p>
           </div>
-        ))}
-
-        {loading && (
-          <div className={`chatbot chat-bubble`}>
-            {/* Show streaming response */}
-            <Markdown>{streamingMessage?.content}</Markdown>
-
-            {/* Show bubbles while stream starts coming in */}
-            <div className="flex h-4 items-end justify-end w-full gap-2">
-              <div className="bounce bounce1 rounded bg-white h-2 w-2" />
-              <div className="bounce bounce2 rounded bg-white h-2 w-2" />
-              <div className="bounce bounce3 rounded bg-white h-2 w-2" />
-            </div>
-          </div>
-        )}
+        </div>
       </div>
 
-      <Suspense>
-        <PromptInput
-          prompt={prompt}
-          setPrompt={setPrompt}
-          sendPrompt={sendPrompt}
-          threadId={threadId}
-          loading={loading}
-        />
-      </Suspense>
+      {/* Main Content */}
+      <div className="w-full max-w-7xl mx-auto px-4 py-4 sm:py-6 lg:py-8 flex-1 flex flex-col">
+        <Nav refreshChat={refreshChat} title={title} />
+
+        <div className="flex flex-col lg:flex-row gap-6 flex-1">
+          {/* Chat and Input Section */}
+          <div className="flex-1 flex flex-col">
+            {/* Chat Container */}
+            <div className="chat-container">
+              <div
+                className="chat-messages scroll"
+                ref={messageListRef}
+                style={{ scrollBehavior: "smooth" }}
+              >
+                {messages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`message-bubble ${
+                      msg.role === "assistant"
+                        ? "message-bubble-assistant"
+                        : "message-bubble-user"
+                    }`}
+                  >
+                    <Markdown className="prose max-w-none text-sm sm:text-base">
+                      {msg.content}
+                    </Markdown>
+                  </div>
+                ))}
+
+                {loading && streamingMessage && (
+                  <div className="message-bubble message-bubble-assistant">
+                    <Markdown className="prose max-w-none text-sm sm:text-base">
+                      {streamingMessage.content}
+                    </Markdown>
+                    <div className="flex h-4 items-end gap-2 mt-2">
+                      <div className="bounce bounce1 rounded bg-primary h-1.5 w-1.5 sm:h-2 sm:w-2" />
+                      <div className="bounce bounce2 rounded bg-primary h-1.5 w-1.5 sm:h-2 sm:w-2" />
+                      <div className="bounce bounce3 rounded bg-primary h-1.5 w-1.5 sm:h-2 sm:w-2" />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Input Container */}
+            <div className="w-full">
+              <PromptInput
+                prompt={prompt}
+                setPrompt={setPrompt}
+                sendPrompt={sendPrompt}
+                threadId={threadId}
+                loading={loading}
+              />
+            </div>
+          </div>
+
+          {/* Starter Questions Section */}
+          <div className="lg:w-64 flex flex-col gap-2">
+            <h2 className="font-medium text-sm text-gray-600 mb-1 hidden lg:block">
+              Suggested Questions
+            </h2>
+            {chatConfig.starterQuestions.map((q, i) => (
+              <button
+                key={i}
+                onClick={() => handleStarterQuestion(q.text)}
+                disabled={loading}
+                className="starter-question-btn"
+              >
+                {q.text}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Legal Text */}
+        <div className="text-center text-xs text-gray-500 mt-4">
+          By chatting, you agree to the{" "}
+          <a
+            href="https://www.kornferry.com/terms"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-900 font-medium hover:underline"
+          >
+            Terms of Use
+          </a>{" "}
+          and{" "}
+          <a
+            href="https://www.kornferry.com/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-900 font-medium hover:underline"
+          >
+            Global Privacy Policy
+          </a>
+        </div>
+      </div>
     </div>
   );
 }

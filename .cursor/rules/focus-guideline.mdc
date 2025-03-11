@@ -1,0 +1,42 @@
+---
+description: Maintaining focus
+globs: 
+alwaysApply: false
+---
+
+# Focus and Implementation Guidelines
+
+## Core Principle
+**Only implement what is explicitly requested. Do not create additional functionality without prior approval.**
+
+## Rules
+1. Focus exclusively on solving the specific challenge or task requested by the user
+2. Do not create new files, functions, or features unless explicitly requested
+3. If suggesting additional functionality, clearly mark it as a suggestion and wait for approval
+4. Maintain the existing architecture and patterns unless changes are requested
+5. Prioritize fixing issues within the current scope over adding new capabilities
+
+## Implementation Practice
+- When addressing an issue, first understand what specific problem needs to be solved
+- Propose solutions before implementing them if they involve creating new components
+- Always explain what changes you're making and why they address the specific request
+- If multiple approaches exist, present options rather than choosing one unilaterally
+
+## Examples
+
+### Good Approach
+```
+I can see the issue with your test paths. Here are two ways we could fix this:
+1. Update the paths in the existing files (simpler)
+2. Create a configuration file for paths (more flexible)
+
+Which approach would you prefer?
+```
+
+### Poor Approach
+```
+I've fixed your test paths and also created a new utility file with helper functions that might be useful in the future.
+```
+
+## Note
+This rule applies to all code changes and architecture decisions throughout the project. 

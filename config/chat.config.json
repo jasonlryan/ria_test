@@ -1,0 +1,21 @@
+{
+    "welcomeMessage": "👋 Hi! I'm RIA, your AI research assistant for the Workforce 2025 Survey. I can help you explore insights about what people really want from work, from flexible hours to career growth. What would you like to know about the future of work?",
+    "starterQuestions": [
+        {
+            "text": "How do I use this?",
+            "action": "ask"
+        },
+        {
+            "text": "What regions are covered?",
+            "action": "ask"
+        },
+        {
+            "text": "What is the appetite for re-skilling in the UK?",
+            "action": "ask"
+        }
+    ],
+    "legal": {
+        "termsOfUseUrl": "/terms-of-use",
+        "privacyPolicyUrl": "/global-privacy-policy"
+    }
+}

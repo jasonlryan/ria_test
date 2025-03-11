@@ -1,0 +1,52 @@
+{
+    "version": 2,
+    "name": "workforce-survey-2025",
+    "buildCommand": "npm run build",
+    "outputDirectory": ".next",
+    "framework": "nextjs",
+    "env": {
+        "OPENAI_API_KEY": "@openai-api-key",
+        "OPENAI_ASSISTANT_ID": "@openai-assistant-id",
+        "NODE_ENV": "production"
+    },
+    "build": {
+        "env": {
+            "OPENAI_API_KEY": "@openai-api-key",
+            "OPENAI_ASSISTANT_ID": "@openai-assistant-id"
+        }
+    },
+    "headers": [
+        {
+            "source": "/(.*)",
+            "headers": [
+                {
+                    "key": "X-Content-Type-Options",
+                    "value": "nosniff"
+                },
+                {
+                    "key": "X-Frame-Options",
+                    "value": "DENY"
+                },
+                {
+                    "key": "X-XSS-Protection",
+                    "value": "1; mode=block"
+                }
+            ]
+        }
+    ],
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "/"
+        }
+    ],
+    "regions": [
+        "iad1"
+    ],
+    "functions": {
+        "api/assistant.js": {
+            "memory": 1024,
+            "maxDuration": 60
+        }
+    }
+}

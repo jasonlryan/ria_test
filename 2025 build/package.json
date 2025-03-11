@@ -1,0 +1,33 @@
+{
+    "name": "workforce-survey-2025",
+    "version": "1.0.0",
+    "description": "Global Workforce Survey 2025 AI Assistant",
+    "private": true,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint",
+        "prepare-data": "node prepare_vector_data.js && node create_question_mapping.js"
+    },
+    "dependencies": {
+        "next": "^14.0.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "openai": "^4.20.0",
+        "ai": "^2.2.0",
+        "fs": "^0.0.1-security",
+        "path": "^0.12.7",
+        "csv-parser": "^3.0.0"
+    },
+    "devDependencies": {
+        "eslint": "^8.50.0",
+        "eslint-config-next": "^14.0.0",
+        "typescript": "^5.2.2",
+        "@types/react": "^18.2.21",
+        "@types/node": "^20.6.0"
+    },
+    "engines": {
+        "node": ">=16.0.0"
+    }
+}

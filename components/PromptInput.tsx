@@ -42,50 +42,29 @@ export default function PromptInput({
   }, [prompt, threadId]);
 
   return (
-    <div className="border-t border-primary border-opacity-10 py-2">
-      <ul className="mb-2 md:flex gap-2">
-        {queries.map((buttonPrompt, id) => {
-          return (
-            <button
-              type="submit"
-              key={id}
-              onClick={(e) => {
-                if (loading) return;
-                setPromptClicked(true);
-                setPrompt(buttonPrompt);
-              }}
-              className="border bg-primary text-white border-primary rounded-full px-4 py-2 text-sm hocus:bg-secondary hocus:border-secondary mb-1 md:mb-0 w-full md:w-auto"
-            >
-              {buttonPrompt}
-            </button>
-          );
-        })}
-      </ul>
-
+    <div className="w-full">
       <form
         onSubmit={(event) => {
-          // Disable submission of form (page refresh)
           event.preventDefault();
-
-          // Send prompt on success submit
           sendPrompt(threadId);
         }}
-        className="flex gap-2 mt-auto mb-4 w-full"
+        className="relative"
       >
         <input
           id="question"
-          className="bg-white border border-tertiary rounded hocus:ring-secondary hocus:border-secondary block w-full p-2.5"
-          placeholder="Ask a question"
+          className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white border-2 border-tertiary rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors text-sm sm:text-base"
+          placeholder="Ask RIA about the Workforce 2025 Survey..."
           required
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
+          disabled={loading}
         />
         <button
-          className="bg-primary hocus:bg-secondary hocus:ring-2 hocus:outline-none hocus:ring-primary rounded sm:w-auto px-5 flex justify-center items-center disabled:opacity-50 disabled:pointer-events-none"
-          // Disabled the button if no prompt is typed.
+          type="submit"
+          className="absolute right-1.5 sm:right-2 top-1/2 -translate-y-1/2 bg-primary text-white p-1.5 sm:p-2 rounded-full hover:bg-secondary transition-colors disabled:opacity-50 disabled:hover:bg-primary"
           disabled={!prompt || loading}
         >
-          <Send className="h-5 w-5 stroke-white" />
+          <Send className="h-4 w-4 sm:h-5 sm:w-5 stroke-current" />
         </button>
       </form>
     </div>

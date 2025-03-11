@@ -1,0 +1,38 @@
+---
+description: Never use hard coded test data in code
+globs: 
+alwaysApply: false
+---
+
+# Test Data Policy
+
+## Core Principle
+**Never use hard-coded test data in any test files or testing scripts.**
+
+## Rules
+1. All test data should be provided through external files in appropriate formats (CSV, JSON, etc.)
+2. Test files should be stored in dedicated data directories (e.g., `parser/tests/data/`)
+3. Test data should represent realistic scenarios and edge cases
+4. Any test requiring sample data should reference the external data files
+5. Commented-out sample data in test files is prohibited
+
+## Implementation
+- Use relative paths with `path.join(__dirname, ...)` to reference test data files
+- For parser tests, use the actual CSV files from the data directory
+- When creating new tests, create corresponding test data files if needed
+
+## Example (Good Practice)
+```javascript
+// Use this approach
+const testFile = "test_country_data.csv";
+const dataPath = path.join(__dirname, "data/", testFile);
+```
+
+## Example (Bad Practice)
+```javascript
+// Do NOT use this approach
+const csv = `Question,Response,region_UK,region_USA
+1. Test Question,Test Answer,42%,33%`;
+```
+
+This rule applies to all testing code in the project.
