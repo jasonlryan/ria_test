@@ -5,14 +5,14 @@
     "outputDirectory": ".next",
     "framework": "nextjs",
     "env": {
-        "OPENAI_API_KEY": "@openai-api-key",
-        "OPENAI_ASSISTANT_ID": "@openai-assistant-id",
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}",
+        "OPENAI_ASSISTANT_ID": "asst_f3NgFGr4gfTt6z6tCzDX6TYG",
         "NODE_ENV": "production"
     },
     "build": {
         "env": {
-            "OPENAI_API_KEY": "@openai-api-key",
-            "OPENAI_ASSISTANT_ID": "@openai-assistant-id"
+            "OPENAI_API_KEY": "${OPENAI_API_KEY}",
+            "OPENAI_ASSISTANT_ID": "asst_f3NgFGr4gfTt6z6tCzDX6TYG"
         }
     },
     "headers": [
@@ -30,6 +30,10 @@
                 {
                     "key": "X-XSS-Protection",
                     "value": "1; mode=block"
+                },
+                {
+                    "key": "Permissions-Policy",
+                    "value": "camera=(), microphone=(), geolocation=(), interest-cohort=()"
                 }
             ]
         }
