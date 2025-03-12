@@ -7,7 +7,7 @@ import { Analytics } from "@vercel/analytics/react";
 // const montserrat = Montserrat({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Korn Ferry - Workforce 24 AI Companion",
+  title: "Korn Ferry - Workforce 2025 AI Companion",
   description:
     "Korn Ferry's survey of professionals around the world. It's designed to answer one simple questio",
 };
