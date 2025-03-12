@@ -3,9 +3,17 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 function Home() {
   const [assistants, setAssistants] = useState([]);
+  const router = useRouter();
+
+  // Add this effect to redirect to the 2025 assistant
+  useEffect(() => {
+    // Redirect to the 2025 assistant
+    router.push("/embed/asst_f3NgFGr4gfTt6z6tCzDX6TYG");
+  }, [router]);
 
   useEffect(() => {
     const getList = async () => {
