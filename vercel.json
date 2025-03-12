@@ -34,12 +34,6 @@
             ]
         }
     ],
-    "rewrites": [
-        {
-            "source": "/(.*)",
-            "destination": "/"
-        }
-    ],
     "regions": [
         "iad1"
     ],
