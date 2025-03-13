@@ -4,17 +4,6 @@
     "buildCommand": "npm run build",
     "outputDirectory": ".next",
     "framework": "nextjs",
-    "env": {
-        "OPENAI_API_KEY": "${OPENAI_API_KEY}",
-        "OPENAI_ASSISTANT_ID": "asst_f3NgFGr4gfTt6z6tCzDX6TYG",
-        "NODE_ENV": "production"
-    },
-    "build": {
-        "env": {
-            "OPENAI_API_KEY": "${OPENAI_API_KEY}",
-            "OPENAI_ASSISTANT_ID": "asst_f3NgFGr4gfTt6z6tCzDX6TYG"
-        }
-    },
     "headers": [
         {
             "source": "/(.*)",
@@ -51,6 +40,10 @@
             "maxDuration": 30
         },
         "app/api/test-assistant/route.ts": {
+            "memory": 1024,
+            "maxDuration": 30
+        },
+        "app/api/test-key/route.ts": {
             "memory": 1024,
             "maxDuration": 30
         }
