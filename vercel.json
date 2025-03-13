@@ -36,5 +36,23 @@
     ],
     "regions": [
         "iad1"
-    ]
+    ],
+    "functions": {
+        "app/api/chat-assistant/route.ts": {
+            "memory": 1024,
+            "maxDuration": 60
+        },
+        "app/api/openai/route.ts": {
+            "memory": 1024,
+            "maxDuration": 60
+        },
+        "app/api/test-openai/route.ts": {
+            "memory": 1024,
+            "maxDuration": 30
+        },
+        "app/api/test-assistant/route.ts": {
+            "memory": 1024,
+            "maxDuration": 30
+        }
+    }
 }
