@@ -1,0 +1,44 @@
+{
+    "RadicallyHumanToneOfVoice": {
+      "PurposeAndValues": {
+        "description": "The tone of voice guidelines help Korn Ferry communicate authentically and effectively, building trust and empathy with partners and colleagues",
+        "peopleCentric": "Focus on building long-term relationships with partners, not clients.",
+        "coreValues": ["Inclusivity", "Honesty", "High Performance", "Knowledge"]
+      },
+      "CorePrinciples": {
+        "RadicallyHuman": "Emphasize honesty, empathy, and authenticity.",
+        "Simplicity": "Use simple, clear, and consistent language to build trust and ensure understanding."
+      },
+      "CommunicationStyle": {
+        "PersonalTouch": "Use personal pronouns like 'you,' 'we,' and 'us.'",
+        "ActiveVoice": "Prefer active sentences to clearly indicate who is doing what.",
+        "Contractions": "Use common contractions to sound more conversational.",
+        "VerbOverNoun": "Convert nouns ending in -ance, -ence, -ing, -tion, -sion, and -ment into verbs to simplify sentences."
+      },
+      "ToneAndLanguage": {
+        "EverydayLanguage": "Avoid jargon and technical terms that can alienate readers.",
+        "PositiveFraming": "Start with the positive even when delivering difficult messages.",
+        "Inclusivity": "Make language accessible to everyone, avoiding formal or pretentious words."
+      },
+      "PracticalWritingTips": {
+        "BulletsAndSubheadings": "Use for clarity and easier navigation.",
+        "Storytelling": "Use stories, relationships, and data to make points more engaging.",
+        "CallToAction": "Clearly state what you want the reader to do next."
+      },
+      "BrandConsistency": {
+        "AdherenceToValues": "Ensure all writing reflects the company’s core values.",
+        "ConsistencyAcrossMediums": "Maintain the same tone across all types of communication, whether it's a social media post, whitepaper, or email."
+      },
+      "PunctuationAndGrammar": {
+        "OxfordComma": "Use to avoid ambiguity.",
+        "AmericanEnglish": "Default language style, adjust for UK-specific content.",
+        "CompoundWords": "Hyphenate where necessary, follow specific guidelines for consistency."
+      },
+      "SpecificGuidelines": {
+        "EmDashesAndHyphens": "Use em dashes for separating information and hyphens for compound adjectives.",
+        "Numbers": "Write out numbers one to nine; use numerals for 10 and above unless starting a sentence.",
+        "Acronyms": "Spell out the first usage with the acronym in parentheses, then use the acronym alone."
+      }
+    }
+  }
+  

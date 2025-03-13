@@ -254,6 +254,7 @@ const DEFAULT_OUTPUT_FILE = path.join(__dirname, "all_questions_mapped.csv");
 function processCSVFile(inputFile) {
   try {
     console.log(`Processing file: ${inputFile}`);
+    const fileName = path.basename(inputFile).toLowerCase();
 
     // Read the input file
     let fileContent = fs.readFileSync(inputFile, { encoding: "utf-8" });
@@ -272,11 +273,19 @@ function processCSVFile(inputFile) {
       trim: true,
     });
 
+    // Log debug info
+    console.log(`Total rows parsed: ${rows.length}`);
+
     // Extract the question text from the first cell of the first row
-    let questionText = rows[0][0].replace(/^["']|["']$/g, "").trim();
+    let questionText = "";
+    if (rows && rows.length > 0 && rows[0] && rows[0][0]) {
+      questionText = rows[0][0].replace(/^["']|["']$/g, "").trim();
+    } else {
+      console.log("Warning: Could not extract question text from first row");
+      questionText = "Unknown Question";
+    }
 
     // Modify question text for specific files to provide clarity
-    const fileName = path.basename(inputFile).toLowerCase();
     if (fileName === "q4a_global.csv") {
       questionText = `${questionText} - Current place of work`;
       console.log("Processing current place of work data");
@@ -285,6 +294,8 @@ function processCSVFile(inputFile) {
       console.log("Processing ideal place of work data");
     } else if (fileName === "q11_global.csv") {
       console.log("Processing compensation data");
+    } else if (fileName === "q12_global.csv") {
+      console.log("Processing job leaving data");
     }
 
     console.log("Question text:", questionText);
@@ -292,47 +303,54 @@ function processCSVFile(inputFile) {
     // Prepare a list to hold mapped rows
     const mappedRows = [];
 
-    // Determine data start row based on filename
-    let dataStartIndex = 16; // Default for most files
+    // GENERIC ROW SCANNER - Find all rows that contain response data by looking for percentage values
+    // This works for most question files including Q11, Q12, etc.
+    let responseRows = [];
+    let capturedResponses = new Set(); // Track what we've already found to avoid duplicates
 
-    // For Q4 files, look for the actual data rows
-    if (fileName.startsWith("q4")) {
-      for (let i = 0; i < rows.length; i++) {
-        if (
-          rows[i][0] &&
-          (rows[i][0].includes("Full-time in office") ||
-            rows[i][0].includes("Full-time remote") ||
-            rows[i][0].includes("Hybrid work") ||
-            rows[i][0].includes("Unsure"))
-        ) {
-          dataStartIndex = i;
+    for (let i = 0; i < rows.length; i++) {
+      // Skip empty rows or rows with no data
+      if (!rows[i] || !rows[i][0] || rows[i][0].trim() === "") {
+        continue;
+      }
+
+      // Skip rows that have "Sigma" or are headers
+      if (
+        rows[i][0].includes("Sigma") ||
+        rows[i][0].includes("Base:") ||
+        rows[i][0].includes("Total Respondents")
+      ) {
+        continue;
+      }
+
+      // Check if this row has percentage values which indicates it's a response row
+      let hasPercentage = false;
+      for (let j = 1; j < Math.min(5, rows[i].length); j++) {
+        if (rows[i][j] && rows[i][j].includes("%")) {
+          hasPercentage = true;
           break;
         }
       }
-    } else if (fileName === "q11_global.csv") {
-      // For Q11, data starts at a different position
-      dataStartIndex = 14;
-    }
 
-    // Process data rows
-    for (let i = dataStartIndex; i < rows.length; i++) {
-      // Skip empty rows or rows with no data
-      if (rows[i].length === 0 || !rows[i][0] || rows[i][0].trim() === "")
-        continue;
+      // If the row has a non-empty first cell and percentage values, it's likely a response
+      if (hasPercentage && rows[i][0].trim() !== "") {
+        const responseText = rows[i][0].trim();
 
-      // Skip the "Sigma" row for all questions
-      if (rows[i][0].includes("Sigma")) {
-        continue;
-      }
-
-      // Special handling for Q11
-      if (fileName === "q11_global.csv") {
-        // Only process rows that start with "My company gives"
-        if (!rows[i][0].includes("My company gives")) {
-          continue;
+        // If we haven't seen this response yet, add it
+        if (!capturedResponses.has(responseText)) {
+          console.log(
+            `Found response at row ${i}: "${responseText.substring(0, 50)}..."`
+          );
+          responseRows.push(i);
+          capturedResponses.add(responseText);
         }
       }
+    }
 
+    console.log(`Found ${responseRows.length} unique responses`);
+
+    // Process each identified response row
+    for (let rowIndex of responseRows) {
       // Create a new row with keys from TARGET_HEADER
       const mappedRow = {};
       TARGET_HEADER.forEach((key) => (mappedRow[key] = ""));
@@ -341,16 +359,16 @@ function processCSVFile(inputFile) {
       mappedRow.Question = questionText;
 
       // Get the response text
-      let responseText = rows[i][0].trim();
+      let responseText = rows[rowIndex][0].trim();
+      console.log(`Processing response: "${responseText.substring(0, 50)}..."`);
 
       // Set the response text for this row
       mappedRow.Response = responseText;
 
-      // Map the total and breakdown fields
-      for (let j = 1; j < rows[i].length; j++) {
+      // Map the column values to our target headers
+      for (let j = 1; j < rows[rowIndex].length; j++) {
         if (j <= TARGET_HEADER.length - 2) {
-          // +2 because we've already set Question and Response
-          mappedRow[TARGET_HEADER[j + 1]] = rows[i][j] || "";
+          mappedRow[TARGET_HEADER[j + 1]] = rows[rowIndex][j] || "";
         }
       }
 

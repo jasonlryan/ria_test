@@ -1,0 +1,28 @@
+{
+    "survey_information": {
+      "title": "Korn Ferry 2024 Workforce Survey",
+      "why_this_survey": {
+        "description": "The world of work is in a state of flux the likes of which we have not seen in decades. Many of the fundamental assumptions about work and employment are being revisited, reshaped, and renegotiated.",
+        "details": "At the heart of this turbulent era is a shift in expectations between employees and their employers—expectations about where work is performed, how it is performed, and the exchange for worker effort.",
+        "purpose": "During periods of change like this one, rich data is needed to capture emerging patterns and trends, helping paint a portrait of new realities at work. Korn Ferry's research aims to better understand perceptions, attitudes, and expectations about work, documenting important dynamics that should inform how we think about the world of work today."
+      },
+      "what_do_people_really_think": {
+        "description": "If you understand your people, you understand what drives your business. But while you might think you know what makes them tick—do you?",
+        "goal": "Korn Ferry launched Workforce 2024 to answer one simple question: what do people want from work?"
+      },
+      "how_we_did_it": {
+        "description": "We spoke to 10,000 professionals at all stages of their career, from entry-level to CEO, in six markets: USA, UK, Brazil, Middle East, Australia, and India.",
+        "global_snapshot": "Their insights reveal a global snapshot of how people are feeling in the Americas, EMEA, and APAC."
+      },
+      "what_does_it_contain": {
+        "topics_covered": [
+          "Their top priorities when choosing a new job",
+          "What keeps them in their current job",
+          "What makes them want to leave a job",
+          "How organizations can motivate their workforce",
+          "Hundreds of additional insights into today’s workplace"
+        ]
+      }
+    }
+  }
+  
