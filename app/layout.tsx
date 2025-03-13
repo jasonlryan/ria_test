@@ -1,7 +1,6 @@
 import "../styles/globals.css";
 import "../styles/bubbles.css";
 import MainComponent from "../components/MainComponent";
-
 import { Analytics } from "@vercel/analytics/react";
 
 // const montserrat = Montserrat({ subsets: ["latin"] });

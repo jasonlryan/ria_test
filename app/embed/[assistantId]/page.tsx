@@ -43,10 +43,14 @@ function Embed({ params: { assistantId } }) {
   // Get the thread id from the response, and then can pass it back to the next request to continue the conversation.
   const [threadId, setThreadId] = useState(null);
 
-  // Add a console log to debug
+  // Add version and params logging
   useEffect(() => {
-    console.log("LOADED 2025 VERSION - TEST MARKER");
-  }, []);
+    console.log("=== EMBED PAGE DIAGNOSTICS ===");
+    console.log("Version: 2025");
+    console.log("Assistant ID:", assistantId);
+    console.log("Initial Render Time:", new Date().toISOString());
+    console.log("========================");
+  }, [assistantId]);
 
   // Reset chat
   const refreshChat = () => {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 
 interface NavProps {
@@ -7,6 +7,13 @@ interface NavProps {
 }
 
 export default function Nav({ refreshChat }: NavProps) {
+  useEffect(() => {
+    console.log("=== NAV COMPONENT DIAGNOSTICS ===");
+    console.log("Nav Component Loaded");
+    console.log("Render Time:", new Date().toISOString());
+    console.log("========================");
+  }, []);
+
   return (
     <div className="flex justify-between items-center py-3 sm:py-4 mb-4 sm:mb-6">
       <div className="flex items-center">
