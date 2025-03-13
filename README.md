@@ -132,3 +132,7 @@ To process a single country:
 ```shell
 node scripts/index-country-json.js
 ```
+
+## Deployment Trigger
+
+Last updated: March 13, 2025 - 08:30
