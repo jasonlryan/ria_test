@@ -105,6 +105,12 @@ function Embed({ params: { assistantId } }) {
     ]);
 
     try {
+      console.log("Sending request to API:", {
+        assistantId,
+        threadId,
+        contentLength: questionText.length,
+      });
+
       // Send request to API
       const response = await fetch("/api/chat-assistant", {
         method: "POST",
@@ -118,8 +124,20 @@ function Embed({ params: { assistantId } }) {
         }),
       });
 
+      console.log("API response status:", response.status);
+
       if (!response.ok) {
-        throw new Error(`API responded with status: ${response.status}`);
+        const errorText = await response
+          .text()
+          .catch(() => "No error text available");
+        console.error("API error details:", {
+          status: response.status,
+          statusText: response.statusText,
+          errorText,
+        });
+        throw new Error(
+          `API responded with status: ${response.status} - ${errorText}`
+        );
       }
 
       if (!response.body) {
