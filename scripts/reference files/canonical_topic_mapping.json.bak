@@ -1,0 +1,568 @@
+{
+    "metadata": {
+        "version": "1.0",
+        "description": "Canonical topic mapping for survey data organized by themes and topics",
+        "lastUpdated": "2025-03-15"
+    },
+    "dataAccess": {
+        "2024": {
+            "filename": "global_2024_data.json"
+        },
+        "2025": {
+            "filename": "global_2025_data.json"
+        },
+        "comparableMarkets": [
+            "United Kingdom",
+            "United States",
+            "Australia",
+            "India",
+            "Brazil"
+        ]
+    },
+    "retrievalRules": {
+        "comparable": "For topics marked as comparable, retrieve data from both 2024 and 2025 surveys, but only include data from the five comparable markets.",
+        "nonComparable": "For topics marked as non-comparable, retrieve data from only the available survey year(s) and include the appropriate user message explaining why year-on-year comparison is not available.",
+        "singleYear": "For topics available in only one year, retrieve that data and include the user message noting the limitation."
+    },
+    "questionExclusivity": {
+        "Q1": "Attraction_Factors",
+        "Q2": "Retention_Factors",
+        "Q3": "Attrition_Factors"
+    },
+    "themes": [
+        {
+            "name": "Talent Attraction & Retention",
+            "topics": [
+                {
+                    "id": "Attraction_Factors",
+                    "canonicalQuestion": "What are the most important factors when looking for a new job?",
+                    "rationale": "Identify factors that drive candidates to consider a new job; essential for talent acquisition.",
+                    "mapping": {
+                        "2024": "Q1",
+                        "2025": "Q1"
+                    },
+                    "comparable": false,
+                    "availableMarkets": [],
+                    "userMessage": "Year‑on‑year comparisons not available due to methodology changes.",
+                    "alternatePhrasings": [
+                        "job attraction factors",
+                        "what attracts new hires",
+                        "important job factors"
+                    ]
+                },
+                {
+                    "id": "Retention_Factors",
+                    "canonicalQuestion": "What factors would make you stay at your current company?",
+                    "rationale": "Understand what keeps employees in their current roles for effective retention strategies.",
+                    "mapping": {
+                        "2024": "Q2",
+                        "2025": "Q2"
+                    },
+                    "comparable": false,
+                    "availableMarkets": [],
+                    "userMessage": "Year‑on‑year comparisons not available due to methodology changes.",
+                    "alternatePhrasings": [
+                        "retention factors",
+                        "why employees stay",
+                        "reasons to remain at company"
+                    ]
+                },
+                {
+                    "id": "Attrition_Factors",
+                    "canonicalQuestion": "What factors would make you leave your current company?",
+                    "rationale": "Identify the key drivers that prompt employees to leave, to address turnover risks.",
+                    "mapping": {
+                        "2024": "Q3",
+                        "2025": "Q3"
+                    },
+                    "comparable": false,
+                    "availableMarkets": [],
+                    "userMessage": "Year‑on‑year comparisons not available due to methodology changes.",
+                    "alternatePhrasings": [
+                        "turnover factors",
+                        "reasons employees leave",
+                        "attrition drivers"
+                    ]
+                },
+                {
+                    "id": "Intention_to_Leave",
+                    "canonicalQuestion": "Are you planning on leaving your current role in the next three months?",
+                    "rationale": "Gauge near‑term turnover intent as a signal of attrition risk.",
+                    "mapping": {
+                        "2024": [
+                            "Q9",
+                            "Q4_8"
+                        ],
+                        "2025": [
+                            "Q12",
+                            "Q7_2",
+                            "Q7_4",
+                            "Q7_5"
+                        ]
+                    },
+                    "comparable": true,
+                    "availableMarkets": [
+                        "United Kingdom",
+                        "United States",
+                        "Australia",
+                        "India",
+                        "Brazil"
+                    ],
+                    "userMessage": "Data based on comparable markets only.",
+                    "alternatePhrasings": [
+                        "quit intentions",
+                        "planning to leave",
+                        "short-term turnover",
+                        "resignation plans"
+                    ]
+                },
+                {
+                    "id": "Ideal_Role",
+                    "canonicalQuestion": "What would your ideal role be?",
+                    "rationale": "Determine employees' desired employment type, guiding future talent model design.",
+                    "mapping": {
+                        "2024": "Q10",
+                        "2025": [
+                            "Q10",
+                            "Q13"
+                        ]
+                    },
+                    "comparable": true,
+                    "availableMarkets": [
+                        "United Kingdom",
+                        "United States",
+                        "Australia",
+                        "India",
+                        "Brazil"
+                    ],
+                    "userMessage": "Data based on comparable markets only.",
+                    "alternatePhrasings": [
+                        "preferred employment type",
+                        "ideal employment arrangement",
+                        "preferred work mode"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Employee Experience & Work‑Life",
+            "topics": [
+                {
+                    "id": "Work_Life_Flexibility",
+                    "canonicalQuestion": "How important is flexibility in your work arrangements?",
+                    "rationale": "Capture flexible work preferences to understand work–life balance and location needs.",
+                    "mapping": {
+                        "2024": [
+                            "Q4_2",
+                            "Q4_5"
+                        ],
+                        "2025": [
+                            "Q6_6",
+                            "Q16",
+                            "Q7_8"
+                        ]
+                    },
+                    "comparable": false,
+                    "availableMarkets": [],
+                    "userMessage": "Compare with caution due to differences in question framing between years.",
+                    "alternatePhrasings": [
+                        "flexible working",
+                        "work from anywhere",
+                        "work-life balance",
+                        "flexible arrangements"
+                    ]
+                },
+                {
+                    "id": "Culture_and_Values",
+                    "canonicalQuestion": "How important are company culture and values to your work experience?",
+                    "rationale": "Assess employees' perceptions of their company's culture, values, and overall connectedness.",
+                    "mapping": {
+                        "2024": [
+                            "Q4_1",
+                            "Q4_3",
+                            "Q4_12",
+                            "Q4_13",
+                            "Q4_14",
+                            "Q4_15",
+                            "Q6_2",
+                            "Q18_8"
+                        ],
+                        "2025": [
+                            "Q7_1",
+                            "Q7_3",
+                            "Q9_4",
+                            "Q8_11",
+                            "Q17_8"
+                        ]
+                    },
+                    "comparable": false,
+                    "availableMarkets": [],
+                    "userMessage": "Compare with caution due to differences in question framing between years.",
+                    "alternatePhrasings": [
+                        "organizational culture",
+                        "company values",
+                        "workplace ethos",
+                        "cultural fit"
+                    ]
+                },
+                {
+                    "id": "Employee_Wellbeing",
+                    "canonicalQuestion": "How supported do you feel in terms of wellbeing at work?",
+                    "rationale": "Evaluate overall employee wellbeing including comfort with personal disclosures.",
+                    "mapping": {
+                        "2024": [
+                            "Q5_3",
+                            "Q5_5"
+                        ],
+                        "2025": [
+                            "Q6_3",
+                            "Q9_3"
+                        ]
+                    },
+                    "comparable": false,
+                    "availableMarkets": [],
+                    "userMessage": "Compare with caution due to differences in question framing between years.",
+                    "alternatePhrasings": [
+                        "health support",
+                        "wellbeing initiatives",
+                        "work-life support",
+                        "mental health"
+                    ]
+                },
+                {
+                    "id": "Communication_and_Connection",
+                    "canonicalQuestion": "How comfortable are you communicating and connecting with colleagues?",
+                    "rationale": "Measure how well employees connect and communicate with peers, impacting engagement and collaboration.",
+                    "mapping": {
+                        "2024": [
+                            "Q5_1",
+                            "Q5_2",
+                            "Q5_4"
+                        ],
+                        "2025": [
+                            "Q6_1",
+                            "Q6_4",
+                            "Q9_5"
+                        ]
+                    },
+                    "comparable": false,
+                    "availableMarkets": [],
+                    "userMessage": "Compare with caution due to differences in question framing between years.",
+                    "alternatePhrasings": [
+                        "workplace relationships",
+                        "peer communication",
+                        "colleague connections",
+                        "collaboration comfort"
+                    ]
+                },
+                {
+                    "id": "Motivation_and_Fulfillment",
+                    "canonicalQuestion": "How motivated and fulfilled do you feel in your role?",
+                    "rationale": "Understand overall motivation, fulfillment, and engagement at work, key for workforce morale.",
+                    "mapping": {
+                        "2024": [
+                            "Q4_16",
+                            "Q18_1",
+                            "Q18_2",
+                            "Q18_3"
+                        ],
+                        "2025": [
+                            "Q17_1",
+                            "Q17_4",
+                            "Q17_6"
+                        ]
+                    },
+                    "comparable": false,
+                    "availableMarkets": [],
+                    "userMessage": "Compare with caution due to differences in question framing between years.",
+                    "alternatePhrasings": [
+                        "job satisfaction",
+                        "work engagement",
+                        "employee motivation",
+                        "workplace fulfillment"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Skills & Development",
+            "topics": [
+                {
+                    "id": "Learning_and_Development",
+                    "canonicalQuestion": "How would you rate your learning and development opportunities?",
+                    "rationale": "Assess access to and quality of learning and development opportunities.",
+                    "mapping": {
+                        "2024": [
+                            "Q4_6",
+                            "Q4_7",
+                            "Q18_5"
+                        ],
+                        "2025": [
+                            "Q5_1",
+                            "Q17_3"
+                        ]
+                    },
+                    "comparable": false,
+                    "availableMarkets": [],
+                    "userMessage": "Compare with caution due to differences in question framing between years.",
+                    "alternatePhrasings": [
+                        "professional development",
+                        "training opportunities",
+                        "skill advancement",
+                        "career growth"
+                    ]
+                },
+                {
+                    "id": "Skills_Utilization",
+                    "canonicalQuestion": "How well are your skills utilized in your current role?",
+                    "rationale": "Evaluate how effectively employees utilize their skills on the job.",
+                    "mapping": {
+                        "2024": [
+                            "Q18_4",
+                            "Q4_17",
+                            "Q4_18"
+                        ],
+                        "2025": [
+                            "Q17_2",
+                            "Q8_3",
+                            "Q8_5",
+                            "Q8_10"
+                        ]
+                    },
+                    "comparable": true,
+                    "availableMarkets": [
+                        "United Kingdom",
+                        "United States",
+                        "Australia",
+                        "India",
+                        "Brazil"
+                    ],
+                    "userMessage": "Data based on comparable markets only.",
+                    "alternatePhrasings": [
+                        "skills usage",
+                        "talent utilization",
+                        "capability application",
+                        "competency use"
+                    ]
+                },
+                {
+                    "id": "AI_Readiness_and_Attitudes",
+                    "canonicalQuestion": "What are your attitudes toward AI in the workplace?",
+                    "rationale": "Capture employee attitudes toward AI—including excitement, perceived value, and fears of replacement—to gauge AI readiness.",
+                    "mapping": {
+                        "2024": [
+                            "Q4_9",
+                            "Q4_10",
+                            "Q4_11"
+                        ],
+                        "2025": [
+                            "Q5_2",
+                            "Q5_3",
+                            "Q5_4",
+                            "Q5_5",
+                            "Q5_6",
+                            "Q5_7",
+                            "Q5_8"
+                        ]
+                    },
+                    "comparable": false,
+                    "availableMarkets": [],
+                    "userMessage": "Compare with caution due to expanded question set in 2025.",
+                    "alternatePhrasings": [
+                        "technology adoption",
+                        "AI perception",
+                        "digital transformation readiness",
+                        "emerging tech attitudes"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Leadership & Management",
+            "topics": [
+                {
+                    "id": "Leadership_Confidence",
+                    "canonicalQuestion": "How confident are you in your organization's leadership?",
+                    "rationale": "Gauge overall confidence in senior leadership; vital for strategic decision‑making.",
+                    "mapping": {
+                        "2024": [
+                            "Q7",
+                            "Q18_6"
+                        ],
+                        "2025": [
+                            "Q7_6",
+                            "Q8_1",
+                            "Q8_2",
+                            "Q17_7"
+                        ]
+                    },
+                    "comparable": false,
+                    "availableMarkets": [],
+                    "userMessage": "Compare with caution due to differences in question framing between years.",
+                    "alternatePhrasings": [
+                        "trust in leadership",
+                        "executive confidence",
+                        "leadership effectiveness",
+                        "management trust"
+                    ]
+                },
+                {
+                    "id": "Organizational_Adaptation",
+                    "canonicalQuestion": "How effectively does your organization adapt to change?",
+                    "rationale": "Evaluate how effectively the organization adapts to external changes (e.g. market or regulatory shifts).",
+                    "mapping": {
+                        "2024": "Q18_7",
+                        "2025": "Q17_5"
+                    },
+                    "comparable": true,
+                    "availableMarkets": [
+                        "United Kingdom",
+                        "United States",
+                        "Australia",
+                        "India",
+                        "Brazil"
+                    ],
+                    "userMessage": "Data based on comparable markets only.",
+                    "alternatePhrasings": [
+                        "change management",
+                        "business agility",
+                        "organizational flexibility",
+                        "adaptive capability"
+                    ]
+                },
+                {
+                    "id": "Manager_Capability",
+                    "canonicalQuestion": "How effective is your direct manager?",
+                    "rationale": "Assess direct manager effectiveness; available only in 2025.",
+                    "mapping": {
+                        "2025": [
+                            "Q9_1",
+                            "Q9_6",
+                            "Q9_7",
+                            "Q9_8"
+                        ]
+                    },
+                    "comparable": false,
+                    "availableMarkets": [],
+                    "userMessage": "New in 2025; no year‑on‑year comparison.",
+                    "alternatePhrasings": [
+                        "supervisory effectiveness",
+                        "line manager capability",
+                        "manager performance",
+                        "leader effectiveness"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Workplace Dynamics",
+            "topics": [
+                {
+                    "id": "Intergenerational_Collaboration",
+                    "canonicalQuestion": "How effectively do different generations collaborate in your workplace?",
+                    "rationale": "Identify challenges arising from generational differences—new emphasis in 2025 for intergenerational collaboration.",
+                    "mapping": {
+                        "2025": [
+                            "Q6_2",
+                            "Q6_7",
+                            "Q6_8",
+                            "Q8_4",
+                            "Q8_6",
+                            "Q14",
+                            "Q15"
+                        ]
+                    },
+                    "comparable": false,
+                    "availableMarkets": [],
+                    "userMessage": "New in 2025; no year‑on‑year comparison.",
+                    "alternatePhrasings": [
+                        "generational diversity",
+                        "age-diverse teams",
+                        "cross-generational work",
+                        "multigenerational workplace"
+                    ]
+                },
+                {
+                    "id": "DEI",
+                    "canonicalQuestion": "How committed is your organization to diversity, equity, and inclusion?",
+                    "rationale": "Evaluate the organization's commitment to DEI (diversity, equity, inclusion) initiatives.",
+                    "mapping": {
+                        "2024": "Q6_1",
+                        "2025": [
+                            "Q7_7",
+                            "Q8_7",
+                            "Q8_8",
+                            "Q8_9"
+                        ]
+                    },
+                    "comparable": false,
+                    "availableMarkets": [],
+                    "userMessage": "Compare with caution due to expanded question set in 2025.",
+                    "alternatePhrasings": [
+                        "diversity initiatives",
+                        "equity programs",
+                        "inclusion efforts",
+                        "workplace diversity"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Compensation & Benefits",
+            "topics": [
+                {
+                    "id": "Pay_and_Reward",
+                    "canonicalQuestion": "How fair do you consider your compensation relative to your contribution?",
+                    "rationale": "Determine whether employees perceive their compensation as fair relative to their contribution.",
+                    "mapping": {
+                        "2024": [
+                            "Q8",
+                            "Q4_4"
+                        ],
+                        "2025": [
+                            "Q11",
+                            "Q6_5"
+                        ]
+                    },
+                    "comparable": true,
+                    "availableMarkets": [
+                        "United Kingdom",
+                        "United States",
+                        "Australia",
+                        "India",
+                        "Brazil"
+                    ],
+                    "userMessage": "Note: Wording differs between Q8 (2024) and Q11 (2025).",
+                    "alternatePhrasings": [
+                        "compensation fairness",
+                        "salary satisfaction",
+                        "pay equity",
+                        "reward adequacy"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Workplace",
+            "topics": [
+                {
+                    "id": "Current_and_Preferred",
+                    "canonicalQuestion": "What is your current and preferred work location?",
+                    "rationale": "Compare current versus ideal work location preferences.",
+                    "mapping": {
+                        "2025": "Q4"
+                    },
+                    "comparable": false,
+                    "availableMarkets": [],
+                    "userMessage": "New in 2025; no year‑on‑year comparison.",
+                    "alternatePhrasings": [
+                        "work location",
+                        "office preferences",
+                        "remote vs in-office",
+                        "workplace location"
+                    ]
+                }
+            ]
+        }
+    ]
+}

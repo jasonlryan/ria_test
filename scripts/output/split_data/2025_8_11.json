@@ -1,0 +1,104 @@
+{
+  "question": "To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "I share negative reviews about my employer on social media or review sites (such as Glassdoor)",
+      "data": {
+        "region": {
+          "country_overall": 0.32,
+          "united_states": 0.2,
+          "united_kingdom": 0.46,
+          "india": 0.23,
+          "france": 0.27,
+          "germany": 0.18,
+          "japan": 0.34,
+          "united_arab_emirates": 0.27,
+          "brazil": 0.38,
+          "saudi_arabia": 0.25,
+          "australia": 0.36
+        },
+        "age": {
+          "18-24": 0.35,
+          "25-34": 0.31,
+          "35-44": 0.24,
+          "45-54": 0.15,
+          "55-65": 0.13
+        },
+        "gender": {
+          "female": 0.33,
+          "male": 0.25
+        },
+        "org_size": {
+          "fewer_than_10": 0.26,
+          "10_to_49": 0.36,
+          "50_to_99": 0.33,
+          "100_to_249": 0.35,
+          "500_to_999": 0.24,
+          "1000_or_more": 0.3
+        },
+        "sector": {
+          "automotive": 0.32,
+          "business_administration_support_services": 0.43,
+          "technology": 0.31,
+          "construction": 0.29,
+          "consumer_goods": 0.23,
+          "education": 0.23,
+          "energy_utilities": 0.34,
+          "financial_services": 0.19,
+          "government": 0.2,
+          "healthcare_life_sciences": 0.26,
+          "manufacturing_industrial": 0.48,
+          "marketing_services": 0.15,
+          "not_for_profit": 0.19,
+          "legal_in-house": 0.19,
+          "legal_agency": 0.22,
+          "professional_services": 0.27,
+          "real_estate_property_services": 0.23,
+          "retail": 0.35,
+          "sales": 0.36,
+          "telecommunications": 0.22,
+          "transport_storage": 0.22,
+          "travel_hospitality_leisure": 0.2,
+          "wholesale_distribution": 0.23,
+          "other": 0.39
+        },
+        "job_level": {
+          "ceo": 0.44,
+          "senior_executive": 0.39,
+          "senior_leader": 0.3,
+          "mid_level_leader": 0.3,
+          "first_level_supervisor": 0.16,
+          "individual_contributor": 0.28
+        },
+        "relationship_status": {
+          "single": 0.21,
+          "cohabiting": 0.32,
+          "married": 0.15,
+          "divorced_separated": 0.17,
+          "widowed": 0.24
+        },
+        "education": {
+          "secondary": 0.23,
+          "tertiary": 0.23,
+          "professional_certifications": 0.28,
+          "undergraduate": 0.36,
+          "postgraduate": 0.31,
+          "doctorate": 0
+        },
+        "generation": {
+          "age_65_plus": 0.37,
+          "gen_z": 0.32,
+          "millennials": 0.23,
+          "gen_x": 0.12,
+          "baby_boomers": 0.23
+        },
+        "employment_status": {
+          "full-time": 0.22,
+          "part-time": 0.33,
+          "contract": 0.24,
+          "freelance": 0.37
+        }
+      }
+    }
+  ]
+}

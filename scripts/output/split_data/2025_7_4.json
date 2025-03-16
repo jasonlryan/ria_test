@@ -1,0 +1,104 @@
+{
+  "question": "To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "I am open to relocating to another country to secure a job",
+      "data": {
+        "region": {
+          "country_overall": 0.47,
+          "united_states": 0.43,
+          "united_kingdom": 0.73,
+          "india": 0.35,
+          "france": 0.41,
+          "germany": 0.26,
+          "japan": 0.68,
+          "united_arab_emirates": 0.56,
+          "brazil": 0.65,
+          "saudi_arabia": 0.42,
+          "australia": 0.57
+        },
+        "age": {
+          "18-24": 0.57,
+          "25-34": 0.52,
+          "35-44": 0.42,
+          "45-54": 0.25,
+          "55-65": 0.22
+        },
+        "gender": {
+          "female": 0.53,
+          "male": 0.4
+        },
+        "org_size": {
+          "fewer_than_10": 0.4,
+          "10_to_49": 0.49,
+          "50_to_99": 0.51,
+          "100_to_249": 0.53,
+          "500_to_999": 0.44,
+          "1000_or_more": 0.49
+        },
+        "sector": {
+          "automotive": 0.51,
+          "business_administration_support_services": 0.67,
+          "technology": 0.55,
+          "construction": 0.5,
+          "consumer_goods": 0.42,
+          "education": 0.45,
+          "energy_utilities": 0.56,
+          "financial_services": 0.36,
+          "government": 0.39,
+          "healthcare_life_sciences": 0.43,
+          "manufacturing_industrial": 0.6,
+          "marketing_services": 0.3,
+          "not_for_profit": 0.3,
+          "legal_in-house": 0.39,
+          "legal_agency": 0.49,
+          "professional_services": 0.39,
+          "real_estate_property_services": 0.41,
+          "retail": 0.52,
+          "sales": 0.55,
+          "telecommunications": 0.37,
+          "transport_storage": 0.44,
+          "travel_hospitality_leisure": 0.44,
+          "wholesale_distribution": 0.39,
+          "other": 0.61
+        },
+        "job_level": {
+          "ceo": 0.65,
+          "senior_executive": 0.61,
+          "senior_leader": 0.51,
+          "mid_level_leader": 0.49,
+          "first_level_supervisor": 0.31,
+          "individual_contributor": 0.48
+        },
+        "relationship_status": {
+          "single": 0.37,
+          "cohabiting": 0.52,
+          "married": 0.3,
+          "divorced_separated": 0.3,
+          "widowed": 0.38
+        },
+        "education": {
+          "secondary": 0.38,
+          "tertiary": 0.38,
+          "professional_certifications": 0.5,
+          "undergraduate": 0.57,
+          "postgraduate": 0.54,
+          "doctorate": 0
+        },
+        "generation": {
+          "age_65_plus": 0.59,
+          "gen_z": 0.54,
+          "millennials": 0.38,
+          "gen_x": 0.2,
+          "baby_boomers": 0.41
+        },
+        "employment_status": {
+          "full-time": 0.37,
+          "part-time": 0.45,
+          "contract": 0.44,
+          "freelance": 0.48
+        }
+      }
+    }
+  ]
+}

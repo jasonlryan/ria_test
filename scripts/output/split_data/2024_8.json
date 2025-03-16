@@ -1,0 +1,236 @@
+{
+  "question": "8. How well do you think you are paid for your work and skillset?",
+  "responses": [
+    {
+      "response": "Below my contribution",
+      "data": {
+        "region": {},
+        "age": {
+          "18-24": 0.39,
+          "25-34": 0.39,
+          "35-44": 0.38,
+          "45-54": 0.36,
+          "55-65": 0.35
+        },
+        "gender": {
+          "female": 0.38,
+          "male": 0.38
+        },
+        "org_size": {
+          "fewer_than_10": 0.4,
+          "10_to_49": 0.39,
+          "50_to_99": 0.38,
+          "100_to_249": 0.37,
+          "250_to_499": 0.39,
+          "500_to_999": 0.37,
+          "1000_or_more": 0.37
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.61,
+          "automotive": 0.45,
+          "business_administration_support_services": 0.37,
+          "clean_technology": 0.4,
+          "technology": 0.36,
+          "construction": 0.34,
+          "education": 0.4,
+          "energy_utilities": 0.33,
+          "financial_services": 0.36,
+          "food_drink": 0.41,
+          "government": 0.38,
+          "healthcare_life_sciences": 0.42,
+          "leisure_sport_entertainment_recreation": 0.34,
+          "manufacturing_industrial": 0.35,
+          "marketing_services": 0.36,
+          "media_entertainment": 0.35,
+          "not_for_profit": 0.43,
+          "real_estate_property_services": 0.36,
+          "retail": 0.32,
+          "sports": 0.45,
+          "telecommunications": 0.42,
+          "transport_storage": 0.33,
+          "travel_hospitality_leisure": 0.35,
+          "wholesale_distribution": 0.45,
+          "other": 0.4
+        },
+        "job_level": {
+          "ceo": 0.42,
+          "senior_executive": 0.37,
+          "senior_leader": 0.35,
+          "mid_level_leader": 0.35,
+          "first_level_supervisor": 0.36,
+          "individual_contributor": 0.42
+        },
+        "relationship_status": {
+          "single": 0.41,
+          "cohabiting": 0.41,
+          "married": 0.36,
+          "divorced_separated": 0.38,
+          "widowed": 0.44
+        },
+        "education": {
+          "secondary": 0.42,
+          "tertiary": 0.38,
+          "undergraduate": 0.37,
+          "postgraduate": 0.37,
+          "doctorate": 0.39
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Match my contribution",
+      "data": {
+        "region": {},
+        "age": {
+          "18-24": 0.54,
+          "25-34": 0.53,
+          "35-44": 0.52,
+          "45-54": 0.57,
+          "55-65": 0.6
+        },
+        "gender": {
+          "female": 0.54,
+          "male": 0.54
+        },
+        "org_size": {
+          "fewer_than_10": 0.55,
+          "10_to_49": 0.55,
+          "50_to_99": 0.56,
+          "100_to_249": 0.57,
+          "250_to_499": 0.55,
+          "500_to_999": 0.5,
+          "1000_or_more": 0.54
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.32,
+          "automotive": 0.48,
+          "business_administration_support_services": 0.56,
+          "clean_technology": 0.52,
+          "technology": 0.52,
+          "construction": 0.57,
+          "education": 0.54,
+          "energy_utilities": 0.6,
+          "financial_services": 0.56,
+          "food_drink": 0.53,
+          "government": 0.58,
+          "healthcare_life_sciences": 0.52,
+          "leisure_sport_entertainment_recreation": 0.63,
+          "manufacturing_industrial": 0.56,
+          "marketing_services": 0.54,
+          "media_entertainment": 0.56,
+          "not_for_profit": 0.5,
+          "real_estate_property_services": 0.58,
+          "retail": 0.6,
+          "sports": 0.45,
+          "telecommunications": 0.54,
+          "transport_storage": 0.59,
+          "travel_hospitality_leisure": 0.57,
+          "wholesale_distribution": 0.51,
+          "other": 0.53
+        },
+        "job_level": {
+          "ceo": 0.45,
+          "senior_executive": 0.51,
+          "senior_leader": 0.59,
+          "mid_level_leader": 0.58,
+          "first_level_supervisor": 0.56,
+          "individual_contributor": 0.54
+        },
+        "relationship_status": {
+          "single": 0.53,
+          "cohabiting": 0.55,
+          "married": 0.54,
+          "divorced_separated": 0.58,
+          "widowed": 0.43
+        },
+        "education": {
+          "secondary": 0.53,
+          "tertiary": 0.57,
+          "undergraduate": 0.57,
+          "postgraduate": 0.53,
+          "doctorate": 0.45
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Exceed my contribution",
+      "data": {
+        "region": {},
+        "age": {
+          "18-24": 0.07,
+          "25-34": 0.08,
+          "35-44": 0.09,
+          "45-54": 0.07,
+          "55-65": 0.04
+        },
+        "gender": {
+          "female": 0.07,
+          "male": 0.08
+        },
+        "org_size": {
+          "fewer_than_10": 0.05,
+          "10_to_49": 0.05,
+          "50_to_99": 0.06,
+          "100_to_249": 0.06,
+          "250_to_499": 0.06,
+          "500_to_999": 0.13,
+          "1000_or_more": 0.09
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.07,
+          "automotive": 0.06,
+          "business_administration_support_services": 0.06,
+          "clean_technology": 0.07,
+          "technology": 0.11,
+          "construction": 0.09,
+          "education": 0.06,
+          "energy_utilities": 0.07,
+          "financial_services": 0.08,
+          "food_drink": 0.06,
+          "government": 0.04,
+          "healthcare_life_sciences": 0.07,
+          "leisure_sport_entertainment_recreation": 0.03,
+          "manufacturing_industrial": 0.09,
+          "marketing_services": 0.1,
+          "media_entertainment": 0.09,
+          "not_for_profit": 0.07,
+          "real_estate_property_services": 0.05,
+          "retail": 0.08,
+          "sports": 0.11,
+          "telecommunications": 0.04,
+          "transport_storage": 0.07,
+          "travel_hospitality_leisure": 0.08,
+          "wholesale_distribution": 0.04,
+          "other": 0.08
+        },
+        "job_level": {
+          "ceo": 0.12,
+          "senior_executive": 0.12,
+          "senior_leader": 0.07,
+          "mid_level_leader": 0.06,
+          "first_level_supervisor": 0.08,
+          "individual_contributor": 0.04
+        },
+        "relationship_status": {
+          "single": 0.05,
+          "cohabiting": 0.04,
+          "married": 0.09,
+          "divorced_separated": 0.04,
+          "widowed": 0.12
+        },
+        "education": {
+          "secondary": 0.05,
+          "tertiary": 0.05,
+          "undergraduate": 0.06,
+          "postgraduate": 0.11,
+          "doctorate": 0.16
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

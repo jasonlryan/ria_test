@@ -1,0 +1,104 @@
+{
+  "question": "To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "My organization has cut back on the number of managers",
+      "data": {
+        "region": {
+          "country_overall": 0.44,
+          "united_states": 0.39,
+          "united_kingdom": 0.6,
+          "india": 0.38,
+          "france": 0.32,
+          "germany": 0.24,
+          "japan": 0.47,
+          "united_arab_emirates": 0.4,
+          "brazil": 0.46,
+          "saudi_arabia": 0.43,
+          "australia": 0.49
+        },
+        "age": {
+          "18-24": 0.46,
+          "25-34": 0.44,
+          "35-44": 0.39,
+          "45-54": 0.28,
+          "55-65": 0.26
+        },
+        "gender": {
+          "female": 0.45,
+          "male": 0.3
+        },
+        "org_size": {
+          "fewer_than_10": 0.35,
+          "10_to_49": 0.44,
+          "50_to_99": 0.46,
+          "100_to_249": 0.47,
+          "500_to_999": 0.39,
+          "1000_or_more": 0.43
+        },
+        "sector": {
+          "automotive": 0.46,
+          "business_administration_support_services": 0.53,
+          "technology": 0.44,
+          "construction": 0.5,
+          "consumer_goods": 0.37,
+          "education": 0.42,
+          "energy_utilities": 0.5,
+          "financial_services": 0.29,
+          "government": 0.35,
+          "healthcare_life_sciences": 0.36,
+          "manufacturing_industrial": 0.54,
+          "marketing_services": 0.29,
+          "not_for_profit": 0.3,
+          "legal_in-house": 0.37,
+          "legal_agency": 0.42,
+          "professional_services": 0.38,
+          "real_estate_property_services": 0.4,
+          "retail": 0.45,
+          "sales": 0.51,
+          "telecommunications": 0.34,
+          "transport_storage": 0.41,
+          "travel_hospitality_leisure": 0.32,
+          "wholesale_distribution": 0.34,
+          "other": 0.48
+        },
+        "job_level": {
+          "ceo": 0.53,
+          "senior_executive": 0.51,
+          "senior_leader": 0.42,
+          "mid_level_leader": 0.46,
+          "first_level_supervisor": 0.29,
+          "individual_contributor": 0.4
+        },
+        "relationship_status": {
+          "single": 0.34,
+          "cohabiting": 0.45,
+          "married": 0.32,
+          "divorced_separated": 0.26,
+          "widowed": 0.37
+        },
+        "education": {
+          "secondary": 0.37,
+          "tertiary": 0.32,
+          "professional_certifications": 0.42,
+          "undergraduate": 0.5,
+          "postgraduate": 0.41,
+          "doctorate": 0
+        },
+        "generation": {
+          "age_65_plus": 0.48,
+          "gen_z": 0.45,
+          "millennials": 0.37,
+          "gen_x": 0.27,
+          "baby_boomers": 0.37
+        },
+        "employment_status": {
+          "full-time": 0.35,
+          "part-time": 0.43,
+          "contract": 0.36,
+          "freelance": 0.51
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,698 @@
+{
+  "question": "To what extent do you agree with the following statements with regards to your workplace.",
+  "responses": [
+    {
+      "response": "I feel my company provides a variety of ways to communicate and connect with colleagues",
+      "data": {
+        "region": {
+          "country_overall": 0.73,
+          "united_states": 0.68,
+          "united_kingdom": 0.85,
+          "india": 0.61,
+          "france": 0.64,
+          "germany": 0.4,
+          "japan": 0.76,
+          "united_arab_emirates": 0.73,
+          "brazil": 0.79,
+          "saudi_arabia": 0.67,
+          "australia": 0.7
+        },
+        "age": {
+          "18-24": 0.73,
+          "25-34": 0.72,
+          "35-44": 0.65,
+          "45-54": 0.56,
+          "55-65": 0.6
+        },
+        "gender": {
+          "female": 0.7,
+          "male": 0.57
+        },
+        "org_size": {
+          "fewer_than_10": 0.61,
+          "10_to_49": 0.65,
+          "50_to_99": 0.7,
+          "100_to_249": 0.72,
+          "500_to_999": 0.68,
+          "1000_or_more": 0.7
+        },
+        "sector": {
+          "automotive": 0.72,
+          "business_administration_support_services": 0.84,
+          "technology": 0.73,
+          "construction": 0.68,
+          "consumer_goods": 0.68,
+          "education": 0.72,
+          "energy_utilities": 0.75,
+          "financial_services": 0.65,
+          "government": 0.63,
+          "healthcare_life_sciences": 0.67,
+          "manufacturing_industrial": 0.7,
+          "marketing_services": 0.73,
+          "not_for_profit": 0.64,
+          "legal_in-house": 0.7,
+          "legal_agency": 0.7,
+          "professional_services": 0.7,
+          "real_estate_property_services": 0.58,
+          "retail": 0.66,
+          "sales": 0.76,
+          "telecommunications": 0.58,
+          "transport_storage": 0.66,
+          "travel_hospitality_leisure": 0.59,
+          "wholesale_distribution": 0.6,
+          "other": 0.78
+        },
+        "job_level": {
+          "ceo": 0.83,
+          "senior_executive": 0.79,
+          "senior_leader": 0.7,
+          "mid_level_leader": 0.71,
+          "first_level_supervisor": 0.55,
+          "individual_contributor": 0.63
+        },
+        "relationship_status": {
+          "single": 0.64,
+          "cohabiting": 0.73,
+          "married": 0.57,
+          "divorced_separated": 0.66,
+          "widowed": 0.61
+        },
+        "education": {
+          "secondary": 0.59,
+          "tertiary": 0.62,
+          "professional_certifications": 0.7,
+          "undergraduate": 0.76,
+          "postgraduate": 0.78,
+          "doctorate": 0
+        },
+        "generation": {
+          "age_65_plus": 0.72,
+          "gen_z": 0.73,
+          "millennials": 0.64,
+          "gen_x": 0.56,
+          "baby_boomers": 0.67
+        },
+        "employment_status": {
+          "full-time": 0.6,
+          "part-time": 0.6,
+          "contract": 0.58,
+          "freelance": 0.7
+        }
+      }
+    },
+    {
+      "response": "I feel leaders in my company respect the needs of employees across generations",
+      "data": {
+        "region": {
+          "country_overall": 0.72,
+          "united_states": 0.62,
+          "united_kingdom": 0.86,
+          "india": 0.55,
+          "france": 0.61,
+          "germany": 0.41,
+          "japan": 0.79,
+          "united_arab_emirates": 0.71,
+          "brazil": 0.77,
+          "saudi_arabia": 0.64,
+          "australia": 0.68
+        },
+        "age": {
+          "18-24": 0.73,
+          "25-34": 0.69,
+          "35-44": 0.61,
+          "45-54": 0.53,
+          "55-65": 0.59
+        },
+        "gender": {
+          "female": 0.68,
+          "male": 0.62
+        },
+        "org_size": {
+          "fewer_than_10": 0.64,
+          "10_to_49": 0.63,
+          "50_to_99": 0.69,
+          "100_to_249": 0.7,
+          "500_to_999": 0.63,
+          "1000_or_more": 0.67
+        },
+        "sector": {
+          "automotive": 0.68,
+          "business_administration_support_services": 0.83,
+          "technology": 0.74,
+          "construction": 0.64,
+          "consumer_goods": 0.63,
+          "education": 0.7,
+          "energy_utilities": 0.7,
+          "financial_services": 0.58,
+          "government": 0.58,
+          "healthcare_life_sciences": 0.65,
+          "manufacturing_industrial": 0.71,
+          "marketing_services": 0.59,
+          "not_for_profit": 0.53,
+          "legal_in-house": 0.61,
+          "legal_agency": 0.62,
+          "professional_services": 0.69,
+          "real_estate_property_services": 0.59,
+          "retail": 0.68,
+          "sales": 0.68,
+          "telecommunications": 0.56,
+          "transport_storage": 0.64,
+          "travel_hospitality_leisure": 0.59,
+          "wholesale_distribution": 0.6,
+          "other": 0.79
+        },
+        "job_level": {
+          "ceo": 0.83,
+          "senior_executive": 0.76,
+          "senior_leader": 0.67,
+          "mid_level_leader": 0.68,
+          "first_level_supervisor": 0.53,
+          "individual_contributor": 0.61
+        },
+        "relationship_status": {
+          "single": 0.59,
+          "cohabiting": 0.71,
+          "married": 0.57,
+          "divorced_separated": 0.62,
+          "widowed": 0.62
+        },
+        "education": {
+          "secondary": 0.54,
+          "tertiary": 0.59,
+          "professional_certifications": 0.67,
+          "undergraduate": 0.74,
+          "postgraduate": 0.75,
+          "doctorate": 0
+        },
+        "generation": {
+          "age_65_plus": 0.7,
+          "gen_z": 0.71,
+          "millennials": 0.59,
+          "gen_x": 0.54,
+          "baby_boomers": 0.64
+        },
+        "employment_status": {
+          "full-time": 0.61,
+          "part-time": 0.58,
+          "contract": 0.59,
+          "freelance": 0.69
+        }
+      }
+    },
+    {
+      "response": "I feel my company provides adequate support for employee mental well-being",
+      "data": {
+        "region": {
+          "country_overall": 0.7,
+          "united_states": 0.66,
+          "united_kingdom": 0.82,
+          "india": 0.5,
+          "france": 0.55,
+          "germany": 0.35,
+          "japan": 0.73,
+          "united_arab_emirates": 0.68,
+          "brazil": 0.75,
+          "saudi_arabia": 0.65,
+          "australia": 0.64
+        },
+        "age": {
+          "18-24": 0.71,
+          "25-34": 0.67,
+          "35-44": 0.58,
+          "45-54": 0.5,
+          "55-65": 0.59
+        },
+        "gender": {
+          "female": 0.65,
+          "male": 0.57
+        },
+        "org_size": {
+          "fewer_than_10": 0.57,
+          "10_to_49": 0.61,
+          "50_to_99": 0.63,
+          "100_to_249": 0.67,
+          "500_to_999": 0.62,
+          "1000_or_more": 0.65
+        },
+        "sector": {
+          "automotive": 0.66,
+          "business_administration_support_services": 0.81,
+          "technology": 0.68,
+          "construction": 0.66,
+          "consumer_goods": 0.59,
+          "education": 0.66,
+          "energy_utilities": 0.68,
+          "financial_services": 0.58,
+          "government": 0.58,
+          "healthcare_life_sciences": 0.59,
+          "manufacturing_industrial": 0.66,
+          "marketing_services": 0.58,
+          "not_for_profit": 0.52,
+          "legal_in-house": 0.61,
+          "legal_agency": 0.54,
+          "professional_services": 0.59,
+          "real_estate_property_services": 0.59,
+          "retail": 0.61,
+          "sales": 0.68,
+          "telecommunications": 0.54,
+          "transport_storage": 0.57,
+          "travel_hospitality_leisure": 0.51,
+          "wholesale_distribution": 0.58,
+          "other": 0.77
+        },
+        "job_level": {
+          "ceo": 0.81,
+          "senior_executive": 0.74,
+          "senior_leader": 0.63,
+          "mid_level_leader": 0.65,
+          "first_level_supervisor": 0.51,
+          "individual_contributor": 0.57
+        },
+        "relationship_status": {
+          "single": 0.56,
+          "cohabiting": 0.7,
+          "married": 0.52,
+          "divorced_separated": 0.59,
+          "widowed": 0.6
+        },
+        "education": {
+          "secondary": 0.53,
+          "tertiary": 0.56,
+          "professional_certifications": 0.64,
+          "undergraduate": 0.72,
+          "postgraduate": 0.72,
+          "doctorate": 0
+        },
+        "generation": {
+          "age_65_plus": 0.67,
+          "gen_z": 0.69,
+          "millennials": 0.56,
+          "gen_x": 0.53,
+          "baby_boomers": 0.61
+        },
+        "employment_status": {
+          "full-time": 0.58,
+          "part-time": 0.53,
+          "contract": 0.53,
+          "freelance": 0.62
+        }
+      }
+    },
+    {
+      "response": "I have strong connections with my remote colleagues",
+      "data": {
+        "region": {
+          "country_overall": 0.62,
+          "united_states": 0.56,
+          "united_kingdom": 0.82,
+          "india": 0.53,
+          "france": 0.5,
+          "germany": 0.26,
+          "japan": 0.78,
+          "united_arab_emirates": 0.66,
+          "brazil": 0.8,
+          "saudi_arabia": 0.57,
+          "australia": 0.6
+        },
+        "age": {
+          "18-24": 0.67,
+          "25-34": 0.64,
+          "35-44": 0.54,
+          "45-54": 0.45,
+          "55-65": 0.42
+        },
+        "gender": {
+          "female": 0.62,
+          "male": 0.51
+        },
+        "org_size": {
+          "fewer_than_10": 0.51,
+          "10_to_49": 0.61,
+          "50_to_99": 0.62,
+          "100_to_249": 0.64,
+          "500_to_999": 0.56,
+          "1000_or_more": 0.62
+        },
+        "sector": {
+          "automotive": 0.65,
+          "business_administration_support_services": 0.78,
+          "technology": 0.64,
+          "construction": 0.61,
+          "consumer_goods": 0.55,
+          "education": 0.62,
+          "energy_utilities": 0.67,
+          "financial_services": 0.52,
+          "government": 0.52,
+          "healthcare_life_sciences": 0.57,
+          "manufacturing_industrial": 0.7,
+          "marketing_services": 0.53,
+          "not_for_profit": 0.63,
+          "legal_in-house": 0.58,
+          "legal_agency": 0.53,
+          "professional_services": 0.55,
+          "real_estate_property_services": 0.48,
+          "retail": 0.64,
+          "sales": 0.69,
+          "telecommunications": 0.53,
+          "transport_storage": 0.5,
+          "travel_hospitality_leisure": 0.5,
+          "wholesale_distribution": 0.52,
+          "other": 0.72
+        },
+        "job_level": {
+          "ceo": 0.77,
+          "senior_executive": 0.73,
+          "senior_leader": 0.62,
+          "mid_level_leader": 0.62,
+          "first_level_supervisor": 0.43,
+          "individual_contributor": 0.53
+        },
+        "relationship_status": {
+          "single": 0.51,
+          "cohabiting": 0.66,
+          "married": 0.46,
+          "divorced_separated": 0.5,
+          "widowed": 0.53
+        },
+        "education": {
+          "secondary": 0.49,
+          "tertiary": 0.5,
+          "professional_certifications": 0.61,
+          "undergraduate": 0.7,
+          "postgraduate": 0.68,
+          "doctorate": 0
+        },
+        "generation": {
+          "age_65_plus": 0.63,
+          "gen_z": 0.66,
+          "millennials": 0.52,
+          "gen_x": 0.43,
+          "baby_boomers": 0.57
+        },
+        "employment_status": {
+          "full-time": 0.48,
+          "part-time": 0.48,
+          "contract": 0.53,
+          "freelance": 0.6
+        }
+      }
+    },
+    {
+      "response": "I would stay at a job if it allowed me flexibility, even if I hated the role.",
+      "data": {
+        "region": {
+          "country_overall": 0.62,
+          "united_states": 0.55,
+          "united_kingdom": 0.75,
+          "india": 0.5,
+          "france": 0.47,
+          "germany": 0.51,
+          "japan": 0.69,
+          "united_arab_emirates": 0.58,
+          "brazil": 0.7,
+          "saudi_arabia": 0.56,
+          "australia": 0.62
+        },
+        "age": {
+          "18-24": 0.64,
+          "25-34": 0.62,
+          "35-44": 0.53,
+          "45-54": 0.42,
+          "55-65": 0.4
+        },
+        "gender": {
+          "female": 0.61,
+          "male": 0.49
+        },
+        "org_size": {
+          "fewer_than_10": 0.51,
+          "10_to_49": 0.61,
+          "50_to_99": 0.61,
+          "100_to_249": 0.62,
+          "500_to_999": 0.56,
+          "1000_or_more": 0.59
+        },
+        "sector": {
+          "automotive": 0.6,
+          "business_administration_support_services": 0.7,
+          "technology": 0.59,
+          "construction": 0.61,
+          "consumer_goods": 0.52,
+          "education": 0.58,
+          "energy_utilities": 0.65,
+          "financial_services": 0.53,
+          "government": 0.52,
+          "healthcare_life_sciences": 0.57,
+          "manufacturing_industrial": 0.62,
+          "marketing_services": 0.45,
+          "not_for_profit": 0.53,
+          "legal_in-house": 0.53,
+          "legal_agency": 0.49,
+          "professional_services": 0.55,
+          "real_estate_property_services": 0.54,
+          "retail": 0.66,
+          "sales": 0.61,
+          "telecommunications": 0.54,
+          "transport_storage": 0.51,
+          "travel_hospitality_leisure": 0.52,
+          "wholesale_distribution": 0.52,
+          "other": 0.66
+        },
+        "job_level": {
+          "ceo": 0.7,
+          "senior_executive": 0.66,
+          "senior_leader": 0.6,
+          "mid_level_leader": 0.59,
+          "first_level_supervisor": 0.47,
+          "individual_contributor": 0.56
+        },
+        "relationship_status": {
+          "single": 0.52,
+          "cohabiting": 0.62,
+          "married": 0.42,
+          "divorced_separated": 0.42,
+          "widowed": 0.54
+        },
+        "education": {
+          "secondary": 0.51,
+          "tertiary": 0.49,
+          "professional_certifications": 0.6,
+          "undergraduate": 0.65,
+          "postgraduate": 0.62,
+          "doctorate": 0
+        },
+        "generation": {
+          "age_65_plus": 0.63,
+          "gen_z": 0.63,
+          "millennials": 0.51,
+          "gen_x": 0.4,
+          "baby_boomers": 0.54
+        },
+        "employment_status": {
+          "full-time": 0.52,
+          "part-time": 0.59,
+          "contract": 0.54,
+          "freelance": 0.59
+        }
+      }
+    },
+    {
+      "response": "My organization has taken steps to reduce cultural gaps between different generations of workers",
+      "data": {
+        "region": {
+          "country_overall": 0.63,
+          "united_states": 0.58,
+          "united_kingdom": 0.8,
+          "india": 0.4,
+          "france": 0.51,
+          "germany": 0.34,
+          "japan": 0.72,
+          "united_arab_emirates": 0.6,
+          "brazil": 0.74,
+          "saudi_arabia": 0.59,
+          "australia": 0.63
+        },
+        "age": {
+          "18-24": 0.65,
+          "25-34": 0.63,
+          "35-44": 0.51,
+          "45-54": 0.42,
+          "55-65": 0.45
+        },
+        "gender": {
+          "female": 0.61,
+          "male": 0.47
+        },
+        "org_size": {
+          "fewer_than_10": 0.52,
+          "10_to_49": 0.58,
+          "50_to_99": 0.61,
+          "100_to_249": 0.62,
+          "500_to_999": 0.56,
+          "1000_or_more": 0.59
+        },
+        "sector": {
+          "automotive": 0.6,
+          "business_administration_support_services": 0.76,
+          "technology": 0.63,
+          "construction": 0.59,
+          "consumer_goods": 0.54,
+          "education": 0.58,
+          "energy_utilities": 0.63,
+          "financial_services": 0.48,
+          "government": 0.53,
+          "healthcare_life_sciences": 0.54,
+          "manufacturing_industrial": 0.64,
+          "marketing_services": 0.48,
+          "not_for_profit": 0.44,
+          "legal_in-house": 0.56,
+          "legal_agency": 0.51,
+          "professional_services": 0.54,
+          "real_estate_property_services": 0.53,
+          "retail": 0.55,
+          "sales": 0.64,
+          "telecommunications": 0.5,
+          "transport_storage": 0.55,
+          "travel_hospitality_leisure": 0.43,
+          "wholesale_distribution": 0.48,
+          "other": 0.72
+        },
+        "job_level": {
+          "ceo": 0.76,
+          "senior_executive": 0.7,
+          "senior_leader": 0.6,
+          "mid_level_leader": 0.6,
+          "first_level_supervisor": 0.43,
+          "individual_contributor": 0.53
+        },
+        "relationship_status": {
+          "single": 0.5,
+          "cohabiting": 0.64,
+          "married": 0.43,
+          "divorced_separated": 0.46,
+          "widowed": 0.52
+        },
+        "education": {
+          "secondary": 0.45,
+          "tertiary": 0.51,
+          "professional_certifications": 0.6,
+          "undergraduate": 0.67,
+          "postgraduate": 0.65,
+          "doctorate": 0
+        },
+        "generation": {
+          "age_65_plus": 0.64,
+          "gen_z": 0.64,
+          "millennials": 0.49,
+          "gen_x": 0.41,
+          "baby_boomers": 0.55
+        },
+        "employment_status": {
+          "full-time": 0.51,
+          "part-time": 0.53,
+          "contract": 0.49,
+          "freelance": 0.64
+        }
+      }
+    },
+    {
+      "response": "I feel I work better with people my own age",
+      "data": {
+        "region": {
+          "country_overall": 0.55,
+          "united_states": 0.45,
+          "united_kingdom": 0.82,
+          "india": 0.42,
+          "france": 0.53,
+          "germany": 0.37,
+          "japan": 0.7,
+          "united_arab_emirates": 0.5,
+          "brazil": 0.76,
+          "saudi_arabia": 0.51,
+          "australia": 0.66
+        },
+        "age": {
+          "18-24": 0.64,
+          "25-34": 0.56,
+          "35-44": 0.47,
+          "45-54": 0.36,
+          "55-65": 0.39
+        },
+        "gender": {
+          "female": 0.59,
+          "male": 0.41
+        },
+        "org_size": {
+          "fewer_than_10": 0.52,
+          "10_to_49": 0.57,
+          "50_to_99": 0.61,
+          "100_to_249": 0.6,
+          "500_to_999": 0.5,
+          "1000_or_more": 0.56
+        },
+        "sector": {
+          "automotive": 0.6,
+          "business_administration_support_services": 0.71,
+          "technology": 0.59,
+          "construction": 0.6,
+          "consumer_goods": 0.52,
+          "education": 0.48,
+          "energy_utilities": 0.61,
+          "financial_services": 0.42,
+          "government": 0.48,
+          "healthcare_life_sciences": 0.51,
+          "manufacturing_industrial": 0.66,
+          "marketing_services": 0.37,
+          "not_for_profit": 0.29,
+          "legal_in-house": 0.4,
+          "legal_agency": 0.53,
+          "professional_services": 0.52,
+          "real_estate_property_services": 0.5,
+          "retail": 0.56,
+          "sales": 0.61,
+          "telecommunications": 0.48,
+          "transport_storage": 0.5,
+          "travel_hospitality_leisure": 0.44,
+          "wholesale_distribution": 0.47,
+          "other": 0.65
+        },
+        "job_level": {
+          "ceo": 0.71,
+          "senior_executive": 0.65,
+          "senior_leader": 0.56,
+          "mid_level_leader": 0.56,
+          "first_level_supervisor": 0.41,
+          "individual_contributor": 0.53
+        },
+        "relationship_status": {
+          "single": 0.44,
+          "cohabiting": 0.59,
+          "married": 0.37,
+          "divorced_separated": 0.45,
+          "widowed": 0.48
+        },
+        "education": {
+          "secondary": 0.43,
+          "tertiary": 0.48,
+          "professional_certifications": 0.57,
+          "undergraduate": 0.63,
+          "postgraduate": 0.61,
+          "doctorate": 0
+        },
+        "generation": {
+          "age_65_plus": 0.67,
+          "gen_z": 0.6,
+          "millennials": 0.45,
+          "gen_x": 0.35,
+          "baby_boomers": 0.5
+        },
+        "employment_status": {
+          "full-time": 0.48,
+          "part-time": 0.49,
+          "contract": 0.46,
+          "freelance": 0.6
+        }
+      }
+    }
+  ]
+}

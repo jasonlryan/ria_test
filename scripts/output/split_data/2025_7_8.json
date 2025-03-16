@@ -1,0 +1,104 @@
+{
+  "question": "To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "I feel my company is using Return to Office policies and other rules to push me out",
+      "data": {
+        "region": {
+          "country_overall": 0.39,
+          "united_states": 0.3,
+          "united_kingdom": 0.61,
+          "india": 0.34,
+          "france": 0.33,
+          "germany": 0.22,
+          "japan": 0.5,
+          "united_arab_emirates": 0.33,
+          "brazil": 0.48,
+          "saudi_arabia": 0.34,
+          "australia": 0.46
+        },
+        "age": {
+          "18-24": 0.44,
+          "25-34": 0.41,
+          "35-44": 0.34,
+          "45-54": 0.21,
+          "55-65": 0.19
+        },
+        "gender": {
+          "female": 0.42,
+          "male": 0.27
+        },
+        "org_size": {
+          "fewer_than_10": 0.32,
+          "10_to_49": 0.47,
+          "50_to_99": 0.44,
+          "100_to_249": 0.46,
+          "500_to_999": 0.33,
+          "1000_or_more": 0.39
+        },
+        "sector": {
+          "automotive": 0.42,
+          "business_administration_support_services": 0.53,
+          "technology": 0.41,
+          "construction": 0.42,
+          "consumer_goods": 0.32,
+          "education": 0.32,
+          "energy_utilities": 0.46,
+          "financial_services": 0.27,
+          "government": 0.29,
+          "healthcare_life_sciences": 0.35,
+          "manufacturing_industrial": 0.49,
+          "marketing_services": 0.27,
+          "not_for_profit": 0.22,
+          "legal_in-house": 0.16,
+          "legal_agency": 0.38,
+          "professional_services": 0.39,
+          "real_estate_property_services": 0.31,
+          "retail": 0.43,
+          "sales": 0.48,
+          "telecommunications": 0.31,
+          "transport_storage": 0.31,
+          "travel_hospitality_leisure": 0.31,
+          "wholesale_distribution": 0.3,
+          "other": 0.49
+        },
+        "job_level": {
+          "ceo": 0.55,
+          "senior_executive": 0.48,
+          "senior_leader": 0.42,
+          "mid_level_leader": 0.39,
+          "first_level_supervisor": 0.23,
+          "individual_contributor": 0.37
+        },
+        "relationship_status": {
+          "single": 0.28,
+          "cohabiting": 0.42,
+          "married": 0.22,
+          "divorced_separated": 0.22,
+          "widowed": 0.3
+        },
+        "education": {
+          "secondary": 0.31,
+          "tertiary": 0.29,
+          "professional_certifications": 0.39,
+          "undergraduate": 0.47,
+          "postgraduate": 0.39,
+          "doctorate": 0
+        },
+        "generation": {
+          "age_65_plus": 0.47,
+          "gen_z": 0.42,
+          "millennials": 0.32,
+          "gen_x": 0.19,
+          "baby_boomers": 0.32
+        },
+        "employment_status": {
+          "full-time": 0.29,
+          "part-time": 0.38,
+          "contract": 0.31,
+          "freelance": 0.46
+        }
+      }
+    }
+  ]
+}

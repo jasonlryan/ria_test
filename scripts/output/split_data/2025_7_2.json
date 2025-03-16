@@ -1,0 +1,104 @@
+{
+  "question": "To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "I am worried about how to make my resume/ CV stand out in the competitive job market",
+      "data": {
+        "region": {
+          "country_overall": 0.53,
+          "united_states": 0.5,
+          "united_kingdom": 0.65,
+          "india": 0.43,
+          "france": 0.42,
+          "germany": 0.38,
+          "japan": 0.67,
+          "united_arab_emirates": 0.75,
+          "brazil": 0.63,
+          "saudi_arabia": 0.56,
+          "australia": 0.62
+        },
+        "age": {
+          "18-24": 0.6,
+          "25-34": 0.55,
+          "35-44": 0.49,
+          "45-54": 0.38,
+          "55-65": 0.32
+        },
+        "gender": {
+          "female": 0.53,
+          "male": 0.46
+        },
+        "org_size": {
+          "fewer_than_10": 0.5,
+          "10_to_49": 0.53,
+          "50_to_99": 0.56,
+          "100_to_249": 0.56,
+          "500_to_999": 0.51,
+          "1000_or_more": 0.53
+        },
+        "sector": {
+          "automotive": 0.6,
+          "business_administration_support_services": 0.63,
+          "technology": 0.53,
+          "construction": 0.61,
+          "consumer_goods": 0.52,
+          "education": 0.53,
+          "energy_utilities": 0.57,
+          "financial_services": 0.48,
+          "government": 0.47,
+          "healthcare_life_sciences": 0.47,
+          "manufacturing_industrial": 0.62,
+          "marketing_services": 0.53,
+          "not_for_profit": 0.29,
+          "legal_in-house": 0.53,
+          "legal_agency": 0.65,
+          "professional_services": 0.49,
+          "real_estate_property_services": 0.53,
+          "retail": 0.59,
+          "sales": 0.56,
+          "telecommunications": 0.4,
+          "transport_storage": 0.52,
+          "travel_hospitality_leisure": 0.45,
+          "wholesale_distribution": 0.48,
+          "other": 0.56
+        },
+        "job_level": {
+          "ceo": 0.61,
+          "senior_executive": 0.58,
+          "senior_leader": 0.54,
+          "mid_level_leader": 0.55,
+          "first_level_supervisor": 0.46,
+          "individual_contributor": 0.53
+        },
+        "relationship_status": {
+          "single": 0.47,
+          "cohabiting": 0.55,
+          "married": 0.42,
+          "divorced_separated": 0.38,
+          "widowed": 0.52
+        },
+        "education": {
+          "secondary": 0.51,
+          "tertiary": 0.45,
+          "professional_certifications": 0.56,
+          "undergraduate": 0.56,
+          "postgraduate": 0.51,
+          "doctorate": 0
+        },
+        "generation": {
+          "age_65_plus": 0.62,
+          "gen_z": 0.57,
+          "millennials": 0.47,
+          "gen_x": 0.34,
+          "baby_boomers": 0.53
+        },
+        "employment_status": {
+          "full-time": 0.51,
+          "part-time": 0.53,
+          "contract": 0.51,
+          "freelance": 0.56
+        }
+      }
+    }
+  ]
+}

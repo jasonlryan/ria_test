@@ -1,0 +1,104 @@
+{
+  "question": "To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "I feel that I am overlooked for leadership roles because of my age.",
+      "data": {
+        "region": {
+          "country_overall": 0.42,
+          "united_states": 0.32,
+          "united_kingdom": 0.58,
+          "india": 0.3,
+          "france": 0.32,
+          "germany": 0.23,
+          "japan": 0.44,
+          "united_arab_emirates": 0.38,
+          "brazil": 0.43,
+          "saudi_arabia": 0.39,
+          "australia": 0.52
+        },
+        "age": {
+          "18-24": 0.45,
+          "25-34": 0.37,
+          "35-44": 0.33,
+          "45-54": 0.28,
+          "55-65": 0.28
+        },
+        "gender": {
+          "female": 0.41,
+          "male": 0.3
+        },
+        "org_size": {
+          "fewer_than_10": 0.35,
+          "10_to_49": 0.47,
+          "50_to_99": 0.42,
+          "100_to_249": 0.44,
+          "500_to_999": 0.35,
+          "1000_or_more": 0.39
+        },
+        "sector": {
+          "automotive": 0.43,
+          "business_administration_support_services": 0.52,
+          "technology": 0.38,
+          "construction": 0.38,
+          "consumer_goods": 0.35,
+          "education": 0.35,
+          "energy_utilities": 0.42,
+          "financial_services": 0.28,
+          "government": 0.33,
+          "healthcare_life_sciences": 0.34,
+          "manufacturing_industrial": 0.51,
+          "marketing_services": 0.3,
+          "not_for_profit": 0.26,
+          "legal_in-house": 0.28,
+          "legal_agency": 0.36,
+          "professional_services": 0.33,
+          "real_estate_property_services": 0.37,
+          "retail": 0.43,
+          "sales": 0.43,
+          "telecommunications": 0.3,
+          "transport_storage": 0.35,
+          "travel_hospitality_leisure": 0.33,
+          "wholesale_distribution": 0.31,
+          "other": 0.44
+        },
+        "job_level": {
+          "ceo": 0.51,
+          "senior_executive": 0.45,
+          "senior_leader": 0.39,
+          "mid_level_leader": 0.4,
+          "first_level_supervisor": 0.28,
+          "individual_contributor": 0.39
+        },
+        "relationship_status": {
+          "single": 0.32,
+          "cohabiting": 0.41,
+          "married": 0.27,
+          "divorced_separated": 0.3,
+          "widowed": 0.34
+        },
+        "education": {
+          "secondary": 0.31,
+          "tertiary": 0.33,
+          "professional_certifications": 0.39,
+          "undergraduate": 0.45,
+          "postgraduate": 0.39,
+          "doctorate": 0
+        },
+        "generation": {
+          "age_65_plus": 0.51,
+          "gen_z": 0.4,
+          "millennials": 0.31,
+          "gen_x": 0.29,
+          "baby_boomers": 0.35
+        },
+        "employment_status": {
+          "full-time": 0.34,
+          "part-time": 0.42,
+          "contract": 0.37,
+          "freelance": 0.48
+        }
+      }
+    }
+  ]
+}
