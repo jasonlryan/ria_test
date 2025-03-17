@@ -5,12 +5,7 @@
         "lastUpdated": "2025-03-15"
     },
     "dataAccess": {
-        "2024": {
-            "filename": "global_2024_data.json"
-        },
-        "2025": {
-            "filename": "global_2025_data.json"
-        },
+        "basePath": "scripts/output/split_data/",
         "comparableMarkets": [
             "United Kingdom",
             "United States",
@@ -24,10 +19,113 @@
         "nonComparable": "For topics marked as non-comparable, retrieve data from only the available survey year(s) and include the appropriate user message explaining why year-on-year comparison is not available.",
         "singleYear": "For topics available in only one year, retrieve that data and include the user message noting the limitation."
     },
-    "questionExclusivity": {
-        "Q1": "Attraction_Factors",
-        "Q2": "Retention_Factors",
-        "Q3": "Attrition_Factors"
+    "allValidFiles": {
+        "2024": [
+            "2024_1.json",
+            "2024_2.json",
+            "2024_3.json",
+            "2024_4_1.json",
+            "2024_4_2.json",
+            "2024_4_3.json",
+            "2024_4_4.json",
+            "2024_4_5.json",
+            "2024_4_6.json",
+            "2024_4_7.json",
+            "2024_4_8.json",
+            "2024_4_9.json",
+            "2024_4_10.json",
+            "2024_4_11.json",
+            "2024_4_12.json",
+            "2024_4_13.json",
+            "2024_4_14.json",
+            "2024_4_15.json",
+            "2024_4_16.json",
+            "2024_4_17.json",
+            "2024_4_18.json",
+            "2024_5_1.json",
+            "2024_5_2.json",
+            "2024_5_3.json",
+            "2024_5_4.json",
+            "2024_5_5.json",
+            "2024_6_1.json",
+            "2024_6_2.json",
+            "2024_7.json",
+            "2024_8.json",
+            "2024_9.json",
+            "2024_10.json",
+            "2024_18_1.json",
+            "2024_18_2.json",
+            "2024_18_3.json",
+            "2024_18_4.json",
+            "2024_18_5.json",
+            "2024_18_6.json",
+            "2024_18_7.json",
+            "2024_18_8.json"
+        ],
+        "2025": [
+            "2025_1.json",
+            "2025_2.json",
+            "2025_3.json",
+            "2025_4.json",
+            "2025_5_1.json",
+            "2025_5_2.json",
+            "2025_5_3.json",
+            "2025_5_4.json",
+            "2025_5_5.json",
+            "2025_5_6.json",
+            "2025_5_7.json",
+            "2025_5_8.json",
+            "2025_6_1.json",
+            "2025_6_2.json",
+            "2025_6_3.json",
+            "2025_6_4.json",
+            "2025_6_5.json",
+            "2025_6_6.json",
+            "2025_6_7.json",
+            "2025_6_8.json",
+            "2025_7_1.json",
+            "2025_7_2.json",
+            "2025_7_3.json",
+            "2025_7_4.json",
+            "2025_7_5.json",
+            "2025_7_6.json",
+            "2025_7_7.json",
+            "2025_7_8.json",
+            "2025_8_1.json",
+            "2025_8_2.json",
+            "2025_8_3.json",
+            "2025_8_4.json",
+            "2025_8_5.json",
+            "2025_8_6.json",
+            "2025_8_7.json",
+            "2025_8_8.json",
+            "2025_8_9.json",
+            "2025_8_10.json",
+            "2025_8_11.json",
+            "2025_9_1.json",
+            "2025_9_2.json",
+            "2025_9_3.json",
+            "2025_9_4.json",
+            "2025_9_5.json",
+            "2025_9_6.json",
+            "2025_9_7.json",
+            "2025_9_8.json",
+            "2025_10.json",
+            "2025_11.json",
+            "2025_12.json",
+            "2025_13.json",
+            "2025_14.json",
+            "2025_15.json",
+            "2025_16.json",
+            "2025_17_1.json",
+            "2025_17_2.json",
+            "2025_17_3.json",
+            "2025_17_4.json",
+            "2025_17_5.json",
+            "2025_17_6.json",
+            "2025_17_7.json",
+            "2025_17_8.json"
+        ]
     },
     "themes": [
         {
@@ -38,8 +136,18 @@
                     "canonicalQuestion": "What are the most important factors when looking for a new job?",
                     "rationale": "Identify factors that drive candidates to consider a new job; essential for talent acquisition.",
                     "mapping": {
-                        "2024": "Q1",
-                        "2025": "Q1"
+                        "2024": [
+                            {
+                                "id": "Q1",
+                                "file": "2024_1.json"
+                            }
+                        ],
+                        "2025": [
+                            {
+                                "id": "Q1",
+                                "file": "2025_1.json"
+                            }
+                        ]
                     },
                     "comparable": false,
                     "availableMarkets": [],
@@ -55,8 +163,18 @@
                     "canonicalQuestion": "What factors would make you stay at your current company?",
                     "rationale": "Understand what keeps employees in their current roles for effective retention strategies.",
                     "mapping": {
-                        "2024": "Q2",
-                        "2025": "Q2"
+                        "2024": [
+                            {
+                                "id": "Q2",
+                                "file": "2024_2.json"
+                            }
+                        ],
+                        "2025": [
+                            {
+                                "id": "Q2",
+                                "file": "2025_2.json"
+                            }
+                        ]
                     },
                     "comparable": false,
                     "availableMarkets": [],
@@ -72,8 +190,18 @@
                     "canonicalQuestion": "What factors would make you leave your current company?",
                     "rationale": "Identify the key drivers that prompt employees to leave, to address turnover risks.",
                     "mapping": {
-                        "2024": "Q3",
-                        "2025": "Q3"
+                        "2024": [
+                            {
+                                "id": "Q3",
+                                "file": "2024_3.json"
+                            }
+                        ],
+                        "2025": [
+                            {
+                                "id": "Q3",
+                                "file": "2025_3.json"
+                            }
+                        ]
                     },
                     "comparable": false,
                     "availableMarkets": [],
@@ -90,14 +218,32 @@
                     "rationale": "Gauge near‑term turnover intent as a signal of attrition risk.",
                     "mapping": {
                         "2024": [
-                            "Q9",
-                            "Q4_8"
+                            {
+                                "id": "Q9",
+                                "file": "2024_9.json"
+                            },
+                            {
+                                "id": "Q4_8",
+                                "file": "2024_4_8.json"
+                            }
                         ],
                         "2025": [
-                            "Q12",
-                            "Q7_2",
-                            "Q7_4",
-                            "Q7_5"
+                            {
+                                "id": "Q12",
+                                "file": "2025_12.json"
+                            },
+                            {
+                                "id": "Q7_2",
+                                "file": "2025_7_2.json"
+                            },
+                            {
+                                "id": "Q7_4",
+                                "file": "2025_7_4.json"
+                            },
+                            {
+                                "id": "Q7_5",
+                                "file": "2025_7_5.json"
+                            }
                         ]
                     },
                     "comparable": true,
@@ -121,10 +267,21 @@
                     "canonicalQuestion": "What would your ideal role be?",
                     "rationale": "Determine employees' desired employment type, guiding future talent model design.",
                     "mapping": {
-                        "2024": "Q10",
+                        "2024": [
+                            {
+                                "id": "Q10",
+                                "file": "2024_10.json"
+                            }
+                        ],
                         "2025": [
-                            "Q10",
-                            "Q13"
+                            {
+                                "id": "Q10",
+                                "file": "2025_10.json"
+                            },
+                            {
+                                "id": "Q13",
+                                "file": "2025_13.json"
+                            }
                         ]
                     },
                     "comparable": true,
@@ -153,13 +310,28 @@
                     "rationale": "Capture flexible work preferences to understand work–life balance and location needs.",
                     "mapping": {
                         "2024": [
-                            "Q4_2",
-                            "Q4_5"
+                            {
+                                "id": "Q4_2",
+                                "file": "2024_4_2.json"
+                            },
+                            {
+                                "id": "Q4_5",
+                                "file": "2024_4_5.json"
+                            }
                         ],
                         "2025": [
-                            "Q6_6",
-                            "Q16",
-                            "Q7_8"
+                            {
+                                "id": "Q6_6",
+                                "file": "2025_6_6.json"
+                            },
+                            {
+                                "id": "Q16",
+                                "file": "2025_16.json"
+                            },
+                            {
+                                "id": "Q7_8",
+                                "file": "2025_7_8.json"
+                            }
                         ]
                     },
                     "comparable": false,
@@ -178,21 +350,60 @@
                     "rationale": "Assess employees' perceptions of their company's culture, values, and overall connectedness.",
                     "mapping": {
                         "2024": [
-                            "Q4_1",
-                            "Q4_3",
-                            "Q4_12",
-                            "Q4_13",
-                            "Q4_14",
-                            "Q4_15",
-                            "Q6_2",
-                            "Q18_8"
+                            {
+                                "id": "Q4_1",
+                                "file": "2024_4_1.json"
+                            },
+                            {
+                                "id": "Q4_3",
+                                "file": "2024_4_3.json"
+                            },
+                            {
+                                "id": "Q4_12",
+                                "file": "2024_4_12.json"
+                            },
+                            {
+                                "id": "Q4_13",
+                                "file": "2024_4_13.json"
+                            },
+                            {
+                                "id": "Q4_14",
+                                "file": "2024_4_14.json"
+                            },
+                            {
+                                "id": "Q4_15",
+                                "file": "2024_4_15.json"
+                            },
+                            {
+                                "id": "Q6_2",
+                                "file": "2024_6_2.json"
+                            },
+                            {
+                                "id": "Q18_8",
+                                "file": "2024_18_8.json"
+                            }
                         ],
                         "2025": [
-                            "Q7_1",
-                            "Q7_3",
-                            "Q9_4",
-                            "Q8_11",
-                            "Q17_8"
+                            {
+                                "id": "Q7_1",
+                                "file": "2025_7_1.json"
+                            },
+                            {
+                                "id": "Q7_3",
+                                "file": "2025_7_3.json"
+                            },
+                            {
+                                "id": "Q9_4",
+                                "file": "2025_9_4.json"
+                            },
+                            {
+                                "id": "Q8_11",
+                                "file": "2025_8_11.json"
+                            },
+                            {
+                                "id": "Q17_8",
+                                "file": "2025_17_8.json"
+                            }
                         ]
                     },
                     "comparable": false,
@@ -211,12 +422,24 @@
                     "rationale": "Evaluate overall employee wellbeing including comfort with personal disclosures.",
                     "mapping": {
                         "2024": [
-                            "Q5_3",
-                            "Q5_5"
+                            {
+                                "id": "Q5_3",
+                                "file": "2024_5_3.json"
+                            },
+                            {
+                                "id": "Q5_5",
+                                "file": "2024_5_5.json"
+                            }
                         ],
                         "2025": [
-                            "Q6_3",
-                            "Q9_3"
+                            {
+                                "id": "Q6_3",
+                                "file": "2025_6_3.json"
+                            },
+                            {
+                                "id": "Q9_3",
+                                "file": "2025_9_3.json"
+                            }
                         ]
                     },
                     "comparable": false,
@@ -235,14 +458,32 @@
                     "rationale": "Measure how well employees connect and communicate with peers, impacting engagement and collaboration.",
                     "mapping": {
                         "2024": [
-                            "Q5_1",
-                            "Q5_2",
-                            "Q5_4"
+                            {
+                                "id": "Q5_1",
+                                "file": "2024_5_1.json"
+                            },
+                            {
+                                "id": "Q5_2",
+                                "file": "2024_5_2.json"
+                            },
+                            {
+                                "id": "Q5_4",
+                                "file": "2024_5_4.json"
+                            }
                         ],
                         "2025": [
-                            "Q6_1",
-                            "Q6_4",
-                            "Q9_5"
+                            {
+                                "id": "Q6_1",
+                                "file": "2025_6_1.json"
+                            },
+                            {
+                                "id": "Q6_4",
+                                "file": "2025_6_4.json"
+                            },
+                            {
+                                "id": "Q9_5",
+                                "file": "2025_9_5.json"
+                            }
                         ]
                     },
                     "comparable": false,
@@ -261,15 +502,36 @@
                     "rationale": "Understand overall motivation, fulfillment, and engagement at work, key for workforce morale.",
                     "mapping": {
                         "2024": [
-                            "Q4_16",
-                            "Q18_1",
-                            "Q18_2",
-                            "Q18_3"
+                            {
+                                "id": "Q4_16",
+                                "file": "2024_4_16.json"
+                            },
+                            {
+                                "id": "Q18_1",
+                                "file": "2024_18_1.json"
+                            },
+                            {
+                                "id": "Q18_2",
+                                "file": "2024_18_2.json"
+                            },
+                            {
+                                "id": "Q18_3",
+                                "file": "2024_18_3.json"
+                            }
                         ],
                         "2025": [
-                            "Q17_1",
-                            "Q17_4",
-                            "Q17_6"
+                            {
+                                "id": "Q17_1",
+                                "file": "2025_17_1.json"
+                            },
+                            {
+                                "id": "Q17_4",
+                                "file": "2025_17_4.json"
+                            },
+                            {
+                                "id": "Q17_6",
+                                "file": "2025_17_6.json"
+                            }
                         ]
                     },
                     "comparable": false,
@@ -293,13 +555,28 @@
                     "rationale": "Assess access to and quality of learning and development opportunities.",
                     "mapping": {
                         "2024": [
-                            "Q4_6",
-                            "Q4_7",
-                            "Q18_5"
+                            {
+                                "id": "Q4_6",
+                                "file": "2024_4_6.json"
+                            },
+                            {
+                                "id": "Q4_7",
+                                "file": "2024_4_7.json"
+                            },
+                            {
+                                "id": "Q18_5",
+                                "file": "2024_18_5.json"
+                            }
                         ],
                         "2025": [
-                            "Q5_1",
-                            "Q17_3"
+                            {
+                                "id": "Q5_1",
+                                "file": "2025_5_1.json"
+                            },
+                            {
+                                "id": "Q17_3",
+                                "file": "2025_17_3.json"
+                            }
                         ]
                     },
                     "comparable": false,
@@ -318,15 +595,36 @@
                     "rationale": "Evaluate how effectively employees utilize their skills on the job.",
                     "mapping": {
                         "2024": [
-                            "Q18_4",
-                            "Q4_17",
-                            "Q4_18"
+                            {
+                                "id": "Q18_4",
+                                "file": "2024_18_4.json"
+                            },
+                            {
+                                "id": "Q4_17",
+                                "file": "2024_4_17.json"
+                            },
+                            {
+                                "id": "Q4_18",
+                                "file": "2024_4_18.json"
+                            }
                         ],
                         "2025": [
-                            "Q17_2",
-                            "Q8_3",
-                            "Q8_5",
-                            "Q8_10"
+                            {
+                                "id": "Q17_2",
+                                "file": "2025_17_2.json"
+                            },
+                            {
+                                "id": "Q8_3",
+                                "file": "2025_8_3.json"
+                            },
+                            {
+                                "id": "Q8_5",
+                                "file": "2025_8_5.json"
+                            },
+                            {
+                                "id": "Q8_10",
+                                "file": "2025_8_10.json"
+                            }
                         ]
                     },
                     "comparable": true,
@@ -351,18 +649,48 @@
                     "rationale": "Capture employee attitudes toward AI—including excitement, perceived value, and fears of replacement—to gauge AI readiness.",
                     "mapping": {
                         "2024": [
-                            "Q4_9",
-                            "Q4_10",
-                            "Q4_11"
+                            {
+                                "id": "Q4_9",
+                                "file": "2024_4_9.json"
+                            },
+                            {
+                                "id": "Q4_10",
+                                "file": "2024_4_10.json"
+                            },
+                            {
+                                "id": "Q4_11",
+                                "file": "2024_4_11.json"
+                            }
                         ],
                         "2025": [
-                            "Q5_2",
-                            "Q5_3",
-                            "Q5_4",
-                            "Q5_5",
-                            "Q5_6",
-                            "Q5_7",
-                            "Q5_8"
+                            {
+                                "id": "Q5_2",
+                                "file": "2025_5_2.json"
+                            },
+                            {
+                                "id": "Q5_3",
+                                "file": "2025_5_3.json"
+                            },
+                            {
+                                "id": "Q5_4",
+                                "file": "2025_5_4.json"
+                            },
+                            {
+                                "id": "Q5_5",
+                                "file": "2025_5_5.json"
+                            },
+                            {
+                                "id": "Q5_6",
+                                "file": "2025_5_6.json"
+                            },
+                            {
+                                "id": "Q5_7",
+                                "file": "2025_5_7.json"
+                            },
+                            {
+                                "id": "Q5_8",
+                                "file": "2025_5_8.json"
+                            }
                         ]
                     },
                     "comparable": false,
@@ -386,14 +714,32 @@
                     "rationale": "Gauge overall confidence in senior leadership; vital for strategic decision‑making.",
                     "mapping": {
                         "2024": [
-                            "Q7",
-                            "Q18_6"
+                            {
+                                "id": "Q7",
+                                "file": "2024_7.json"
+                            },
+                            {
+                                "id": "Q18_6",
+                                "file": "2024_18_6.json"
+                            }
                         ],
                         "2025": [
-                            "Q7_6",
-                            "Q8_1",
-                            "Q8_2",
-                            "Q17_7"
+                            {
+                                "id": "Q7_6",
+                                "file": "2025_7_6.json"
+                            },
+                            {
+                                "id": "Q8_1",
+                                "file": "2025_8_1.json"
+                            },
+                            {
+                                "id": "Q8_2",
+                                "file": "2025_8_2.json"
+                            },
+                            {
+                                "id": "Q17_7",
+                                "file": "2025_17_7.json"
+                            }
                         ]
                     },
                     "comparable": false,
@@ -411,8 +757,18 @@
                     "canonicalQuestion": "How effectively does your organization adapt to change?",
                     "rationale": "Evaluate how effectively the organization adapts to external changes (e.g. market or regulatory shifts).",
                     "mapping": {
-                        "2024": "Q18_7",
-                        "2025": "Q17_5"
+                        "2024": [
+                            {
+                                "id": "Q18_7",
+                                "file": "2024_18_7.json"
+                            }
+                        ],
+                        "2025": [
+                            {
+                                "id": "Q17_5",
+                                "file": "2025_17_5.json"
+                            }
+                        ]
                     },
                     "comparable": true,
                     "availableMarkets": [
@@ -436,10 +792,22 @@
                     "rationale": "Assess direct manager effectiveness; available only in 2025.",
                     "mapping": {
                         "2025": [
-                            "Q9_1",
-                            "Q9_6",
-                            "Q9_7",
-                            "Q9_8"
+                            {
+                                "id": "Q9_1",
+                                "file": "2025_9_1.json"
+                            },
+                            {
+                                "id": "Q9_6",
+                                "file": "2025_9_6.json"
+                            },
+                            {
+                                "id": "Q9_7",
+                                "file": "2025_9_7.json"
+                            },
+                            {
+                                "id": "Q9_8",
+                                "file": "2025_9_8.json"
+                            }
                         ]
                     },
                     "comparable": false,
@@ -463,13 +831,34 @@
                     "rationale": "Identify challenges arising from generational differences—new emphasis in 2025 for intergenerational collaboration.",
                     "mapping": {
                         "2025": [
-                            "Q6_2",
-                            "Q6_7",
-                            "Q6_8",
-                            "Q8_4",
-                            "Q8_6",
-                            "Q14",
-                            "Q15"
+                            {
+                                "id": "Q6_2",
+                                "file": "2025_6_2.json"
+                            },
+                            {
+                                "id": "Q6_7",
+                                "file": "2025_6_7.json"
+                            },
+                            {
+                                "id": "Q6_8",
+                                "file": "2025_6_8.json"
+                            },
+                            {
+                                "id": "Q8_4",
+                                "file": "2025_8_4.json"
+                            },
+                            {
+                                "id": "Q8_6",
+                                "file": "2025_8_6.json"
+                            },
+                            {
+                                "id": "Q14",
+                                "file": "2025_14.json"
+                            },
+                            {
+                                "id": "Q15",
+                                "file": "2025_15.json"
+                            }
                         ]
                     },
                     "comparable": false,
@@ -487,12 +876,29 @@
                     "canonicalQuestion": "How committed is your organization to diversity, equity, and inclusion?",
                     "rationale": "Evaluate the organization's commitment to DEI (diversity, equity, inclusion) initiatives.",
                     "mapping": {
-                        "2024": "Q6_1",
+                        "2024": [
+                            {
+                                "id": "Q6_1",
+                                "file": "2024_6_1.json"
+                            }
+                        ],
                         "2025": [
-                            "Q7_7",
-                            "Q8_7",
-                            "Q8_8",
-                            "Q8_9"
+                            {
+                                "id": "Q7_7",
+                                "file": "2025_7_7.json"
+                            },
+                            {
+                                "id": "Q8_7",
+                                "file": "2025_8_7.json"
+                            },
+                            {
+                                "id": "Q8_8",
+                                "file": "2025_8_8.json"
+                            },
+                            {
+                                "id": "Q8_9",
+                                "file": "2025_8_9.json"
+                            }
                         ]
                     },
                     "comparable": false,
@@ -516,12 +922,24 @@
                     "rationale": "Determine whether employees perceive their compensation as fair relative to their contribution.",
                     "mapping": {
                         "2024": [
-                            "Q8",
-                            "Q4_4"
+                            {
+                                "id": "Q8",
+                                "file": "2024_8.json"
+                            },
+                            {
+                                "id": "Q4_4",
+                                "file": "2024_4_4.json"
+                            }
                         ],
                         "2025": [
-                            "Q11",
-                            "Q6_5"
+                            {
+                                "id": "Q11",
+                                "file": "2025_11.json"
+                            },
+                            {
+                                "id": "Q6_5",
+                                "file": "2025_6_5.json"
+                            }
                         ]
                     },
                     "comparable": true,
@@ -550,7 +968,12 @@
                     "canonicalQuestion": "What is your current and preferred work location?",
                     "rationale": "Compare current versus ideal work location preferences.",
                     "mapping": {
-                        "2025": "Q4"
+                        "2025": [
+                            {
+                                "id": "Q4",
+                                "file": "2025_4.json"
+                            }
+                        ]
                     },
                     "comparable": false,
                     "availableMarkets": [],
