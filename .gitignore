@@ -8,3 +8,14 @@ node_modules
 # macOS system files
 .DS_Store
 **/.DS_Store
+
+# Data directories with intermediate and backup files
+/2025_DATA/
+/2025_DATA/**
+/scripts/data/
+/scripts/data/**
+
+# Backup files
+*.bak
+*.backup
+*.csv
