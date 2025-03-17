@@ -19,6 +19,114 @@
         "nonComparable": "For topics marked as non-comparable, retrieve data from only the available survey year(s) and include the appropriate user message explaining why year-on-year comparison is not available.",
         "singleYear": "For topics available in only one year, retrieve that data and include the user message noting the limitation."
     },
+    "allValidFiles": {
+        "2024": [
+            "2024_1.json",
+            "2024_2.json",
+            "2024_3.json",
+            "2024_4_1.json",
+            "2024_4_2.json",
+            "2024_4_3.json",
+            "2024_4_4.json",
+            "2024_4_5.json",
+            "2024_4_6.json",
+            "2024_4_7.json",
+            "2024_4_8.json",
+            "2024_4_9.json",
+            "2024_4_10.json",
+            "2024_4_11.json",
+            "2024_4_12.json",
+            "2024_4_13.json",
+            "2024_4_14.json",
+            "2024_4_15.json",
+            "2024_4_16.json",
+            "2024_4_17.json",
+            "2024_4_18.json",
+            "2024_5_1.json",
+            "2024_5_2.json",
+            "2024_5_3.json",
+            "2024_5_4.json",
+            "2024_5_5.json",
+            "2024_6_1.json",
+            "2024_6_2.json",
+            "2024_7.json",
+            "2024_8.json",
+            "2024_9.json",
+            "2024_10.json",
+            "2024_18_1.json",
+            "2024_18_2.json",
+            "2024_18_3.json",
+            "2024_18_4.json",
+            "2024_18_5.json",
+            "2024_18_6.json",
+            "2024_18_7.json",
+            "2024_18_8.json"
+        ],
+        "2025": [
+            "2025_1.json",
+            "2025_2.json",
+            "2025_3.json",
+            "2025_4.json",
+            "2025_5_1.json",
+            "2025_5_2.json",
+            "2025_5_3.json",
+            "2025_5_4.json",
+            "2025_5_5.json",
+            "2025_5_6.json",
+            "2025_5_7.json",
+            "2025_5_8.json",
+            "2025_6_1.json",
+            "2025_6_2.json",
+            "2025_6_3.json",
+            "2025_6_4.json",
+            "2025_6_5.json",
+            "2025_6_6.json",
+            "2025_6_7.json",
+            "2025_6_8.json",
+            "2025_7_1.json",
+            "2025_7_2.json",
+            "2025_7_3.json",
+            "2025_7_4.json",
+            "2025_7_5.json",
+            "2025_7_6.json",
+            "2025_7_7.json",
+            "2025_7_8.json",
+            "2025_8_1.json",
+            "2025_8_2.json",
+            "2025_8_3.json",
+            "2025_8_4.json",
+            "2025_8_5.json",
+            "2025_8_6.json",
+            "2025_8_7.json",
+            "2025_8_8.json",
+            "2025_8_9.json",
+            "2025_8_10.json",
+            "2025_8_11.json",
+            "2025_9_1.json",
+            "2025_9_2.json",
+            "2025_9_3.json",
+            "2025_9_4.json",
+            "2025_9_5.json",
+            "2025_9_6.json",
+            "2025_9_7.json",
+            "2025_9_8.json",
+            "2025_10.json",
+            "2025_11.json",
+            "2025_12.json",
+            "2025_13.json",
+            "2025_14.json",
+            "2025_15.json",
+            "2025_16.json",
+            "2025_17_1.json",
+            "2025_17_2.json",
+            "2025_17_3.json",
+            "2025_17_4.json",
+            "2025_17_5.json",
+            "2025_17_6.json",
+            "2025_17_7.json",
+            "2025_17_8.json"
+        ]
+    },
     "themes": [
         {
             "name": "Talent Attraction & Retention",
@@ -536,7 +644,7 @@
                     ]
                 },
                 {
-                    "id": "AI_Readiness_and_Attitudes",
+                    "id": "AI_Attitudes",
                     "canonicalQuestion": "What are your attitudes toward AI in the workplace?",
                     "rationale": "Capture employee attitudes toward AI—including excitement, perceived value, and fears of replacement—to gauge AI readiness.",
                     "mapping": {
@@ -564,6 +672,39 @@
                                 "file": "2025_5_3.json"
                             },
                             {
+                                "id": "Q5_8",
+                                "file": "2025_5_8.json"
+                            }
+                        ]
+                    },
+                    "comparable": true,
+                    "availableMarkets": [
+                        "United Kingdom",
+                        "United States",
+                        "Australia",
+                        "India",
+                        "Brazil"
+                    ],
+                    "userMessage": "Data based on comparable markets only.",
+                    "alternatePhrasings": [
+                        "AI attitudes",
+                        "AI perception",
+                        "excitement about AI",
+                        "role impact of AI",
+                        "emerging technology sentiment",
+                        "optimism regarding AI",
+                        "AI value",
+                        "AI influence"
+                    ]
+                },
+                {
+                    "id": "AI_Readiness",
+                    "canonicalQuestion": "How ready are you to adopt and use AI in your role?",
+                    "rationale": "Assess the readiness and training for AI use among employees; new questions in 2025 lack a 2024 counterpart.",
+                    "mapping": {
+                        "2024": [],
+                        "2025": [
+                            {
                                 "id": "Q5_4",
                                 "file": "2025_5_4.json"
                             },
@@ -578,21 +719,23 @@
                             {
                                 "id": "Q5_7",
                                 "file": "2025_5_7.json"
-                            },
-                            {
-                                "id": "Q5_8",
-                                "file": "2025_5_8.json"
                             }
                         ]
                     },
                     "comparable": false,
                     "availableMarkets": [],
-                    "userMessage": "Compare with caution due to expanded question set in 2025.",
+                    "userMessage": "Year‑on‑year comparisons not available due to new question additions in 2025.",
                     "alternatePhrasings": [
-                        "technology adoption",
-                        "AI perception",
-                        "digital transformation readiness",
-                        "emerging tech attitudes"
+                        "AI readiness",
+                        "AI training",
+                        "effective use of AI",
+                        "AI adoption",
+                        "AI competence",
+                        "proficiency with AI",
+                        "AI tool training",
+                        "AI integration",
+                        "readiness for AI",
+                        "experimentation with AI"
                     ]
                 }
             ]
