@@ -1,23 +1,31 @@
 {
   "metadata": {
-    "topicId": "Culture_and_Values",
+    "topicId": "DEI",
     "questionId": "Q8_9",
     "year": 2025,
     "keywords": [
-      "organizational culture",
-      "company values",
-      "employee feedback",
-      "workplace reviews",
-      "negative feedback",
-      "social media"
+      "diversity",
+      "equity",
+      "inclusion",
+      "DEI",
+      "commitment",
+      "workplace diversity"
     ],
-    "canonicalQuestion": "How important are company culture and values to your work experience?",
-    "comparable": false,
-    "userMessage": "Compare with caution due to differences in question framing between years.",
-    "availableMarkets": [],
+    "canonicalQuestion": "How committed is your organization to diversity, equity, and inclusion?",
+    "subQuestion": "I share negative reviews about my employer on social media or review sites (such as Glassdoor)",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
     "relatedTopics": [
-      "Employee_Wellbeing",
-      "Leadership_Confidence"
+      "Intergenerational_Collaboration",
+      "Culture_and_Values",
+      "Employee_Wellbeing"
     ],
     "dataStructure": {
       "questionField": "question",

@@ -1,4 +1,47 @@
 {
+  "metadata": {
+    "topicId": "Employee_Wellbeing",
+    "questionId": "Q5_3",
+    "year": 2024,
+    "keywords": [
+      "health support",
+      "wellbeing initiatives",
+      "work-life support",
+      "mental health",
+      "Employee_Wellbeing"
+    ],
+    "canonicalQuestion": "How supported do you feel in terms of wellbeing at work?",
+    "subQuestion": "Agree",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [
+      "Work_Life_Flexibility",
+      "Culture_and_Values",
+      "Communication_and_Connection"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
   "question": "5_3. If a problem in my personal life is affecting my work/performance, I feel comfortable telling my manager about it",
   "responses": [
     {

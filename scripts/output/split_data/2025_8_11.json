@@ -1,23 +1,25 @@
 {
   "metadata": {
-    "topicId": "DEI",
+    "topicId": "Culture_and_Values",
     "questionId": "Q8_11",
     "year": 2025,
     "keywords": [
-      "diversity initiatives",
-      "equity programs",
-      "inclusion efforts",
-      "workplace diversity",
-      "racial discrimination",
-      "career advancement"
+      "organizational culture",
+      "company values",
+      "workplace ethos",
+      "cultural fit",
+      "people decisions",
+      "sensitivity in management"
     ],
-    "canonicalQuestion": "How committed is your organization to diversity, equity, and inclusion?",
+    "canonicalQuestion": "How important are company culture and values to your work experience?",
+    "subQuestion": "I feel that I am overlooked for promotions, pay rises, or leadership training because of my race",
     "comparable": false,
-    "userMessage": "Compare with caution due to expanded question set in 2025.",
+    "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
     "relatedTopics": [
-      "Culture_and_Values",
-      "Leadership_Confidence"
+      "Work_Life_Flexibility",
+      "Employee_Wellbeing",
+      "Communication_and_Connection"
     ],
     "dataStructure": {
       "questionField": "question",

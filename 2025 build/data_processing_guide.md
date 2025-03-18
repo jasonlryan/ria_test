@@ -12,14 +12,14 @@ graph TD
     D --> E[harmonized/global_YYYY_harmonized.json]
     E --> F[split_to_files.js]
     F --> G[split_data/YYYY_QX.json files]
-    G --> H[add_metadata.js*]
+    G --> H[add_metadata.js]
     H --> I[Complete split_data/YYYY_QX.json files with metadata]
 
-    style H fill:#f96,stroke:#333,stroke-width:2px
+    style H fill:#9f6,stroke:#333,stroke-width:2px
     style I fill:#9f6,stroke:#333,stroke-width:2px
 ```
 
-\*Currently done manually, needs to be automated in the future
+\*Now automated with add_metadata.js script
 
 ## Step 1: Process Raw CSV Files to Global JSON
 
@@ -124,9 +124,9 @@ node scripts/split_to_files.js
 - `scripts/output/split_data/2025_Q1.json`, `2025_Q2.json`, etc.
 - Sub-question files like `2025_7_1.json`, `2025_7_2.json`, etc.
 
-## Step 4: Add Metadata to Question Files (Currently Manual)
+## Step 4: Add Metadata to Question Files (Now Automated)
 
-After splitting the data files, we need to add structured metadata to each question file to enable proper querying, categorization, and display in the frontend.
+After splitting the data files, we now use the `add_metadata.js` script to automatically add structured metadata to each question file to enable proper querying, categorization, and display in the frontend.
 
 ### Input
 
@@ -135,45 +135,87 @@ After splitting the data files, we need to add structured metadata to each quest
 
 ### Process
 
-Currently, this process is done **manually** for each file:
+We use the `add_metadata.js` script to:
 
-1. Identify the topic for each question using the canonical_topic_mapping.json file
-2. Create a metadata section with standardized fields:
+1. Parse the file names to identify the year and question ID
+2. Find the matching topic for each question using the canonical_topic_mapping.json file
+3. Generate metadata for each file with the following fields:
+   - **topicId**: The canonical topic (e.g., "Manager_Capability")
+   - **questionId**: The question identifier (e.g., "Q9_1")
+   - **year**: The survey year (e.g., 2025)
+   - **keywords**: Generated from the `alternatePhrasings` in the canonical mapping
+   - **canonicalQuestion**: The standardized question text from the topic mapping
+   - **comparable**: Boolean indicating if year-over-year comparison is possible
+   - **userMessage**: Guidance for data interpretation
+   - **availableMarkets**: List of markets for which data is available (for comparable topics)
+   - **relatedTopics**: Other topics related to this question
+   - **dataStructure**: Standardized description of the JSON structure
+4. Add the metadata to each question file
+5. Handle special cases like:
+   - Questions Q1, Q2, and Q3 that must always be non-comparable
+   - Leadership_Confidence that must always be comparable with specific markets
 
-   - topicId: The canonical topic (e.g., "Manager_Capability")
-   - questionId: The question identifier (e.g., "Q9_1")
-   - year: The survey year (e.g., 2025)
-   - keywords: Relevant keywords for search/classification
-   - canonicalQuestion: The standardized question text from the topic mapping
-   - comparable: Boolean indicating if year-over-year comparison is possible
-   - userMessage: Guidance for data interpretation
-   - availableMarkets: List of markets for which data is available
-   - relatedTopics: Other topics related to this question
-   - dataStructure: Standardized description of the JSON structure
+### Keyword Generation
 
-3. Add this metadata to the top of each question file
+The script generates high-quality keywords for each file using the following approach:
 
-### Example of Metadata Structure
+1. First, it uses the `alternatePhrasings` from the canonical mapping file, which contain carefully crafted, topic-specific keyword phrases
+2. It adds the topic ID as a keyword
+3. For specific topics, it adds additional topic-specific keywords from a predefined list
+4. If no alternatePhrasings are found in the canonical mapping, it falls back to programmatically generating keywords from the topic ID and canonical question
+
+This approach ensures consistent, high-quality keywords across all files, which is crucial for search functionality and topic classification.
+
+### Command
+
+```bash
+# Process all files
+node scripts/add_metadata.js
+
+# Process files for a specific year
+node scripts/add_metadata.js --year=2024
+
+# Force overwrite existing metadata
+node scripts/add_metadata.js --force
+
+# Verify canonical mapping without processing files
+node scripts/add_metadata.js --verify-only
+```
+
+### Output
+
+- Updated `scripts/output/split_data/YYYY_QX.json` files with complete metadata sections
+
+### Example of Generated Metadata
 
 ```json
 {
   "metadata": {
-    "topicId": "Manager_Capability",
-    "questionId": "Q9_1",
+    "topicId": "AI_Readiness",
+    "questionId": "Q5_4",
     "year": 2025,
     "keywords": [
-      "manager effectiveness",
-      "employee empowerment",
-      "supervisor support",
-      "leadership quality",
-      "management style",
-      "direct manager relationships"
+      "AI readiness",
+      "AI training",
+      "effective use of AI",
+      "AI adoption",
+      "AI competence",
+      "proficiency with AI",
+      "AI tool training",
+      "AI integration",
+      "readiness for AI",
+      "experimentation with AI"
     ],
-    "canonicalQuestion": "How effective is your direct manager?",
+    "canonicalQuestion": "How ready are you to adopt and use AI in your role?",
+    "subQuestion": "I think using AI in my role will bolster my value in the next three years",
     "comparable": false,
-    "userMessage": "New in 2025; no year‑on‑year comparison.",
+    "userMessage": "Year‑on‑year comparisons not available due to new question additions in 2025.",
     "availableMarkets": [],
-    "relatedTopics": ["Leadership_Confidence", "Employee_Wellbeing"],
+    "relatedTopics": [
+      "Learning_and_Development",
+      "Skills_Utilization",
+      "AI_Attitudes"
+    ],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -193,24 +235,11 @@ Currently, this process is done **manually** for each file:
       ],
       "primaryMetric": "country_overall",
       "valueFormat": "decimal",
-      "sortOrder": "desc"
+      "sortOrder": "descending"
     }
-  },
-  "question": "To what extent do you agree with the following statements.",
-  "responses": [
-    // response data...
-  ]
+  }
 }
 ```
-
-### Future Automation Need
-
-**This manual process needs to be automated.** A new script (e.g., `add_metadata.js`) should be developed to:
-
-1. Read the canonical_topic_mapping.json to identify topics for each question
-2. Generate appropriate metadata for each question file based on its ID and topic
-3. Update the split JSON files with this metadata
-4. Add consistency checks to ensure metadata aligns with file content
 
 ## The Importance of Canonical Topic Mapping
 
@@ -287,12 +316,7 @@ This is crucial for proper topic mapping as defined in the canonical_topic_mappi
 
 1. **Process_single_question.js Update**: The `process_single_question.js` script needs to be updated to include the harmonization step directly, integrating the functionality of `data_harmonizer.js`.
 
-2. **Metadata Automation**: Develop a new script or extend `split_to_files.js` to automatically add metadata to each output file based on the canonical_topic_mapping.json. This should:
-
-   - Extract topic information for each question ID
-   - Generate appropriate keywords based on topic and question content
-   - Add standardized metadata structure to each file
-   - Ensure consistency between metadata and file content
+2. **Related Topics Generation Enhancement**: Improve the algorithm for generating related topics by using more sophisticated content analysis and similarity metrics.
 
 3. **Automated Workflow**: Create a single command or script that runs the entire process from CSV to complete metadata-enriched split files.
 
@@ -300,142 +324,53 @@ This is crucial for proper topic mapping as defined in the canonical_topic_mappi
 
 5. **Canonical Mapping Maintenance**: Create tools to help maintain and update the canonical mapping when new questions are added or classifications change.
 
-### Proposed Metadata Generation Script
+6. **Keyword Expansion**: Develop more advanced keyword generation algorithms that can extract relevant terms from response data.
 
-A basic outline for the metadata automation script:
+### Implementation of add_metadata.js
 
-```javascript
-// metadata_generator.js
-const fs = require("fs");
-const path = require("path");
+The implementation of `add_metadata.js` includes several key features:
 
-// Load canonical topic mapping
-const canonicalMapping = JSON.parse(
-  fs.readFileSync(
-    "./scripts/reference files/canonical_topic_mapping.json",
-    "utf8"
-  )
-);
+- **Topic Matching Logic**: Uses multiple approaches to match questions to topics
 
-// Get all split data files
-const dataDir = "./scripts/output/split_data/";
-const files = fs
-  .readdirSync(dataDir)
-  .filter((file) => file.match(/^\d{4}_\d+(_\d+)?\.json$/));
+  - Exact file name matching
+  - Question ID format variations (with/without "Q" prefix, with/without underscore)
+  - Pattern matching on file names
+  - Parent question matching for sub-questions
 
-// Process each file
-files.forEach((file) => {
-  // Parse file name to get year and question ID
-  const [year, questionId] = parseFileName(file);
+- **Keyword Generation**: Prioritizes keywords from the canonical mapping's alternatePhrasings
 
-  // Find topic for this question in canonical mapping
-  const topic = findTopicForQuestion(canonicalMapping, year, questionId);
+  ```javascript
+  // Simplified version of the keyword generation logic
+  function generateKeywords(topic) {
+    // Use alternatePhrasings from canonical mapping as primary source
+    if (topic.alternatePhrasings && topic.alternatePhrasings.length > 0) {
+      let keywords = [...topic.alternatePhrasings];
+      // Add topic ID if not included
+      if (!keywords.includes(topic.id)) {
+        keywords.push(topic.id);
+      }
+      // Add topic-specific keywords from predefined list if available
+      // ...
+      return keywords;
+    }
 
-  if (!topic) {
-    console.warn(`No topic found for ${file}`);
-    return;
+    // Fall back to programmatic generation if no alternatePhrasings
+    // ...
   }
+  ```
 
-  // Read the file
-  const filePath = path.join(dataDir, file);
-  const fileData = JSON.parse(fs.readFileSync(filePath, "utf8"));
+- **Related Topics Generation**: Finds related topics based on:
 
-  // Generate metadata structure
-  const metadata = generateMetadata(topic, year, questionId, fileData);
+  - Topics from the same theme
+  - Keyword matching between topics
+  - Predefined common topic pairings
 
-  // Add metadata to file data
-  const updatedData = {
-    metadata,
-    ...fileData,
-  };
+- **Comparable Topics Handling**: Verifies and handles comparable topics correctly
+  - Ensures Q1, Q2, and Q3 are always non-comparable
+  - Special handling for Leadership_Confidence which must be comparable
+  - Adds appropriate availableMarkets and userMessage based on comparable status
 
-  // Write back to file
-  fs.writeFileSync(filePath, JSON.stringify(updatedData, null, 2));
-
-  console.log(`Added metadata to ${file}`);
-});
-
-// Helper functions would be implemented here...
-```
-
-## Integrating Harmonization into process_single_question.js
-
-Currently, our data processing involves three separate steps. A planned enhancement is to integrate the harmonization step directly into `process_single_question.js`. Here's the approach for this integration:
-
-### Current Limitations
-
-The current `process_single_question.js` script has several limitations:
-
-1. It outputs data that may have inconsistent demographic categories
-2. It doesn't standardize keys between years
-3. It doesn't handle misplaced demographic data
-4. It requires a separate harmonization step
-
-### Planned Updates
-
-The updated script will incorporate the following enhancements:
-
-1. **Direct Category Mapping**: Implement the categorization mappings from `data_harmonizer.js` directly in the processing stage:
-
-   ```javascript
-   // Example of how this will work
-   function processDemographicData(rawData) {
-     const mappedData = {
-       region: {},
-       age: {},
-       gender: {},
-       // ...other categories
-     };
-
-     // Apply mapping directly to each field
-     for (const [key, value] of Object.entries(rawData)) {
-       const mapping = getCategoryMapping(key);
-       if (mapping) {
-         mappedData[mapping.category][mapping.standardKey] =
-           convertPercentToDecimal(value);
-       }
-     }
-
-     return mappedData;
-   }
-   ```
-
-2. **Standardized Output Structure**: Ensure the JSON output follows the harmonized format directly:
-
-   ```javascript
-   // Sample of the output format
-   const outputFormat = {
-     question: "Question text",
-     response: "Response text",
-     data: {
-       region: { "united_states": 0.75, ... },
-       age: { "18-24": 0.82, ... },
-       // All standardized categories
-     }
-   };
-   ```
-
-3. **Modular Design**: The new script will use a modular approach:
-
-   - Separate modules for parsing, mapping, and output generation
-   - Reusable harmonization functions
-   - Configuration-based category mappings
-
-4. **Command-Line Options**:
-   ```bash
-   # Planned command-line interface
-   node process_single_question.js --input=file.csv --output=output.json --year=2025 --harmonize=true
-   ```
-
-### Implementation Timeline
-
-1. **Phase 1**: Extract reusable functions from `data_harmonizer.js`
-2. **Phase 2**: Create a shared library for category mappings
-3. **Phase 3**: Update `process_single_question.js` to use the shared functions
-4. **Phase 4**: Add command-line options for harmonization
-5. **Phase 5**: Deprecate separate harmonization step
-
-This integration will streamline the workflow by reducing the number of steps required to process survey data while ensuring consistent output format.
+This script now fully automates what was previously a manual process, ensuring consistency across all files and eliminating human error in metadata generation.
 
 ## Troubleshooting
 

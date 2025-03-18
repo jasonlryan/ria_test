@@ -16,8 +16,9 @@
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
     "relatedTopics": [
+      "Culture_and_Values",
       "Employee_Wellbeing",
-      "Retention_Factors"
+      "Communication_and_Connection"
     ],
     "dataStructure": {
       "questionField": "question",
@@ -38,7 +39,7 @@
       ],
       "primaryMetric": "country_overall",
       "valueFormat": "decimal",
-      "sortOrder": "desc"
+      "sortOrder": "descending"
     }
   },
   "question": "Do you feel your company allows you to switch off at the end of the day without an expectation to answer emails or calls?",

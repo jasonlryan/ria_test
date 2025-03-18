@@ -3,18 +3,26 @@
     "topicId": "Leadership_Confidence",
     "questionId": "Q7_6",
     "year": 2025,
-    "canonicalQuestion": "How confident are you in your organization's leadership?",
-    "comparable": false,
-    "userMessage": "Compare with caution due to differences in question framing between years.",
     "keywords": [
       "trust in leadership",
       "executive confidence",
       "leadership effectiveness",
       "management trust"
     ],
+    "canonicalQuestion": "How confident are you in your organization's leadership?",
+    "subQuestion": "I have trust and confidence in the company's senior leadership team.",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
     "relatedTopics": [
-      "Culture_and_Values",
-      "Organizational_Adaptation"
+      "Organizational_Adaptation",
+      "Manager_Capability"
     ],
     "dataStructure": {
       "questionField": "question",

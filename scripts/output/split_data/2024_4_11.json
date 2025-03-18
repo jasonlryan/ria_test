@@ -1,4 +1,58 @@
 {
+  "metadata": {
+    "topicId": "AI_Attitudes",
+    "questionId": "Q4_11",
+    "year": 2024,
+    "keywords": [
+      "AI attitudes",
+      "AI perception",
+      "excitement about AI",
+      "role impact of AI",
+      "emerging technology sentiment",
+      "optimism regarding AI",
+      "AI value",
+      "AI influence",
+      "AI_Attitudes",
+      "artificial intelligence"
+    ],
+    "canonicalQuestion": "What are your attitudes toward AI in the workplace?",
+    "subQuestion": "Agree",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [
+      "Learning_and_Development",
+      "Skills_Utilization",
+      "AI_Readiness"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
   "question": "4_11. AI - I feel certain that my role will be replaced by AI/tech in the next three years",
   "responses": [
     {

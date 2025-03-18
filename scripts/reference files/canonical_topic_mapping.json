@@ -778,9 +778,15 @@
                             }
                         ]
                     },
-                    "comparable": false,
-                    "availableMarkets": [],
-                    "userMessage": "Compare with caution due to differences in question framing between years.",
+                    "comparable": true,
+                    "availableMarkets": [
+                        "United Kingdom",
+                        "United States",
+                        "Australia",
+                        "India",
+                        "Brazil"
+                    ],
+                    "userMessage": "Data based on comparable markets only.",
                     "alternatePhrasings": [
                         "trust in leadership",
                         "executive confidence",
@@ -949,9 +955,15 @@
                             }
                         ]
                     },
-                    "comparable": false,
-                    "availableMarkets": [],
-                    "userMessage": "Compare with caution due to expanded question set in 2025.",
+                    "comparable": true,
+                    "availableMarkets": [
+                        "United Kingdom",
+                        "United States",
+                        "Australia",
+                        "India",
+                        "Brazil"
+                    ],
+                    "userMessage": "Data based on comparable markets only.",
                     "alternatePhrasings": [
                         "diversity initiatives",
                         "equity programs",

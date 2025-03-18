@@ -12,6 +12,7 @@
       "age discrimination"
     ],
     "canonicalQuestion": "How well are your skills utilized in your current role?",
+    "subQuestion": "I feel that I am overlooked for training because of my age",
     "comparable": true,
     "userMessage": "Data based on comparable markets only.",
     "availableMarkets": [
@@ -23,7 +24,8 @@
     ],
     "relatedTopics": [
       "Learning_and_Development",
-      "Intergenerational_Collaboration"
+      "AI_Attitudes",
+      "AI_Readiness"
     ],
     "dataStructure": {
       "questionField": "question",

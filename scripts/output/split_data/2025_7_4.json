@@ -12,6 +12,7 @@
       "international mobility"
     ],
     "canonicalQuestion": "Are you planning on leaving your current role in the next three months?",
+    "subQuestion": "I am open to relocating to another country to secure a job",
     "comparable": true,
     "userMessage": "Data based on comparable markets only.",
     "availableMarkets": [
@@ -23,7 +24,8 @@
     ],
     "relatedTopics": [
       "Attraction_Factors",
-      "Retention_Factors"
+      "Retention_Factors",
+      "Attrition_Factors"
     ],
     "dataStructure": {
       "questionField": "question",

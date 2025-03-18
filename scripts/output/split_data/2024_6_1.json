@@ -1,4 +1,58 @@
 {
+  "metadata": {
+    "topicId": "DEI",
+    "questionId": "Q6_1",
+    "year": 2024,
+    "keywords": [
+      "diversity initiatives",
+      "equity programs",
+      "inclusion efforts",
+      "workplace diversity",
+      "DEI commitment",
+      "corporate social responsibility",
+      "sustainability goals",
+      "DEI",
+      "diversity",
+      "equity"
+    ],
+    "canonicalQuestion": "How committed is your organization to diversity, equity, and inclusion?",
+    "subQuestion": "Not committed enough",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [
+      "Intergenerational_Collaboration",
+      "Culture_and_Values",
+      "Employee_Wellbeing"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
   "question": "6_1. To what extent is your company committed to Diversity, Equity & Inclusion (DE&I) in the workplace?",
   "responses": [
     {

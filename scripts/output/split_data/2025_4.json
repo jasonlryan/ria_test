@@ -15,9 +15,7 @@
     "comparable": false,
     "userMessage": "New in 2025; no year‑on‑year comparison.",
     "availableMarkets": [],
-    "relatedTopics": [
-      "Work_Life_Flexibility"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",

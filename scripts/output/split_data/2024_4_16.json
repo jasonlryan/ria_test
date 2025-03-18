@@ -1,4 +1,47 @@
 {
+  "metadata": {
+    "topicId": "Motivation_and_Fulfillment",
+    "questionId": "Q4_16",
+    "year": 2024,
+    "keywords": [
+      "job satisfaction",
+      "work engagement",
+      "employee motivation",
+      "workplace fulfillment",
+      "Motivation_and_Fulfillment"
+    ],
+    "canonicalQuestion": "How motivated and fulfilled do you feel in your role?",
+    "subQuestion": "Agree",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [
+      "Work_Life_Flexibility",
+      "Culture_and_Values",
+      "Employee_Wellbeing"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
   "question": "4_16. My current role leaves me feeling fulfilled",
   "responses": [
     {

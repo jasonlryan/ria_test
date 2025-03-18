@@ -12,6 +12,7 @@
       "job performance"
     ],
     "canonicalQuestion": "How well are your skills utilized in your current role?",
+    "subQuestion": "I struggle with imposter syndrome",
     "comparable": true,
     "userMessage": "Data based on comparable markets only.",
     "availableMarkets": [
@@ -22,8 +23,9 @@
       "Brazil"
     ],
     "relatedTopics": [
-      "Employee_Wellbeing",
-      "Learning_and_Development"
+      "Learning_and_Development",
+      "AI_Attitudes",
+      "AI_Readiness"
     ],
     "dataStructure": {
       "questionField": "question",

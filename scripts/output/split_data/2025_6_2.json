@@ -3,17 +3,18 @@
     "topicId": "Intergenerational_Collaboration",
     "questionId": "Q6_2",
     "year": 2025,
-    "canonicalQuestion": "How effectively do different generations collaborate in your workplace?",
-    "comparable": false,
-    "userMessage": "New in 2025; no year‑on‑year comparison.",
     "keywords": [
       "generational diversity",
       "age-diverse teams",
       "cross-generational work",
       "multigenerational workplace"
     ],
+    "canonicalQuestion": "How effectively do different generations collaborate in your workplace?",
+    "subQuestion": "I feel leaders in my company respect the needs of employees across generations",
+    "comparable": false,
+    "userMessage": "New in 2025; no year‑on‑year comparison.",
+    "availableMarkets": [],
     "relatedTopics": [
-      "Culture_and_Values",
       "DEI"
     ],
     "dataStructure": {

@@ -1,4 +1,49 @@
 {
+  "metadata": {
+    "topicId": "Pay_and_Reward",
+    "questionId": "Q4_4",
+    "year": 2024,
+    "keywords": [
+      "compensation fairness",
+      "salary satisfaction",
+      "pay equity",
+      "reward adequacy",
+      "Pay_and_Reward"
+    ],
+    "canonicalQuestion": "How fair do you consider your compensation relative to your contribution?",
+    "subQuestion": "Agree",
+    "comparable": true,
+    "userMessage": "Note: Wording differs between Q8 (2024) and Q11 (2025).",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
   "question": "4_4. I would stay at a job if it paid me the salary I want, even if I hated the role",
   "responses": [
     {

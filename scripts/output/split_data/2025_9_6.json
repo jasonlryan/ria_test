@@ -12,6 +12,7 @@
       "management pressure"
     ],
     "canonicalQuestion": "How effective is your direct manager?",
+    "subQuestion": "My manager appears overwhelmed at work",
     "comparable": false,
     "userMessage": "New in 2025; no year‑on‑year comparison.",
     "availableMarkets": [],
@@ -38,7 +39,7 @@
       ],
       "primaryMetric": "country_overall",
       "valueFormat": "decimal",
-      "sortOrder": "desc"
+      "sortOrder": "descending"
     }
   },
   "question": "To what extent do you agree with the following statements.",

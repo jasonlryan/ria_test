@@ -12,12 +12,19 @@
       "organizational cohesion"
     ],
     "canonicalQuestion": "How confident are you in your organization's leadership?",
-    "comparable": false,
-    "userMessage": "Compare with caution due to differences in question framing between years.",
-    "availableMarkets": [],
+    "subQuestion": "Leaders at my organization are often not aligned",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
     "relatedTopics": [
       "Organizational_Adaptation",
-      "Culture_and_Values"
+      "Manager_Capability"
     ],
     "dataStructure": {
       "questionField": "question",

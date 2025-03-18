@@ -1,43 +1,45 @@
 {
-    "metadata": {
-        "topicId": "Communication_and_Connection",
-        "questionId": "Q6_4",
-        "year": 2025,
-        "canonicalQuestion": "How comfortable are you communicating and connecting with colleagues?",
-        "comparable": false,
-        "userMessage": "Compare with caution due to differences in question framing between years.",
-        "keywords": [
-            "workplace relationships",
-            "peer communication",
-            "colleague connections",
-            "collaboration comfort"
-        ],
-        "relatedTopics": [
-            "Culture_and_Values",
-            "Manager_Capability"
-        ],
-        "dataStructure": {
-            "questionField": "question",
-            "responsesArray": "responses",
-            "responseTextField": "response",
-            "dataField": "data",
-            "segments": [
-                "region",
-                "age",
-                "gender",
-                "org_size",
-                "sector",
-                "job_level",
-                "relationship_status",
-                "education",
-                "generation",
-                "employment_status"
-            ],
-            "primaryMetric": "country_overall",
-            "valueFormat": "decimal",
-            "sortOrder": "descending"
-        }
-    },
-    "question": "To what extent do you agree with the following statements with regards to your workplace.",
-    "responses": []
+  "metadata": {
+    "topicId": "Communication_and_Connection",
+    "questionId": "Q6_4",
+    "year": 2025,
+    "keywords": [
+      "workplace relationships",
+      "peer communication",
+      "colleague connections",
+      "collaboration comfort"
+    ],
+    "canonicalQuestion": "How comfortable are you communicating and connecting with colleagues?",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [
+      "Work_Life_Flexibility",
+      "Culture_and_Values",
+      "Employee_Wellbeing"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "To what extent do you agree with the following statements with regards to your workplace.",
+  "responses": []
 }

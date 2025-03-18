@@ -1,4 +1,53 @@
 {
+  "metadata": {
+    "topicId": "Skills_Utilization",
+    "questionId": "Q4_18",
+    "year": 2024,
+    "keywords": [
+      "skills usage",
+      "talent utilization",
+      "capability application",
+      "competency use",
+      "Skills_Utilization"
+    ],
+    "canonicalQuestion": "How well are your skills utilized in your current role?",
+    "subQuestion": "Agree",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [
+      "Learning_and_Development",
+      "AI_Attitudes",
+      "AI_Readiness"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
   "question": "4_18. I have imposter syndrome and feel I am stretched too far beyond my abilities",
   "responses": [
     {

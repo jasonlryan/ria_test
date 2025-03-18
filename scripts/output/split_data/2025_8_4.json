@@ -12,12 +12,12 @@
       "leadership opportunities"
     ],
     "canonicalQuestion": "How effectively do different generations collaborate in your workplace?",
+    "subQuestion": "I feel that I am overlooked for leadership roles because of my age.",
     "comparable": false,
     "userMessage": "New in 2025; no year‑on‑year comparison.",
     "availableMarkets": [],
     "relatedTopics": [
-      "DEI",
-      "Leadership_Confidence"
+      "DEI"
     ],
     "dataStructure": {
       "questionField": "question",

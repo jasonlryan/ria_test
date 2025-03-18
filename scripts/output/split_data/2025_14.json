@@ -16,8 +16,7 @@
     "userMessage": "New in 2025; no year‑on‑year comparison.",
     "availableMarkets": [],
     "relatedTopics": [
-      "Communication_and_Connection",
-      "Culture_and_Values"
+      "DEI"
     ],
     "dataStructure": {
       "questionField": "question",
@@ -38,7 +37,7 @@
       ],
       "primaryMetric": "country_overall",
       "valueFormat": "decimal",
-      "sortOrder": "desc"
+      "sortOrder": "descending"
     }
   },
   "question": "What are the biggest challenges you face when working with colleagues from different generations?",

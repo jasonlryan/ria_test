@@ -16,12 +16,14 @@
       "experimentation with AI"
     ],
     "canonicalQuestion": "How ready are you to adopt and use AI in your role?",
+    "subQuestion": "I think using AI in my role will bolster my value in the next three years",
     "comparable": false,
     "userMessage": "Year‑on‑year comparisons not available due to new question additions in 2025.",
     "availableMarkets": [],
     "relatedTopics": [
-      "AI_Attitudes",
-      "Learning_and_Development"
+      "Learning_and_Development",
+      "Skills_Utilization",
+      "AI_Attitudes"
     ],
     "dataStructure": {
       "questionField": "question",

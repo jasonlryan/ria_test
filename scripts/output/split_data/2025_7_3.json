@@ -12,12 +12,14 @@
       "organizational priorities"
     ],
     "canonicalQuestion": "How important are company culture and values to your work experience?",
+    "subQuestion": "My organization's leaders value people over profits",
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
     "relatedTopics": [
-      "Leadership_Confidence",
-      "Employee_Wellbeing"
+      "Work_Life_Flexibility",
+      "Employee_Wellbeing",
+      "Communication_and_Connection"
     ],
     "dataStructure": {
       "questionField": "question",

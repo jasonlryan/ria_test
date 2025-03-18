@@ -17,7 +17,8 @@
     "availableMarkets": [],
     "relatedTopics": [
       "Retention_Factors",
-      "Attrition_Factors"
+      "Attrition_Factors",
+      "Intention_to_Leave"
     ],
     "dataStructure": {
       "questionField": "question",

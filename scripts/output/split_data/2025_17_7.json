@@ -1,4 +1,51 @@
 {
+  "metadata": {
+    "topicId": "Leadership_Confidence",
+    "questionId": "Q17_7",
+    "year": 2025,
+    "keywords": [
+      "trust in leadership",
+      "executive confidence",
+      "leadership effectiveness",
+      "management trust"
+    ],
+    "canonicalQuestion": "How confident are you in your organization's leadership?",
+    "subQuestion": "I have trust and confidence in the company's senior leadership team.",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [
+      "Organizational_Adaptation",
+      "Manager_Capability"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
   "question": "To what extent do you agree with the following statements.",
   "responses": [
     {

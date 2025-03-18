@@ -12,11 +12,13 @@
       "personal challenges"
     ],
     "canonicalQuestion": "How supported do you feel in terms of wellbeing at work?",
+    "subQuestion": "If a problem in my personal life is affecting my work/performance, I feel comfortable telling my manager about it",
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
     "relatedTopics": [
-      "Manager_Capability",
+      "Work_Life_Flexibility",
+      "Culture_and_Values",
       "Communication_and_Connection"
     ],
     "dataStructure": {
@@ -38,7 +40,7 @@
       ],
       "primaryMetric": "country_overall",
       "valueFormat": "decimal",
-      "sortOrder": "desc"
+      "sortOrder": "descending"
     }
   },
   "question": "To what extent do you agree with the following statements.",

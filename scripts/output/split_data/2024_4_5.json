@@ -1,4 +1,47 @@
 {
+  "metadata": {
+    "topicId": "Work_Life_Flexibility",
+    "questionId": "Q4_5",
+    "year": 2024,
+    "keywords": [
+      "flexible working",
+      "work from anywhere",
+      "work-life balance",
+      "flexible arrangements",
+      "Work_Life_Flexibility"
+    ],
+    "canonicalQuestion": "How important is flexibility in your work arrangements?",
+    "subQuestion": "Agree",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [
+      "Culture_and_Values",
+      "Employee_Wellbeing",
+      "Communication_and_Connection"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
   "question": "4_5. I would stay at a job if it allowed me flexibility, even if I hated the role",
   "responses": [
     {

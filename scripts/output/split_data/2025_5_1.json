@@ -12,11 +12,13 @@
       "learning"
     ],
     "canonicalQuestion": "How would you rate your learning and development opportunities?",
+    "subQuestion": "I would stay at a job if it paid me the salary I want, even if I hated the role",
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
     "relatedTopics": [
       "Skills_Utilization",
+      "AI_Attitudes",
       "AI_Readiness"
     ],
     "dataStructure": {

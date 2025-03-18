@@ -12,12 +12,19 @@
       "operational disruption"
     ],
     "canonicalQuestion": "How confident are you in your organization's leadership?",
-    "comparable": false,
-    "userMessage": "Compare with caution due to differences in question framing between years.",
-    "availableMarkets": [],
+    "subQuestion": "I feel recent changes in senior leadership has negatively impacted the operations at our firm",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
     "relatedTopics": [
       "Organizational_Adaptation",
-      "Culture_and_Values"
+      "Manager_Capability"
     ],
     "dataStructure": {
       "questionField": "question",

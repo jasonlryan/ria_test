@@ -12,12 +12,20 @@
       "career advancement"
     ],
     "canonicalQuestion": "How committed is your organization to diversity, equity, and inclusion?",
-    "comparable": false,
-    "userMessage": "Compare with caution due to expanded question set in 2025.",
-    "availableMarkets": [],
+    "subQuestion": "I feel that I am overlooked for promotions, pay rises, or leadership training because of my sex",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
     "relatedTopics": [
+      "Intergenerational_Collaboration",
       "Culture_and_Values",
-      "Leadership_Confidence"
+      "Employee_Wellbeing"
     ],
     "dataStructure": {
       "questionField": "question",

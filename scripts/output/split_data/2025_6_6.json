@@ -3,18 +3,21 @@
     "topicId": "Work_Life_Flexibility",
     "questionId": "Q6_6",
     "year": 2025,
-    "canonicalQuestion": "How important is flexibility in your work arrangements?",
-    "comparable": false,
-    "userMessage": "Compare with caution due to differences in question framing between years.",
     "keywords": [
       "flexible working",
       "work from anywhere",
       "work-life balance",
       "flexible arrangements"
     ],
+    "canonicalQuestion": "How important is flexibility in your work arrangements?",
+    "subQuestion": "I would stay at a job if it allowed me flexibility, even if I hated the role.",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
     "relatedTopics": [
+      "Culture_and_Values",
       "Employee_Wellbeing",
-      "Retention_Factors"
+      "Communication_and_Connection"
     ],
     "dataStructure": {
       "questionField": "question",

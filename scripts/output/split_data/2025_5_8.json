@@ -14,6 +14,7 @@
       "AI influence"
     ],
     "canonicalQuestion": "What are your attitudes toward AI in the workplace?",
+    "subQuestion": "I feel certain that my role will be replaced by AI/tech in the next three years",
     "comparable": true,
     "userMessage": "Data based on comparable markets only.",
     "availableMarkets": [
@@ -24,8 +25,9 @@
       "Brazil"
     ],
     "relatedTopics": [
-      "AI_Readiness",
-      "Learning_and_Development"
+      "Learning_and_Development",
+      "Skills_Utilization",
+      "AI_Readiness"
     ],
     "dataStructure": {
       "questionField": "question",

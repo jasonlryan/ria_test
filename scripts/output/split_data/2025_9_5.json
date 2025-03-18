@@ -12,12 +12,14 @@
       "interpersonal comfort"
     ],
     "canonicalQuestion": "How comfortable are you communicating and connecting with colleagues?",
+    "subQuestion": "I'm comfortable discussing my personal life with my colleagues",
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
     "relatedTopics": [
-      "Employee_Wellbeing",
-      "Culture_and_Values"
+      "Work_Life_Flexibility",
+      "Culture_and_Values",
+      "Employee_Wellbeing"
     ],
     "dataStructure": {
       "questionField": "question",
@@ -38,7 +40,7 @@
       ],
       "primaryMetric": "country_overall",
       "valueFormat": "decimal",
-      "sortOrder": "desc"
+      "sortOrder": "descending"
     }
   },
   "question": "To what extent do you agree with the following statements.",

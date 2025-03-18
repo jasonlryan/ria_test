@@ -22,8 +22,9 @@
       "Brazil"
     ],
     "relatedTopics": [
-      "Attrition_Factors",
-      "Retention_Factors"
+      "Attraction_Factors",
+      "Retention_Factors",
+      "Attrition_Factors"
     ],
     "dataStructure": {
       "questionField": "question",
@@ -44,7 +45,7 @@
       ],
       "primaryMetric": "country_overall",
       "valueFormat": "decimal",
-      "sortOrder": "desc"
+      "sortOrder": "descending"
     }
   },
   "question": "Are you planning on leaving your current role in the next three months?",

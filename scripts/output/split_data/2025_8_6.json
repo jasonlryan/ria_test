@@ -1,23 +1,23 @@
 {
   "metadata": {
-    "topicId": "DEI",
+    "topicId": "Intergenerational_Collaboration",
     "questionId": "Q8_6",
     "year": 2025,
     "keywords": [
-      "diversity initiatives",
-      "equity programs",
-      "inclusion efforts",
-      "workplace diversity",
-      "discrimination",
-      "career advancement"
+      "generational diversity",
+      "age-diverse teams",
+      "cross-generational work",
+      "multigenerational workplace",
+      "generational challenges",
+      "age differences"
     ],
-    "canonicalQuestion": "How committed is your organization to diversity, equity, and inclusion?",
+    "canonicalQuestion": "How effectively do different generations collaborate in your workplace?",
+    "subQuestion": "I feel that I am overlooked for promotions, pay rises, or leadership training because of my class.",
     "comparable": false,
-    "userMessage": "Compare with caution due to expanded question set in 2025.",
+    "userMessage": "New in 2025; no year‑on‑year comparison.",
     "availableMarkets": [],
     "relatedTopics": [
-      "Culture_and_Values",
-      "Leadership_Confidence"
+      "DEI"
     ],
     "dataStructure": {
       "questionField": "question",

@@ -1,17 +1,18 @@
 {
   "metadata": {
-    "topicId": "Skills_Utilization",
+    "topicId": "DEI",
     "questionId": "Q8_7",
     "year": 2025,
     "keywords": [
-      "workplace confidence",
-      "self-doubt",
-      "professional insecurity",
-      "capability concerns",
-      "job performance",
-      "role fulfillment"
+      "diversity",
+      "equity",
+      "inclusion",
+      "DEI",
+      "commitment",
+      "workplace diversity"
     ],
-    "canonicalQuestion": "How well are your skills utilized in your current role?",
+    "canonicalQuestion": "How committed is your organization to diversity, equity, and inclusion?",
+    "subQuestion": "I frequently doubt my ability to fulfill my work responsibilities.",
     "comparable": true,
     "userMessage": "Data based on comparable markets only.",
     "availableMarkets": [
@@ -22,8 +23,9 @@
       "Brazil"
     ],
     "relatedTopics": [
-      "Employee_Wellbeing",
-      "Learning_and_Development"
+      "Intergenerational_Collaboration",
+      "Culture_and_Values",
+      "Employee_Wellbeing"
     ],
     "dataStructure": {
       "questionField": "question",

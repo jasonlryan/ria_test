@@ -1,4 +1,47 @@
 {
+  "metadata": {
+    "topicId": "Learning_and_Development",
+    "questionId": "Q4_6",
+    "year": 2024,
+    "keywords": [
+      "professional development",
+      "training opportunities",
+      "skill advancement",
+      "career growth",
+      "Learning_and_Development"
+    ],
+    "canonicalQuestion": "How would you rate your learning and development opportunities?",
+    "subQuestion": "Agree",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [
+      "Skills_Utilization",
+      "AI_Attitudes",
+      "AI_Readiness"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
   "question": "4_6. I would stay at a job if it granted me opportunities to progress and upskill quickly, even if I hated the current role",
   "responses": [
     {

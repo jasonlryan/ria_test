@@ -21,10 +21,7 @@
       "India",
       "Brazil"
     ],
-    "relatedTopics": [
-      "Retention_Factors",
-      "Attrition_Factors"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -44,7 +41,7 @@
       ],
       "primaryMetric": "country_overall",
       "valueFormat": "decimal",
-      "sortOrder": "desc"
+      "sortOrder": "descending"
     }
   },
   "question": "How well do you think you are compensated for your skillset?",

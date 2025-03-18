@@ -12,12 +12,19 @@
       "management receptiveness"
     ],
     "canonicalQuestion": "How confident are you in your organization's leadership?",
-    "comparable": false,
-    "userMessage": "Compare with caution due to differences in question framing between years.",
-    "availableMarkets": [],
+    "subQuestion": "I feel that my ideas and opinions will be welcomed by company leaders",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
     "relatedTopics": [
-      "Manager_Capability",
-      "Culture_and_Values"
+      "Organizational_Adaptation",
+      "Manager_Capability"
     ],
     "dataStructure": {
       "questionField": "question",
@@ -38,7 +45,7 @@
       ],
       "primaryMetric": "country_overall",
       "valueFormat": "decimal",
-      "sortOrder": "desc"
+      "sortOrder": "descending"
     }
   },
   "question": "To what extent do you agree with the following statements.",

@@ -1,4 +1,48 @@
 {
+  "metadata": {
+    "topicId": "Learning_and_Development",
+    "questionId": "Q17_3",
+    "year": 2025,
+    "keywords": [
+      "professional development",
+      "training opportunities",
+      "skill advancement",
+      "career growth",
+      "job skills",
+      "learning"
+    ],
+    "canonicalQuestion": "How would you rate your learning and development opportunities?",
+    "subQuestion": "I have good opportunities for learning and development at the company.",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [
+      "Skills_Utilization",
+      "AI_Attitudes",
+      "AI_Readiness"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
   "question": "To what extent do you agree with the following statements.",
   "responses": [
     {

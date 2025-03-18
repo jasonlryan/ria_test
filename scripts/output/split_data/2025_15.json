@@ -16,8 +16,7 @@
     "userMessage": "New in 2025; no year‑on‑year comparison.",
     "availableMarkets": [],
     "relatedTopics": [
-      "Communication_and_Connection",
-      "Learning_and_Development"
+      "DEI"
     ],
     "dataStructure": {
       "questionField": "question",
@@ -38,7 +37,7 @@
       ],
       "primaryMetric": "country_overall",
       "valueFormat": "decimal",
-      "sortOrder": "desc"
+      "sortOrder": "descending"
     }
   },
   "question": "Which of the following would help you collaborate better with colleagues from different generations?",

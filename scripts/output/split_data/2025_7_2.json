@@ -12,6 +12,7 @@
       "resume preparation"
     ],
     "canonicalQuestion": "Are you planning on leaving your current role in the next three months?",
+    "subQuestion": "I am worried about how to make my resume/ CV stand out in the competitive job market",
     "comparable": true,
     "userMessage": "Data based on comparable markets only.",
     "availableMarkets": [
@@ -23,7 +24,8 @@
     ],
     "relatedTopics": [
       "Attraction_Factors",
-      "Retention_Factors"
+      "Retention_Factors",
+      "Attrition_Factors"
     ],
     "dataStructure": {
       "questionField": "question",

@@ -16,12 +16,14 @@
       "experimentation with AI"
     ],
     "canonicalQuestion": "How ready are you to adopt and use AI in your role?",
+    "subQuestion": "When I've been asked to use AI to help with my job, I found it produced better results and/or improved efficiency.",
     "comparable": false,
     "userMessage": "Year‑on‑year comparisons not available due to new question additions in 2025.",
     "availableMarkets": [],
     "relatedTopics": [
-      "AI_Attitudes",
-      "Learning_and_Development"
+      "Learning_and_Development",
+      "Skills_Utilization",
+      "AI_Attitudes"
     ],
     "dataStructure": {
       "questionField": "question",
