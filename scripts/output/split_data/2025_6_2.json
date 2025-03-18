@@ -1,0 +1,143 @@
+{
+  "metadata": {
+    "topicId": "Intergenerational_Collaboration",
+    "questionId": "Q6_2",
+    "year": 2025,
+    "canonicalQuestion": "How effectively do different generations collaborate in your workplace?",
+    "comparable": false,
+    "userMessage": "New in 2025; no year‑on‑year comparison.",
+    "keywords": [
+      "generational diversity",
+      "age-diverse teams",
+      "cross-generational work",
+      "multigenerational workplace"
+    ],
+    "relatedTopics": [
+      "Culture_and_Values",
+      "DEI"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "To what extent do you agree with the following statements with regards to your workplace.",
+  "responses": [
+    {
+      "response": "I feel leaders in my company respect the needs of employees across generations",
+      "data": {
+        "region": {
+          "country_overall": 0.72,
+          "united_states": 0.62,
+          "united_kingdom": 0.86,
+          "india": 0.55,
+          "france": 0.61,
+          "germany": 0.41,
+          "japan": 0.79,
+          "united_arab_emirates": 0.71,
+          "brazil": 0.77,
+          "saudi_arabia": 0.64,
+          "australia": 0.68
+        },
+        "age": {
+          "18-24": 0.73,
+          "25-34": 0.69,
+          "35-44": 0.61,
+          "45-54": 0.53,
+          "55-65": 0.59
+        },
+        "gender": {
+          "female": 0.68,
+          "male": 0.62
+        },
+        "org_size": {
+          "fewer_than_10": 0.64,
+          "10_to_49": 0.63,
+          "50_to_99": 0.69,
+          "100_to_249": 0.7,
+          "500_to_999": 0.63,
+          "1000_or_more": 0.67
+        },
+        "sector": {
+          "automotive": 0.68,
+          "business_administration_support_services": 0.83,
+          "technology": 0.74,
+          "construction": 0.64,
+          "consumer_goods": 0.63,
+          "education": 0.7,
+          "energy_utilities": 0.7,
+          "financial_services": 0.58,
+          "government": 0.58,
+          "healthcare_life_sciences": 0.65,
+          "manufacturing_industrial": 0.71,
+          "marketing_services": 0.59,
+          "not_for_profit": 0.53,
+          "legal_in-house": 0.61,
+          "legal_agency": 0.62,
+          "professional_services": 0.69,
+          "real_estate_property_services": 0.59,
+          "retail": 0.68,
+          "sales": 0.68,
+          "telecommunications": 0.56,
+          "transport_storage": 0.64,
+          "travel_hospitality_leisure": 0.59,
+          "wholesale_distribution": 0.6,
+          "other": 0.79
+        },
+        "job_level": {
+          "ceo": 0.83,
+          "senior_executive": 0.76,
+          "senior_leader": 0.67,
+          "mid_level_leader": 0.68,
+          "first_level_supervisor": 0.53,
+          "individual_contributor": 0.61
+        },
+        "relationship_status": {
+          "single": 0.59,
+          "cohabiting": 0.71,
+          "married": 0.57,
+          "divorced_separated": 0.62,
+          "widowed": 0.62
+        },
+        "education": {
+          "secondary": 0.54,
+          "tertiary": 0.59,
+          "professional_certifications": 0.67,
+          "undergraduate": 0.74,
+          "postgraduate": 0.75,
+          "doctorate": 0
+        },
+        "generation": {
+          "age_65_plus": 0.7,
+          "gen_z": 0.71,
+          "millennials": 0.59,
+          "gen_x": 0.54,
+          "baby_boomers": 0.64
+        },
+        "employment_status": {
+          "full-time": 0.61,
+          "part-time": 0.58,
+          "contract": 0.59,
+          "freelance": 0.69
+        }
+      }
+    }
+  ]
+}

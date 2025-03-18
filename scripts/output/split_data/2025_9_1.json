@@ -1,4 +1,46 @@
 {
+  "metadata": {
+    "topicId": "Manager_Capability",
+    "questionId": "Q9_1",
+    "year": 2025,
+    "keywords": [
+      "manager effectiveness",
+      "employee empowerment",
+      "supervisor support",
+      "leadership quality",
+      "management style",
+      "direct manager relationships"
+    ],
+    "canonicalQuestion": "How effective is your direct manager?",
+    "comparable": false,
+    "userMessage": "New in 2025; no year‑on‑year comparison.",
+    "availableMarkets": [],
+    "relatedTopics": [
+      "Leadership_Confidence",
+      "Employee_Wellbeing"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "desc"
+    }
+  },
   "question": "To what extent do you agree with the following statements.",
   "responses": [
     {

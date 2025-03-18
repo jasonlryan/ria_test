@@ -1,4 +1,46 @@
 {
+  "metadata": {
+    "topicId": "Work_Life_Flexibility",
+    "questionId": "Q7_8",
+    "year": 2025,
+    "keywords": [
+      "flexible working",
+      "work from anywhere",
+      "work-life balance",
+      "flexible arrangements",
+      "return to office",
+      "RTO policies"
+    ],
+    "canonicalQuestion": "How important is flexibility in your work arrangements?",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [
+      "Employee_Wellbeing",
+      "Retention_Factors"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
   "question": "To what extent do you agree with the following statements.",
   "responses": [
     {

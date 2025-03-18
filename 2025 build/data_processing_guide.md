@@ -12,7 +12,14 @@ graph TD
     D --> E[harmonized/global_YYYY_harmonized.json]
     E --> F[split_to_files.js]
     F --> G[split_data/YYYY_QX.json files]
+    G --> H[add_metadata.js*]
+    H --> I[Complete split_data/YYYY_QX.json files with metadata]
+
+    style H fill:#f96,stroke:#333,stroke-width:2px
+    style I fill:#9f6,stroke:#333,stroke-width:2px
 ```
+
+\*Currently done manually, needs to be automated in the future
 
 ## Step 1: Process Raw CSV Files to Global JSON
 
@@ -83,7 +90,7 @@ node scripts/data_harmonizer.js
 
 ## Step 3: Split Data by Question
 
-The final step is to split the harmonized data into individual question files based on the survey question definitions and canonical topic mapping.
+The next step is to split the harmonized data into individual question files based on the survey question definitions and canonical topic mapping.
 
 ### Input
 
@@ -117,6 +124,94 @@ node scripts/split_to_files.js
 - `scripts/output/split_data/2025_Q1.json`, `2025_Q2.json`, etc.
 - Sub-question files like `2025_7_1.json`, `2025_7_2.json`, etc.
 
+## Step 4: Add Metadata to Question Files (Currently Manual)
+
+After splitting the data files, we need to add structured metadata to each question file to enable proper querying, categorization, and display in the frontend.
+
+### Input
+
+- `scripts/output/split_data/YYYY_QX.json` files
+- `scripts/reference files/canonical_topic_mapping.json`
+
+### Process
+
+Currently, this process is done **manually** for each file:
+
+1. Identify the topic for each question using the canonical_topic_mapping.json file
+2. Create a metadata section with standardized fields:
+
+   - topicId: The canonical topic (e.g., "Manager_Capability")
+   - questionId: The question identifier (e.g., "Q9_1")
+   - year: The survey year (e.g., 2025)
+   - keywords: Relevant keywords for search/classification
+   - canonicalQuestion: The standardized question text from the topic mapping
+   - comparable: Boolean indicating if year-over-year comparison is possible
+   - userMessage: Guidance for data interpretation
+   - availableMarkets: List of markets for which data is available
+   - relatedTopics: Other topics related to this question
+   - dataStructure: Standardized description of the JSON structure
+
+3. Add this metadata to the top of each question file
+
+### Example of Metadata Structure
+
+```json
+{
+  "metadata": {
+    "topicId": "Manager_Capability",
+    "questionId": "Q9_1",
+    "year": 2025,
+    "keywords": [
+      "manager effectiveness",
+      "employee empowerment",
+      "supervisor support",
+      "leadership quality",
+      "management style",
+      "direct manager relationships"
+    ],
+    "canonicalQuestion": "How effective is your direct manager?",
+    "comparable": false,
+    "userMessage": "New in 2025; no year‑on‑year comparison.",
+    "availableMarkets": [],
+    "relatedTopics": ["Leadership_Confidence", "Employee_Wellbeing"],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "desc"
+    }
+  },
+  "question": "To what extent do you agree with the following statements.",
+  "responses": [
+    // response data...
+  ]
+}
+```
+
+### Future Automation Need
+
+**This manual process needs to be automated.** A new script (e.g., `add_metadata.js`) should be developed to:
+
+1. Read the canonical_topic_mapping.json to identify topics for each question
+2. Generate appropriate metadata for each question file based on its ID and topic
+3. Update the split JSON files with this metadata
+4. Add consistency checks to ensure metadata aligns with file content
+
 ## The Importance of Canonical Topic Mapping
 
 The canonical topic mapping plays a crucial role in our data processing workflow, particularly for handling multipart questions that need to be mapped to different topics in the taxonomy.
@@ -142,7 +237,7 @@ Example structure:
           "canonicalQuestion": "How confident are you in your organization's leadership?",
           "mapping": {
             "2024": ["Q7", "Q18_6"],
-            "2025": ["Q7_6", "Q8_1", "Q8_2", "Q17_7"]
+            "2025": ["Q7_6", "Q8_1", "Q8_2", "Q9_2", "Q17_7"]
           }
         }
       ]
@@ -187,6 +282,81 @@ The `split_to_files.js` script handles the complex task of mapping statement-typ
   - etc.
 
 This is crucial for proper topic mapping as defined in the canonical_topic_mapping.json file.
+
+## Future Improvements
+
+1. **Process_single_question.js Update**: The `process_single_question.js` script needs to be updated to include the harmonization step directly, integrating the functionality of `data_harmonizer.js`.
+
+2. **Metadata Automation**: Develop a new script or extend `split_to_files.js` to automatically add metadata to each output file based on the canonical_topic_mapping.json. This should:
+
+   - Extract topic information for each question ID
+   - Generate appropriate keywords based on topic and question content
+   - Add standardized metadata structure to each file
+   - Ensure consistency between metadata and file content
+
+3. **Automated Workflow**: Create a single command or script that runs the entire process from CSV to complete metadata-enriched split files.
+
+4. **Validation**: Add validation steps to verify the integrity of the data and metadata at each stage of processing.
+
+5. **Canonical Mapping Maintenance**: Create tools to help maintain and update the canonical mapping when new questions are added or classifications change.
+
+### Proposed Metadata Generation Script
+
+A basic outline for the metadata automation script:
+
+```javascript
+// metadata_generator.js
+const fs = require("fs");
+const path = require("path");
+
+// Load canonical topic mapping
+const canonicalMapping = JSON.parse(
+  fs.readFileSync(
+    "./scripts/reference files/canonical_topic_mapping.json",
+    "utf8"
+  )
+);
+
+// Get all split data files
+const dataDir = "./scripts/output/split_data/";
+const files = fs
+  .readdirSync(dataDir)
+  .filter((file) => file.match(/^\d{4}_\d+(_\d+)?\.json$/));
+
+// Process each file
+files.forEach((file) => {
+  // Parse file name to get year and question ID
+  const [year, questionId] = parseFileName(file);
+
+  // Find topic for this question in canonical mapping
+  const topic = findTopicForQuestion(canonicalMapping, year, questionId);
+
+  if (!topic) {
+    console.warn(`No topic found for ${file}`);
+    return;
+  }
+
+  // Read the file
+  const filePath = path.join(dataDir, file);
+  const fileData = JSON.parse(fs.readFileSync(filePath, "utf8"));
+
+  // Generate metadata structure
+  const metadata = generateMetadata(topic, year, questionId, fileData);
+
+  // Add metadata to file data
+  const updatedData = {
+    metadata,
+    ...fileData,
+  };
+
+  // Write back to file
+  fs.writeFileSync(filePath, JSON.stringify(updatedData, null, 2));
+
+  console.log(`Added metadata to ${file}`);
+});
+
+// Helper functions would be implemented here...
+```
 
 ## Integrating Harmonization into process_single_question.js
 
@@ -267,14 +437,6 @@ The updated script will incorporate the following enhancements:
 
 This integration will streamline the workflow by reducing the number of steps required to process survey data while ensuring consistent output format.
 
-## Future Improvements
-
-1. **Process_single_question.js Update**: The `process_single_question.js` script needs to be updated to include the harmonization step directly, integrating the functionality of `data_harmonizer.js`.
-
-2. **Automated Workflow**: Create a single command or script that runs the entire process from CSV to split files.
-
-3. **Validation**: Add validation steps to verify the integrity of the data at each stage of processing.
-
 ## Troubleshooting
 
 ### Missing Question Files
@@ -288,6 +450,14 @@ If certain question files are missing after the split process, check:
 ### Incorrect Demographic Data
 
 If demographic data appears incorrect, adjust the categorization mappings in `data_harmonizer.js`.
+
+### Missing or Incorrect Metadata
+
+If files are missing metadata or have incorrect topic mapping:
+
+- Check that the question ID is properly included in the canonical_topic_mapping.json
+- Verify that the question text matches the expected pattern for the topic
+- Run the metadata generation script (once developed) with verbose logging
 
 ## Data Structure Reference
 
@@ -313,14 +483,61 @@ The raw CSV files have column headers like:
 ]
 ```
 
-### Split Question File Structure
+### Complete Split Question File Structure (with Metadata)
 
 ```json
 {
+  "metadata": {
+    "topicId": "Culture_and_Values",
+    "questionId": "Q9_4",
+    "year": 2025,
+    "keywords": [
+      "company culture",
+      "external reputation",
+      "brand consistency",
+      "organizational identity",
+      "internal experience"
+    ],
+    "canonicalQuestion": "How important are company culture and values to your work experience?",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [
+      "Organizational_Adaptation",
+      "Leadership_Confidence"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "desc"
+    }
+  },
   "question": "To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "The organization handles decisions about people with sensitivity and care",
+      "response": "Our external reputation matches our internal culture",
       "data": {
         "region": { ... },
         "age": { ... },

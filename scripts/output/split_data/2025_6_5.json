@@ -1,0 +1,50 @@
+{
+    "metadata": {
+        "topicId": "Pay_and_Reward",
+        "questionId": "Q6_5",
+        "year": 2025,
+        "canonicalQuestion": "How fair do you consider your compensation relative to your contribution?",
+        "comparable": true,
+        "availableMarkets": [
+            "United Kingdom",
+            "United States",
+            "Australia",
+            "India",
+            "Brazil"
+        ],
+        "userMessage": "Note: Wording differs between Q8 (2024) and Q11 (2025).",
+        "keywords": [
+            "compensation fairness",
+            "salary satisfaction",
+            "pay equity",
+            "reward adequacy"
+        ],
+        "relatedTopics": [
+            "Retention_Factors",
+            "Attrition_Factors"
+        ],
+        "dataStructure": {
+            "questionField": "question",
+            "responsesArray": "responses",
+            "responseTextField": "response",
+            "dataField": "data",
+            "segments": [
+                "region",
+                "age",
+                "gender",
+                "org_size",
+                "sector",
+                "job_level",
+                "relationship_status",
+                "education",
+                "generation",
+                "employment_status"
+            ],
+            "primaryMetric": "country_overall",
+            "valueFormat": "decimal",
+            "sortOrder": "descending"
+        }
+    },
+    "question": "To what extent do you agree with the following statements with regards to your workplace.",
+    "responses": []
+}

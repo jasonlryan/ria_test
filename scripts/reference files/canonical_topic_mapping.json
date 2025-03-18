@@ -110,7 +110,8 @@
             "2025_9_6.json",
             "2025_9_7.json",
             "2025_9_8.json",
-            "2025_10.json",
+            "2025_10_1.json",
+            "2025_10_2.json",
             "2025_11.json",
             "2025_12.json",
             "2025_13.json",
@@ -274,10 +275,6 @@
                             }
                         ],
                         "2025": [
-                            {
-                                "id": "Q10",
-                                "file": "2025_10.json"
-                            },
                             {
                                 "id": "Q13",
                                 "file": "2025_13.json"
@@ -772,6 +769,10 @@
                                 "file": "2025_8_2.json"
                             },
                             {
+                                "id": "Q9_2",
+                                "file": "2025_9_2.json"
+                            },
+                            {
                                 "id": "Q17_7",
                                 "file": "2025_17_7.json"
                             }
@@ -915,9 +916,21 @@
                             {
                                 "id": "Q6_1",
                                 "file": "2024_6_1.json"
+                            },
+                            {
+                                "id": "Q6_2",
+                                "file": "2024_6_2.json"
                             }
                         ],
                         "2025": [
+                            {
+                                "id": "Q10_1",
+                                "file": "2025_10_1.json"
+                            },
+                            {
+                                "id": "Q10_2",
+                                "file": "2025_10_2.json"
+                            },
                             {
                                 "id": "Q7_7",
                                 "file": "2025_7_7.json"
@@ -943,7 +956,10 @@
                         "diversity initiatives",
                         "equity programs",
                         "inclusion efforts",
-                        "workplace diversity"
+                        "workplace diversity",
+                        "DEI commitment",
+                        "corporate social responsibility",
+                        "sustainability goals"
                     ]
                 }
             ]

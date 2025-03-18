@@ -1,4 +1,46 @@
 {
+  "metadata": {
+    "topicId": "Attraction_Factors",
+    "questionId": "Q1",
+    "year": 2025,
+    "keywords": [
+      "job factors",
+      "new job",
+      "looking for job",
+      "job search",
+      "attraction",
+      "factors when looking"
+    ],
+    "canonicalQuestion": "What are the most important factors when looking for a new job?",
+    "comparable": false,
+    "userMessage": "Year‑on‑year comparisons not available due to methodology changes.",
+    "availableMarkets": [],
+    "relatedTopics": [
+      "Retention_Factors",
+      "Attrition_Factors"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
   "question": "If you were to look for a new job, what would be the most important factors for you?",
   "responses": [
     {

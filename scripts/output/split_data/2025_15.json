@@ -1,4 +1,46 @@
 {
+  "metadata": {
+    "topicId": "Intergenerational_Collaboration",
+    "questionId": "Q15",
+    "year": 2025,
+    "keywords": [
+      "generational diversity",
+      "age-diverse teams",
+      "cross-generational work",
+      "multigenerational workplace",
+      "collaboration improvement",
+      "generational bridges"
+    ],
+    "canonicalQuestion": "How effectively do different generations collaborate in your workplace?",
+    "comparable": false,
+    "userMessage": "New in 2025; no year‑on‑year comparison.",
+    "availableMarkets": [],
+    "relatedTopics": [
+      "Communication_and_Connection",
+      "Learning_and_Development"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "desc"
+    }
+  },
   "question": "Which of the following would help you collaborate better with colleagues from different generations?",
   "responses": [
     {

@@ -1,4 +1,45 @@
 {
+  "metadata": {
+    "topicId": "Current_and_Preferred",
+    "questionId": "Q4",
+    "year": 2025,
+    "keywords": [
+      "work location",
+      "remote work",
+      "hybrid work",
+      "office work",
+      "workplace model",
+      "work from home"
+    ],
+    "canonicalQuestion": "What is your current and preferred work location?",
+    "comparable": false,
+    "userMessage": "New in 2025; no year‑on‑year comparison.",
+    "availableMarkets": [],
+    "relatedTopics": [
+      "Work_Life_Flexibility"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
   "question": "Please confirm the location of your current place of work, and also where this would ideally be for you? - Current place of work",
   "responses": [
     {

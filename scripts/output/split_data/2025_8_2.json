@@ -1,0 +1,146 @@
+{
+  "metadata": {
+    "topicId": "Leadership_Confidence",
+    "questionId": "Q8_2",
+    "year": 2025,
+    "keywords": [
+      "trust in leadership",
+      "executive confidence",
+      "leadership effectiveness",
+      "management trust",
+      "leadership alignment",
+      "organizational cohesion"
+    ],
+    "canonicalQuestion": "How confident are you in your organization's leadership?",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [
+      "Organizational_Adaptation",
+      "Culture_and_Values"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "Leaders at my organization are often not aligned",
+      "data": {
+        "region": {
+          "country_overall": 0.48,
+          "united_states": 0.42,
+          "united_kingdom": 0.54,
+          "india": 0.41,
+          "france": 0.39,
+          "germany": 0.3,
+          "japan": 0.44,
+          "united_arab_emirates": 0.42,
+          "brazil": 0.37,
+          "saudi_arabia": 0.46,
+          "australia": 0.48
+        },
+        "age": {
+          "18-24": 0.47,
+          "25-34": 0.46,
+          "35-44": 0.42,
+          "45-54": 0.33,
+          "55-65": 0.29
+        },
+        "gender": {
+          "female": 0.45,
+          "male": 0.32
+        },
+        "org_size": {
+          "fewer_than_10": 0.4,
+          "10_to_49": 0.46,
+          "50_to_99": 0.47,
+          "100_to_249": 0.48,
+          "500_to_999": 0.43,
+          "1000_or_more": 0.44
+        },
+        "sector": {
+          "automotive": 0.46,
+          "business_administration_support_services": 0.51,
+          "technology": 0.41,
+          "construction": 0.42,
+          "consumer_goods": 0.42,
+          "education": 0.39,
+          "energy_utilities": 0.47,
+          "financial_services": 0.44,
+          "government": 0.43,
+          "healthcare_life_sciences": 0.38,
+          "manufacturing_industrial": 0.52,
+          "marketing_services": 0.37,
+          "not_for_profit": 0.38,
+          "legal_in-house": 0.37,
+          "legal_agency": 0.42,
+          "professional_services": 0.39,
+          "real_estate_property_services": 0.42,
+          "retail": 0.45,
+          "sales": 0.48,
+          "telecommunications": 0.39,
+          "transport_storage": 0.41,
+          "travel_hospitality_leisure": 0.37,
+          "wholesale_distribution": 0.36,
+          "other": 0.43
+        },
+        "job_level": {
+          "ceo": 0.5,
+          "senior_executive": 0.48,
+          "senior_leader": 0.45,
+          "mid_level_leader": 0.46,
+          "first_level_supervisor": 0.37,
+          "individual_contributor": 0.43
+        },
+        "relationship_status": {
+          "single": 0.41,
+          "cohabiting": 0.45,
+          "married": 0.36,
+          "divorced_separated": 0.34,
+          "widowed": 0.41
+        },
+        "education": {
+          "secondary": 0.42,
+          "tertiary": 0.41,
+          "professional_certifications": 0.43,
+          "undergraduate": 0.48,
+          "postgraduate": 0.4,
+          "doctorate": 0
+        },
+        "generation": {
+          "age_65_plus": 0.48,
+          "gen_z": 0.46,
+          "millennials": 0.41,
+          "gen_x": 0.3,
+          "baby_boomers": 0.42
+        },
+        "employment_status": {
+          "full-time": 0.4,
+          "part-time": 0.42,
+          "contract": 0.36,
+          "freelance": 0.51
+        }
+      }
+    }
+  ]
+}

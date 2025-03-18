@@ -1,4 +1,46 @@
 {
+  "metadata": {
+    "topicId": "Leadership_Confidence",
+    "questionId": "Q8_1",
+    "year": 2025,
+    "keywords": [
+      "trust in leadership",
+      "executive confidence",
+      "leadership effectiveness",
+      "management trust",
+      "leadership change impact",
+      "operational disruption"
+    ],
+    "canonicalQuestion": "How confident are you in your organization's leadership?",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [
+      "Organizational_Adaptation",
+      "Culture_and_Values"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
   "question": "To what extent do you agree with the following statements.",
   "responses": [
     {

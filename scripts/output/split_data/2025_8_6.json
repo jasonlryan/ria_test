@@ -1,4 +1,46 @@
 {
+  "metadata": {
+    "topicId": "DEI",
+    "questionId": "Q8_6",
+    "year": 2025,
+    "keywords": [
+      "diversity initiatives",
+      "equity programs",
+      "inclusion efforts",
+      "workplace diversity",
+      "discrimination",
+      "career advancement"
+    ],
+    "canonicalQuestion": "How committed is your organization to diversity, equity, and inclusion?",
+    "comparable": false,
+    "userMessage": "Compare with caution due to expanded question set in 2025.",
+    "availableMarkets": [],
+    "relatedTopics": [
+      "Culture_and_Values",
+      "Leadership_Confidence"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
   "question": "To what extent do you agree with the following statements.",
   "responses": [
     {

@@ -175,14 +175,30 @@
         ]
     },
     "10": {
-        "question": "What would your ideal role be?",
-        "responses": [
-            "Permanent Full Time",
-            "Part time",
-            "Contract / Interim Part Time",
-            "Contract / Interim Full Time",
-            "Freelance Part Time",
-            "Freelance Full Time"
+        "question": "To what extent do you think your company is committed to greater inclusion and social responsibility?",
+        "parts": [
+            {
+                "subtitle": "Is your company committed to Diversity, Equity & Inclusion (DE&I) in the workplace?",
+                "responses": [
+                    "Far too committed",
+                    "Slightly too committed",
+                    "Just the right commitment",
+                    "Not committed nearly enough",
+                    "Not committed at all",
+                    "Don't know / no opinion"
+                ]
+            },
+            {
+                "subtitle": "Is your company committed to corporate social responsibility and sustainability goals?",
+                "responses": [
+                    "Far too committed",
+                    "Slightly too committed",
+                    "Just the right commitment",
+                    "Not committed nearly enough",
+                    "Not committed at all",
+                    "Don't know / no opinion"
+                ]
+            }
         ]
     },
     "11": {

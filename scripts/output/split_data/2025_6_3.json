@@ -1,0 +1,143 @@
+{
+  "metadata": {
+    "topicId": "Employee_Wellbeing",
+    "questionId": "Q6_3",
+    "year": 2025,
+    "canonicalQuestion": "How supported do you feel in terms of wellbeing at work?",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "keywords": [
+      "health support",
+      "wellbeing initiatives",
+      "work-life support",
+      "mental health"
+    ],
+    "relatedTopics": [
+      "Work_Life_Flexibility",
+      "Motivation_and_Fulfillment"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "To what extent do you agree with the following statements with regards to your workplace.",
+  "responses": [
+    {
+      "response": "I feel my company provides adequate support for employee mental well-being",
+      "data": {
+        "region": {
+          "country_overall": 0.7,
+          "united_states": 0.66,
+          "united_kingdom": 0.82,
+          "india": 0.5,
+          "france": 0.55,
+          "germany": 0.35,
+          "japan": 0.73,
+          "united_arab_emirates": 0.68,
+          "brazil": 0.75,
+          "saudi_arabia": 0.65,
+          "australia": 0.64
+        },
+        "age": {
+          "18-24": 0.71,
+          "25-34": 0.67,
+          "35-44": 0.58,
+          "45-54": 0.5,
+          "55-65": 0.59
+        },
+        "gender": {
+          "female": 0.65,
+          "male": 0.57
+        },
+        "org_size": {
+          "fewer_than_10": 0.57,
+          "10_to_49": 0.61,
+          "50_to_99": 0.63,
+          "100_to_249": 0.67,
+          "500_to_999": 0.62,
+          "1000_or_more": 0.65
+        },
+        "sector": {
+          "automotive": 0.66,
+          "business_administration_support_services": 0.81,
+          "technology": 0.68,
+          "construction": 0.66,
+          "consumer_goods": 0.59,
+          "education": 0.66,
+          "energy_utilities": 0.68,
+          "financial_services": 0.58,
+          "government": 0.58,
+          "healthcare_life_sciences": 0.59,
+          "manufacturing_industrial": 0.66,
+          "marketing_services": 0.58,
+          "not_for_profit": 0.52,
+          "legal_in-house": 0.61,
+          "legal_agency": 0.54,
+          "professional_services": 0.59,
+          "real_estate_property_services": 0.59,
+          "retail": 0.61,
+          "sales": 0.68,
+          "telecommunications": 0.54,
+          "transport_storage": 0.57,
+          "travel_hospitality_leisure": 0.51,
+          "wholesale_distribution": 0.58,
+          "other": 0.77
+        },
+        "job_level": {
+          "ceo": 0.81,
+          "senior_executive": 0.74,
+          "senior_leader": 0.63,
+          "mid_level_leader": 0.65,
+          "first_level_supervisor": 0.51,
+          "individual_contributor": 0.57
+        },
+        "relationship_status": {
+          "single": 0.56,
+          "cohabiting": 0.7,
+          "married": 0.52,
+          "divorced_separated": 0.59,
+          "widowed": 0.6
+        },
+        "education": {
+          "secondary": 0.53,
+          "tertiary": 0.56,
+          "professional_certifications": 0.64,
+          "undergraduate": 0.72,
+          "postgraduate": 0.72,
+          "doctorate": 0
+        },
+        "generation": {
+          "age_65_plus": 0.67,
+          "gen_z": 0.69,
+          "millennials": 0.56,
+          "gen_x": 0.53,
+          "baby_boomers": 0.61
+        },
+        "employment_status": {
+          "full-time": 0.58,
+          "part-time": 0.53,
+          "contract": 0.53,
+          "freelance": 0.62
+        }
+      }
+    }
+  ]
+}

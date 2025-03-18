@@ -1,4 +1,52 @@
 {
+  "metadata": {
+    "topicId": "Skills_Utilization",
+    "questionId": "Q8_5",
+    "year": 2025,
+    "keywords": [
+      "skills usage",
+      "talent utilization",
+      "capability application",
+      "competency use",
+      "training access",
+      "age discrimination"
+    ],
+    "canonicalQuestion": "How well are your skills utilized in your current role?",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [
+      "Learning_and_Development",
+      "Intergenerational_Collaboration"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
   "question": "To what extent do you agree with the following statements.",
   "responses": [
     {

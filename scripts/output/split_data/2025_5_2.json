@@ -1,0 +1,154 @@
+{
+  "metadata": {
+    "topicId": "AI_Attitudes",
+    "questionId": "Q5_2",
+    "year": 2025,
+    "keywords": [
+      "AI attitudes",
+      "AI perception",
+      "excitement about AI",
+      "role impact of AI",
+      "emerging technology sentiment",
+      "optimism regarding AI",
+      "AI value",
+      "AI influence"
+    ],
+    "canonicalQuestion": "What are your attitudes toward AI in the workplace?",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [
+      "AI_Readiness",
+      "Learning_and_Development"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "To what extent do you agree with the following statements about AI in the workplace and skills.",
+  "responses": [
+    {
+      "response": "My organization encourages experimentation with new technologies",
+      "data": {
+        "region": {
+          "country_overall": 0.64,
+          "united_states": 0.57,
+          "united_kingdom": 0.85,
+          "india": 0.51,
+          "france": 0.51,
+          "germany": 0.42,
+          "japan": 0.79,
+          "united_arab_emirates": 0.77,
+          "brazil": 0.78,
+          "saudi_arabia": 0.56,
+          "australia": 0.64
+        },
+        "age": {
+          "18-24": 0.68,
+          "25-34": 0.66,
+          "35-44": 0.57,
+          "45-54": 0.45,
+          "55-65": 0.51
+        },
+        "gender": {
+          "female": 0.65,
+          "male": 0.53
+        },
+        "org_size": {
+          "fewer_than_10": 0.53,
+          "10_to_49": 0.61,
+          "50_to_99": 0.63,
+          "100_to_249": 0.67,
+          "500_to_999": 0.59,
+          "1000_or_more": 0.64
+        },
+        "sector": {
+          "automotive": 0.7,
+          "business_administration_support_services": 0.83,
+          "technology": 0.66,
+          "construction": 0.67,
+          "consumer_goods": 0.57,
+          "education": 0.65,
+          "energy_utilities": 0.7,
+          "financial_services": 0.48,
+          "government": 0.51,
+          "healthcare_life_sciences": 0.62,
+          "manufacturing_industrial": 0.69,
+          "marketing_services": 0.43,
+          "not_for_profit": 0.47,
+          "legal_in-house": 0.49,
+          "legal_agency": 0.66,
+          "professional_services": 0.61,
+          "real_estate_property_services": 0.53,
+          "retail": 0.63,
+          "sales": 0.72,
+          "telecommunications": 0.53,
+          "transport_storage": 0.51,
+          "travel_hospitality_leisure": 0.46,
+          "wholesale_distribution": 0.54,
+          "other": 0.78
+        },
+        "job_level": {
+          "ceo": 0.81,
+          "senior_executive": 0.76,
+          "senior_leader": 0.64,
+          "mid_level_leader": 0.65,
+          "first_level_supervisor": 0.44,
+          "individual_contributor": 0.56
+        },
+        "relationship_status": {
+          "single": 0.52,
+          "cohabiting": 0.68,
+          "married": 0.46,
+          "divorced_separated": 0.51,
+          "widowed": 0.52
+        },
+        "education": {
+          "secondary": 0.53,
+          "tertiary": 0.5,
+          "professional_certifications": 0.64,
+          "undergraduate": 0.73,
+          "postgraduate": 0.73,
+          "doctorate": 0
+        },
+        "generation": {
+          "age_65_plus": 0.66,
+          "gen_z": 0.67,
+          "millennials": 0.55,
+          "gen_x": 0.43,
+          "baby_boomers": 0.58
+        },
+        "employment_status": {
+          "full-time": 0.51,
+          "part-time": 0.57,
+          "contract": 0.58,
+          "freelance": 0.64
+        }
+      }
+    }
+  ]
+}

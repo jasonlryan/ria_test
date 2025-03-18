@@ -1,4 +1,46 @@
 {
+  "metadata": {
+    "topicId": "Communication_and_Connection",
+    "questionId": "Q9_5",
+    "year": 2025,
+    "keywords": [
+      "workplace relationships",
+      "peer communication",
+      "colleague connections",
+      "personal disclosure",
+      "workplace friendships",
+      "interpersonal comfort"
+    ],
+    "canonicalQuestion": "How comfortable are you communicating and connecting with colleagues?",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [
+      "Employee_Wellbeing",
+      "Culture_and_Values"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "desc"
+    }
+  },
   "question": "To what extent do you agree with the following statements.",
   "responses": [
     {

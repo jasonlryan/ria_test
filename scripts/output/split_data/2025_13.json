@@ -1,4 +1,52 @@
 {
+  "metadata": {
+    "topicId": "Ideal_Role",
+    "questionId": "Q13",
+    "year": 2025,
+    "keywords": [
+      "preferred employment type",
+      "ideal employment arrangement",
+      "preferred work mode",
+      "job format",
+      "work model preference",
+      "employment structure"
+    ],
+    "canonicalQuestion": "What would your ideal role be?",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [
+      "Work_Life_Flexibility",
+      "Retention_Factors"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "desc"
+    }
+  },
   "question": "What would your ideal role be?",
   "responses": [
     {

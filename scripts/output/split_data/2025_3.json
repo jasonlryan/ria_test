@@ -1,4 +1,46 @@
 {
+  "metadata": {
+    "topicId": "Attrition_Factors",
+    "questionId": "Q3",
+    "year": 2025,
+    "keywords": [
+      "attrition factors",
+      "why employees leave",
+      "reasons to leave company",
+      "leaving factors",
+      "job departure",
+      "turnover reasons"
+    ],
+    "canonicalQuestion": "What factors would make you leave your current company?",
+    "comparable": false,
+    "userMessage": "Year‑on‑year comparisons not available due to methodology changes.",
+    "availableMarkets": [],
+    "relatedTopics": [
+      "Attraction_Factors",
+      "Retention_Factors"
+    ],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
   "question": "When considering the below options, which are most likely to make you leave your current company?",
   "responses": [
     {

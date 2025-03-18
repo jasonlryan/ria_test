@@ -1,0 +1,665 @@
+{
+    "metadata": {
+        "topicId": "DEI",
+        "questionId": "Q10_1",
+        "year": 2025,
+        "keywords": [
+            "diversity",
+            "equity",
+            "inclusion",
+            "DEI",
+            "commitment",
+            "workplace diversity"
+        ],
+        "canonicalQuestion": "To what extent do you think your company is committed to greater inclusion and social responsibility?",
+        "subQuestion": "Is your company committed to Diversity, Equity & Inclusion (DE&I) in the workplace?",
+        "comparable": true,
+        "userMessage": "Compare with Q6_1 from 2024 survey for DEI commitment trends.",
+        "availableMarkets": [
+            "United Kingdom",
+            "United States",
+            "Australia",
+            "India",
+            "Brazil",
+            "France",
+            "Germany",
+            "Japan",
+            "United Arab Emirates",
+            "Saudi Arabia"
+        ],
+        "relatedTopics": [
+            "Organizational_Values",
+            "Employee_Wellbeing",
+            "Workplace_Culture"
+        ],
+        "dataStructure": {
+            "question": "To what extent do you think your company is committed to greater inclusion and social responsibility?",
+            "subQuestion": "Is your company committed to Diversity, Equity & Inclusion (DE&I) in the workplace?",
+            "responses": [
+                "Far too committed",
+                "Slightly too committed",
+                "Just the right commitment",
+                "Not committed nearly enough",
+                "Not committed at all",
+                "Don't know / no opinion"
+            ],
+            "segments": [
+                "country",
+                "age",
+                "generation",
+                "gender",
+                "organization_size",
+                "employment_status",
+                "sector",
+                "job_level",
+                "marital_status",
+                "education"
+            ]
+        }
+    },
+    "data": {
+        "question": "To what extent do you think your company is committed to greater inclusion and social responsibility?",
+        "subQuestion": "Is your company committed to Diversity, Equity & Inclusion (DE&I) in the workplace?",
+        "responses": [
+            {
+                "response": "Far too committed",
+                "total": 12,
+                "segments": {
+                    "country": {
+                        "US": 12,
+                        "United_Kingdom": 12,
+                        "India": 21,
+                        "France": 6,
+                        "Germany": 7,
+                        "Japan": 2,
+                        "United_Arab_Emirates": 19,
+                        "Brazil": 22,
+                        "Saudi_Arabia": 18,
+                        "Australia": 12
+                    },
+                    "age": {
+                        "18-24": 10,
+                        "25-34": 14,
+                        "35-44": 14,
+                        "45-54": 11,
+                        "55-65": 7,
+                        "65_plus": 5
+                    },
+                    "generation": {
+                        "Gen_Z": 11,
+                        "Millennials": 15,
+                        "Gen_X": 10,
+                        "Baby_Boomers": 7
+                    },
+                    "gender": {
+                        "female": 11,
+                        "male": 14
+                    },
+                    "organization_size": {
+                        "<10": 3,
+                        "10-49": 5,
+                        "50-99": 10,
+                        "100-500": 12,
+                        "501-1000": 15,
+                        "1000+": 12
+                    },
+                    "employment_status": {
+                        "full-time": 13,
+                        "part-time": 7,
+                        "contract": 8,
+                        "freelance": 9
+                    },
+                    "sector": {
+                        "Automotive": 14,
+                        "Business_administration": 13,
+                        "Technology": 23,
+                        "Construction": 12,
+                        "Consumer_Goods": 17,
+                        "Education": 12,
+                        "Energy_Utilities": 13,
+                        "Financial_Services": 14,
+                        "Government": 10,
+                        "Healthcare": 9,
+                        "Manufacturing_industrial": 10,
+                        "Marketing_services": 18,
+                        "Not-for-profit": 6,
+                        "Legal_in-house": 4,
+                        "Legal_agency": 7,
+                        "Life_sciences": 14,
+                        "Professional_Services": 7,
+                        "Real_Estate": 12,
+                        "Retail": 7,
+                        "Sales": 10,
+                        "Telecommunications": 15,
+                        "Transport_storage": 8,
+                        "Travel_Hospitality_Leisure": 6,
+                        "Wholesale_Distribution": 5,
+                        "Other": 11
+                    },
+                    "job_level": {
+                        "CEO": 20,
+                        "Senior_Executive": 24,
+                        "Senior_Leader": 15,
+                        "Mid-Level_Leader": 11,
+                        "First_Level_Supervisor": 14,
+                        "Individual_Contributor": 6
+                    },
+                    "marital_status": {
+                        "Single": 9,
+                        "Co-habiting": 5,
+                        "Married": 16,
+                        "Divorced_separated": 6,
+                        "Widowed": 5
+                    },
+                    "education": {
+                        "Secondary": 8,
+                        "Tertiary": 8,
+                        "Professional_Certifications": 7,
+                        "Under-graduate_degree": 13,
+                        "Post-graduate_Masters_degree": 17,
+                        "Doctorate_Phd": 20
+                    }
+                }
+            },
+            {
+                "response": "Slightly too committed",
+                "total": 15,
+                "segments": {
+                    "country": {
+                        "US": 16,
+                        "United_Kingdom": 15,
+                        "India": 23,
+                        "France": 13,
+                        "Germany": 14,
+                        "Japan": 8,
+                        "United_Arab_Emirates": 23,
+                        "Brazil": 12,
+                        "Saudi_Arabia": 21,
+                        "Australia": 13
+                    },
+                    "age": {
+                        "18-24": 18,
+                        "25-34": 18,
+                        "35-44": 17,
+                        "45-54": 14,
+                        "55-65": 10,
+                        "65_plus": 10
+                    },
+                    "generation": {
+                        "Gen_Z": 17,
+                        "Millennials": 17,
+                        "Gen_X": 13,
+                        "Baby_Boomers": 9
+                    },
+                    "gender": {
+                        "female": 13,
+                        "male": 17
+                    },
+                    "organization_size": {
+                        "<10": 10,
+                        "10-49": 12,
+                        "50-99": 15,
+                        "100-500": 17,
+                        "501-1000": 17,
+                        "1000+": 15
+                    },
+                    "employment_status": {
+                        "full-time": 16,
+                        "part-time": 12,
+                        "contract": 17,
+                        "freelance": 13
+                    },
+                    "sector": {
+                        "Automotive": 15,
+                        "Business_administration": 14,
+                        "Technology": 22,
+                        "Construction": 18,
+                        "Consumer_Goods": 10,
+                        "Education": 13,
+                        "Energy_Utilities": 16,
+                        "Financial_Services": 20,
+                        "Government": 13,
+                        "Healthcare": 12,
+                        "Marketing_services": 14,
+                        "Not-for-profit": 22,
+                        "Legal_in-house": 5,
+                        "Legal_agency": 11,
+                        "Life_sciences": 18,
+                        "Professional_Services": 14,
+                        "Real_Estate": 13,
+                        "Retail": 12,
+                        "Sales": 12,
+                        "Telecommunications": 13,
+                        "Transport_storage": 20,
+                        "Travel_Hospitality_Leisure": 14,
+                        "Wholesale_Distribution": 13,
+                        "Other": 12
+                    },
+                    "job_level": {
+                        "CEO": 19,
+                        "Senior_Executive": 21,
+                        "Senior_Leader": 18,
+                        "Mid-Level_Leader": 17,
+                        "First_Level_Supervisor": 17,
+                        "Individual_Contributor": 10
+                    },
+                    "marital_status": {
+                        "Single": 14,
+                        "Co-habiting": 12,
+                        "Married": 17,
+                        "Divorced_separated": 10,
+                        "Widowed": 12
+                    },
+                    "education": {
+                        "Secondary": 12,
+                        "Tertiary": 14,
+                        "Professional_Certifications": 13,
+                        "Under-graduate_degree": 15,
+                        "Post-graduate_Masters_degree": 16,
+                        "Doctorate_Phd": 21
+                    }
+                }
+            },
+            {
+                "response": "Just the right commitment",
+                "total": 48,
+                "segments": {
+                    "country": {
+                        "US": 50,
+                        "United_Kingdom": 54,
+                        "India": 34,
+                        "France": 49,
+                        "Germany": 52,
+                        "Japan": 51,
+                        "United_Arab_Emirates": 35,
+                        "Brazil": 42,
+                        "Saudi_Arabia": 39,
+                        "Australia": 53
+                    },
+                    "age": {
+                        "18-24": 41,
+                        "25-34": 44,
+                        "35-44": 47,
+                        "45-54": 50,
+                        "55-65": 56,
+                        "65_plus": 58
+                    },
+                    "generation": {
+                        "Gen_Z": 42,
+                        "Millennials": 46,
+                        "Gen_X": 51,
+                        "Baby_Boomers": 57
+                    },
+                    "gender": {
+                        "female": 50,
+                        "male": 45
+                    },
+                    "organization_size": {
+                        "<10": 54,
+                        "10-49": 49,
+                        "50-99": 48,
+                        "100-500": 46,
+                        "501-1000": 45,
+                        "1000+": 50
+                    },
+                    "employment_status": {
+                        "full-time": 47,
+                        "part-time": 52,
+                        "contract": 40,
+                        "freelance": 40
+                    },
+                    "sector": {
+                        "Automotive": 41,
+                        "Business_administration": 52,
+                        "Technology": 40,
+                        "Construction": 47,
+                        "Consumer_Goods": 43,
+                        "Education": 50,
+                        "Energy_Utilities": 52,
+                        "Financial_Services": 45,
+                        "Government": 49,
+                        "Healthcare": 52,
+                        "Manufacturing_industrial": 50,
+                        "Marketing_services": 45,
+                        "Not-for-profit": 30,
+                        "Legal_in-house": 64,
+                        "Legal_agency": 60,
+                        "Life_sciences": 33,
+                        "Professional_Services": 43,
+                        "Real_Estate": 51,
+                        "Retail": 53,
+                        "Sales": 47,
+                        "Telecommunications": 44,
+                        "Transport_storage": 53,
+                        "Travel_Hospitality_Leisure": 56,
+                        "Wholesale_Distribution": 49,
+                        "Other": 46
+                    },
+                    "job_level": {
+                        "CEO": 39,
+                        "Senior_Executive": 38,
+                        "Senior_Leader": 46,
+                        "Mid-Level_Leader": 48,
+                        "First_Level_Supervisor": 47,
+                        "Individual_Contributor": 53
+                    },
+                    "marital_status": {
+                        "Single": 47,
+                        "Co-habiting": 56,
+                        "Married": 45,
+                        "Divorced_separated": 55,
+                        "Widowed": 54
+                    },
+                    "education": {
+                        "Secondary": 54,
+                        "Tertiary": 52,
+                        "Professional_Certifications": 47,
+                        "Under-graduate_degree": 47,
+                        "Post-graduate_Masters_degree": 44,
+                        "Doctorate_Phd": 43
+                    }
+                }
+            },
+            {
+                "response": "Not committed nearly enough",
+                "total": 12,
+                "segments": {
+                    "country": {
+                        "US": 7,
+                        "United_Kingdom": 9,
+                        "India": 11,
+                        "France": 13,
+                        "Germany": 14,
+                        "Japan": 20,
+                        "United_Arab_Emirates": 13,
+                        "Brazil": 15,
+                        "Saudi_Arabia": 9,
+                        "Australia": 11
+                    },
+                    "age": {
+                        "18-24": 16,
+                        "25-34": 12,
+                        "35-44": 11,
+                        "45-54": 11,
+                        "55-65": 11,
+                        "65_plus": 9
+                    },
+                    "generation": {
+                        "Gen_Z": 15,
+                        "Millennials": 11,
+                        "Gen_X": 11,
+                        "Baby_Boomers": 10
+                    },
+                    "gender": {
+                        "female": 12,
+                        "male": 12
+                    },
+                    "organization_size": {
+                        "<10": 12,
+                        "10-49": 14,
+                        "50-99": 13,
+                        "100-500": 14,
+                        "501-1000": 12,
+                        "1000+": 11
+                    },
+                    "employment_status": {
+                        "full-time": 12,
+                        "part-time": 12,
+                        "contract": 19,
+                        "freelance": 15
+                    },
+                    "sector": {
+                        "Automotive": 14,
+                        "Business_administration": 10,
+                        "Technology": 8,
+                        "Construction": 11,
+                        "Consumer_Goods": 14,
+                        "Education": 12,
+                        "Energy_Utilities": 9,
+                        "Financial_Services": 11,
+                        "Government": 13,
+                        "Healthcare": 12,
+                        "Manufacturing_industrial": 13,
+                        "Marketing_services": 13,
+                        "Not-for-profit": 13,
+                        "Legal_in-house": 12,
+                        "Legal_agency": 16,
+                        "Life_sciences": 19,
+                        "Professional_Services": 18,
+                        "Real_Estate": 15,
+                        "Retail": 12,
+                        "Sales": 16,
+                        "Telecommunications": 12,
+                        "Transport_storage": 12,
+                        "Travel_Hospitality_Leisure": 12,
+                        "Wholesale_Distribution": 16,
+                        "Other": 11
+                    },
+                    "job_level": {
+                        "CEO": 7,
+                        "Senior_Executive": 9,
+                        "Senior_Leader": 14,
+                        "Mid-Level_Leader": 13,
+                        "First_Level_Supervisor": 11,
+                        "Individual_Contributor": 12
+                    },
+                    "marital_status": {
+                        "Single": 14,
+                        "Co-habiting": 14,
+                        "Married": 10,
+                        "Divorced_separated": 11,
+                        "Widowed": 8
+                    },
+                    "education": {
+                        "Secondary": 13,
+                        "Tertiary": 15,
+                        "Professional_Certifications": 13,
+                        "Under-graduate_degree": 12,
+                        "Post-graduate_Masters_degree": 10,
+                        "Doctorate_Phd": 7
+                    }
+                }
+            },
+            {
+                "response": "Not committed at all",
+                "total": 5,
+                "segments": {
+                    "country": {
+                        "US": 6,
+                        "United_Kingdom": 3,
+                        "India": 8,
+                        "France": 6,
+                        "Germany": 6,
+                        "Japan": 5,
+                        "United_Arab_Emirates": 6,
+                        "Brazil": 5,
+                        "Saudi_Arabia": 6,
+                        "Australia": 4
+                    },
+                    "age": {
+                        "18-24": 9,
+                        "25-34": 6,
+                        "35-44": 5,
+                        "45-54": 5,
+                        "55-65": 5,
+                        "65_plus": 7
+                    },
+                    "generation": {
+                        "Gen_Z": 8,
+                        "Millennials": 5,
+                        "Gen_X": 5,
+                        "Baby_Boomers": 5
+                    },
+                    "gender": {
+                        "female": 5,
+                        "male": 6
+                    },
+                    "organization_size": {
+                        "<10": 10,
+                        "10-49": 8,
+                        "50-99": 7,
+                        "100-500": 6,
+                        "501-1000": 5,
+                        "1000+": 4
+                    },
+                    "employment_status": {
+                        "full-time": 5,
+                        "part-time": 6,
+                        "contract": 10,
+                        "freelance": 9
+                    },
+                    "sector": {
+                        "Automotive": 9,
+                        "Business_administration": 5,
+                        "Technology": 4,
+                        "Construction": 7,
+                        "Consumer_Goods": 8,
+                        "Education": 5,
+                        "Energy_Utilities": 4,
+                        "Financial_Services": 5,
+                        "Government": 4,
+                        "Healthcare": 4,
+                        "Manufacturing_industrial": 3,
+                        "Marketing_services": 6,
+                        "Not-for-profit": 10,
+                        "Legal_in-house": 4,
+                        "Legal_agency": 1,
+                        "Life_sciences": 11,
+                        "Professional_Services": 4,
+                        "Real_Estate": 7,
+                        "Retail": 5,
+                        "Sales": 7,
+                        "Telecommunications": 4,
+                        "Transport_storage": 3,
+                        "Travel_Hospitality_Leisure": 6,
+                        "Wholesale_Distribution": 8,
+                        "Other": 6
+                    },
+                    "job_level": {
+                        "CEO": 10,
+                        "Senior_Executive": 6,
+                        "Senior_Leader": 5,
+                        "Mid-Level_Leader": 6,
+                        "First_Level_Supervisor": 5,
+                        "Individual_Contributor": 5
+                    },
+                    "marital_status": {
+                        "Single": 7,
+                        "Co-habiting": 4,
+                        "Married": 5,
+                        "Divorced_separated": 6,
+                        "Widowed": 6
+                    },
+                    "education": {
+                        "Secondary": 5,
+                        "Tertiary": 6,
+                        "Professional_Certifications": 6,
+                        "Under-graduate_degree": 5,
+                        "Post-graduate_Masters_degree": 5,
+                        "Doctorate_Phd": 8
+                    }
+                }
+            },
+            {
+                "response": "Don't know / no opinion",
+                "total": 7,
+                "segments": {
+                    "country": {
+                        "US": 9,
+                        "United_Kingdom": 7,
+                        "India": 2,
+                        "France": 13,
+                        "Germany": 7,
+                        "Japan": 14,
+                        "United_Arab_Emirates": 4,
+                        "Brazil": 5,
+                        "Saudi_Arabia": 6,
+                        "Australia": 7
+                    },
+                    "age": {
+                        "18-24": 7,
+                        "25-34": 5,
+                        "35-44": 6,
+                        "45-54": 9,
+                        "55-65": 12,
+                        "65_plus": 11
+                    },
+                    "generation": {
+                        "Gen_Z": 6,
+                        "Millennials": 6,
+                        "Gen_X": 10,
+                        "Baby_Boomers": 12
+                    },
+                    "gender": {
+                        "female": 9,
+                        "male": 6
+                    },
+                    "organization_size": {
+                        "<10": 12,
+                        "10-49": 10,
+                        "50-99": 7,
+                        "100-500": 5,
+                        "501-1000": 6,
+                        "1000+": 8
+                    },
+                    "employment_status": {
+                        "full-time": 7,
+                        "part-time": 12,
+                        "contract": 6,
+                        "freelance": 14
+                    },
+                    "sector": {
+                        "Automotive": 7,
+                        "Business_administration": 5,
+                        "Technology": 2,
+                        "Construction": 4,
+                        "Consumer_Goods": 9,
+                        "Education": 9,
+                        "Energy_Utilities": 6,
+                        "Financial_Services": 4,
+                        "Government": 10,
+                        "Healthcare": 10,
+                        "Manufacturing_industrial": 7,
+                        "Marketing_services": 7,
+                        "Not-for-profit": 7,
+                        "Legal_in-house": 8,
+                        "Legal_agency": 7,
+                        "Life_sciences": 12,
+                        "Professional_Services": 8,
+                        "Real_Estate": 7,
+                        "Retail": 8,
+                        "Sales": 7,
+                        "Telecommunications": 4,
+                        "Transport_storage": 9,
+                        "Travel_Hospitality_Leisure": 6,
+                        "Wholesale_Distribution": 11,
+                        "Other": 13
+                    },
+                    "job_level": {
+                        "CEO": 4,
+                        "Senior_Executive": 2,
+                        "Senior_Leader": 3,
+                        "Mid-Level_Leader": 5,
+                        "First_Level_Supervisor": 6,
+                        "Individual_Contributor": 14
+                    },
+                    "marital_status": {
+                        "Single": 9,
+                        "Co-habiting": 8,
+                        "Married": 6,
+                        "Divorced_separated": 13,
+                        "Widowed": 15
+                    },
+                    "education": {
+                        "Secondary": 11,
+                        "Tertiary": 11,
+                        "Professional_Certifications": 9,
+                        "Under-graduate_degree": 6,
+                        "Post-graduate_Masters_degree": 5,
+                        "Doctorate_Phd": 5
+                    }
+                }
+            }
+        ]
+    }
+}
