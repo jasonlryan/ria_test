@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, KeyboardEvent } from "react";
 
 import Send from "./icons/Send";
 import { useSearchParams } from "next/navigation";
@@ -49,6 +49,21 @@ export default function PromptInput({
     }
   }, [prompt, threadId, promptClicked, hasMounted]);
 
+  // Handle keyboard events to support SHIFT+RETURN for new line
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter") {
+      // If SHIFT+ENTER, allow adding a new line
+      if (e.shiftKey) {
+        return; // Default behavior will add a line break
+      }
+      // If just ENTER without shift, submit the form
+      e.preventDefault();
+      if (prompt && !loading) {
+        setPromptClicked(true);
+      }
+    }
+  };
+
   return (
     <div className="w-full">
       <form
@@ -58,14 +73,17 @@ export default function PromptInput({
         }}
         className="relative"
       >
-        <input
+        <textarea
           id="question"
-          className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white border-2 border-tertiary rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors text-sm sm:text-base"
-          placeholder="Ask RIA about the Workforce 2025 Survey..."
+          className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white border-2 border-tertiary rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors text-sm sm:text-base resize-none overflow-y-auto"
+          placeholder="Ask RIA about the Workforce 2025 Survey... (Press SHIFT+RETURN for new line)"
           required
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
+          onKeyDown={handleKeyDown}
           disabled={loading}
+          rows={3}
+          style={{ minHeight: "80px", maxHeight: "200px" }}
         />
         <button
           type="submit"
