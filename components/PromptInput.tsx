@@ -24,29 +24,37 @@ export default function PromptInput({
 }) {
   // State to check if the prompt button is clicked.
   const [promptClicked, setPromptClicked] = useState(false);
+  // Track if the component has mounted to prevent auto-sending on first keystroke
+  const [hasMounted, setHasMounted] = useState(false);
 
   // Check if a question has been passed in the URL, if so, run the question
   const searchParams = useSearchParams();
   const question = searchParams.get("question");
 
   useEffect(() => {
-    setPrompt(question);
-    setPromptClicked(true);
+    // This runs only once on component mount
+    setHasMounted(true);
+    if (question) {
+      setPrompt(question);
+      setPromptClicked(true);
+    }
   }, []);
 
   useEffect(() => {
-    if (prompt && promptClicked) {
+    // Only send prompt if explicitly clicked or from URL parameter
+    // Avoid sending on first keystroke when editing manually
+    if (prompt && promptClicked && hasMounted) {
       sendPrompt(threadId);
       setPromptClicked(false);
     }
-  }, [prompt, threadId]);
+  }, [prompt, threadId, promptClicked, hasMounted]);
 
   return (
     <div className="w-full">
       <form
         onSubmit={(event) => {
           event.preventDefault();
-          sendPrompt(threadId);
+          setPromptClicked(true);
         }}
         className="relative"
       >
