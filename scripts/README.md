@@ -40,6 +40,78 @@ node process_survey_data.js --year=2024 --skip-global
 | `--verbose`     | Show detailed output during processing       |
 | `--help`, `-h`  | Display help message                         |
 
+## Vector Store Integration: `add_to_vectorstore.js`
+
+This script enables uploading processed JSON files to the OpenAI Vector Store, allowing the data to be used with OpenAI Assistants.
+
+### Features
+
+- Upload individual files or entire directories of files
+- Smart file replacement to update changed files
+- File tracking to manage what's in the vector store
+- Configurable through a JSON configuration file
+- Built-in duplicate detection and cleanup
+
+### Usage
+
+```bash
+# Use the configuration file to upload all configured files
+node add_to_vectorstore.js --config=vectorstore-config.json
+
+# Do a dry run first to see what would be uploaded
+node add_to_vectorstore.js --config=vectorstore-config.json --dryrun
+
+# Upload with detailed output
+node add_to_vectorstore.js --config=vectorstore-config.json --verbose
+
+# Upload specific files
+node add_to_vectorstore.js --file=output/split_data/2025_1.json
+
+# Upload files matching a pattern in a directory
+node add_to_vectorstore.js --dir=output/split_data --pattern=2025_*.json
+```
+
+### Command Line Options
+
+| Option           | Description                                  |
+| ---------------- | -------------------------------------------- |
+| `--config=path`  | Path to a configuration file                 |
+| `--file=path`    | Path to a specific file to upload            |
+| `--dir=path`     | Directory containing files to upload         |
+| `--pattern=glob` | File pattern to match when using --dir       |
+| `--purpose=str`  | Purpose of the files (default: "assistants") |
+| `--replace`      | Replace files if they already exist          |
+| `--verbose`      | Show detailed output during processing       |
+| `--dryrun`       | Preview without uploading                    |
+| `--help`, `-h`   | Display help message                         |
+
+### Vector Store Configuration
+
+The `vectorstore-config.json` file defines which files should be uploaded to the vector store. Example:
+
+```json
+{
+  "fileCollections": [
+    {
+      "name": "Canonical Mapping",
+      "files": ["reference files/canonical_topic_mapping.json"]
+    },
+    {
+      "name": "2024 Split Files",
+      "pattern": "output/split_data/2024_*.json"
+    },
+    {
+      "name": "2025 Split Files",
+      "pattern": "output/split_data/2025_*.json"
+    }
+  ],
+  "options": {
+    "replaceExisting": true,
+    "trackUploads": true
+  }
+}
+```
+
 ## Legacy Scripts
 
 Older scripts that are no longer part of the main workflow have been moved to the `legacy/` directory to keep the main directory clean and focused.
@@ -68,6 +140,8 @@ However, this is not recommended as it will not provide the enhanced question id
 - `reference files/` - Contains mapping files for question identification
   - `canonical_topic_mapping.json` - Maps questions to topics and themes
 - `legacy/` - Contains deprecated scripts that are no longer part of the main workflow
+- `vectorstore-config.json` - Configuration file for vector store uploads
+- `vectorstore-index.json` - Tracking file for uploaded vector store files
 
 ## Processing Workflow
 
@@ -76,6 +150,7 @@ However, this is not recommended as it will not provide the enhanced question id
 3. Metadata is added to each file using the canonical topic mapping
 4. Files are named according to the year and question ID (e.g., `2025_5_1.json`)
 5. A file index is created to catalog all generated files
+6. (Optional) Files are uploaded to the OpenAI Vector Store for use with Assistants
 
 ## Recent Optimizations
 
@@ -86,3 +161,5 @@ The `process_survey_data.js` script has been optimized to include:
 - Better error handling with detailed logging for unmapped questions
 - Performance optimizations for file generation and indexing
 - Consolidated functionality for a streamlined workflow
+
+The new `add_to_vectorstore.js` script adds the ability to upload processed files to OpenAI's Vector Store, enabling integration with AI assistants that can access and query the survey data.
