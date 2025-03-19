@@ -14,7 +14,6 @@ import { AssistantStream } from "openai/lib/AssistantStream";
 // Markdown
 import Markdown from "react-markdown";
 // Components
-import Nav from "../../../components/Nav";
 import PromptInput from "../../../components/PromptInput";
 // Helpers
 import { parseResponse } from "../../../utils/helpers";
@@ -23,7 +22,7 @@ import chatConfig from "../../../config/chat.config.json";
 function Embed({ params: { assistantId } }) {
   const title = "WORKFORCE 2025";
   const description =
-    "Explore insights from our comprehensive workforce survey with RIA, your AI research assistant";
+    "Explore insights from our comprehensive workforce survey with RIA,\nyour AI research assistant";
 
   const [loading, setLoading] = useState(false);
   // Message being streamed
@@ -244,11 +243,13 @@ function Embed({ params: { assistantId } }) {
   const scroll = () => {
     // Grab the properties for the message list
     const { scrollHeight } = messageListRef.current as HTMLDivElement;
-    messageListRef.current?.scrollTo(0, scrollHeight);
+    console.log("Scrolling to:", scrollHeight);
+    messageListRef.current?.scrollTo({ top: scrollHeight, behavior: "smooth" });
   };
   useEffect(() => {
+    console.log("Messages updated, triggering scroll.");
     scroll();
-  }, [streamingMessage]);
+  }, [messages, streamingMessage]);
 
   const handleStarterQuestion = (question: string) => {
     if (loading) return;
@@ -260,28 +261,49 @@ function Embed({ params: { assistantId } }) {
   return (
     <div className="min-h-screen w-full bg-white flex flex-col">
       {/* Hero Section */}
-      <div className="hero-section">
-        <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8 lg:py-10 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-              {title}
-            </h1>
-            <p className="mt-4 text-base sm:text-lg md:text-xl text-white max-w-3xl mx-auto">
-              {description}
-            </p>
+      <div className="hero-section sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-5 relative">
+          <div className="flex justify-between items-center">
+            <div className="text-left max-w-3xl pl-1 sm:pl-2 md:pl-4">
+              <h1 className="text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">
+                {title}
+              </h1>
+              <p className="mt-2 text-sm sm:text-base md:text-lg text-white whitespace-pre-line">
+                {description}
+              </p>
+            </div>
+            <button
+              onClick={refreshChat}
+              className="inline-flex items-center bg-white hover:bg-gray-100 text-primary py-1.5 px-3 rounded-lg transition-colors shadow-md"
+              aria-label="New chat"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-5 h-5 mr-2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+                />
+              </svg>
+              <span className="text-base font-medium">New Chat</span>
+            </button>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="w-full max-w-7xl mx-auto px-4 py-4 sm:py-6 lg:py-8 flex-1 flex flex-col">
-        <Nav refreshChat={refreshChat} title={title} />
-
-        <div className="flex flex-col lg:flex-row gap-6 flex-1">
+      <div className="w-full max-w-7xl mx-auto px-4 pt-1 flex-1 flex flex-col">
+        <div className="flex flex-col lg:flex-row gap-4 flex-1 overflow-hidden">
           {/* Chat and Input Section */}
           <div className="flex-1 flex flex-col">
             {/* Chat Container */}
-            <div className="chat-container">
+            <div className="chat-container flex-1 overflow-y-auto">
               <div
                 className="chat-messages scroll"
                 ref={messageListRef}
@@ -318,7 +340,7 @@ function Embed({ params: { assistantId } }) {
             </div>
 
             {/* Input Container */}
-            <div className="w-full">
+            <div className="w-full sticky bottom-0 z-10 bg-white">
               <PromptInput
                 prompt={prompt}
                 setPrompt={setPrompt}
@@ -348,7 +370,7 @@ function Embed({ params: { assistantId } }) {
         </div>
 
         {/* Legal Text */}
-        <div className="text-center text-xs text-gray-500 mt-4">
+        <div className="text-center text-xs text-gray-500 mt-4 mb-8 pb-6">
           By chatting, you agree to the{" "}
           <a
             href="https://www.kornferry.com/terms"
