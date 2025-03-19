@@ -1,6 +1,7 @@
 {
   "metadata": {
     "topicId": "Pay_and_Reward",
+    "theme": "Compensation & Benefits",
     "questionId": "Q4_4",
     "year": 2024,
     "keywords": [
@@ -44,12 +45,20 @@
       "sortOrder": "descending"
     }
   },
-  "question": "4_4. I would stay at a job if it paid me the salary I want, even if I hated the role",
+  "question": "4_1. The values a company promotes are extremely important to me",
   "responses": [
     {
       "response": "Agree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.52,
+          "united_states": 0.66,
+          "australia": 0.52,
+          "india": 0.68,
+          "brazil": 0.55,
+          "saudi_arabia_uae": 0.71,
+          "country_overall": 0.61
+        },
         "age": {
           "18-24": 0.61,
           "25-34": 0.65,
@@ -58,8 +67,8 @@
           "55-65": 0.4
         },
         "gender": {
-          "female": 0.58,
-          "male": 0.63
+          "male": 0.63,
+          "female": 0.58
         },
         "org_size": {
           "fewer_than_10": 0.49,
@@ -98,7 +107,6 @@
           "other": 0.55
         },
         "job_level": {
-          "ceo": 0.64,
           "senior_executive": 0.7,
           "senior_leader": 0.6,
           "mid_level_leader": 0.59,
@@ -126,7 +134,15 @@
     {
       "response": "Disagree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.23,
+          "united_states": 0.14,
+          "australia": 0.22,
+          "india": 0.16,
+          "brazil": 0.27,
+          "saudi_arabia_uae": 0.12,
+          "country_overall": 0.19
+        },
         "age": {
           "18-24": 0.17,
           "25-34": 0.15,
@@ -135,8 +151,8 @@
           "55-65": 0.33
         },
         "gender": {
-          "female": 0.22,
-          "male": 0.16
+          "male": 0.16,
+          "female": 0.22
         },
         "org_size": {
           "fewer_than_10": 0.27,
@@ -175,7 +191,6 @@
           "other": 0.22
         },
         "job_level": {
-          "ceo": 0.19,
           "senior_executive": 0.15,
           "senior_leader": 0.19,
           "mid_level_leader": 0.18,

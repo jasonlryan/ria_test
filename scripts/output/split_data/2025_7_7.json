@@ -1,6 +1,7 @@
 {
   "metadata": {
     "topicId": "DEI",
+    "theme": "Workplace Dynamics",
     "questionId": "Q7_7",
     "year": 2025,
     "keywords": [
@@ -8,11 +9,15 @@
       "equity programs",
       "inclusion efforts",
       "workplace diversity",
-      "DEI rollbacks",
-      "political impact on DEI"
+      "DEI commitment",
+      "corporate social responsibility",
+      "sustainability goals",
+      "DEI",
+      "diversity",
+      "equity"
     ],
     "canonicalQuestion": "How committed is your organization to diversity, equity, and inclusion?",
-    "subQuestion": "I expect a significant reduction in DEI initiatives at my company since new governments were elected",
+    "subQuestion": "My organization's leaders value people over profits",
     "comparable": true,
     "userMessage": "Data based on comparable markets only.",
     "availableMarkets": [
@@ -22,11 +27,7 @@
       "India",
       "Brazil"
     ],
-    "relatedTopics": [
-      "Intergenerational_Collaboration",
-      "Culture_and_Values",
-      "Employee_Wellbeing"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -49,105 +50,35 @@
       "sortOrder": "descending"
     }
   },
-  "question": "To what extent do you agree with the following statements.",
+  "question": "Q7 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "I expect a significant reduction in DEI initiatives at my company since new governments were elected",
+      "response": "My organization's leaders value people over profits",
       "data": {
         "region": {
-          "country_overall": 0.5,
-          "united_states": 0.34,
-          "united_kingdom": 0.65,
-          "india": 0.32,
-          "france": 0.32,
-          "germany": 0.24,
-          "japan": 0.51,
-          "united_arab_emirates": 0.45,
-          "brazil": 0.46,
-          "saudi_arabia": 0.34,
-          "australia": 0.48
+          "australia": 58,
+          "india": 39,
+          "brazil": 65,
+          "country_overall": 54
         },
         "age": {
-          "18-24": 0.48,
-          "25-34": 0.44,
-          "35-44": 0.37,
-          "45-54": 0.25,
-          "55-65": 0.26
+          "18-24": 59,
+          "25-34": 56,
+          "35-44": 45,
+          "45-54": 35,
+          "55-65": 40
         },
         "gender": {
-          "female": 0.45,
-          "male": 0.32
+          "male": 46,
+          "female": 55
         },
-        "org_size": {
-          "fewer_than_10": 0.36,
-          "10_to_49": 0.45,
-          "50_to_99": 0.46,
-          "100_to_249": 0.49,
-          "500_to_999": 0.36,
-          "1000_or_more": 0.43
-        },
-        "sector": {
-          "automotive": 0.44,
-          "business_administration_support_services": 0.59,
-          "technology": 0.46,
-          "construction": 0.43,
-          "consumer_goods": 0.38,
-          "education": 0.39,
-          "energy_utilities": 0.47,
-          "financial_services": 0.28,
-          "government": 0.33,
-          "healthcare_life_sciences": 0.39,
-          "manufacturing_industrial": 0.6,
-          "marketing_services": 0.17,
-          "not_for_profit": 0.22,
-          "legal_in-house": 0.3,
-          "legal_agency": 0.41,
-          "professional_services": 0.38,
-          "real_estate_property_services": 0.35,
-          "retail": 0.44,
-          "sales": 0.51,
-          "telecommunications": 0.33,
-          "transport_storage": 0.35,
-          "travel_hospitality_leisure": 0.33,
-          "wholesale_distribution": 0.32,
-          "other": 0.55
-        },
-        "job_level": {
-          "ceo": 0.6,
-          "senior_executive": 0.51,
-          "senior_leader": 0.43,
-          "mid_level_leader": 0.42,
-          "first_level_supervisor": 0.26,
-          "individual_contributor": 0.39
-        },
-        "relationship_status": {
-          "single": 0.3,
-          "cohabiting": 0.46,
-          "married": 0.26,
-          "divorced_separated": 0.33,
-          "widowed": 0.34
-        },
-        "education": {
-          "secondary": 0.33,
-          "tertiary": 0.31,
-          "professional_certifications": 0.42,
-          "undergraduate": 0.51,
-          "postgraduate": 0.47,
-          "doctorate": 0
-        },
-        "generation": {
-          "age_65_plus": 0.49,
-          "gen_z": 0.45,
-          "millennials": 0.34,
-          "gen_x": 0.25,
-          "baby_boomers": 0.36
-        },
-        "employment_status": {
-          "full-time": 0.31,
-          "part-time": 0.38,
-          "contract": 0.39,
-          "freelance": 0.46
-        }
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
       }
     }
   ]

@@ -1,6 +1,7 @@
 {
   "metadata": {
     "topicId": "Culture_and_Values",
+    "theme": "Employee Experience & Work‑Life",
     "questionId": "Q4_13",
     "year": 2024,
     "keywords": [
@@ -15,11 +16,7 @@
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
-    "relatedTopics": [
-      "Work_Life_Flexibility",
-      "Employee_Wellbeing",
-      "Communication_and_Connection"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -42,12 +39,20 @@
       "sortOrder": "descending"
     }
   },
-  "question": "4_13. Connection with my colleagues is one of the most important things about my job",
+  "question": "4_1. The values a company promotes are extremely important to me",
   "responses": [
     {
       "response": "Agree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.64,
+          "united_states": 0.73,
+          "australia": 0.66,
+          "india": 0.83,
+          "brazil": 0.72,
+          "saudi_arabia_uae": 0.8,
+          "country_overall": 0.73
+        },
         "age": {
           "18-24": 0.67,
           "25-34": 0.74,
@@ -56,8 +61,8 @@
           "55-65": 0.64
         },
         "gender": {
-          "female": 0.71,
-          "male": 0.74
+          "male": 0.74,
+          "female": 0.71
         },
         "org_size": {
           "fewer_than_10": 0.61,
@@ -96,7 +101,6 @@
           "other": 0.66
         },
         "job_level": {
-          "ceo": 0.77,
           "senior_executive": 0.81,
           "senior_leader": 0.74,
           "mid_level_leader": 0.72,
@@ -124,7 +128,15 @@
     {
       "response": "Disagree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.12,
+          "united_states": 0.1,
+          "australia": 0.1,
+          "india": 0.05,
+          "brazil": 0.1,
+          "saudi_arabia_uae": 0.06,
+          "country_overall": 0.09
+        },
         "age": {
           "18-24": 0.13,
           "25-34": 0.07,
@@ -133,8 +145,8 @@
           "55-65": 0.12
         },
         "gender": {
-          "female": 0.09,
-          "male": 0.08
+          "male": 0.08,
+          "female": 0.09
         },
         "org_size": {
           "fewer_than_10": 0.15,
@@ -173,7 +185,6 @@
           "other": 0.12
         },
         "job_level": {
-          "ceo": 0.09,
           "senior_executive": 0.06,
           "senior_leader": 0.07,
           "mid_level_leader": 0.08,

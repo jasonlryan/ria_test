@@ -1,6 +1,7 @@
 {
   "metadata": {
     "topicId": "Motivation_and_Fulfillment",
+    "theme": "Employee Experience & Work‑Life",
     "questionId": "Q17_4",
     "year": 2025,
     "keywords": [
@@ -8,23 +9,14 @@
       "work engagement",
       "employee motivation",
       "workplace fulfillment",
-      "Motivation_and_Fulfillment",
-      "motivation",
-      "fulfillment",
-      "motivated",
-      "fulfilled",
-      "feel"
+      "Motivation_and_Fulfillment"
     ],
     "canonicalQuestion": "How motivated and fulfilled do you feel in your role?",
-    "subQuestion": "The organization motivates me to do my best work.",
+    "subQuestion": "The organization shows care and concern for its employees.",
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
-    "relatedTopics": [
-      "Work_Life_Flexibility",
-      "Culture_and_Values",
-      "Employee_Wellbeing"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -47,105 +39,35 @@
       "sortOrder": "descending"
     }
   },
-  "question": "To what extent do you agree with the following statements.",
+  "question": "Q17 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "The organization motivates me to do my best work.",
+      "response": "The organization shows care and concern for its employees.",
       "data": {
         "region": {
-          "country_overall": 0.76,
-          "united_states": 0.66,
-          "united_kingdom": 0.85,
-          "india": 0.68,
-          "france": 0.64,
-          "germany": 0.33,
-          "japan": 0.76,
-          "united_arab_emirates": 0.76,
-          "brazil": 0.78,
-          "saudi_arabia": 0.69,
-          "australia": 0.71
+          "australia": 70,
+          "india": 55,
+          "brazil": 76,
+          "country_overall": 67
         },
         "age": {
-          "18-24": 0.74,
-          "25-34": 0.72,
-          "35-44": 0.64,
-          "45-54": 0.59,
-          "55-65": 0.68
+          "18-24": 72,
+          "25-34": 70,
+          "35-44": 63,
+          "45-54": 56,
+          "55-65": 63
         },
         "gender": {
-          "female": 0.69,
-          "male": 0.67
+          "male": 62,
+          "female": 68
         },
-        "org_size": {
-          "fewer_than_10": 0.66,
-          "10_to_49": 0.7,
-          "50_to_99": 0.72,
-          "100_to_249": 0.72,
-          "500_to_999": 0.67,
-          "1000_or_more": 0.7
-        },
-        "sector": {
-          "automotive": 0.74,
-          "business_administration_support_services": 0.84,
-          "technology": 0.76,
-          "construction": 0.64,
-          "consumer_goods": 0.71,
-          "education": 0.71,
-          "energy_utilities": 0.72,
-          "financial_services": 0.6,
-          "government": 0.66,
-          "healthcare_life_sciences": 0.66,
-          "manufacturing_industrial": 0.71,
-          "marketing_services": 0.67,
-          "not_for_profit": 0.71,
-          "legal_in-house": 0.68,
-          "legal_agency": 0.66,
-          "professional_services": 0.73,
-          "real_estate_property_services": 0.63,
-          "retail": 0.71,
-          "sales": 0.73,
-          "telecommunications": 0.6,
-          "transport_storage": 0.64,
-          "travel_hospitality_leisure": 0.64,
-          "wholesale_distribution": 0.62,
-          "other": 0.83
-        },
-        "job_level": {
-          "ceo": 0.84,
-          "senior_executive": 0.77,
-          "senior_leader": 0.69,
-          "mid_level_leader": 0.71,
-          "first_level_supervisor": 0.59,
-          "individual_contributor": 0.64
-        },
-        "relationship_status": {
-          "single": 0.65,
-          "cohabiting": 0.74,
-          "married": 0.61,
-          "divorced_separated": 0.7,
-          "widowed": 0.68
-        },
-        "education": {
-          "secondary": 0.59,
-          "tertiary": 0.62,
-          "professional_certifications": 0.69,
-          "undergraduate": 0.77,
-          "postgraduate": 0.77,
-          "doctorate": 0
-        },
-        "generation": {
-          "age_65_plus": 0.73,
-          "gen_z": 0.73,
-          "millennials": 0.64,
-          "gen_x": 0.6,
-          "baby_boomers": 0.7
-        },
-        "employment_status": {
-          "full-time": 0.67,
-          "part-time": 0.59,
-          "contract": 0.66,
-          "freelance": 0.7
-        }
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
       }
     }
   ]

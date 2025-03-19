@@ -1,6 +1,7 @@
 {
   "metadata": {
     "topicId": "AI_Attitudes",
+    "theme": "Skills & Development",
     "questionId": "Q5_8",
     "year": 2025,
     "keywords": [
@@ -11,10 +12,12 @@
       "emerging technology sentiment",
       "optimism regarding AI",
       "AI value",
-      "AI influence"
+      "AI influence",
+      "AI_Attitudes",
+      "artificial intelligence"
     ],
     "canonicalQuestion": "What are your attitudes toward AI in the workplace?",
-    "subQuestion": "I feel certain that my role will be replaced by AI/tech in the next three years",
+    "subQuestion": "When I've been asked to use AI to help with my job, I found it produced better results and/or improved efficiency.",
     "comparable": true,
     "userMessage": "Data based on comparable markets only.",
     "availableMarkets": [
@@ -24,11 +27,7 @@
       "India",
       "Brazil"
     ],
-    "relatedTopics": [
-      "Learning_and_Development",
-      "Skills_Utilization",
-      "AI_Readiness"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -51,105 +50,35 @@
       "sortOrder": "descending"
     }
   },
-  "question": "To what extent do you agree with the following statements about AI in the workplace and skills.",
+  "question": "Q5 - To what extent do you agree with the following statements about AI in the workplace and skills.",
   "responses": [
     {
-      "response": "I feel certain that my role will be replaced by AI/tech in the next three years",
+      "response": "When I've been asked to use AI to help with my job, I found it produced better results and/or improved efficiency.",
       "data": {
         "region": {
-          "country_overall": 0.48,
-          "united_states": 0.36,
-          "united_kingdom": 0.68,
-          "india": 0.38,
-          "france": 0.38,
-          "germany": 0.32,
-          "japan": 0.53,
-          "united_arab_emirates": 0.42,
-          "brazil": 0.53,
-          "saudi_arabia": 0.41,
-          "australia": 0.5
+          "australia": 61,
+          "india": 45,
+          "brazil": 75,
+          "country_overall": 60.33
         },
         "age": {
-          "18-24": 0.5,
-          "25-34": 0.48,
-          "35-44": 0.41,
-          "45-54": 0.29,
-          "55-65": 0.31
+          "18-24": 66,
+          "25-34": 62,
+          "35-44": 50,
+          "45-54": 37,
+          "55-65": 41
         },
         "gender": {
-          "female": 0.47,
-          "male": 0.36
+          "male": 45,
+          "female": 61
         },
-        "org_size": {
-          "fewer_than_10": 0.4,
-          "10_to_49": 0.51,
-          "50_to_99": 0.49,
-          "100_to_249": 0.51,
-          "500_to_999": 0.4,
-          "1000_or_more": 0.46
-        },
-        "sector": {
-          "automotive": 0.5,
-          "business_administration_support_services": 0.6,
-          "technology": 0.45,
-          "construction": 0.53,
-          "consumer_goods": 0.37,
-          "education": 0.4,
-          "energy_utilities": 0.53,
-          "financial_services": 0.33,
-          "government": 0.35,
-          "healthcare_life_sciences": 0.41,
-          "manufacturing_industrial": 0.56,
-          "marketing_services": 0.28,
-          "not_for_profit": 0.32,
-          "legal_in-house": 0.28,
-          "legal_agency": 0.41,
-          "professional_services": 0.47,
-          "real_estate_property_services": 0.39,
-          "retail": 0.52,
-          "sales": 0.52,
-          "telecommunications": 0.36,
-          "transport_storage": 0.38,
-          "travel_hospitality_leisure": 0.41,
-          "wholesale_distribution": 0.39,
-          "other": 0.54
-        },
-        "job_level": {
-          "ceo": 0.62,
-          "senior_executive": 0.54,
-          "senior_leader": 0.46,
-          "mid_level_leader": 0.47,
-          "first_level_supervisor": 0.31,
-          "individual_contributor": 0.42
-        },
-        "relationship_status": {
-          "single": 0.34,
-          "cohabiting": 0.49,
-          "married": 0.32,
-          "divorced_separated": 0.35,
-          "widowed": 0.4
-        },
-        "education": {
-          "secondary": 0.38,
-          "tertiary": 0.35,
-          "professional_certifications": 0.45,
-          "undergraduate": 0.52,
-          "postgraduate": 0.49,
-          "doctorate": 0
-        },
-        "generation": {
-          "age_65_plus": 0.51,
-          "gen_z": 0.48,
-          "millennials": 0.39,
-          "gen_x": 0.27,
-          "baby_boomers": 0.41
-        },
-        "employment_status": {
-          "full-time": 0.36,
-          "part-time": 0.47,
-          "contract": 0.43,
-          "freelance": 0.49
-        }
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
       }
     }
   ]

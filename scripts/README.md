@@ -1,92 +1,88 @@
-# RIA25 Scripts - Survey Data Processing
+# Survey Data Processing Scripts
 
-## Overview
+This directory contains scripts for processing survey data from CSV files into individual JSON files with appropriate metadata.
 
-This directory contains scripts for processing survey data for the RIA25 project. The scripts handle the transformation of raw CSV data from different survey years into standardized JSON formats and individual question files for the web application.
+## Main Script: `process_survey_data.js`
 
-## Streamlined Processing Pipeline
+This is the **primary script** for all survey data processing. It handles the complete workflow:
 
-The processing pipeline has been streamlined to the following essential scripts:
+1. Reading CSV data
+2. Converting to a global JSON file
+3. Splitting the global JSON into individual files with proper metadata
+4. Creating a file index
 
-### Core Scripts
-
-1. **`process_survey_data.js`**
-
-   - Main orchestrator script that handles the complete workflow
-   - Converts CSV input to a global JSON format
-   - Splits the global data into individual question files with metadata
-   - Works with both 2024 and 2025 data with proper parameters
-
-2. **`process_2025_data.js`**
-
-   - Prepares 2025 data specifically (only needed for 2025 data)
-   - Harmonizes the 2025 consolidated CSV format with the 2024 format
-   - Converts percentage strings to decimal values
-   - Standardizes column names across both datasets
-   - Creates mapping documentation
-
-3. **`update_canonical_mapping.js`**
-
-   - Updates the canonical topic mapping used for organizing files
-   - Helps maintain consistent file naming and categorization
-
-4. **`split_to_files.js`**
-   - Contains functionality used by process_survey_data.js
-   - Splits global JSON data into individual question files
-
-### Directory Structure
-
-- **`data/`** - Contains input CSV and intermediate JSON files
-
-  - `2024/` - 2024 survey data files
-    - `2024_global_data.csv` - Standardized input CSV
-  - `2025/` - 2025 survey data files
-    - `2025_global_data.csv` - Standardized input CSV
-
-- **`output/`** - Contains processed output files
-
-  - `global_2024_data.json` - Processed global JSON for 2024 data
-  - `global_2025_data.json` - Processed global JSON for 2025 data
-  - `split_data/` - Individual question files with metadata
-
-- **`reference files/`** - Contains reference data and mappings
-
-- **`legacy/`** - Contains deprecated scripts that are no longer part of the main pipeline
-
-## Usage Instructions
-
-### Processing 2025 Data
-
-1. First, prepare the 2025 data with the harmonization script:
-
-   ```bash
-   node process_2025_data.js
-   ```
-
-   This creates a standardized 2025_global_data.csv in the data/2025 directory.
-
-2. Process the harmonized 2025 data:
-   ```bash
-   node process_survey_data.js --year=2025 --output=scripts/output
-   ```
-
-### Processing 2024 Data
-
-1. Process the 2024 data directly:
-   ```bash
-   node process_survey_data.js --year=2024 --output=scripts/output
-   ```
-
-### Updating Canonical Mappings
-
-If you need to update topic mappings:
+### Usage
 
 ```bash
-node update_canonical_mapping.js
+# Process 2025 data with default settings
+node process_survey_data.js --year=2025 --verbose
+
+# Process 2024 data
+node process_survey_data.js --year=2024 --verbose
+
+# Process with custom input file
+node process_survey_data.js --year=2025 --input=./custom/input.csv
+
+# Skip certain steps
+node process_survey_data.js --year=2024 --skip-global
 ```
 
-## Notes
+### Command Line Options
 
-- All redundant or single-purpose scripts have been moved to the `legacy/` directory
-- The current pipeline represents a streamlined approach focused on maintainability
-- Core scripts do not reference any of the legacy scripts
+| Option          | Description                                  |
+| --------------- | -------------------------------------------- |
+| `--year=YYYY`   | Survey year to process (2024, 2025)          |
+| `--input=path`  | Path to the input CSV file                   |
+| `--output=path` | Output directory for all generated files     |
+| `--skip-global` | Skip generating the global JSON file         |
+| `--skip-split`  | Skip splitting into individual files         |
+| `--force`       | Override existing files without confirmation |
+| `--verbose`     | Show detailed output during processing       |
+| `--help`, `-h`  | Display help message                         |
+
+## Legacy Scripts
+
+Older scripts that are no longer part of the main workflow have been moved to the `legacy/` directory to keep the main directory clean and focused.
+
+### `legacy/split_to_files.js`
+
+> ⚠️ **DEPRECATED**: This script has been replaced by `process_survey_data.js`
+
+`split_to_files.js` was previously used for splitting global JSON data into individual files. It has been deprecated in favor of the more comprehensive `process_survey_data.js`. The script now serves as a wrapper that redirects to the new script with appropriate warnings.
+
+If you need to run the legacy script for compatibility reasons, you can use the `--force` flag:
+
+```bash
+node legacy/split_to_files.js --force
+```
+
+However, this is not recommended as it will not provide the enhanced question identification and metadata handling available in the primary script.
+
+## Directory Structure
+
+- `data/` - Contains input CSV files by year
+- `output/` - Contains processed JSON files
+  - `global_YYYY_data.json` - Consolidated global JSON data
+  - `split_data/` - Individual question files with metadata
+  - `split_data/YYYY_file_index.json` - Index of all generated files
+- `reference files/` - Contains mapping files for question identification
+  - `canonical_topic_mapping.json` - Maps questions to topics and themes
+- `legacy/` - Contains deprecated scripts that are no longer part of the main workflow
+
+## Processing Workflow
+
+1. The CSV file is read and processed into a global JSON file
+2. The global JSON is split into individual files based on question IDs
+3. Metadata is added to each file using the canonical topic mapping
+4. Files are named according to the year and question ID (e.g., `2025_5_1.json`)
+5. A file index is created to catalog all generated files
+
+## Recent Optimizations
+
+The `process_survey_data.js` script has been optimized to include:
+
+- Enhanced question ID detection with multiple pattern matching approaches
+- Improved metadata structure that maintains consistency across files
+- Better error handling with detailed logging for unmapped questions
+- Performance optimizations for file generation and indexing
+- Consolidated functionality for a streamlined workflow

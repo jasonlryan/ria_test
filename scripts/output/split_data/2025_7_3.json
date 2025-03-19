@@ -1,6 +1,7 @@
 {
   "metadata": {
     "topicId": "Culture_and_Values",
+    "theme": "Employee Experience & Work‑Life",
     "questionId": "Q7_3",
     "year": 2025,
     "keywords": [
@@ -8,19 +9,14 @@
       "company values",
       "workplace ethos",
       "cultural fit",
-      "people over profits",
-      "organizational priorities"
+      "Culture_and_Values"
     ],
     "canonicalQuestion": "How important are company culture and values to your work experience?",
-    "subQuestion": "My organization's leaders value people over profits",
+    "subQuestion": "I am open to relocating to another country to secure a job",
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
-    "relatedTopics": [
-      "Work_Life_Flexibility",
-      "Employee_Wellbeing",
-      "Communication_and_Connection"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -43,105 +39,35 @@
       "sortOrder": "descending"
     }
   },
-  "question": "To what extent do you agree with the following statements.",
+  "question": "Q7 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "My organization's leaders value people over profits",
+      "response": "I am open to relocating to another country to secure a job",
       "data": {
         "region": {
-          "country_overall": 0.57,
-          "united_states": 0.47,
-          "united_kingdom": 0.78,
-          "india": 0.39,
-          "france": 0.45,
-          "germany": 0.33,
-          "japan": 0.62,
-          "united_arab_emirates": 0.5,
-          "brazil": 0.65,
-          "saudi_arabia": 0.48,
-          "australia": 0.58
+          "australia": 57,
+          "india": 35,
+          "brazil": 65,
+          "country_overall": 52.33
         },
         "age": {
-          "18-24": 0.59,
-          "25-34": 0.56,
-          "35-44": 0.45,
-          "45-54": 0.35,
-          "55-65": 0.4
+          "18-24": 57,
+          "25-34": 52,
+          "35-44": 42,
+          "45-54": 25,
+          "55-65": 22
         },
         "gender": {
-          "female": 0.55,
-          "male": 0.46
+          "male": 40,
+          "female": 53
         },
-        "org_size": {
-          "fewer_than_10": 0.48,
-          "10_to_49": 0.53,
-          "50_to_99": 0.57,
-          "100_to_249": 0.58,
-          "500_to_999": 0.47,
-          "1000_or_more": 0.53
-        },
-        "sector": {
-          "automotive": 0.56,
-          "business_administration_support_services": 0.71,
-          "technology": 0.58,
-          "construction": 0.51,
-          "consumer_goods": 0.53,
-          "education": 0.45,
-          "energy_utilities": 0.56,
-          "financial_services": 0.43,
-          "government": 0.45,
-          "healthcare_life_sciences": 0.49,
-          "manufacturing_industrial": 0.61,
-          "marketing_services": 0.51,
-          "not_for_profit": 0.32,
-          "legal_in-house": 0.42,
-          "legal_agency": 0.55,
-          "professional_services": 0.55,
-          "real_estate_property_services": 0.41,
-          "retail": 0.5,
-          "sales": 0.57,
-          "telecommunications": 0.4,
-          "transport_storage": 0.44,
-          "travel_hospitality_leisure": 0.39,
-          "wholesale_distribution": 0.45,
-          "other": 0.68
-        },
-        "job_level": {
-          "ceo": 0.72,
-          "senior_executive": 0.64,
-          "senior_leader": 0.53,
-          "mid_level_leader": 0.54,
-          "first_level_supervisor": 0.36,
-          "individual_contributor": 0.49
-        },
-        "relationship_status": {
-          "single": 0.42,
-          "cohabiting": 0.57,
-          "married": 0.33,
-          "divorced_separated": 0.44,
-          "widowed": 0.44
-        },
-        "education": {
-          "secondary": 0.4,
-          "tertiary": 0.43,
-          "professional_certifications": 0.53,
-          "undergraduate": 0.62,
-          "postgraduate": 0.61,
-          "doctorate": 0
-        },
-        "generation": {
-          "age_65_plus": 0.59,
-          "gen_z": 0.58,
-          "millennials": 0.43,
-          "gen_x": 0.35,
-          "baby_boomers": 0.48
-        },
-        "employment_status": {
-          "full-time": 0.45,
-          "part-time": 0.47,
-          "contract": 0.47,
-          "freelance": 0.53
-        }
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
       }
     }
   ]

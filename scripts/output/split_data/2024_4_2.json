@@ -1,6 +1,7 @@
 {
   "metadata": {
     "topicId": "Work_Life_Flexibility",
+    "theme": "Employee Experience & Work‑Life",
     "questionId": "Q4_2",
     "year": 2024,
     "keywords": [
@@ -15,11 +16,7 @@
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
-    "relatedTopics": [
-      "Culture_and_Values",
-      "Employee_Wellbeing",
-      "Communication_and_Connection"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -42,12 +39,20 @@
       "sortOrder": "descending"
     }
   },
-  "question": "4_2. The ability to work flexibly and from wherever I want is critical to my work-life balance",
+  "question": "4_1. The values a company promotes are extremely important to me",
   "responses": [
     {
       "response": "Agree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.68,
+          "united_states": 0.75,
+          "australia": 0.69,
+          "india": 0.81,
+          "brazil": 0.81,
+          "saudi_arabia_uae": 0.83,
+          "country_overall": 0.76
+        },
         "age": {
           "18-24": 0.69,
           "25-34": 0.77,
@@ -56,8 +61,8 @@
           "55-65": 0.66
         },
         "gender": {
-          "female": 0.75,
-          "male": 0.75
+          "male": 0.75,
+          "female": 0.75
         },
         "org_size": {
           "fewer_than_10": 0.76,
@@ -96,7 +101,6 @@
           "other": 0.73
         },
         "job_level": {
-          "ceo": 0.81,
           "senior_executive": 0.79,
           "senior_leader": 0.75,
           "mid_level_leader": 0.74,
@@ -124,7 +128,15 @@
     {
       "response": "Disagree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.11,
+          "united_states": 0.08,
+          "australia": 0.08,
+          "india": 0.07,
+          "brazil": 0.06,
+          "saudi_arabia_uae": 0.05,
+          "country_overall": 0.07
+        },
         "age": {
           "18-24": 0.11,
           "25-34": 0.07,
@@ -133,8 +145,8 @@
           "55-65": 0.12
         },
         "gender": {
-          "female": 0.08,
-          "male": 0.08
+          "male": 0.08,
+          "female": 0.08
         },
         "org_size": {
           "fewer_than_10": 0.07,
@@ -173,7 +185,6 @@
           "other": 0.08
         },
         "job_level": {
-          "ceo": 0.06,
           "senior_executive": 0.07,
           "senior_leader": 0.09,
           "mid_level_leader": 0.07,

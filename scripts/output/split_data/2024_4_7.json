@@ -1,6 +1,7 @@
 {
   "metadata": {
     "topicId": "Learning_and_Development",
+    "theme": "Skills & Development",
     "questionId": "Q4_7",
     "year": 2024,
     "keywords": [
@@ -15,11 +16,7 @@
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
-    "relatedTopics": [
-      "Skills_Utilization",
-      "AI_Attitudes",
-      "AI_Readiness"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -42,12 +39,20 @@
       "sortOrder": "descending"
     }
   },
-  "question": "4_7. I feel supported and encouraged to learn new skills and work on my own professional development",
+  "question": "4_1. The values a company promotes are extremely important to me",
   "responses": [
     {
       "response": "Agree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.63,
+          "united_states": 0.76,
+          "australia": 0.64,
+          "india": 0.86,
+          "brazil": 0.76,
+          "saudi_arabia_uae": 0.8,
+          "country_overall": 0.74
+        },
         "age": {
           "18-24": 0.72,
           "25-34": 0.77,
@@ -56,8 +61,8 @@
           "55-65": 0.6
         },
         "gender": {
-          "female": 0.73,
-          "male": 0.75
+          "male": 0.75,
+          "female": 0.73
         },
         "org_size": {
           "fewer_than_10": 0.66,
@@ -96,7 +101,6 @@
           "other": 0.65
         },
         "job_level": {
-          "ceo": 0.81,
           "senior_executive": 0.83,
           "senior_leader": 0.77,
           "mid_level_leader": 0.71,
@@ -124,7 +128,15 @@
     {
       "response": "Disagree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.13,
+          "united_states": 0.07,
+          "australia": 0.12,
+          "india": 0.04,
+          "brazil": 0.08,
+          "saudi_arabia_uae": 0.05,
+          "country_overall": 0.08
+        },
         "age": {
           "18-24": 0.1,
           "25-34": 0.07,
@@ -133,8 +145,8 @@
           "55-65": 0.16
         },
         "gender": {
-          "female": 0.1,
-          "male": 0.08
+          "male": 0.08,
+          "female": 0.1
         },
         "org_size": {
           "fewer_than_10": 0.1,
@@ -173,7 +185,6 @@
           "other": 0.12
         },
         "job_level": {
-          "ceo": 0.05,
           "senior_executive": 0.05,
           "senior_leader": 0.07,
           "mid_level_leader": 0.1,

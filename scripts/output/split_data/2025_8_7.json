@@ -1,18 +1,23 @@
 {
   "metadata": {
     "topicId": "DEI",
+    "theme": "Workplace Dynamics",
     "questionId": "Q8_7",
     "year": 2025,
     "keywords": [
-      "diversity",
-      "equity",
-      "inclusion",
+      "diversity initiatives",
+      "equity programs",
+      "inclusion efforts",
+      "workplace diversity",
+      "DEI commitment",
+      "corporate social responsibility",
+      "sustainability goals",
       "DEI",
-      "commitment",
-      "workplace diversity"
+      "diversity",
+      "equity"
     ],
     "canonicalQuestion": "How committed is your organization to diversity, equity, and inclusion?",
-    "subQuestion": "I frequently doubt my ability to fulfill my work responsibilities.",
+    "subQuestion": "I feel that I am overlooked for training because of my age",
     "comparable": true,
     "userMessage": "Data based on comparable markets only.",
     "availableMarkets": [
@@ -22,11 +27,7 @@
       "India",
       "Brazil"
     ],
-    "relatedTopics": [
-      "Intergenerational_Collaboration",
-      "Culture_and_Values",
-      "Employee_Wellbeing"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -49,105 +50,35 @@
       "sortOrder": "descending"
     }
   },
-  "question": "To what extent do you agree with the following statements.",
+  "question": "Q8 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "I frequently doubt my ability to fulfill my work responsibilities.",
+      "response": "I feel that I am overlooked for training because of my age",
       "data": {
         "region": {
-          "country_overall": 0.38,
-          "united_states": 0.32,
-          "united_kingdom": 0.54,
-          "india": 0.3,
-          "france": 0.31,
-          "germany": 0.28,
-          "japan": 0.4,
-          "united_arab_emirates": 0.33,
-          "brazil": 0.39,
-          "saudi_arabia": 0.37,
-          "australia": 0.47
+          "australia": 48,
+          "india": 29,
+          "brazil": 39,
+          "country_overall": 38.67
         },
         "age": {
-          "18-24": 0.43,
-          "25-34": 0.38,
-          "35-44": 0.33,
-          "45-54": 0.2,
-          "55-65": 0.17
+          "18-24": 41,
+          "25-34": 36,
+          "35-44": 32,
+          "45-54": 29,
+          "55-65": 24
         },
         "gender": {
-          "female": 0.38,
-          "male": 0.29
+          "male": 29,
+          "female": 39
         },
-        "org_size": {
-          "fewer_than_10": 0.34,
-          "10_to_49": 0.44,
-          "50_to_99": 0.41,
-          "100_to_249": 0.42,
-          "500_to_999": 0.33,
-          "1000_or_more": 0.37
-        },
-        "sector": {
-          "automotive": 0.43,
-          "business_administration_support_services": 0.5,
-          "technology": 0.35,
-          "construction": 0.33,
-          "consumer_goods": 0.36,
-          "education": 0.3,
-          "energy_utilities": 0.4,
-          "financial_services": 0.3,
-          "government": 0.32,
-          "healthcare_life_sciences": 0.35,
-          "manufacturing_industrial": 0.5,
-          "marketing_services": 0.27,
-          "not_for_profit": 0.29,
-          "legal_in-house": 0.42,
-          "legal_agency": 0.38,
-          "professional_services": 0.37,
-          "real_estate_property_services": 0.31,
-          "retail": 0.4,
-          "sales": 0.43,
-          "telecommunications": 0.26,
-          "transport_storage": 0.27,
-          "travel_hospitality_leisure": 0.31,
-          "wholesale_distribution": 0.31,
-          "other": 0.41
-        },
-        "job_level": {
-          "ceo": 0.47,
-          "senior_executive": 0.43,
-          "senior_leader": 0.38,
-          "mid_level_leader": 0.38,
-          "first_level_supervisor": 0.27,
-          "individual_contributor": 0.37
-        },
-        "relationship_status": {
-          "single": 0.31,
-          "cohabiting": 0.39,
-          "married": 0.22,
-          "divorced_separated": 0.22,
-          "widowed": 0.32
-        },
-        "education": {
-          "secondary": 0.32,
-          "tertiary": 0.3,
-          "professional_certifications": 0.37,
-          "undergraduate": 0.43,
-          "postgraduate": 0.37,
-          "doctorate": 0
-        },
-        "generation": {
-          "age_65_plus": 0.46,
-          "gen_z": 0.4,
-          "millennials": 0.3,
-          "gen_x": 0.18,
-          "baby_boomers": 0.34
-        },
-        "employment_status": {
-          "full-time": 0.33,
-          "part-time": 0.42,
-          "contract": 0.34,
-          "freelance": 0.43
-        }
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
       }
     }
   ]

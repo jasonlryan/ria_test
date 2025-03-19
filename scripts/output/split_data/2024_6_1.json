@@ -1,6 +1,7 @@
 {
   "metadata": {
     "topicId": "DEI",
+    "theme": "Workplace Dynamics",
     "questionId": "Q6_1",
     "year": 2024,
     "keywords": [
@@ -26,11 +27,7 @@
       "India",
       "Brazil"
     ],
-    "relatedTopics": [
-      "Intergenerational_Collaboration",
-      "Culture_and_Values",
-      "Employee_Wellbeing"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -58,7 +55,15 @@
     {
       "response": "Not committed enough",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.24,
+          "united_states": 0.16,
+          "australia": 0.17,
+          "india": 0.24,
+          "brazil": 0.3,
+          "saudi_arabia_uae": 0.22,
+          "country_overall": 0.22
+        },
         "age": {
           "18-24": 0.32,
           "25-34": 0.24,
@@ -67,8 +72,8 @@
           "55-65": 0.17
         },
         "gender": {
-          "female": 0.21,
-          "male": 0.21
+          "male": 0.21,
+          "female": 0.21
         },
         "org_size": {
           "fewer_than_10": 0.26,
@@ -107,7 +112,6 @@
           "other": 0.2
         },
         "job_level": {
-          "ceo": 0.18,
           "senior_executive": 0.21,
           "senior_leader": 0.21,
           "mid_level_leader": 0.23,
@@ -135,7 +139,15 @@
     {
       "response": "Too committed",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.2,
+          "united_states": 0.34,
+          "australia": 0.25,
+          "india": 0.39,
+          "brazil": 0.27,
+          "saudi_arabia_uae": 0.37,
+          "country_overall": 0.3
+        },
         "age": {
           "18-24": 0.23,
           "25-34": 0.31,
@@ -144,8 +156,8 @@
           "55-65": 0.17
         },
         "gender": {
-          "female": 0.27,
-          "male": 0.33
+          "male": 0.33,
+          "female": 0.27
         },
         "org_size": {
           "fewer_than_10": 0.14,
@@ -184,7 +196,6 @@
           "other": 0.26
         },
         "job_level": {
-          "ceo": 0.35,
           "senior_executive": 0.42,
           "senior_leader": 0.36,
           "mid_level_leader": 0.3,

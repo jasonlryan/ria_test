@@ -1,6 +1,7 @@
 {
   "metadata": {
     "topicId": "Learning_and_Development",
+    "theme": "Skills & Development",
     "questionId": "Q5_1",
     "year": 2025,
     "keywords": [
@@ -8,19 +9,14 @@
       "training opportunities",
       "skill advancement",
       "career growth",
-      "job skills",
-      "learning"
+      "Learning_and_Development"
     ],
     "canonicalQuestion": "How would you rate your learning and development opportunities?",
-    "subQuestion": "I would stay at a job if it paid me the salary I want, even if I hated the role",
+    "subQuestion": "I feel adequately trained to use AI tools",
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
-    "relatedTopics": [
-      "Skills_Utilization",
-      "AI_Attitudes",
-      "AI_Readiness"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -43,105 +39,35 @@
       "sortOrder": "descending"
     }
   },
-  "question": "To what extent do you agree with the following statements with regards to your workplace.",
+  "question": "Q5 - To what extent do you agree with the following statements about AI in the workplace and skills.",
   "responses": [
     {
-      "response": "I would stay at a job if it paid me the salary I want, even if I hated the role",
+      "response": "I feel adequately trained to use AI tools",
       "data": {
         "region": {
-          "country_overall": 0.64,
-          "united_states": 0.56,
-          "united_kingdom": 0.74,
-          "india": 0.51,
-          "france": 0.51,
-          "germany": 0.49,
-          "japan": 0.69,
-          "united_arab_emirates": 0.56,
-          "brazil": 0.7,
-          "saudi_arabia": 0.59,
-          "australia": 0.66
+          "australia": 62,
+          "india": 40,
+          "brazil": 73,
+          "country_overall": 58.33
         },
         "age": {
-          "18-24": 0.66,
-          "25-34": 0.62,
-          "35-44": 0.54,
-          "45-54": 0.45,
-          "55-65": 0.43
+          "18-24": 63,
+          "25-34": 61,
+          "35-44": 47,
+          "45-54": 33,
+          "55-65": 38
         },
         "gender": {
-          "female": 0.62,
-          "male": 0.49
+          "male": 45,
+          "female": 59
         },
-        "org_size": {
-          "fewer_than_10": 0.51,
-          "10_to_49": 0.61,
-          "50_to_99": 0.63,
-          "100_to_249": 0.62,
-          "500_to_999": 0.58,
-          "1000_or_more": 0.6
-        },
-        "sector": {
-          "automotive": 0.59,
-          "business_administration_support_services": 0.68,
-          "technology": 0.6,
-          "construction": 0.62,
-          "consumer_goods": 0.56,
-          "education": 0.56,
-          "energy_utilities": 0.65,
-          "financial_services": 0.56,
-          "government": 0.54,
-          "healthcare_life_sciences": 0.54,
-          "manufacturing_industrial": 0.66,
-          "marketing_services": 0.46,
-          "not_for_profit": 0.49,
-          "legal_in-house": 0.53,
-          "legal_agency": 0.45,
-          "professional_services": 0.62,
-          "real_estate_property_services": 0.59,
-          "retail": 0.63,
-          "sales": 0.62,
-          "telecommunications": 0.57,
-          "transport_storage": 0.54,
-          "travel_hospitality_leisure": 0.55,
-          "wholesale_distribution": 0.53,
-          "other": 0.64
-        },
-        "job_level": {
-          "ceo": 0.68,
-          "senior_executive": 0.63,
-          "senior_leader": 0.62,
-          "mid_level_leader": 0.61,
-          "first_level_supervisor": 0.51,
-          "individual_contributor": 0.59
-        },
-        "relationship_status": {
-          "single": 0.54,
-          "cohabiting": 0.62,
-          "married": 0.47,
-          "divorced_separated": 0.47,
-          "widowed": 0.57
-        },
-        "education": {
-          "secondary": 0.53,
-          "tertiary": 0.53,
-          "professional_certifications": 0.61,
-          "undergraduate": 0.64,
-          "postgraduate": 0.58,
-          "doctorate": 0
-        },
-        "generation": {
-          "age_65_plus": 0.66,
-          "gen_z": 0.64,
-          "millennials": 0.52,
-          "gen_x": 0.44,
-          "baby_boomers": 0.56
-        },
-        "employment_status": {
-          "full-time": 0.53,
-          "part-time": 0.55,
-          "contract": 0.5,
-          "freelance": 0.64
-        }
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
       }
     }
   ]

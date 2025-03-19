@@ -1,6 +1,7 @@
 {
   "metadata": {
     "topicId": "Motivation_and_Fulfillment",
+    "theme": "Employee Experience & Work‑Life",
     "questionId": "Q4_16",
     "year": 2024,
     "keywords": [
@@ -15,11 +16,7 @@
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
-    "relatedTopics": [
-      "Work_Life_Flexibility",
-      "Culture_and_Values",
-      "Employee_Wellbeing"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -42,12 +39,20 @@
       "sortOrder": "descending"
     }
   },
-  "question": "4_16. My current role leaves me feeling fulfilled",
+  "question": "4_1. The values a company promotes are extremely important to me",
   "responses": [
     {
       "response": "Agree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.59,
+          "united_states": 0.73,
+          "australia": 0.59,
+          "india": 0.77,
+          "brazil": 0.72,
+          "saudi_arabia_uae": 0.76,
+          "country_overall": 0.69
+        },
         "age": {
           "18-24": 0.63,
           "25-34": 0.7,
@@ -56,8 +61,8 @@
           "55-65": 0.63
         },
         "gender": {
-          "female": 0.67,
-          "male": 0.7
+          "male": 0.7,
+          "female": 0.67
         },
         "org_size": {
           "fewer_than_10": 0.64,
@@ -96,7 +101,6 @@
           "other": 0.63
         },
         "job_level": {
-          "ceo": 0.79,
           "senior_executive": 0.79,
           "senior_leader": 0.71,
           "mid_level_leader": 0.65,
@@ -124,7 +128,15 @@
     {
       "response": "Disagree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.18,
+          "united_states": 0.1,
+          "australia": 0.16,
+          "india": 0.08,
+          "brazil": 0.11,
+          "saudi_arabia_uae": 0.07,
+          "country_overall": 0.12
+        },
         "age": {
           "18-24": 0.13,
           "25-34": 0.11,
@@ -133,8 +145,8 @@
           "55-65": 0.15
         },
         "gender": {
-          "female": 0.13,
-          "male": 0.11
+          "male": 0.11,
+          "female": 0.13
         },
         "org_size": {
           "fewer_than_10": 0.14,
@@ -173,7 +185,6 @@
           "other": 0.14
         },
         "job_level": {
-          "ceo": 0.08,
           "senior_executive": 0.07,
           "senior_leader": 0.1,
           "mid_level_leader": 0.13,

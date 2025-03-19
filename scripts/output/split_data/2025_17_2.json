@@ -1,18 +1,18 @@
 {
   "metadata": {
     "topicId": "Skills_Utilization",
+    "theme": "Skills & Development",
     "questionId": "Q17_2",
     "year": 2025,
     "keywords": [
-      "imposter syndrome",
-      "workplace confidence",
-      "self-doubt",
-      "professional insecurity",
-      "capability concerns",
-      "job performance"
+      "skills usage",
+      "talent utilization",
+      "capability application",
+      "competency use",
+      "Skills_Utilization"
     ],
     "canonicalQuestion": "How well are your skills utilized in your current role?",
-    "subQuestion": "My job makes good use of my skills and abilities.",
+    "subQuestion": "I have trust and confidence in the company's senior leadership team.",
     "comparable": true,
     "userMessage": "Data based on comparable markets only.",
     "availableMarkets": [
@@ -22,11 +22,7 @@
       "India",
       "Brazil"
     ],
-    "relatedTopics": [
-      "Learning_and_Development",
-      "AI_Attitudes",
-      "AI_Readiness"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -49,105 +45,35 @@
       "sortOrder": "descending"
     }
   },
-  "question": "To what extent do you agree with the following statements.",
+  "question": "Q17 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "My job makes good use of my skills and abilities.",
+      "response": "I have trust and confidence in the company's senior leadership team.",
       "data": {
         "region": {
-          "country_overall": 0.8,
-          "united_states": 0.74,
-          "united_kingdom": 0.86,
-          "india": 0.74,
-          "france": 0.76,
-          "germany": 0.48,
-          "japan": 0.79,
-          "united_arab_emirates": 0.82,
-          "brazil": 0.88,
-          "saudi_arabia": 0.75,
-          "australia": 0.74
+          "australia": 69,
+          "india": 60,
+          "brazil": 80,
+          "country_overall": 69.67
         },
         "age": {
-          "18-24": 0.79,
-          "25-34": 0.79,
-          "35-44": 0.73,
-          "45-54": 0.71,
-          "55-65": 0.74
+          "18-24": 73,
+          "25-34": 70,
+          "35-44": 62,
+          "45-54": 57,
+          "55-65": 64
         },
         "gender": {
-          "female": 0.75,
-          "male": 0.75
+          "male": 66,
+          "female": 68
         },
-        "org_size": {
-          "fewer_than_10": 0.75,
-          "10_to_49": 0.73,
-          "50_to_99": 0.75,
-          "100_to_249": 0.78,
-          "500_to_999": 0.75,
-          "1000_or_more": 0.77
-        },
-        "sector": {
-          "automotive": 0.76,
-          "business_administration_support_services": 0.86,
-          "technology": 0.78,
-          "construction": 0.72,
-          "consumer_goods": 0.8,
-          "education": 0.74,
-          "energy_utilities": 0.77,
-          "financial_services": 0.73,
-          "government": 0.78,
-          "healthcare_life_sciences": 0.73,
-          "manufacturing_industrial": 0.73,
-          "marketing_services": 0.76,
-          "not_for_profit": 0.67,
-          "legal_in-house": 0.74,
-          "legal_agency": 0.69,
-          "professional_services": 0.75,
-          "real_estate_property_services": 0.7,
-          "retail": 0.77,
-          "sales": 0.78,
-          "telecommunications": 0.7,
-          "transport_storage": 0.73,
-          "travel_hospitality_leisure": 0.67,
-          "wholesale_distribution": 0.72,
-          "other": 0.84
-        },
-        "job_level": {
-          "ceo": 0.86,
-          "senior_executive": 0.82,
-          "senior_leader": 0.77,
-          "mid_level_leader": 0.76,
-          "first_level_supervisor": 0.69,
-          "individual_contributor": 0.7
-        },
-        "relationship_status": {
-          "single": 0.73,
-          "cohabiting": 0.81,
-          "married": 0.7,
-          "divorced_separated": 0.74,
-          "widowed": 0.73
-        },
-        "education": {
-          "secondary": 0.68,
-          "tertiary": 0.74,
-          "professional_certifications": 0.76,
-          "undergraduate": 0.82,
-          "postgraduate": 0.83,
-          "doctorate": 0
-        },
-        "generation": {
-          "age_65_plus": 0.75,
-          "gen_z": 0.8,
-          "millennials": 0.73,
-          "gen_x": 0.71,
-          "baby_boomers": 0.77
-        },
-        "employment_status": {
-          "full-time": 0.72,
-          "part-time": 0.67,
-          "contract": 0.72,
-          "freelance": 0.75
-        }
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
       }
     }
   ]

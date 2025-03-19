@@ -1,26 +1,22 @@
 {
   "metadata": {
     "topicId": "Employee_Wellbeing",
+    "theme": "Employee Experience & Work‑Life",
     "questionId": "Q9_3",
     "year": 2025,
     "keywords": [
-      "wellbeing support",
-      "personal disclosure",
-      "work-life balance",
-      "manager trust",
-      "psychological safety",
-      "personal challenges"
+      "health support",
+      "wellbeing initiatives",
+      "work-life support",
+      "mental health",
+      "Employee_Wellbeing"
     ],
     "canonicalQuestion": "How supported do you feel in terms of wellbeing at work?",
     "subQuestion": "If a problem in my personal life is affecting my work/performance, I feel comfortable telling my manager about it",
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
-    "relatedTopics": [
-      "Work_Life_Flexibility",
-      "Culture_and_Values",
-      "Communication_and_Connection"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -43,105 +39,35 @@
       "sortOrder": "descending"
     }
   },
-  "question": "To what extent do you agree with the following statements.",
+  "question": "Q9 - To what extent do you agree with the following statements.",
   "responses": [
     {
       "response": "If a problem in my personal life is affecting my work/performance, I feel comfortable telling my manager about it",
       "data": {
         "region": {
-          "country_overall": 0.65,
-          "united_states": 0.61,
-          "united_kingdom": 0.73,
-          "india": 0.57,
-          "france": 0.53,
-          "germany": 0.36,
-          "japan": 0.56,
-          "united_arab_emirates": 0.63,
-          "brazil": 0.58,
-          "saudi_arabia": 0.62,
-          "australia": 0.59
+          "australia": 59,
+          "india": 57,
+          "brazil": 58,
+          "country_overall": 58
         },
         "age": {
-          "18-24": 0.63,
-          "25-34": 0.63,
-          "35-44": 0.57,
-          "45-54": 0.52,
-          "55-65": 0.5
+          "18-24": 63,
+          "25-34": 63,
+          "35-44": 57,
+          "45-54": 52,
+          "55-65": 50
         },
         "gender": {
-          "female": 0.6,
-          "male": 0.5
+          "male": 50,
+          "female": 60
         },
-        "org_size": {
-          "fewer_than_10": 0.56,
-          "10_to_49": 0.59,
-          "50_to_99": 0.6,
-          "100_to_249": 0.63,
-          "500_to_999": 0.59,
-          "1000_or_more": 0.61
-        },
-        "sector": {
-          "automotive": 0.63,
-          "business_administration_support_services": 0.71,
-          "technology": 0.61,
-          "construction": 0.6,
-          "consumer_goods": 0.6,
-          "education": 0.58,
-          "energy_utilities": 0.63,
-          "financial_services": 0.58,
-          "government": 0.56,
-          "healthcare_life_sciences": 0.54,
-          "manufacturing_industrial": 0.66,
-          "marketing_services": 0.58,
-          "not_for_profit": 0.48,
-          "legal_in-house": 0.49,
-          "legal_agency": 0.53,
-          "professional_services": 0.62,
-          "real_estate_property_services": 0.56,
-          "retail": 0.62,
-          "sales": 0.63,
-          "telecommunications": 0.57,
-          "transport_storage": 0.55,
-          "travel_hospitality_leisure": 0.53,
-          "wholesale_distribution": 0.53,
-          "other": 0.65
-        },
-        "job_level": {
-          "ceo": 0.71,
-          "senior_executive": 0.67,
-          "senior_leader": 0.59,
-          "mid_level_leader": 0.6,
-          "first_level_supervisor": 0.52,
-          "individual_contributor": 0.54
-        },
-        "relationship_status": {
-          "single": 0.57,
-          "cohabiting": 0.64,
-          "married": 0.52,
-          "divorced_separated": 0.61,
-          "widowed": 0.56
-        },
-        "education": {
-          "secondary": 0.52,
-          "tertiary": 0.54,
-          "professional_certifications": 0.6,
-          "undergraduate": 0.66,
-          "postgraduate": 0.67,
-          "doctorate": 0
-        },
-        "generation": {
-          "age_65_plus": 0.6,
-          "gen_z": 0.63,
-          "millennials": 0.56,
-          "gen_x": 0.51,
-          "baby_boomers": 0.59
-        },
-        "employment_status": {
-          "full-time": 0.55,
-          "part-time": 0.56,
-          "contract": 0.47,
-          "freelance": 0.6
-        }
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
       }
     }
   ]

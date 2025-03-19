@@ -1,6 +1,7 @@
 {
   "metadata": {
     "topicId": "Work_Life_Flexibility",
+    "theme": "Employee Experience & Work‑Life",
     "questionId": "Q4_5",
     "year": 2024,
     "keywords": [
@@ -15,11 +16,7 @@
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
-    "relatedTopics": [
-      "Culture_and_Values",
-      "Employee_Wellbeing",
-      "Communication_and_Connection"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -42,12 +39,20 @@
       "sortOrder": "descending"
     }
   },
-  "question": "4_5. I would stay at a job if it allowed me flexibility, even if I hated the role",
+  "question": "4_1. The values a company promotes are extremely important to me",
   "responses": [
     {
       "response": "Agree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.48,
+          "united_states": 0.68,
+          "australia": 0.51,
+          "india": 0.71,
+          "brazil": 0.55,
+          "saudi_arabia_uae": 0.68,
+          "country_overall": 0.6
+        },
         "age": {
           "18-24": 0.62,
           "25-34": 0.65,
@@ -56,8 +61,8 @@
           "55-65": 0.38
         },
         "gender": {
-          "female": 0.57,
-          "male": 0.63
+          "male": 0.63,
+          "female": 0.57
         },
         "org_size": {
           "fewer_than_10": 0.51,
@@ -96,7 +101,6 @@
           "other": 0.53
         },
         "job_level": {
-          "ceo": 0.67,
           "senior_executive": 0.72,
           "senior_leader": 0.62,
           "mid_level_leader": 0.59,
@@ -124,7 +128,15 @@
     {
       "response": "Disagree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.23,
+          "united_states": 0.13,
+          "australia": 0.22,
+          "india": 0.13,
+          "brazil": 0.26,
+          "saudi_arabia_uae": 0.12,
+          "country_overall": 0.18
+        },
         "age": {
           "18-24": 0.15,
           "25-34": 0.14,
@@ -133,8 +145,8 @@
           "55-65": 0.34
         },
         "gender": {
-          "female": 0.2,
-          "male": 0.16
+          "male": 0.16,
+          "female": 0.2
         },
         "org_size": {
           "fewer_than_10": 0.26,
@@ -173,7 +185,6 @@
           "other": 0.23
         },
         "job_level": {
-          "ceo": 0.16,
           "senior_executive": 0.13,
           "senior_leader": 0.17,
           "mid_level_leader": 0.17,

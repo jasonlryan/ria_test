@@ -1,18 +1,18 @@
 {
   "metadata": {
     "topicId": "Intention_to_Leave",
+    "theme": "Talent Attraction & Retention",
     "questionId": "Q7_5",
     "year": 2025,
     "keywords": [
       "quit intentions",
       "planning to leave",
       "short-term turnover",
-      "immigration policies",
-      "work barriers",
-      "international employment"
+      "resignation plans",
+      "Intention_to_Leave"
     ],
     "canonicalQuestion": "Are you planning on leaving your current role in the next three months?",
-    "subQuestion": "I am concerned that protectionism policies around immigration are affecting my ability to find work",
+    "subQuestion": "I expect a significant reduction in DEI initiatives at my company since new governments were elected",
     "comparable": true,
     "userMessage": "Data based on comparable markets only.",
     "availableMarkets": [
@@ -22,11 +22,7 @@
       "India",
       "Brazil"
     ],
-    "relatedTopics": [
-      "Attraction_Factors",
-      "Retention_Factors",
-      "Attrition_Factors"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -49,105 +45,35 @@
       "sortOrder": "descending"
     }
   },
-  "question": "To what extent do you agree with the following statements.",
+  "question": "Q7 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "I am concerned that protectionism policies around immigration are affecting my ability to find work",
+      "response": "I expect a significant reduction in DEI initiatives at my company since new governments were elected",
       "data": {
         "region": {
-          "country_overall": 0.42,
-          "united_states": 0.33,
-          "united_kingdom": 0.68,
-          "india": 0.35,
-          "france": 0.36,
-          "germany": 0.25,
-          "japan": 0.55,
-          "united_arab_emirates": 0.42,
-          "brazil": 0.51,
-          "saudi_arabia": 0.35,
-          "australia": 0.49
+          "australia": 48,
+          "india": 32,
+          "brazil": 46,
+          "country_overall": 42
         },
         "age": {
-          "18-24": 0.48,
-          "25-34": 0.45,
-          "35-44": 0.36,
-          "45-54": 0.25,
-          "55-65": 0.25
+          "18-24": 48,
+          "25-34": 44,
+          "35-44": 37,
+          "45-54": 25,
+          "55-65": 26
         },
         "gender": {
-          "female": 0.46,
-          "male": 0.35
+          "male": 32,
+          "female": 45
         },
-        "org_size": {
-          "fewer_than_10": 0.39,
-          "10_to_49": 0.47,
-          "50_to_99": 0.47,
-          "100_to_249": 0.48,
-          "500_to_999": 0.36,
-          "1000_or_more": 0.43
-        },
-        "sector": {
-          "automotive": 0.44,
-          "business_administration_support_services": 0.59,
-          "technology": 0.44,
-          "construction": 0.44,
-          "consumer_goods": 0.36,
-          "education": 0.39,
-          "energy_utilities": 0.49,
-          "financial_services": 0.27,
-          "government": 0.33,
-          "healthcare_life_sciences": 0.36,
-          "manufacturing_industrial": 0.56,
-          "marketing_services": 0.21,
-          "not_for_profit": 0.26,
-          "legal_in-house": 0.21,
-          "legal_agency": 0.49,
-          "professional_services": 0.41,
-          "real_estate_property_services": 0.35,
-          "retail": 0.46,
-          "sales": 0.48,
-          "telecommunications": 0.34,
-          "transport_storage": 0.36,
-          "travel_hospitality_leisure": 0.38,
-          "wholesale_distribution": 0.35,
-          "other": 0.53
-        },
-        "job_level": {
-          "ceo": 0.59,
-          "senior_executive": 0.52,
-          "senior_leader": 0.44,
-          "mid_level_leader": 0.43,
-          "first_level_supervisor": 0.27,
-          "individual_contributor": 0.4
-        },
-        "relationship_status": {
-          "single": 0.31,
-          "cohabiting": 0.46,
-          "married": 0.25,
-          "divorced_separated": 0.26,
-          "widowed": 0.35
-        },
-        "education": {
-          "secondary": 0.34,
-          "tertiary": 0.34,
-          "professional_certifications": 0.42,
-          "undergraduate": 0.5,
-          "postgraduate": 0.45,
-          "doctorate": 0
-        },
-        "generation": {
-          "age_65_plus": 0.5,
-          "gen_z": 0.46,
-          "millennials": 0.34,
-          "gen_x": 0.23,
-          "baby_boomers": 0.36
-        },
-        "employment_status": {
-          "full-time": 0.34,
-          "part-time": 0.39,
-          "contract": 0.37,
-          "freelance": 0.5
-        }
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
       }
     }
   ]

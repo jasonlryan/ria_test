@@ -79,7 +79,7 @@ This script:
 ### 3. Process with the Main RIA25 Script
 
 ```bash
-node ../scripts/process_survey_data.js --input="data/2025/Global- Table 1.csv" --year=2025 --output=scripts/output
+node ../scripts/process_survey_data.js --input="data/2025/2025_global_data.csv" --year=2025 --output=scripts/output
 ```
 
 ## Column Mapping

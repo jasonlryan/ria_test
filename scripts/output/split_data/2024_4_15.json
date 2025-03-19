@@ -1,6 +1,7 @@
 {
   "metadata": {
     "topicId": "Culture_and_Values",
+    "theme": "Employee Experience & Work‑Life",
     "questionId": "Q4_15",
     "year": 2024,
     "keywords": [
@@ -15,11 +16,7 @@
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
-    "relatedTopics": [
-      "Work_Life_Flexibility",
-      "Employee_Wellbeing",
-      "Communication_and_Connection"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -42,12 +39,20 @@
       "sortOrder": "descending"
     }
   },
-  "question": "4_15. It is important to me that the organization I work for prioritizes people over profit",
+  "question": "4_1. The values a company promotes are extremely important to me",
   "responses": [
     {
       "response": "Agree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.7,
+          "united_states": 0.8,
+          "australia": 0.73,
+          "india": 0.82,
+          "brazil": 0.76,
+          "saudi_arabia_uae": 0.81,
+          "country_overall": 0.77
+        },
         "age": {
           "18-24": 0.69,
           "25-34": 0.76,
@@ -56,8 +61,8 @@
           "55-65": 0.74
         },
         "gender": {
-          "female": 0.77,
-          "male": 0.76
+          "male": 0.76,
+          "female": 0.77
         },
         "org_size": {
           "fewer_than_10": 0.69,
@@ -96,7 +101,6 @@
           "other": 0.73
         },
         "job_level": {
-          "ceo": 0.79,
           "senior_executive": 0.83,
           "senior_leader": 0.77,
           "mid_level_leader": 0.72,
@@ -124,7 +128,15 @@
     {
       "response": "Disagree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.07,
+          "united_states": 0.06,
+          "australia": 0.06,
+          "india": 0.04,
+          "brazil": 0.06,
+          "saudi_arabia_uae": 0.04,
+          "country_overall": 0.06
+        },
         "age": {
           "18-24": 0.09,
           "25-34": 0.06,
@@ -133,8 +145,8 @@
           "55-65": 0.05
         },
         "gender": {
-          "female": 0.05,
-          "male": 0.06
+          "male": 0.06,
+          "female": 0.05
         },
         "org_size": {
           "fewer_than_10": 0.07,
@@ -173,7 +185,6 @@
           "other": 0.05
         },
         "job_level": {
-          "ceo": 0.06,
           "senior_executive": 0.05,
           "senior_leader": 0.06,
           "mid_level_leader": 0.07,

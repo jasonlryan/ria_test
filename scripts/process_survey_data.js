@@ -3,8 +3,9 @@
  * process_survey_data.js
  *
  * A unified script that orchestrates the complete survey data processing workflow:
- * 1. Process CSV to global JSON
- * 2. Split global JSON into individual files with metadata
+ * 1. For 2025 data: Harmonize the CSV format (convert percentages to decimals)
+ * 2. Process CSV to global JSON
+ * 3. Split global JSON into individual files with metadata
  *
  * Usage:
  *   node process_survey_data.js --input=path/to/csv/file.csv --year=2024 --output=path/to/output/directory
@@ -14,20 +15,134 @@ const fs = require("fs");
 const path = require("path");
 const csv = require("csv-parser");
 
-// Parse command line arguments
+// Import the harmonization module for 2025 data
+const harmonizer = require("./process_2025_data");
+
+// Parse command line arguments with enhanced support for flags
 const args = process.argv.slice(2).reduce((acc, arg) => {
-  const [key, value] = arg.split("=");
-  acc[key.replace("--", "")] = value;
+  // Handle --flag=value format
+  if (arg.includes("=")) {
+    const [key, value] = arg.split("=");
+    acc[key.replace("--", "")] = value;
+  }
+  // Handle --flag format (boolean flags)
+  else if (arg.startsWith("--")) {
+    acc[arg.replace("--", "")] = true;
+  }
+  // Handle -h short format
+  else if (arg === "-h") {
+    acc.help = true;
+  }
   return acc;
 }, {});
 
-// Set default values
-const csvPath =
-  args.input || path.join(__dirname, "data", "2024", "Global- Table 1.csv");
-const year = args.year || "2024";
-const outputDir = args.output || path.join(__dirname, "output");
+// Check for help flag first
+if (args.help || args.h) {
+  displayHelp();
+  process.exit(0);
+}
+
+// Set default values with enhanced options
+const options = {
+  input:
+    args.input ||
+    path.join(
+      __dirname,
+      "data",
+      args.year || "2024",
+      `${args.year || "2024"}_global_data.csv`
+    ),
+  year: args.year || "2024",
+  output: args.output || path.join(__dirname, "output"),
+  skipHarmonization: args.skipHarmonization || false,
+  skipGlobal: args.skipGlobal || false,
+  skipSplit: args.skipSplit || false,
+  validateOnly: args.validateOnly || false,
+  force: args.force || false,
+  verbose: args.verbose || false,
+};
+
+// Derived values
+const csvPath = options.input;
+const year = options.year;
+const outputDir = options.output;
 const globalOutputPath = path.join(outputDir, `global_${year}_data.json`);
 const splitOutputDir = path.join(outputDir, "split_data");
+
+/**
+ * Display comprehensive help information
+ */
+function displayHelp() {
+  const helpText = `
+  Survey Data Processing Workflow
+  ==============================
+  
+  DESCRIPTION
+    This script orchestrates the complete survey data processing pipeline,
+    from raw CSV input to individualized JSON output files with metadata.
+    
+  USAGE
+    node process_survey_data.js [OPTIONS]
+    
+  OPTIONS
+    Basic Configuration:
+      --input=<path>             Path to the input CSV file
+                                Default: ./data/{year}/{year}_global_data.csv
+      
+      --year=<year>              Survey year to process (2024, 2025)
+                                Default: 2024
+      
+      --output=<path>            Output directory for all generated files
+                                Default: ./output
+    
+    Process Control:
+      --skip-global              Skip generating the global JSON file
+      
+      --skip-split               Skip splitting into individual files
+      
+      --force                    Override existing files without confirmation
+    
+    Validation:
+      --validate-only            Only validate existing outputs without processing
+      
+      --verbose                  Show detailed output during processing
+    
+    Help:
+      --help, -h                 Display this help message
+    
+  EXAMPLES
+    # Process 2024 data with default settings
+    node process_survey_data.js --year=2024
+    
+    # Process 2025 data (using CSV from data/2025 directory)
+    node process_survey_data.js --year=2025
+    
+    # Process 2025 data with custom input file
+    node process_survey_data.js --year=2025 --input=./custom/input.csv
+    
+    # Only validate existing outputs for 2024
+    node process_survey_data.js --year=2024 --validate-only
+    
+    # Process only up to the global JSON generation
+    node process_survey_data.js --year=2024 --skip-split
+    
+  WORKFLOW FOR 2025 DATA
+    1. Run generate_consolidated_csv.js in the 2025_DATA_PROCESSING directory
+    2. Copy the resulting 2025_global_data.csv to scripts/data/2025/
+    3. Run this script with --year=2025
+    
+  PIPELINE STEPS
+    1. CSV to Global JSON conversion
+    2. Global JSON splitting into individual files with metadata
+    
+  OUTPUT FILES
+    - {output}/global_{year}_data.json         Primary consolidated JSON
+    - {output}/split_data/{year}_{id}.json     Individual question files
+    - {output}/{year}_file_index.json          Index of all generated files
+  `;
+
+  console.log(helpText);
+}
 
 /**
  * Process the CSV file to a global JSON format
@@ -236,13 +351,154 @@ async function processCSVToGlobal(csvFilePath) {
 }
 
 /**
+ * Harmonize 2025 data format (convert percentages to decimals)
+ * @param {string} inputPath - The input CSV file path
+ * @param {string} outputDir - The output directory
+ * @returns {Promise<string>} - Promise that resolves to the path of the harmonized file
+ */
+async function harmonize2025Data(inputPath, outputDir) {
+  console.log(
+    `\nSTEP 0: Harmonizing 2025 data format (converting percentages to decimals)...`
+  );
+  console.log(`Input: ${inputPath}`);
+
+  // Check if the input file exists
+  if (!fs.existsSync(inputPath)) {
+    console.warn(`\nWarning: Input file not found at ${inputPath}`);
+
+    // Try to find the file in 2025_DATA_PROCESSING directory as a fallback
+    const alternativePath = path.join(
+      __dirname,
+      "..",
+      "2025_DATA_PROCESSING",
+      "2025_global_data.csv"
+    );
+    if (fs.existsSync(alternativePath)) {
+      console.log(`Found alternative input file at: ${alternativePath}`);
+      inputPath = alternativePath;
+    } else {
+      throw new Error(
+        `2025 data CSV file not found at ${inputPath} or ${alternativePath}`
+      );
+    }
+  }
+
+  // If the output file already exists, we can skip harmonization
+  const expectedOutputPath = path.join(
+    path.dirname(outputDir),
+    "2025_global_data.csv"
+  );
+  if (fs.existsSync(expectedOutputPath) && !options.force) {
+    console.log(`\nHarmonized file already exists at: ${expectedOutputPath}`);
+    console.log(`Use --force to regenerate it if needed.`);
+    return expectedOutputPath;
+  }
+
+  const harmonizeOptions = {
+    inputCsvPath: inputPath,
+    outputDir: path.dirname(outputDir),
+    verbose: options.verbose,
+  };
+
+  const startTime = Date.now();
+
+  try {
+    const result = await harmonizer.harmonize2025Data(harmonizeOptions);
+
+    if (!result.success) {
+      throw new Error(`Harmonization failed: ${result.error}`);
+    }
+
+    const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+    console.log(`✅ Data harmonized successfully in ${duration} seconds.`);
+    console.log(`   Output: ${result.outputPath}`);
+    console.log(`   Processed ${result.recordCount} records.`);
+
+    return result.outputPath;
+  } catch (error) {
+    console.error(`❌ Harmonization error: ${error.message}`);
+    throw error;
+  }
+}
+
+/**
+ * Validate that outputs exist and meet basic criteria
+ */
+async function validateOutputs() {
+  console.log(`\nValidating outputs for ${year} data...`);
+
+  const issues = [];
+
+  // Check if global JSON exists
+  if (!fs.existsSync(globalOutputPath)) {
+    issues.push(`Global JSON file not found: ${globalOutputPath}`);
+  } else {
+    // Basic validation of global JSON
+    try {
+      const globalData = JSON.parse(fs.readFileSync(globalOutputPath, "utf8"));
+      console.log(`✓ Global JSON exists with ${globalData.length} items`);
+
+      if (globalData.length === 0) {
+        issues.push("Global JSON file exists but contains no data");
+      }
+    } catch (error) {
+      issues.push(`Global JSON exists but is not valid JSON: ${error.message}`);
+    }
+  }
+
+  // Check if split files directory exists
+  if (!fs.existsSync(splitOutputDir)) {
+    issues.push(`Split files directory not found: ${splitOutputDir}`);
+  } else {
+    // Count split files for this year
+    const splitFiles = fs
+      .readdirSync(splitOutputDir)
+      .filter((file) => file.startsWith(`${year}_`));
+
+    console.log(`✓ Found ${splitFiles.length} split files for ${year}`);
+
+    if (splitFiles.length === 0) {
+      issues.push(`No split files found for year ${year}`);
+    }
+  }
+
+  if (issues.length > 0) {
+    console.log(`\n❌ Validation found ${issues.length} issues:`);
+    issues.forEach((issue) => console.log(`  - ${issue}`));
+    return false;
+  }
+
+  console.log(`\n✅ All validation checks passed for ${year} data`);
+  return true;
+}
+
+/**
  * Find the canonical topic for a question
  */
 function findCanonicalTopic(question, canonicalMapping, year) {
-  if (!canonicalMapping || !canonicalMapping.topics) {
+  if (!canonicalMapping) {
     return null;
   }
 
+  // Handle different canonical mapping structures
+
+  // Traditional structure (legacy format)
+  if (canonicalMapping.topics) {
+    return findCanonicalTopicLegacy(question, canonicalMapping, year);
+  }
+
+  // New structure (themes -> topics structure)
+  if (canonicalMapping.themes) {
+    return findCanonicalTopicNew(question, canonicalMapping, year);
+  }
+
+  return null;
+}
+
+/**
+ * Find the canonical topic using the legacy mapping format
+ */
+function findCanonicalTopicLegacy(question, canonicalMapping, year) {
   // Direct ID match - if question starts with a number like "1. "
   const idMatch = question.match(/^Q?(\d+)[.\s]/i);
   const questionId = idMatch ? idMatch[1] : null;
@@ -276,6 +532,63 @@ function findCanonicalTopic(question, canonicalMapping, year) {
       for (const phrase of topic.alternatePhrasings) {
         if (question.toLowerCase().includes(phrase.toLowerCase())) {
           return topic;
+        }
+      }
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Find the canonical topic using the new mapping format (themes -> topics)
+ */
+function findCanonicalTopicNew(question, canonicalMapping, year) {
+  // Direct ID match - if question starts with a number like "1. "
+  const idMatch = question.match(/^Q?(\d+)[.\s]/i);
+  const questionId = idMatch ? idMatch[1] : null;
+
+  // Extended match for sub-questions like "4_9."
+  const subIdMatch = question.match(/^(\d+_\d+)[.\s]/i);
+  const subQuestionId = subIdMatch ? subIdMatch[1] : null;
+
+  // Search through all themes and their topics
+  for (const theme of canonicalMapping.themes) {
+    for (const topic of theme.topics) {
+      // Check if this year's mapping includes this question ID
+      if (topic.mapping && topic.mapping[year]) {
+        const yearMapping = topic.mapping[year];
+
+        // The mapping could be an array of strings or an array of objects
+        for (const entry of yearMapping) {
+          // Handle string format like "Q5" or object format like {id: "Q5", file: "2025_5.json"}
+          const entryId = typeof entry === "object" ? entry.id : entry;
+          const cleanEntryId = entryId.replace(/^Q/i, "");
+
+          if (questionId && cleanEntryId === questionId) {
+            return topic;
+          }
+
+          if (subQuestionId && cleanEntryId === subQuestionId) {
+            return topic;
+          }
+        }
+      }
+
+      // Check for direct question text match
+      if (
+        topic.canonicalQuestion &&
+        question.toLowerCase().includes(topic.canonicalQuestion.toLowerCase())
+      ) {
+        return topic;
+      }
+
+      // Check alternate phrasings
+      if (topic.alternatePhrasings && topic.alternatePhrasings.length > 0) {
+        for (const phrase of topic.alternatePhrasings) {
+          if (question.toLowerCase().includes(phrase.toLowerCase())) {
+            return topic;
+          }
         }
       }
     }
@@ -556,6 +869,7 @@ async function splitGlobalDataToFiles(params) {
     const inputFile = params.input;
     const year = params.year;
     const outputDir = params.output;
+    const verboseOutput = params.verbose || false;
 
     console.log(`Reading global data file: ${inputFile}`);
     const globalData = JSON.parse(fs.readFileSync(inputFile, "utf8"));
@@ -563,7 +877,11 @@ async function splitGlobalDataToFiles(params) {
     console.log(`Read ${globalData.length} items from global data file`);
 
     // Load canonical mapping for proper file naming
-    const canonicalMappingPath = path.join(__dirname, "canonical_mapping.json");
+    const canonicalMappingPath = path.join(
+      __dirname,
+      "reference files",
+      "canonical_topic_mapping.json"
+    );
     let canonicalMapping = null;
 
     try {
@@ -573,336 +891,343 @@ async function splitGlobalDataToFiles(params) {
           fs.readFileSync(canonicalMappingPath, "utf8")
         );
       } else {
-        console.log(
-          "Canonical mapping file not found, using basic topic mapping"
+        console.error(
+          "Canonical mapping file not found. This is required for processing."
         );
-        canonicalMapping = createBasicCanonicalMapping();
+        throw new Error("Canonical mapping file not found");
       }
     } catch (error) {
-      console.warn(`Error loading canonical mapping: ${error.message}`);
-      console.log("Using basic topic mapping as fallback");
-      canonicalMapping = createBasicCanonicalMapping();
+      console.error(`Error loading canonical mapping: ${error.message}`);
+      throw error;
     }
-
-    // Group data by question
-    const groupedData = {};
-    const questionToTopicMap = new Map();
-    const questionSubQuestionMap = new Map();
-
-    // Create a mapping of question IDs to topics for easy lookup
-    const topicByQuestionId = {};
-    if (canonicalMapping && canonicalMapping.topics) {
-      canonicalMapping.topics.forEach((topic) => {
-        if (topic.mapping && topic.mapping[year]) {
-          topic.mapping[year].forEach((qId) => {
-            topicByQuestionId[qId.replace(/^Q/i, "")] = topic;
-          });
-        }
-      });
-    }
-
-    // Pre-process for Q18 to organize questions correctly
-    let q18Data = [];
-    const q18TopicData = topicByQuestionId["18"] || null;
-    let q18MainQuestion = "";
-
-    // First pass to identify and group Q18 data
-    globalData.forEach((item, index) => {
-      const { question, response } = item;
-
-      // Identify Q18 questions
-      if (question.startsWith("18.") || question.match(/^Q?18[.\s]/i)) {
-        q18MainQuestion = question;
-        q18Data.push({ index, item });
-      }
-    });
-
-    // Group Q18 responses by sub-questions (if found)
-    // For Q18, we want to extract sub-question numbers for proper file naming
-    const q18SubQuestions = {};
-
-    // Initialize common sub-questions (based on looking at orig/ files)
-    for (let i = 1; i <= 8; i++) {
-      q18SubQuestions[i] = {
-        responses: [],
-        question: q18MainQuestion,
-      };
-    }
-
-    // Assign responses to sub-questions
-    if (q18Data.length > 0) {
-      // If we have exactly 8 or 16 responses (typical for Q18 with Agree/Disagree pairs)
-      if (q18Data.length === 8 || q18Data.length === 16) {
-        // Assume sequential numbering for simplicity
-        let currentSubQuestion = 1;
-        let responsesPerSubQ = q18Data.length / 8; // 1 for just agree/disagree, 2 for paired
-
-        for (let i = 0; i < q18Data.length; i++) {
-          const subQIdx = Math.floor(i / responsesPerSubQ) + 1;
-          q18SubQuestions[subQIdx].responses.push(q18Data[i].item);
-
-          // Store sub-question info for later use
-          questionSubQuestionMap.set(q18Data[i].index, {
-            subQuestionNum: subQIdx,
-            response: q18Data[i].item.response,
-          });
-        }
-      } else {
-        // Fallback: try to parse sub-question numbers from responses
-        q18Data.forEach(({ index, item }) => {
-          const { response } = item;
-
-          // Try patterns like "18_1", "Q18_1", "1. Agree", etc.
-          let subQuestionNum = null;
-
-          // Check numbered patterns
-          const numMatch = response.match(/^(?:18_|Q18_)?(\d+)/i);
-          if (numMatch) {
-            subQuestionNum = parseInt(numMatch[1]);
-          }
-          // Check if there's a number before Agree/Disagree
-          else if (
-            response.includes("Agree") ||
-            response.includes("Disagree")
-          ) {
-            const agreeMatch = response.match(/(\d+)[\s_-]*(Agree|Disagree)/i);
-            if (agreeMatch) {
-              subQuestionNum = parseInt(agreeMatch[1]);
-            }
-          }
-
-          // If we found a sub-question number and it's within range
-          if (subQuestionNum && subQuestionNum >= 1 && subQuestionNum <= 8) {
-            q18SubQuestions[subQuestionNum].responses.push(item);
-
-            // Store sub-question info for later use
-            questionSubQuestionMap.set(index, {
-              subQuestionNum,
-              response: item.response,
-            });
-          } else {
-            // Fallback: assign to a sub-question based on position
-            const fallbackSubQ = (q18Data.indexOf({ index, item }) % 8) + 1;
-            q18SubQuestions[fallbackSubQ].responses.push(item);
-
-            // Store sub-question info for later use
-            questionSubQuestionMap.set(index, {
-              subQuestionNum: fallbackSubQ,
-              response: item.response,
-            });
-          }
-        });
-      }
-    }
-
-    // Create special entries for Q18 sub-questions
-    if (q18Data.length > 0) {
-      for (let i = 1; i <= 8; i++) {
-        if (q18SubQuestions[i].responses.length > 0) {
-          const fileId = `${year}_18_${i}`;
-          groupedData[fileId] = {
-            question: q18MainQuestion,
-            responses: q18SubQuestions[i].responses,
-            topic: q18TopicData,
-            isQ18SubQuestion: true,
-            subQuestionNum: i,
-          };
-        }
-      }
-    }
-
-    // Now process all non-Q18 items
-    globalData.forEach((item, index) => {
-      const { question, response, data } = item;
-
-      // Skip Q18 items as they've been handled specially
-      if (question.startsWith("18.") || question.match(/^Q?18[.\s]/i)) {
-        return;
-      }
-
-      // Extract the exact ID from the question string
-      let fileId;
-
-      // First try to match sub-questions like "4_9. AI - I feel..."
-      const subIdMatch = question.match(/^(\d+_\d+)[.\s]/i);
-      if (subIdMatch) {
-        fileId = `${year}_${subIdMatch[1]}`;
-      } else {
-        // Then try regular questions like "1. Most important factors..."
-        const idMatch = question.match(/^Q?(\d+)[.\s]/i);
-        if (idMatch) {
-          fileId = `${year}_${idMatch[1]}`;
-        } else {
-          // Only use topic mapping if we can't determine ID directly from question
-          const topic = findCanonicalTopic(question, canonicalMapping, year);
-          if (topic) {
-            fileId = `${year}_${topic.id}`;
-            questionToTopicMap.set(question, topic);
-          } else {
-            // Last resort - create a hash ID and warn about it
-            console.warn(
-              `No ID or canonical mapping found for question: "${question.substring(
-                0,
-                50
-              )}..."`
-            );
-            const hashId =
-              "x" +
-              Math.abs(
-                question.split("").reduce((a, b) => {
-                  a = (a << 5) - a + b.charCodeAt(0);
-                  return a & a;
-                }, 0)
-              )
-                .toString(16)
-                .slice(0, 4);
-            fileId = `${year}_${hashId}`;
-          }
-        }
-      }
-
-      // Get the question ID (for looking up in canonical mapping)
-      let questionId = fileId.split("_").slice(1).join("_");
-
-      // Find canonical topic if available
-      const topic =
-        topicByQuestionId[questionId] ||
-        findCanonicalTopic(question, canonicalMapping, year);
-
-      if (topic) {
-        questionToTopicMap.set(question, topic);
-      }
-
-      // Initialize group if not exists
-      if (!groupedData[fileId]) {
-        groupedData[fileId] = {
-          question,
-          responses: [],
-          topic: questionToTopicMap.get(question),
-        };
-      }
-
-      // Add response
-      groupedData[fileId].responses.push({
-        response,
-        data,
-      });
-    });
 
     // Ensure output directory exists
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir, { recursive: true });
     }
 
-    // Create files
-    let fileCount = 0;
+    // OPTIMIZATION: Create a map of questions by their IDs for efficient lookup
+    // This uses a more robust pattern matching for question identification
+    const questionsById = new Map();
+    const unmappedQuestions = [];
 
-    for (const [fileId, fileData] of Object.entries(groupedData)) {
-      // Extract details for metadata
-      const questionParts = fileId.split("_");
-      const questionIdBase = questionParts[1]; // e.g., "18" from "2024_18_1"
-      const isSubQuestion = questionParts.length > 2;
-      const subQuestionNum = isSubQuestion ? questionParts[2] : null;
-      const fullQuestionId = isSubQuestion
-        ? `${questionIdBase}_${subQuestionNum}`
-        : questionIdBase;
+    // Enhanced regex patterns for extracting question IDs
+    const mainQuestionPattern = /^Q?(\d+)[.\s-]/i;
+    const subQuestionPattern = /^Q?(\d+)_(\d+)[.\s-]/i;
+    const statementPattern = /^Q?(\d+)_(\d+)\.\s+(.+)/i;
 
-      // Get topic data for this question
-      const topic =
-        fileData.topic ||
-        topicByQuestionId[fullQuestionId] ||
-        topicByQuestionId[questionIdBase];
+    // Statement keywords for fuzzy matching statement questions (merged from split_to_files.js)
+    const statementKeywords = {
+      // Q5 - AI Readiness
+      "ai readiness": "5_1",
+      "effective use of ai": "5_2",
+      "ai adoption": "5_3",
+      "ai competence": "5_4",
+      "proficiency with ai": "5_5",
+      "ai integration": "5_6",
+      "readiness for ai": "5_7",
+      "experimentation with ai": "5_8",
 
-      // Create rich metadata structure similar to the original files
-      let metadata;
+      // Q6 - Workplace Flexibility
+      "flexible work": "6_1",
+      "remote work": "6_2",
+      "hybrid work": "6_3",
+      "work from home": "6_4",
+      "work-life balance": "6_5",
+      "workplace flexibility": "6_6",
+      "flexible schedule": "6_7",
+      "work arrangement": "6_8",
 
-      // Special handling for Q18 sub-questions
-      if (fileData.isQ18SubQuestion) {
-        // Use the Motivation_and_Fulfillment topic for Q18
-        const q18Topic = topicByQuestionId["18"] || {
-          id: "Motivation_and_Fulfillment",
-          theme: "Employee Experience",
-          canonicalQuestion:
-            "How motivated and fulfilled do you feel in your role?",
-          comparable: false,
-          keywords: [
-            "job satisfaction",
-            "work engagement",
-            "employee motivation",
-            "workplace fulfillment",
-            "Motivation_and_Fulfillment",
-          ],
-          userMessage:
-            "Compare with caution due to differences in question framing between years.",
-          relatedTopics: [
-            "Work_Life_Flexibility",
-            "Culture_and_Values",
-            "Employee_Wellbeing",
-          ],
-        };
+      // Q7 - Economic Security
+      "organization handles decisions": "7_1",
+      "job market": "7_2",
+      "people over profits": "7_3",
+      relocating: "7_4",
+      immigration: "7_5",
+      "economic security": "7_6",
+      "dei initiatives": "7_7",
+      "return to office": "7_8",
 
-        // Determine if responses are Agree/Disagree
-        let subQuestion = "";
-        if (
-          fileData.responses.length > 0 &&
-          (fileData.responses[0].response.includes("Agree") ||
-            fileData.responses[0].response.includes("Disagree"))
-        ) {
-          subQuestion = fileData.responses[0].response.includes("Agree")
-            ? "Agree"
-            : "Disagree";
+      // Q8 - Barriers and Discrimination
+      "leadership has negatively impacted": "8_1",
+      discrimination: "8_2",
+      "stretched too far": "8_3",
+      "overlooked for leadership": "8_4",
+      "overlooked for training": "8_5",
+      "overlooked for promotions": "8_6",
+      "class barriers": "8_7",
+      "race barriers": "8_8",
+      "sex barriers": "8_9",
+      "imposter syndrome": "8_10",
+      "share negative reviews": "8_11",
+
+      // Q9 - Manager Dynamics
+      "manager empowers": "9_1",
+      "welcomed by company leaders": "9_2",
+      "comfortable telling my manager": "9_3",
+      "manager appears directionless": "9_4",
+      "comfortable discussing": "9_5",
+      "manager appears overwhelmed": "9_6",
+      "cut back on the number of managers": "9_7",
+      "lack of managers": "9_8",
+
+      // Q17 - Job Satisfaction
+      "challenging and interesting work": "17_1",
+      "good use of my skills": "17_2",
+      "learning and development": "17_3",
+      "best work": "17_4",
+      "strategically adapting": "17_5",
+      motivated: "17_6",
+      "senior leadership team": "17_7",
+      "care and concern for its employees": "17_8",
+    };
+
+    // Function to identify question ID using enhanced pattern matching
+    function identifyQuestionId(question, response) {
+      // Try direct ID extraction using regex patterns
+      let subMatch = subQuestionPattern.exec(question);
+      if (subMatch) {
+        return `${subMatch[1]}_${subMatch[2]}`;
+      }
+
+      let mainMatch = mainQuestionPattern.exec(question);
+      if (mainMatch) {
+        return mainMatch[1];
+      }
+
+      // For statement questions, try to match based on response content
+      if (
+        question.toLowerCase().includes("to what extent do you agree") &&
+        response
+      ) {
+        const lowerResponse = response.toLowerCase();
+
+        // Check for keywords in the response
+        for (const [keyword, id] of Object.entries(statementKeywords)) {
+          if (lowerResponse.includes(keyword.toLowerCase())) {
+            if (verboseOutput) {
+              console.log(
+                `Identified statement question ${id} based on keyword "${keyword}" in response`
+              );
+            }
+            return id;
+          }
         }
 
-        // Create metadata with fields in exact order matching the template
-        metadata = {
-          topicId: q18Topic.id,
-          theme: q18Topic.theme || "Employee Experience",
-          questionId: `Q${fullQuestionId}`,
-          year: parseInt(year),
-          keywords: q18Topic.keywords || [],
-          canonicalQuestion: q18Topic.canonicalQuestion,
-          subQuestion,
-          comparable: q18Topic.comparable || false,
-          userMessage: q18Topic.userMessage || "",
-          availableMarkets: [],
-          relatedTopics: q18Topic.relatedTopics || [],
-          dataStructure: {
-            questionField: "question",
-            responsesArray: "responses",
-            responseTextField: "response",
-            dataField: "data",
-            segments: [
-              "region",
-              "age",
-              "gender",
-              "org_size",
-              "sector",
-              "job_level",
-              "relationship_status",
-              "education",
-              "generation",
-              "employment_status",
-            ],
-            primaryMetric: "country_overall",
-            valueFormat: "decimal",
-            sortOrder: "descending",
-          },
-        };
+        // If no specific match, try to identify the main question category
+        if (question.toLowerCase().includes("workplace")) return "6_1";
+        if (
+          question.toLowerCase().includes("economic") ||
+          question.toLowerCase().includes("organization")
+        )
+          return "7_1";
+        if (
+          question.toLowerCase().includes("barriers") ||
+          question.toLowerCase().includes("discrimination")
+        )
+          return "8_1";
+        if (question.toLowerCase().includes("manager")) return "9_1";
+        if (
+          question.toLowerCase().includes("ai") ||
+          question.toLowerCase().includes("technologies")
+        )
+          return "5_1";
+        if (
+          question.toLowerCase().includes("job satisfaction") ||
+          question.toLowerCase().includes("motivation")
+        )
+          return "17_1";
       }
-      // Enhanced metadata for other questions
-      else if (topic) {
-        // Create metadata with fields in exact order matching the template
-        metadata = {
+
+      // Handle special cases for certain questions
+      if (
+        question.toLowerCase().includes("location") ||
+        question.toLowerCase().includes("place of work")
+      ) {
+        return "4";
+      }
+
+      if (question.toLowerCase().includes("ideal role")) {
+        if (question.toLowerCase().includes("employment arrangement")) {
+          return "13";
+        }
+        return "10";
+      }
+
+      // If all else fails, return null
+      return null;
+    }
+
+    // Process all items to extract question IDs and their data
+    globalData.forEach((item) => {
+      const { question, response, data } = item;
+
+      if (!question) {
+        unmappedQuestions.push("Item with no question text");
+        return;
+      }
+
+      // Get question ID using enhanced identification
+      const questionId = identifyQuestionId(question, response);
+
+      if (!questionId) {
+        unmappedQuestions.push(question);
+        if (verboseOutput) {
+          console.log(
+            `Could not identify question ID for: "${question.substring(
+              0,
+              50
+            )}..."`
+          );
+        }
+        return;
+      }
+
+      // Split into main question ID and sub-question ID if applicable
+      let mainQuestionId = questionId;
+      let subQuestionId = null;
+
+      if (questionId.includes("_")) {
+        [mainQuestionId, subQuestionId] = questionId.split("_");
+      }
+
+      // Store by main question ID
+      if (!questionsById.has(mainQuestionId)) {
+        questionsById.set(mainQuestionId, {
+          question,
+          responses: [],
+          subQuestions: new Map(),
+        });
+      }
+
+      // Add response to the main question
+      questionsById.get(mainQuestionId).responses.push({
+        response,
+        data,
+      });
+
+      // If it's a sub-question, also store it separately
+      if (subQuestionId) {
+        const mainQuestion = questionsById.get(mainQuestionId);
+
+        if (!mainQuestion.subQuestions.has(subQuestionId)) {
+          mainQuestion.subQuestions.set(subQuestionId, []);
+        }
+
+        mainQuestion.subQuestions.get(subQuestionId).push({
+          response,
+          data,
+        });
+      }
+    });
+
+    // Report any unmapped questions
+    if (unmappedQuestions.length > 0 && verboseOutput) {
+      console.log(
+        `\nWarning: ${unmappedQuestions.length} questions could not be identified:`
+      );
+      unmappedQuestions.slice(0, 5).forEach((q) => {
+        console.log(`- "${q.substring(0, 50)}..."`);
+      });
+      if (unmappedQuestions.length > 5) {
+        console.log(`... and ${unmappedQuestions.length - 5} more`);
+      }
+    }
+
+    // Track created files
+    let fileCount = 0;
+    const createdFiles = new Set();
+
+    // Parse canonical mapping and create files
+    if (canonicalMapping && canonicalMapping.themes) {
+      console.log("Processing canonical mapping to create files...");
+
+      // Get all file entries from the canonical mapping
+      const fileEntries = [];
+
+      // Process each theme and topic
+      canonicalMapping.themes.forEach((theme) => {
+        theme.topics.forEach((topic) => {
+          if (topic.mapping && topic.mapping[year]) {
+            topic.mapping[year].forEach((entry) => {
+              fileEntries.push({
+                entry,
+                topic,
+                themeName: theme.name,
+              });
+            });
+          }
+        });
+      });
+
+      console.log(
+        `Found ${fileEntries.length} file entries in canonical mapping`
+      );
+
+      // Create files based on the canonical mapping
+      for (const { entry, topic, themeName } of fileEntries) {
+        if (typeof entry !== "object" || !entry.id || !entry.file) {
+          if (verboseOutput) {
+            console.warn(`Skipping invalid entry: ${JSON.stringify(entry)}`);
+          }
+          continue;
+        }
+
+        // Get question ID without the 'Q' prefix
+        const questionId = entry.id.replace(/^Q/i, "");
+
+        // Check if we have question data for this ID
+        let questionData;
+        let responseItems = [];
+
+        // Handle main question vs sub-question
+        if (questionId.includes("_")) {
+          const [mainId, subId] = questionId.split("_");
+
+          if (questionsById.has(mainId)) {
+            const mainQuestion = questionsById.get(mainId);
+
+            // Get the main question text
+            questionData = mainQuestion.question;
+
+            // Try to get the specific sub-question response
+            if (mainQuestion.subQuestions.has(subId)) {
+              responseItems = mainQuestion.subQuestions.get(subId);
+            } else {
+              // If specific sub-question not found, try using index
+              const subIndex = parseInt(subId) - 1;
+              if (subIndex >= 0 && subIndex < mainQuestion.responses.length) {
+                responseItems = [mainQuestion.responses[subIndex]];
+              }
+            }
+          }
+        } else {
+          // Direct question ID match
+          if (questionsById.has(questionId)) {
+            const mainQuestion = questionsById.get(questionId);
+            questionData = mainQuestion.question;
+            responseItems = mainQuestion.responses;
+          }
+        }
+
+        // Skip if no data found
+        if (!questionData || responseItems.length === 0) {
+          console.warn(`No data found for question ID: ${questionId}`);
+          continue;
+        }
+
+        // Prepare metadata from canonical - using ONLY the values directly from the canonical mapping
+        const metadata = {
           topicId: topic.id,
-          theme: topic.theme || "Employee Experience",
-          questionId: `Q${fullQuestionId}`,
+          theme: themeName || "",
+          questionId: `Q${questionId}`,
           year: parseInt(year),
-          keywords: topic.keywords || [],
-          canonicalQuestion: topic.canonicalQuestion,
-          subQuestion: "", // Empty string for non-subquestions
+          keywords: generateKeywords(topic),
+          canonicalQuestion: topic.canonicalQuestion || "",
+          subQuestion: responseItems[0].response || "",
           comparable: topic.comparable || false,
           userMessage: topic.userMessage || "",
-          availableMarkets: [],
+          availableMarkets: topic.availableMarkets || [],
           relatedTopics: topic.relatedTopics || [],
           dataStructure: {
             questionField: "question",
@@ -926,75 +1251,52 @@ async function splitGlobalDataToFiles(params) {
             sortOrder: "descending",
           },
         };
-      }
-      // Basic metadata for questions without topics
-      else {
-        // Create metadata with fields in exact order matching the template
-        metadata = {
-          topicId: "", // Empty string for unknown topic
-          theme: "", // Empty string for unknown theme
-          questionId: `Q${fullQuestionId}`,
-          year: parseInt(year),
-          keywords: [],
-          canonicalQuestion: "",
-          subQuestion: "",
-          comparable: false,
-          userMessage: "",
-          availableMarkets: [],
-          relatedTopics: [],
-          dataStructure: {
-            questionField: "question",
-            responsesArray: "responses",
-            responseTextField: "response",
-            dataField: "data",
-            segments: [
-              "region",
-              "age",
-              "gender",
-              "org_size",
-              "sector",
-              "job_level",
-              "relationship_status",
-              "education",
-              "generation",
-              "employment_status",
-            ],
-            primaryMetric: "country_overall",
-            valueFormat: "decimal",
-            sortOrder: "descending",
-          },
+
+        // Create file data
+        const fileData = {
+          metadata,
+          question: questionData,
+          responses: responseItems,
         };
+
+        // Output file path
+        const outputFile = path.join(outputDir, entry.file);
+
+        // Track created files
+        createdFiles.add(entry.file);
+
+        // Write the file
+        fs.writeFileSync(outputFile, JSON.stringify(fileData, null, 2));
+        console.log(
+          `Created file: ${outputFile} with ${responseItems.length} responses`
+        );
+        fileCount++;
       }
-
-      // Complete file data
-      const completeFileData = {
-        metadata,
-        question: fileData.question,
-        responses: fileData.responses,
-      };
-
-      // Write file
-      const outputFile = path.join(outputDir, `${fileId}.json`);
-      fs.writeFileSync(outputFile, JSON.stringify(completeFileData, null, 2));
-
-      console.log(
-        `Created file: ${outputFile} with ${fileData.responses.length} responses`
-      );
-      fileCount++;
     }
 
-    // Create a file mapping index for reference
-    const fileMapping = Object.entries(groupedData).map(([fileId, data]) => ({
-      file: `${fileId}.json`,
-      question:
-        data.question.substring(0, 100) +
-        (data.question.length > 100 ? "..." : ""),
-      topicId: data.topic ? data.topic.id : null,
-    }));
+    // Create a file index
+    const fileIndex = Array.from(createdFiles).map((file) => {
+      // Try to read the file to get question and topic ID
+      try {
+        const fileData = JSON.parse(
+          fs.readFileSync(path.join(outputDir, file), "utf8")
+        );
+        return {
+          file,
+          question:
+            fileData.question.substring(0, 100) +
+            (fileData.question.length > 100 ? "..." : ""),
+          topicId: fileData.metadata?.topicId || null,
+        };
+      } catch (e) {
+        return { file, question: "Error reading file", topicId: null };
+      }
+    });
 
+    // Write the file index
     fs.writeFileSync(
       path.join(outputDir, `${year}_file_index.json`),
-      JSON.stringify(fileMapping, null, 2)
+      JSON.stringify(fileIndex, null, 2)
     );
 
     console.log(
@@ -1015,95 +1317,205 @@ async function splitGlobalDataToFiles(params) {
 }
 
 /**
+ * Generate keywords for a topic based on add_metadata.js logic
+ */
+function generateKeywords(topic) {
+  // Start with alternatePhrasings if available
+  let keywords = [];
+
+  if (
+    topic.alternatePhrasings &&
+    Array.isArray(topic.alternatePhrasings) &&
+    topic.alternatePhrasings.length > 0
+  ) {
+    keywords = [...topic.alternatePhrasings];
+
+    // Add topic ID if not already included
+    if (!keywords.includes(topic.id)) {
+      keywords.push(topic.id);
+    }
+
+    // Add topic-specific keywords for common topics
+    const topicSpecificKeywords = {
+      AI_Attitudes: [
+        "artificial intelligence",
+        "ai sentiment",
+        "technology acceptance",
+        "ai perception",
+        "ai impact",
+        "optimism about ai",
+      ],
+      AI_Readiness: [
+        "ai readiness",
+        "ai training",
+        "effective use of ai",
+        "ai adoption",
+        "ai competence",
+        "proficiency with ai",
+        "ai tool training",
+        "ai integration",
+        "readiness for ai",
+        "experimentation with ai",
+      ],
+      DEI: [
+        "diversity",
+        "equity",
+        "inclusion",
+        "workplace diversity",
+        "inclusive culture",
+        "belonging",
+        "equal opportunity",
+      ],
+      Leadership_Confidence: [
+        "leadership trust",
+        "confidence in management",
+        "executive effectiveness",
+        "leadership quality",
+        "senior leadership",
+      ],
+    };
+
+    // Add additional keywords if applicable
+    if (topicSpecificKeywords[topic.id]) {
+      for (const keyword of topicSpecificKeywords[topic.id]) {
+        if (!keywords.includes(keyword)) {
+          keywords.push(keyword);
+        }
+      }
+    }
+
+    // Limit to 10 keywords for consistency
+    if (keywords.length > 10) {
+      keywords = keywords.slice(0, 10);
+    }
+  } else if (topic.keywords && Array.isArray(topic.keywords)) {
+    // Fallback to keywords if defined
+    keywords = [...topic.keywords];
+  } else {
+    // Last resort - add topic ID
+    keywords = [topic.id];
+  }
+
+  return keywords;
+}
+
+/**
+ * Handle errors with a helpful message
+ */
+function handleError(error) {
+  console.error(`\n❌ ERROR: ${error.message}`);
+  console.log("\nTry running with --help for usage information");
+  process.exit(1);
+}
+
+/**
  * Main function to run the complete survey data processing workflow
  */
 async function main() {
   console.log("=== SURVEY DATA PROCESSING WORKFLOW ===");
-  console.log(`CSV Input: ${csvPath}`);
   console.log(`Year: ${year}`);
+  console.log(`Input: ${csvPath}`);
   console.log(`Output Directory: ${outputDir}`);
   console.log("=====================================\n");
 
   try {
-    // Step 1: Process CSV to global JSON
-    console.log("STEP 1: Processing CSV to global JSON...");
-    const startTime1 = Date.now();
-
-    const globalData = await processCSVToGlobal(csvPath);
-
-    // Ensure output directory exists
+    // Ensure the output directory exists
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir, { recursive: true });
+      console.log(`Created output directory: ${outputDir}`);
     }
 
-    // Write the global JSON file
-    fs.writeFileSync(globalOutputPath, JSON.stringify(globalData, null, 2));
+    // If validation only mode is enabled, just validate and exit
+    if (options.validateOnly) {
+      console.log("VALIDATION MODE: Only checking existing outputs");
+      await validateOutputs();
+      return { success: true, message: "Validation complete" };
+    }
 
-    const duration1 = ((Date.now() - startTime1) / 1000).toFixed(2);
-    console.log(`✅ Global JSON created successfully in ${duration1} seconds.`);
-    console.log(`   Output: ${globalOutputPath}`);
+    // For 2025 data, the consolidated CSV should already exist in scripts/data/2025/
+    // No need to run harmonization as this is done by generate_consolidated_csv.js
+    let inputFilePath = csvPath;
+
+    // Just verify the input file exists
+    if (!fs.existsSync(inputFilePath)) {
+      console.error(`\n❌ ERROR: Input file not found at ${inputFilePath}`);
+      console.error(`
+For 2025 data, please ensure:
+1. You've run generate_consolidated_csv.js in the 2025_DATA_PROCESSING directory
+2. Copied the output to scripts/data/2025/2025_global_data.csv
+      `);
+      throw new Error(`Input file not found: ${inputFilePath}`);
+    } else {
+      console.log(`\nFound input CSV file: ${inputFilePath}`);
+    }
+
+    // Step 1: Process CSV to global JSON
+    if (!options.skipGlobal) {
+      console.log("\nSTEP 1: Processing CSV to global JSON...");
+      const startTime1 = Date.now();
+
+      const globalData = await processCSVToGlobal(inputFilePath);
+      fs.writeFileSync(globalOutputPath, JSON.stringify(globalData, null, 2));
+
+      const duration1 = ((Date.now() - startTime1) / 1000).toFixed(2);
+      console.log(
+        `✅ Global JSON created successfully in ${duration1} seconds.`
+      );
+      console.log(`   Output: ${globalOutputPath}`);
+    } else {
+      console.log("\nSTEP 1: SKIPPED - Not processing CSV to global JSON");
+    }
 
     // Step 2: Split global JSON and add metadata
-    console.log("\nSTEP 2: Splitting global JSON and adding metadata...");
-    const startTime2 = Date.now();
+    if (!options.skipSplit) {
+      console.log("\nSTEP 2: Splitting global JSON and adding metadata...");
 
-    const fileCount = await splitGlobalDataToFiles({
-      input: globalOutputPath,
-      year: year,
-      output: splitOutputDir,
-    });
+      // Verify global JSON exists first
+      if (!fs.existsSync(globalOutputPath)) {
+        throw new Error(
+          `Global JSON file not found: ${globalOutputPath}. Run without --skip-global first.`
+        );
+      }
 
-    const duration2 = ((Date.now() - startTime2) / 1000).toFixed(2);
-    console.log(
-      `✅ Split ${fileCount} files with metadata in ${duration2} seconds.`
-    );
-    console.log(`   Output directory: ${splitOutputDir}`);
+      const startTime2 = Date.now();
+
+      const fileCount = await splitGlobalDataToFiles({
+        input: globalOutputPath,
+        year: year,
+        output: splitOutputDir,
+      });
+
+      const duration2 = ((Date.now() - startTime2) / 1000).toFixed(2);
+      console.log(
+        `✅ Split ${fileCount} files with metadata in ${duration2} seconds.`
+      );
+      console.log(`   Output directory: ${splitOutputDir}`);
+    } else {
+      console.log("\nSTEP 2: SKIPPED - Not splitting global JSON");
+    }
 
     // Final summary
-    const totalDuration = ((Date.now() - startTime1) / 1000).toFixed(2);
+    const totalDuration = ((Date.now() - performanceStartTime) / 1000).toFixed(
+      2
+    );
     console.log("\n=== PROCESSING COMPLETE ===");
     console.log(`Total processing time: ${totalDuration} seconds`);
-    console.log(
-      `Total files created: ${
-        fileCount + 1
-      } (1 global JSON + ${fileCount} split files)`
-    );
+    if (!options.skipSplit && !options.skipGlobal) {
+      console.log("All processing steps completed successfully");
+    } else {
+      console.log("Some processing steps were skipped as requested");
+    }
     console.log("=============================");
 
-    return { success: true, fileCount: fileCount + 1 };
+    return { success: true };
   } catch (error) {
-    console.error("\n❌ ERROR in processing workflow:", error);
+    handleError(error);
     return { success: false, error };
   }
 }
 
-// Check for --help flag
-if (args.help || args.h) {
-  console.log(`
-  Survey Data Processing Workflow
-  ------------------------------
-  
-  Usage:
-    node process_survey_data.js [options]
-  
-  Options:
-    --input=<path>    Path to the input CSV file
-                      Default: ./data/2024/Global- Table 1.csv
-    
-    --year=<year>     Survey year (2024, 2025, etc.)
-                      Default: 2024
-    
-    --output=<path>   Output directory for all generated files
-                      Default: ./output
-    
-    --help, -h        Show this help message
-  
-  Examples:
-    node process_survey_data.js --input=./data/2025/survey.csv --year=2025
-    node process_survey_data.js --output=./custom_output
-  `);
-  process.exit(0);
-}
+// Track overall performance
+const performanceStartTime = Date.now();
 
 // Execute if run directly
 if (require.main === module) {
@@ -1118,13 +1530,13 @@ if (require.main === module) {
       }
     })
     .catch((err) => {
-      console.error("Failed to process survey data:", err);
-      process.exit(1);
+      handleError(err);
     });
 }
 
 module.exports = {
   processCSVToGlobal,
   splitGlobalDataToFiles,
+  harmonize2025Data,
   main,
 };

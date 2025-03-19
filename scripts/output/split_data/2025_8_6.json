@@ -1,6 +1,7 @@
 {
   "metadata": {
     "topicId": "Intergenerational_Collaboration",
+    "theme": "Workplace Dynamics",
     "questionId": "Q8_6",
     "year": 2025,
     "keywords": [
@@ -8,17 +9,14 @@
       "age-diverse teams",
       "cross-generational work",
       "multigenerational workplace",
-      "generational challenges",
-      "age differences"
+      "Intergenerational_Collaboration"
     ],
     "canonicalQuestion": "How effectively do different generations collaborate in your workplace?",
-    "subQuestion": "I feel that I am overlooked for promotions, pay rises, or leadership training because of my class.",
+    "subQuestion": "I feel that I am overlooked for promotions, pay rises, or leadership training because of my sex.",
     "comparable": false,
     "userMessage": "New in 2025; no year‑on‑year comparison.",
     "availableMarkets": [],
-    "relatedTopics": [
-      "DEI"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -41,303 +39,35 @@
       "sortOrder": "descending"
     }
   },
-  "question": "To what extent do you agree with the following statements.",
+  "question": "Q8 - To what extent do you agree with the following statements.",
   "responses": [
-    {
-      "response": "I feel that I am overlooked for promotions, pay rises, or leadership training because of my class.",
-      "data": {
-        "region": {
-          "country_overall": 0.39,
-          "united_states": 0.29,
-          "united_kingdom": 0.56,
-          "india": 0.28,
-          "france": 0.33,
-          "germany": 0.22,
-          "japan": 0.44,
-          "united_arab_emirates": 0.36,
-          "brazil": 0.42,
-          "saudi_arabia": 0.32,
-          "australia": 0.45
-        },
-        "age": {
-          "18-24": 0.42,
-          "25-34": 0.38,
-          "35-44": 0.31,
-          "45-54": 0.21,
-          "55-65": 0.2
-        },
-        "gender": {
-          "female": 0.4,
-          "male": 0.25
-        },
-        "org_size": {
-          "fewer_than_10": 0.34,
-          "10_to_49": 0.44,
-          "50_to_99": 0.42,
-          "100_to_249": 0.42,
-          "500_to_999": 0.32,
-          "1000_or_more": 0.37
-        },
-        "sector": {
-          "automotive": 0.39,
-          "business_administration_support_services": 0.51,
-          "technology": 0.36,
-          "construction": 0.33,
-          "consumer_goods": 0.31,
-          "education": 0.31,
-          "energy_utilities": 0.4,
-          "financial_services": 0.25,
-          "government": 0.29,
-          "healthcare_life_sciences": 0.35,
-          "manufacturing_industrial": 0.57,
-          "marketing_services": 0.24,
-          "not_for_profit": 0.21,
-          "legal_in-house": 0.23,
-          "legal_agency": 0.36,
-          "professional_services": 0.38,
-          "real_estate_property_services": 0.32,
-          "retail": 0.39,
-          "sales": 0.4,
-          "telecommunications": 0.26,
-          "transport_storage": 0.29,
-          "travel_hospitality_leisure": 0.32,
-          "wholesale_distribution": 0.29,
-          "other": 0.43
-        },
-        "job_level": {
-          "ceo": 0.48,
-          "senior_executive": 0.44,
-          "senior_leader": 0.39,
-          "mid_level_leader": 0.37,
-          "first_level_supervisor": 0.24,
-          "individual_contributor": 0.35
-        },
-        "relationship_status": {
-          "single": 0.27,
-          "cohabiting": 0.39,
-          "married": 0.24,
-          "divorced_separated": 0.2,
-          "widowed": 0.31
-        },
-        "education": {
-          "secondary": 0.29,
-          "tertiary": 0.29,
-          "professional_certifications": 0.36,
-          "undergraduate": 0.43,
-          "postgraduate": 0.38,
-          "doctorate": 0
-        },
-        "generation": {
-          "age_65_plus": 0.44,
-          "gen_z": 0.39,
-          "millennials": 0.3,
-          "gen_x": 0.18,
-          "baby_boomers": 0.31
-        },
-        "employment_status": {
-          "full-time": 0.29,
-          "part-time": 0.37,
-          "contract": 0.33,
-          "freelance": 0.46
-        }
-      }
-    },
     {
       "response": "I feel that I am overlooked for promotions, pay rises, or leadership training because of my sex.",
       "data": {
         "region": {
-          "country_overall": 0.37,
-          "united_states": 0.25,
-          "united_kingdom": 0.51,
-          "india": 0.37,
-          "france": 0.33,
-          "germany": 0.2,
-          "japan": 0.39,
-          "united_arab_emirates": 0.34,
-          "brazil": 0.38,
-          "saudi_arabia": 0.34,
-          "australia": 0.43
+          "australia": 43,
+          "india": 37,
+          "brazil": 38,
+          "country_overall": 39.33
         },
         "age": {
-          "18-24": 0.41,
-          "25-34": 0.37,
-          "35-44": 0.33,
-          "45-54": 0.21,
-          "55-65": 0.16
+          "18-24": 41,
+          "25-34": 37,
+          "35-44": 33,
+          "45-54": 21,
+          "55-65": 16
         },
         "gender": {
-          "female": 0.37,
-          "male": 0.27
+          "male": 27,
+          "female": 37
         },
-        "org_size": {
-          "fewer_than_10": 0.34,
-          "10_to_49": 0.4,
-          "50_to_99": 0.42,
-          "100_to_249": 0.42,
-          "500_to_999": 0.32,
-          "1000_or_more": 0.36
-        },
-        "sector": {
-          "automotive": 0.41,
-          "business_administration_support_services": 0.48,
-          "technology": 0.35,
-          "construction": 0.36,
-          "consumer_goods": 0.29,
-          "education": 0.31,
-          "energy_utilities": 0.42,
-          "financial_services": 0.27,
-          "government": 0.3,
-          "healthcare_life_sciences": 0.33,
-          "manufacturing_industrial": 0.48,
-          "marketing_services": 0.21,
-          "not_for_profit": 0.22,
-          "legal_in-house": 0.25,
-          "legal_agency": 0.35,
-          "professional_services": 0.29,
-          "real_estate_property_services": 0.31,
-          "retail": 0.36,
-          "sales": 0.44,
-          "telecommunications": 0.28,
-          "transport_storage": 0.31,
-          "travel_hospitality_leisure": 0.27,
-          "wholesale_distribution": 0.31,
-          "other": 0.43
-        },
-        "job_level": {
-          "ceo": 0.48,
-          "senior_executive": 0.43,
-          "senior_leader": 0.38,
-          "mid_level_leader": 0.36,
-          "first_level_supervisor": 0.25,
-          "individual_contributor": 0.35
-        },
-        "relationship_status": {
-          "single": 0.29,
-          "cohabiting": 0.38,
-          "married": 0.25,
-          "divorced_separated": 0.24,
-          "widowed": 0.32
-        },
-        "education": {
-          "secondary": 0.32,
-          "tertiary": 0.29,
-          "professional_certifications": 0.34,
-          "undergraduate": 0.42,
-          "postgraduate": 0.36,
-          "doctorate": 0
-        },
-        "generation": {
-          "age_65_plus": 0.43,
-          "gen_z": 0.38,
-          "millennials": 0.31,
-          "gen_x": 0.18,
-          "baby_boomers": 0.33
-        },
-        "employment_status": {
-          "full-time": 0.29,
-          "part-time": 0.37,
-          "contract": 0.3,
-          "freelance": 0.44
-        }
-      }
-    },
-    {
-      "response": "I feel that I am overlooked for promotions, pay rises, or leadership training because of my race.",
-      "data": {
-        "region": {
-          "country_overall": 0.39,
-          "united_states": 0.26,
-          "united_kingdom": 0.56,
-          "india": 0.24,
-          "france": 0.29,
-          "germany": 0.19,
-          "japan": 0.46,
-          "united_arab_emirates": 0.32,
-          "brazil": 0.4,
-          "saudi_arabia": 0.29,
-          "australia": 0.42
-        },
-        "age": {
-          "18-24": 0.4,
-          "25-34": 0.36,
-          "35-44": 0.29,
-          "45-54": 0.17,
-          "55-65": 0.14
-        },
-        "gender": {
-          "female": 0.38,
-          "male": 0.25
-        },
-        "org_size": {
-          "fewer_than_10": 0.31,
-          "10_to_49": 0.41,
-          "50_to_99": 0.4,
-          "100_to_249": 0.4,
-          "500_to_999": 0.29,
-          "1000_or_more": 0.34
-        },
-        "sector": {
-          "automotive": 0.36,
-          "business_administration_support_services": 0.48,
-          "technology": 0.33,
-          "construction": 0.32,
-          "consumer_goods": 0.29,
-          "education": 0.28,
-          "energy_utilities": 0.4,
-          "financial_services": 0.23,
-          "government": 0.26,
-          "healthcare_life_sciences": 0.31,
-          "manufacturing_industrial": 0.51,
-          "marketing_services": 0.17,
-          "not_for_profit": 0.21,
-          "legal_in-house": 0.23,
-          "legal_agency": 0.31,
-          "professional_services": 0.32,
-          "real_estate_property_services": 0.29,
-          "retail": 0.35,
-          "sales": 0.42,
-          "telecommunications": 0.25,
-          "transport_storage": 0.28,
-          "travel_hospitality_leisure": 0.3,
-          "wholesale_distribution": 0.27,
-          "other": 0.42
-        },
-        "job_level": {
-          "ceo": 0.48,
-          "senior_executive": 0.44,
-          "senior_leader": 0.35,
-          "mid_level_leader": 0.35,
-          "first_level_supervisor": 0.2,
-          "individual_contributor": 0.33
-        },
-        "relationship_status": {
-          "single": 0.23,
-          "cohabiting": 0.37,
-          "married": 0.2,
-          "divorced_separated": 0.18,
-          "widowed": 0.28
-        },
-        "education": {
-          "secondary": 0.26,
-          "tertiary": 0.26,
-          "professional_certifications": 0.34,
-          "undergraduate": 0.42,
-          "postgraduate": 0.34,
-          "doctorate": 0
-        },
-        "generation": {
-          "age_65_plus": 0.43,
-          "gen_z": 0.38,
-          "millennials": 0.27,
-          "gen_x": 0.14,
-          "baby_boomers": 0.28
-        },
-        "employment_status": {
-          "full-time": 0.27,
-          "part-time": 0.39,
-          "contract": 0.26,
-          "freelance": 0.43
-        }
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
       }
     }
   ]

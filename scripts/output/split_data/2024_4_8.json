@@ -1,6 +1,7 @@
 {
   "metadata": {
     "topicId": "Intention_to_Leave",
+    "theme": "Talent Attraction & Retention",
     "questionId": "Q4_8",
     "year": 2024,
     "keywords": [
@@ -21,11 +22,7 @@
       "India",
       "Brazil"
     ],
-    "relatedTopics": [
-      "Attraction_Factors",
-      "Retention_Factors",
-      "Attrition_Factors"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -48,12 +45,20 @@
       "sortOrder": "descending"
     }
   },
-  "question": "4_8. I feel confident I could easily find a new role if I left my current company in the next few months",
+  "question": "4_1. The values a company promotes are extremely important to me",
   "responses": [
     {
       "response": "Agree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.6,
+          "united_states": 0.75,
+          "australia": 0.64,
+          "india": 0.79,
+          "brazil": 0.67,
+          "saudi_arabia_uae": 0.74,
+          "country_overall": 0.7
+        },
         "age": {
           "18-24": 0.66,
           "25-34": 0.73,
@@ -62,8 +67,8 @@
           "55-65": 0.56
         },
         "gender": {
-          "female": 0.68,
-          "male": 0.72
+          "male": 0.72,
+          "female": 0.68
         },
         "org_size": {
           "fewer_than_10": 0.58,
@@ -102,7 +107,6 @@
           "other": 0.63
         },
         "job_level": {
-          "ceo": 0.75,
           "senior_executive": 0.79,
           "senior_leader": 0.73,
           "mid_level_leader": 0.68,
@@ -130,7 +134,15 @@
     {
       "response": "Disagree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.16,
+          "united_states": 0.09,
+          "australia": 0.14,
+          "india": 0.06,
+          "brazil": 0.12,
+          "saudi_arabia_uae": 0.1,
+          "country_overall": 0.11
+        },
         "age": {
           "18-24": 0.14,
           "25-34": 0.09,
@@ -139,8 +151,8 @@
           "55-65": 0.19
         },
         "gender": {
-          "female": 0.13,
-          "male": 0.1
+          "male": 0.1,
+          "female": 0.13
         },
         "org_size": {
           "fewer_than_10": 0.18,
@@ -179,7 +191,6 @@
           "other": 0.14
         },
         "job_level": {
-          "ceo": 0.09,
           "senior_executive": 0.07,
           "senior_leader": 0.1,
           "mid_level_leader": 0.11,

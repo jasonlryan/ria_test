@@ -1,25 +1,22 @@
 {
   "metadata": {
     "topicId": "Manager_Capability",
+    "theme": "Leadership & Management",
     "questionId": "Q9_8",
     "year": 2025,
     "keywords": [
-      "management void",
-      "lack of direction",
-      "reduced supervision",
-      "leadership gap",
-      "guidance deficit",
-      "managerial support"
+      "supervisory effectiveness",
+      "line manager capability",
+      "manager performance",
+      "leader effectiveness",
+      "Manager_Capability"
     ],
     "canonicalQuestion": "How effective is your direct manager?",
     "subQuestion": "The lack of managers at my organization leaves me feeling directionless",
     "comparable": false,
     "userMessage": "New in 2025; no year‑on‑year comparison.",
     "availableMarkets": [],
-    "relatedTopics": [
-      "Leadership_Confidence",
-      "Organizational_Adaptation"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -42,105 +39,35 @@
       "sortOrder": "descending"
     }
   },
-  "question": "To what extent do you agree with the following statements.",
+  "question": "Q9 - To what extent do you agree with the following statements.",
   "responses": [
     {
       "response": "The lack of managers at my organization leaves me feeling directionless",
       "data": {
         "region": {
-          "country_overall": 0.4,
-          "united_states": 0.3,
-          "united_kingdom": 0.59,
-          "india": 0.35,
-          "france": 0.32,
-          "germany": 0.21,
-          "japan": 0.44,
-          "united_arab_emirates": 0.32,
-          "brazil": 0.49,
-          "saudi_arabia": 0.36,
-          "australia": 0.46
+          "australia": 46,
+          "india": 35,
+          "brazil": 49,
+          "country_overall": 43.33
         },
         "age": {
-          "18-24": 0.44,
-          "25-34": 0.4,
-          "35-44": 0.34,
-          "45-54": 0.22,
-          "55-65": 0.2
+          "18-24": 44,
+          "25-34": 40,
+          "35-44": 34,
+          "45-54": 22,
+          "55-65": 20
         },
         "gender": {
-          "female": 0.41,
-          "male": 0.28
+          "male": 28,
+          "female": 41
         },
-        "org_size": {
-          "fewer_than_10": 0.37,
-          "10_to_49": 0.47,
-          "50_to_99": 0.43,
-          "100_to_249": 0.44,
-          "500_to_999": 0.33,
-          "1000_or_more": 0.38
-        },
-        "sector": {
-          "automotive": 0.46,
-          "business_administration_support_services": 0.51,
-          "technology": 0.38,
-          "construction": 0.41,
-          "consumer_goods": 0.34,
-          "education": 0.33,
-          "energy_utilities": 0.44,
-          "financial_services": 0.3,
-          "government": 0.33,
-          "healthcare_life_sciences": 0.33,
-          "manufacturing_industrial": 0.57,
-          "marketing_services": 0.3,
-          "not_for_profit": 0.19,
-          "legal_in-house": 0.23,
-          "legal_agency": 0.34,
-          "professional_services": 0.34,
-          "real_estate_property_services": 0.34,
-          "retail": 0.41,
-          "sales": 0.44,
-          "telecommunications": 0.28,
-          "transport_storage": 0.31,
-          "travel_hospitality_leisure": 0.33,
-          "wholesale_distribution": 0.28,
-          "other": 0.43
-        },
-        "job_level": {
-          "ceo": 0.52,
-          "senior_executive": 0.44,
-          "senior_leader": 0.4,
-          "mid_level_leader": 0.4,
-          "first_level_supervisor": 0.26,
-          "individual_contributor": 0.37
-        },
-        "relationship_status": {
-          "single": 0.29,
-          "cohabiting": 0.41,
-          "married": 0.26,
-          "divorced_separated": 0.24,
-          "widowed": 0.33
-        },
-        "education": {
-          "secondary": 0.31,
-          "tertiary": 0.31,
-          "professional_certifications": 0.38,
-          "undergraduate": 0.45,
-          "postgraduate": 0.4,
-          "doctorate": 0
-        },
-        "generation": {
-          "age_65_plus": 0.47,
-          "gen_z": 0.41,
-          "millennials": 0.32,
-          "gen_x": 0.19,
-          "baby_boomers": 0.34
-        },
-        "employment_status": {
-          "full-time": 0.32,
-          "part-time": 0.41,
-          "contract": 0.34,
-          "freelance": 0.45
-        }
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
       }
     }
   ]

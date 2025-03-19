@@ -1,6 +1,7 @@
 {
   "metadata": {
     "topicId": "Skills_Utilization",
+    "theme": "Skills & Development",
     "questionId": "Q4_17",
     "year": 2024,
     "keywords": [
@@ -21,11 +22,7 @@
       "India",
       "Brazil"
     ],
-    "relatedTopics": [
-      "Learning_and_Development",
-      "AI_Attitudes",
-      "AI_Readiness"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -48,12 +45,20 @@
       "sortOrder": "descending"
     }
   },
-  "question": "4_17. I am totally competent and deliver what is needed in my role",
+  "question": "4_1. The values a company promotes are extremely important to me",
   "responses": [
     {
       "response": "Agree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.78,
+          "united_states": 0.82,
+          "australia": 0.79,
+          "india": 0.85,
+          "brazil": 0.86,
+          "saudi_arabia_uae": 0.86,
+          "country_overall": 0.83
+        },
         "age": {
           "18-24": 0.71,
           "25-34": 0.82,
@@ -62,8 +67,8 @@
           "55-65": 0.85
         },
         "gender": {
-          "female": 0.83,
-          "male": 0.81
+          "male": 0.81,
+          "female": 0.83
         },
         "org_size": {
           "fewer_than_10": 0.81,
@@ -102,7 +107,6 @@
           "other": 0.79
         },
         "job_level": {
-          "ceo": 0.84,
           "senior_executive": 0.84,
           "senior_leader": 0.8,
           "mid_level_leader": 0.8,
@@ -130,7 +134,15 @@
     {
       "response": "Disagree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.06,
+          "united_states": 0.05,
+          "australia": 0.05,
+          "india": 0.04,
+          "brazil": 0.03,
+          "saudi_arabia_uae": 0.03,
+          "country_overall": 0.04
+        },
         "age": {
           "18-24": 0.09,
           "25-34": 0.04,
@@ -139,8 +151,8 @@
           "55-65": 0.02
         },
         "gender": {
-          "female": 0.04,
-          "male": 0.05
+          "male": 0.05,
+          "female": 0.04
         },
         "org_size": {
           "fewer_than_10": 0.05,
@@ -179,7 +191,6 @@
           "other": 0.04
         },
         "job_level": {
-          "ceo": 0.04,
           "senior_executive": 0.05,
           "senior_leader": 0.05,
           "mid_level_leader": 0.05,

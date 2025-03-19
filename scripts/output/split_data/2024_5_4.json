@@ -1,6 +1,7 @@
 {
   "metadata": {
     "topicId": "Communication_and_Connection",
+    "theme": "Employee Experience & Work‑Life",
     "questionId": "Q5_4",
     "year": 2024,
     "keywords": [
@@ -15,11 +16,7 @@
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
-    "relatedTopics": [
-      "Work_Life_Flexibility",
-      "Culture_and_Values",
-      "Employee_Wellbeing"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -42,12 +39,20 @@
       "sortOrder": "descending"
     }
   },
-  "question": "5_4. I feel that my ideas and opinions will be welcomed by company leaders",
+  "question": "5_1. I feel that I can be my full self around my co-workers.",
   "responses": [
     {
       "response": "Agree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.61,
+          "united_states": 0.76,
+          "australia": 0.63,
+          "india": 0.85,
+          "brazil": 0.73,
+          "saudi_arabia_uae": 0.8,
+          "country_overall": 0.73
+        },
         "age": {
           "18-24": 0.68,
           "25-34": 0.75,
@@ -56,8 +61,8 @@
           "55-65": 0.62
         },
         "gender": {
-          "female": 0.7,
-          "male": 0.74
+          "male": 0.74,
+          "female": 0.7
         },
         "org_size": {
           "fewer_than_10": 0.66,
@@ -96,7 +101,6 @@
           "other": 0.66
         },
         "job_level": {
-          "ceo": 0.79,
           "senior_executive": 0.85,
           "senior_leader": 0.77,
           "mid_level_leader": 0.7,
@@ -124,7 +128,15 @@
     {
       "response": "Disagree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.15,
+          "united_states": 0.09,
+          "australia": 0.15,
+          "india": 0.04,
+          "brazil": 0.1,
+          "saudi_arabia_uae": 0.05,
+          "country_overall": 0.1
+        },
         "age": {
           "18-24": 0.12,
           "25-34": 0.08,
@@ -133,8 +145,8 @@
           "55-65": 0.16
         },
         "gender": {
-          "female": 0.11,
-          "male": 0.09
+          "male": 0.09,
+          "female": 0.11
         },
         "org_size": {
           "fewer_than_10": 0.11,
@@ -173,7 +185,6 @@
           "other": 0.12
         },
         "job_level": {
-          "ceo": 0.06,
           "senior_executive": 0.05,
           "senior_leader": 0.08,
           "mid_level_leader": 0.11,

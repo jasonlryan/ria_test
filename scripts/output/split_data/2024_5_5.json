@@ -1,6 +1,7 @@
 {
   "metadata": {
     "topicId": "Employee_Wellbeing",
+    "theme": "Employee Experience & Work‑Life",
     "questionId": "Q5_5",
     "year": 2024,
     "keywords": [
@@ -15,11 +16,7 @@
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
-    "relatedTopics": [
-      "Work_Life_Flexibility",
-      "Culture_and_Values",
-      "Communication_and_Connection"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -42,12 +39,20 @@
       "sortOrder": "descending"
     }
   },
-  "question": "5_5. I am comfortable talking to my manager about needs related to my health and wellbeing",
+  "question": "5_1. I feel that I can be my full self around my co-workers.",
   "responses": [
     {
       "response": "Agree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.64,
+          "united_states": 0.75,
+          "australia": 0.67,
+          "india": 0.84,
+          "brazil": 0.69,
+          "saudi_arabia_uae": 0.73,
+          "country_overall": 0.72
+        },
         "age": {
           "18-24": 0.66,
           "25-34": 0.74,
@@ -56,8 +61,8 @@
           "55-65": 0.64
         },
         "gender": {
-          "female": 0.7,
-          "male": 0.74
+          "male": 0.74,
+          "female": 0.7
         },
         "org_size": {
           "fewer_than_10": 0.63,
@@ -96,7 +101,6 @@
           "other": 0.66
         },
         "job_level": {
-          "ceo": 0.76,
           "senior_executive": 0.84,
           "senior_leader": 0.75,
           "mid_level_leader": 0.7,
@@ -124,7 +128,15 @@
     {
       "response": "Disagree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.15,
+          "united_states": 0.1,
+          "australia": 0.14,
+          "india": 0.05,
+          "brazil": 0.15,
+          "saudi_arabia_uae": 0.1,
+          "country_overall": 0.11
+        },
         "age": {
           "18-24": 0.12,
           "25-34": 0.1,
@@ -133,8 +145,8 @@
           "55-65": 0.18
         },
         "gender": {
-          "female": 0.14,
-          "male": 0.09
+          "male": 0.09,
+          "female": 0.14
         },
         "org_size": {
           "fewer_than_10": 0.15,
@@ -173,7 +185,6 @@
           "other": 0.14
         },
         "job_level": {
-          "ceo": 0.08,
           "senior_executive": 0.05,
           "senior_leader": 0.09,
           "mid_level_leader": 0.12,

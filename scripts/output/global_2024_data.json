@@ -3,7 +3,15 @@
     "question": "1. Most important factors when looking for a new Job",
     "response": "Flexible working hours",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.42,
+        "united_states": 0.33,
+        "australia": 0.46,
+        "india": 0.33,
+        "brazil": 0.38,
+        "saudi_arabia_uae": 0.33,
+        "country_overall": 0.38
+      },
       "age": {
         "18-24": 0.3,
         "25-34": 0.36,
@@ -12,8 +20,8 @@
         "55-65": 0.47
       },
       "gender": {
-        "female": 0.42,
-        "male": 0.33
+        "male": 0.33,
+        "female": 0.42
       },
       "org_size": {
         "fewer_than_10": 0.44,
@@ -52,7 +60,6 @@
         "other": 0.4
       },
       "job_level": {
-        "ceo": 0.33,
         "senior_executive": 0.3,
         "senior_leader": 0.33,
         "mid_level_leader": 0.37,
@@ -81,7 +88,15 @@
     "question": "1. Most important factors when looking for a new Job",
     "response": "Generous salary /bonus/ compensation",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.44,
+        "united_states": 0.31,
+        "australia": 0.45,
+        "india": 0.28,
+        "brazil": 0.46,
+        "saudi_arabia_uae": 0.28,
+        "country_overall": 0.37
+      },
       "age": {
         "18-24": 0.27,
         "25-34": 0.32,
@@ -90,8 +105,8 @@
         "55-65": 0.52
       },
       "gender": {
-        "female": 0.4,
-        "male": 0.34
+        "male": 0.34,
+        "female": 0.4
       },
       "org_size": {
         "fewer_than_10": 0.4,
@@ -130,7 +145,6 @@
         "other": 0.41
       },
       "job_level": {
-        "ceo": 0.26,
         "senior_executive": 0.29,
         "senior_leader": 0.33,
         "mid_level_leader": 0.37,
@@ -159,7 +173,15 @@
     "question": "1. Most important factors when looking for a new Job",
     "response": "High job security (i.e., stable company/employer)",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.3,
+        "united_states": 0.26,
+        "australia": 0.33,
+        "india": 0.33,
+        "brazil": 0.21,
+        "saudi_arabia_uae": 0.32,
+        "country_overall": 0.29
+      },
       "age": {
         "18-24": 0.23,
         "25-34": 0.28,
@@ -168,8 +190,8 @@
         "55-65": 0.33
       },
       "gender": {
-        "female": 0.31,
-        "male": 0.29
+        "male": 0.29,
+        "female": 0.31
       },
       "org_size": {
         "fewer_than_10": 0.23,
@@ -208,7 +230,6 @@
         "other": 0.27
       },
       "job_level": {
-        "ceo": 0.27,
         "senior_executive": 0.29,
         "senior_leader": 0.27,
         "mid_level_leader": 0.3,
@@ -237,7 +258,15 @@
     "question": "1. Most important factors when looking for a new Job",
     "response": "Excellent learning and development opportunities",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.22,
+        "united_states": 0.23,
+        "australia": 0.22,
+        "india": 0.34,
+        "brazil": 0.34,
+        "saudi_arabia_uae": 0.31,
+        "country_overall": 0.28
+      },
       "age": {
         "18-24": 0.24,
         "25-34": 0.28,
@@ -246,8 +275,8 @@
         "55-65": 0.2
       },
       "gender": {
-        "female": 0.28,
-        "male": 0.26
+        "male": 0.26,
+        "female": 0.28
       },
       "org_size": {
         "fewer_than_10": 0.23,
@@ -286,7 +315,6 @@
         "other": 0.24
       },
       "job_level": {
-        "ceo": 0.23,
         "senior_executive": 0.3,
         "senior_leader": 0.27,
         "mid_level_leader": 0.28,
@@ -315,7 +343,15 @@
     "question": "1. Most important factors when looking for a new Job",
     "response": "Hybrid working options",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.28,
+        "united_states": 0.17,
+        "australia": 0.28,
+        "india": 0.19,
+        "brazil": 0.2,
+        "saudi_arabia_uae": 0.12,
+        "country_overall": 0.21
+      },
       "age": {
         "18-24": 0.18,
         "25-34": 0.2,
@@ -324,8 +360,8 @@
         "55-65": 0.24
       },
       "gender": {
-        "female": 0.23,
-        "male": 0.2
+        "male": 0.2,
+        "female": 0.23
       },
       "org_size": {
         "fewer_than_10": 0.17,
@@ -364,7 +400,6 @@
         "other": 0.21
       },
       "job_level": {
-        "ceo": 0.18,
         "senior_executive": 0.19,
         "senior_leader": 0.22,
         "mid_level_leader": 0.23,
@@ -393,7 +428,15 @@
     "question": "1. Most important factors when looking for a new Job",
     "response": "Job is in field/industry that I like",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.21,
+        "united_states": 0.2,
+        "australia": 0.24,
+        "india": 0.17,
+        "brazil": 0.23,
+        "saudi_arabia_uae": 0.23,
+        "country_overall": 0.21
+      },
       "age": {
         "18-24": 0.2,
         "25-34": 0.2,
@@ -402,8 +445,8 @@
         "55-65": 0.26
       },
       "gender": {
-        "female": 0.21,
-        "male": 0.21
+        "male": 0.21,
+        "female": 0.21
       },
       "org_size": {
         "fewer_than_10": 0.24,
@@ -442,7 +485,6 @@
         "other": 0.22
       },
       "job_level": {
-        "ceo": 0.22,
         "senior_executive": 0.18,
         "senior_leader": 0.21,
         "mid_level_leader": 0.2,
@@ -471,7 +513,15 @@
     "question": "1. Most important factors when looking for a new Job",
     "response": "Full-time remote working",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.21,
+        "united_states": 0.26,
+        "australia": 0.21,
+        "india": 0.17,
+        "brazil": 0.23,
+        "saudi_arabia_uae": 0.14,
+        "country_overall": 0.2
+      },
       "age": {
         "18-24": 0.19,
         "25-34": 0.19,
@@ -480,8 +530,8 @@
         "55-65": 0.23
       },
       "gender": {
-        "female": 0.22,
-        "male": 0.19
+        "male": 0.19,
+        "female": 0.22
       },
       "org_size": {
         "fewer_than_10": 0.28,
@@ -520,7 +570,6 @@
         "other": 0.26
       },
       "job_level": {
-        "ceo": 0.26,
         "senior_executive": 0.17,
         "senior_leader": 0.18,
         "mid_level_leader": 0.17,
@@ -549,7 +598,15 @@
     "question": "1. Most important factors when looking for a new Job",
     "response": "Colleagues I enjoy working with",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.26,
+        "united_states": 0.17,
+        "australia": 0.26,
+        "india": 0.16,
+        "brazil": 0.12,
+        "saudi_arabia_uae": 0.22,
+        "country_overall": 0.2
+      },
       "age": {
         "18-24": 0.2,
         "25-34": 0.2,
@@ -558,8 +615,8 @@
         "55-65": 0.24
       },
       "gender": {
-        "female": 0.22,
-        "male": 0.18
+        "male": 0.18,
+        "female": 0.22
       },
       "org_size": {
         "fewer_than_10": 0.16,
@@ -598,7 +655,6 @@
         "other": 0.22
       },
       "job_level": {
-        "ceo": 0.15,
         "senior_executive": 0.17,
         "senior_leader": 0.19,
         "mid_level_leader": 0.21,
@@ -627,7 +683,15 @@
     "question": "1. Most important factors when looking for a new Job",
     "response": "Generous non-salary/bonus/compensation benefits and rewards",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.21,
+        "united_states": 0.19,
+        "australia": 0.22,
+        "india": 0.13,
+        "brazil": 0.21,
+        "saudi_arabia_uae": 0.22,
+        "country_overall": 0.2
+      },
       "age": {
         "18-24": 0.15,
         "25-34": 0.18,
@@ -636,8 +700,8 @@
         "55-65": 0.24
       },
       "gender": {
-        "female": 0.2,
-        "male": 0.19
+        "male": 0.19,
+        "female": 0.2
       },
       "org_size": {
         "fewer_than_10": 0.16,
@@ -676,7 +740,6 @@
         "other": 0.21
       },
       "job_level": {
-        "ceo": 0.16,
         "senior_executive": 0.16,
         "senior_leader": 0.2,
         "mid_level_leader": 0.18,
@@ -705,7 +768,15 @@
     "question": "1. Most important factors when looking for a new Job",
     "response": "Short commute to office",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.21,
+        "united_states": 0.17,
+        "australia": 0.26,
+        "india": 0.09,
+        "brazil": 0.14,
+        "saudi_arabia_uae": 0.16,
+        "country_overall": 0.17
+      },
       "age": {
         "18-24": 0.14,
         "25-34": 0.15,
@@ -714,8 +785,8 @@
         "55-65": 0.27
       },
       "gender": {
-        "female": 0.19,
-        "male": 0.16
+        "male": 0.16,
+        "female": 0.19
       },
       "org_size": {
         "fewer_than_10": 0.17,
@@ -754,7 +825,6 @@
         "other": 0.18
       },
       "job_level": {
-        "ceo": 0.14,
         "senior_executive": 0.15,
         "senior_leader": 0.15,
         "mid_level_leader": 0.18,
@@ -783,7 +853,15 @@
     "question": "1. Most important factors when looking for a new Job",
     "response": "Full-time in the office",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.12,
+        "united_states": 0.26,
+        "australia": 0.13,
+        "india": 0.23,
+        "brazil": 0.09,
+        "saudi_arabia_uae": 0.18,
+        "country_overall": 0.17
+      },
       "age": {
         "18-24": 0.18,
         "25-34": 0.18,
@@ -792,8 +870,8 @@
         "55-65": 0.13
       },
       "gender": {
-        "female": 0.15,
-        "male": 0.2
+        "male": 0.2,
+        "female": 0.15
       },
       "org_size": {
         "fewer_than_10": 0.09,
@@ -832,7 +910,6 @@
         "other": 0.15
       },
       "job_level": {
-        "ceo": 0.21,
         "senior_executive": 0.22,
         "senior_leader": 0.19,
         "mid_level_leader": 0.16,
@@ -861,7 +938,15 @@
     "question": "1. Most important factors when looking for a new Job",
     "response": "To be a part of a culture and value system that I respect",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.16,
+        "united_states": 0.16,
+        "australia": 0.2,
+        "india": 0.13,
+        "brazil": 0.17,
+        "saudi_arabia_uae": 0.17,
+        "country_overall": 0.17
+      },
       "age": {
         "18-24": 0.14,
         "25-34": 0.16,
@@ -870,8 +955,8 @@
         "55-65": 0.18
       },
       "gender": {
-        "female": 0.16,
-        "male": 0.16
+        "male": 0.16,
+        "female": 0.16
       },
       "org_size": {
         "fewer_than_10": 0.12,
@@ -910,7 +995,6 @@
         "other": 0.16
       },
       "job_level": {
-        "ceo": 0.18,
         "senior_executive": 0.16,
         "senior_leader": 0.17,
         "mid_level_leader": 0.17,
@@ -939,7 +1023,15 @@
     "question": "1. Most important factors when looking for a new Job",
     "response": "Excellent diversity and inclusion within the company",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.14,
+        "united_states": 0.19,
+        "australia": 0.12,
+        "india": 0.19,
+        "brazil": 0.13,
+        "saudi_arabia_uae": 0.14,
+        "country_overall": 0.15
+      },
       "age": {
         "18-24": 0.16,
         "25-34": 0.17,
@@ -948,8 +1040,8 @@
         "55-65": 0.11
       },
       "gender": {
-        "female": 0.15,
-        "male": 0.16
+        "male": 0.16,
+        "female": 0.15
       },
       "org_size": {
         "fewer_than_10": 0.09,
@@ -988,7 +1080,6 @@
         "other": 0.14
       },
       "job_level": {
-        "ceo": 0.16,
         "senior_executive": 0.22,
         "senior_leader": 0.18,
         "mid_level_leader": 0.15,
@@ -1017,7 +1108,15 @@
     "question": "1. Most important factors when looking for a new Job",
     "response": "Status and respect for my position in the company",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.11,
+        "united_states": 0.16,
+        "australia": 0.11,
+        "india": 0.23,
+        "brazil": 0.11,
+        "saudi_arabia_uae": 0.23,
+        "country_overall": 0.16
+      },
       "age": {
         "18-24": 0.17,
         "25-34": 0.17,
@@ -1026,8 +1125,8 @@
         "55-65": 0.11
       },
       "gender": {
-        "female": 0.15,
-        "male": 0.16
+        "male": 0.16,
+        "female": 0.15
       },
       "org_size": {
         "fewer_than_10": 0.11,
@@ -1066,7 +1165,6 @@
         "other": 0.13
       },
       "job_level": {
-        "ceo": 0.16,
         "senior_executive": 0.22,
         "senior_leader": 0.16,
         "mid_level_leader": 0.16,
@@ -1095,7 +1193,15 @@
     "question": "1. Most important factors when looking for a new Job",
     "response": "Excellent sustainability policies and practices within the company",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.11,
+        "united_states": 0.19,
+        "australia": 0.09,
+        "india": 0.21,
+        "brazil": 0.13,
+        "saudi_arabia_uae": 0.15,
+        "country_overall": 0.15
+      },
       "age": {
         "18-24": 0.15,
         "25-34": 0.16,
@@ -1104,8 +1210,8 @@
         "55-65": 0.09
       },
       "gender": {
-        "female": 0.12,
-        "male": 0.17
+        "male": 0.17,
+        "female": 0.12
       },
       "org_size": {
         "fewer_than_10": 0.07,
@@ -1144,7 +1250,6 @@
         "other": 0.11
       },
       "job_level": {
-        "ceo": 0.17,
         "senior_executive": 0.22,
         "senior_leader": 0.18,
         "mid_level_leader": 0.13,
@@ -1173,7 +1278,15 @@
     "question": "1. Most important factors when looking for a new Job",
     "response": "Brand is well-known and respected",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.11,
+        "united_states": 0.14,
+        "australia": 0.12,
+        "india": 0.18,
+        "brazil": 0.1,
+        "saudi_arabia_uae": 0.15,
+        "country_overall": 0.13
+      },
       "age": {
         "18-24": 0.15,
         "25-34": 0.14,
@@ -1182,8 +1295,8 @@
         "55-65": 0.11
       },
       "gender": {
-        "female": 0.12,
-        "male": 0.15
+        "male": 0.15,
+        "female": 0.12
       },
       "org_size": {
         "fewer_than_10": 0.1,
@@ -1222,7 +1335,6 @@
         "other": 0.13
       },
       "job_level": {
-        "ceo": 0.14,
         "senior_executive": 0.16,
         "senior_leader": 0.15,
         "mid_level_leader": 0.14,
@@ -1251,7 +1363,15 @@
     "question": "1. Most important factors when looking for a new Job",
     "response": "Hiring manager I respect and trust",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.13,
+        "united_states": 0.16,
+        "australia": 0.14,
+        "india": 0.13,
+        "brazil": 0.09,
+        "saudi_arabia_uae": 0.15,
+        "country_overall": 0.13
+      },
       "age": {
         "18-24": 0.15,
         "25-34": 0.14,
@@ -1260,8 +1380,8 @@
         "55-65": 0.09
       },
       "gender": {
-        "female": 0.13,
-        "male": 0.14
+        "male": 0.14,
+        "female": 0.13
       },
       "org_size": {
         "fewer_than_10": 0.1,
@@ -1300,7 +1420,6 @@
         "other": 0.11
       },
       "job_level": {
-        "ceo": 0.14,
         "senior_executive": 0.13,
         "senior_leader": 0.15,
         "mid_level_leader": 0.15,
@@ -1329,7 +1448,15 @@
     "question": "1. Most important factors when looking for a new Job",
     "response": "Plentiful opportunities for lateral moves and trying new things",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.1,
+        "united_states": 0.16,
+        "australia": 0.13,
+        "india": 0.12,
+        "brazil": 0.13,
+        "saudi_arabia_uae": 0.11,
+        "country_overall": 0.13
+      },
       "age": {
         "18-24": 0.13,
         "25-34": 0.12,
@@ -1338,8 +1465,8 @@
         "55-65": 0.09
       },
       "gender": {
-        "female": 0.12,
-        "male": 0.13
+        "male": 0.13,
+        "female": 0.12
       },
       "org_size": {
         "fewer_than_10": 0.11,
@@ -1378,7 +1505,6 @@
         "other": 0.11
       },
       "job_level": {
-        "ceo": 0.13,
         "senior_executive": 0.15,
         "senior_leader": 0.13,
         "mid_level_leader": 0.11,
@@ -1407,7 +1533,15 @@
     "question": "1. Most important factors when looking for a new Job",
     "response": "Low number of recent layoffs",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.06,
+        "united_states": 0.08,
+        "australia": 0.07,
+        "india": 0.06,
+        "brazil": 0.09,
+        "saudi_arabia_uae": 0.09,
+        "country_overall": 0.07
+      },
       "age": {
         "18-24": 0.07,
         "25-34": 0.08,
@@ -1416,8 +1550,8 @@
         "55-65": 0.06
       },
       "gender": {
-        "female": 0.06,
-        "male": 0.08
+        "male": 0.08,
+        "female": 0.06
       },
       "org_size": {
         "fewer_than_10": 0.06,
@@ -1456,7 +1590,6 @@
         "other": 0.08
       },
       "job_level": {
-        "ceo": 0.07,
         "senior_executive": 0.09,
         "senior_leader": 0.08,
         "mid_level_leader": 0.08,
@@ -1485,7 +1618,15 @@
     "question": "2. Factors to Stay at Current Company",
     "response": "Generous salary / compensation",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.4,
+        "united_states": 0.32,
+        "australia": 0.45,
+        "india": 0.28,
+        "brazil": 0.43,
+        "saudi_arabia_uae": 0.33,
+        "country_overall": 0.37
+      },
       "age": {
         "18-24": 0.25,
         "25-34": 0.34,
@@ -1494,8 +1635,8 @@
         "55-65": 0.51
       },
       "gender": {
-        "female": 0.38,
-        "male": 0.35
+        "male": 0.35,
+        "female": 0.38
       },
       "org_size": {
         "fewer_than_10": 0.34,
@@ -1534,7 +1675,6 @@
         "other": 0.38
       },
       "job_level": {
-        "ceo": 0.29,
         "senior_executive": 0.3,
         "senior_leader": 0.35,
         "mid_level_leader": 0.36,
@@ -1563,7 +1703,15 @@
     "question": "2. Factors to Stay at Current Company",
     "response": "Total flexibility of working hours",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.31,
+        "united_states": 0.28,
+        "australia": 0.33,
+        "india": 0.27,
+        "brazil": 0.3,
+        "saudi_arabia_uae": 0.29,
+        "country_overall": 0.3
+      },
       "age": {
         "18-24": 0.24,
         "25-34": 0.28,
@@ -1572,8 +1720,8 @@
         "55-65": 0.39
       },
       "gender": {
-        "female": 0.33,
-        "male": 0.27
+        "male": 0.27,
+        "female": 0.33
       },
       "org_size": {
         "fewer_than_10": 0.37,
@@ -1612,7 +1760,6 @@
         "other": 0.34
       },
       "job_level": {
-        "ceo": 0.31,
         "senior_executive": 0.26,
         "senior_leader": 0.28,
         "mid_level_leader": 0.28,
@@ -1641,7 +1788,15 @@
     "question": "2. Factors to Stay at Current Company",
     "response": "High job security (of employment contract)",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.28,
+        "united_states": 0.24,
+        "australia": 0.28,
+        "india": 0.31,
+        "brazil": 0.25,
+        "saudi_arabia_uae": 0.29,
+        "country_overall": 0.28
+      },
       "age": {
         "18-24": 0.24,
         "25-34": 0.26,
@@ -1650,8 +1805,8 @@
         "55-65": 0.28
       },
       "gender": {
-        "female": 0.27,
-        "male": 0.28
+        "male": 0.28,
+        "female": 0.27
       },
       "org_size": {
         "fewer_than_10": 0.21,
@@ -1690,7 +1845,6 @@
         "other": 0.23
       },
       "job_level": {
-        "ceo": 0.24,
         "senior_executive": 0.29,
         "senior_leader": 0.27,
         "mid_level_leader": 0.28,
@@ -1719,7 +1873,15 @@
     "question": "2. Factors to Stay at Current Company",
     "response": "Colleagues I enjoy working with",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.34,
+        "united_states": 0.24,
+        "australia": 0.33,
+        "india": 0.22,
+        "brazil": 0.19,
+        "saudi_arabia_uae": 0.25,
+        "country_overall": 0.26
+      },
       "age": {
         "18-24": 0.25,
         "25-34": 0.25,
@@ -1728,8 +1890,8 @@
         "55-65": 0.35
       },
       "gender": {
-        "female": 0.29,
-        "male": 0.25
+        "male": 0.25,
+        "female": 0.29
       },
       "org_size": {
         "fewer_than_10": 0.22,
@@ -1768,7 +1930,6 @@
         "other": 0.25
       },
       "job_level": {
-        "ceo": 0.19,
         "senior_executive": 0.21,
         "senior_leader": 0.26,
         "mid_level_leader": 0.28,
@@ -1797,7 +1958,15 @@
     "question": "2. Factors to Stay at Current Company",
     "response": "Manager I respect and trust",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.28,
+        "united_states": 0.25,
+        "australia": 0.31,
+        "india": 0.26,
+        "brazil": 0.12,
+        "saudi_arabia_uae": 0.26,
+        "country_overall": 0.25
+      },
       "age": {
         "18-24": 0.24,
         "25-34": 0.24,
@@ -1806,8 +1975,8 @@
         "55-65": 0.28
       },
       "gender": {
-        "female": 0.27,
-        "male": 0.25
+        "male": 0.25,
+        "female": 0.27
       },
       "org_size": {
         "fewer_than_10": 0.21,
@@ -1846,7 +2015,6 @@
         "other": 0.21
       },
       "job_level": {
-        "ceo": 0.19,
         "senior_executive": 0.23,
         "senior_leader": 0.26,
         "mid_level_leader": 0.28,
@@ -1875,7 +2043,15 @@
     "question": "2. Factors to Stay at Current Company",
     "response": "Excellent learning and development opportunities",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.21,
+        "united_states": 0.24,
+        "australia": 0.19,
+        "india": 0.32,
+        "brazil": 0.29,
+        "saudi_arabia_uae": 0.27,
+        "country_overall": 0.25
+      },
       "age": {
         "18-24": 0.25,
         "25-34": 0.26,
@@ -1884,8 +2060,8 @@
         "55-65": 0.17
       },
       "gender": {
-        "female": 0.25,
-        "male": 0.25
+        "male": 0.25,
+        "female": 0.25
       },
       "org_size": {
         "fewer_than_10": 0.2,
@@ -1924,7 +2100,6 @@
         "other": 0.23
       },
       "job_level": {
-        "ceo": 0.26,
         "senior_executive": 0.28,
         "senior_leader": 0.25,
         "mid_level_leader": 0.24,
@@ -1953,7 +2128,15 @@
     "question": "2. Factors to Stay at Current Company",
     "response": "Clear career advancement opportunities and processes",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.17,
+        "united_states": 0.2,
+        "australia": 0.19,
+        "india": 0.24,
+        "brazil": 0.25,
+        "saudi_arabia_uae": 0.22,
+        "country_overall": 0.21
+      },
       "age": {
         "18-24": 0.22,
         "25-34": 0.21,
@@ -1962,8 +2145,8 @@
         "55-65": 0.14
       },
       "gender": {
-        "female": 0.2,
-        "male": 0.21
+        "male": 0.21,
+        "female": 0.2
       },
       "org_size": {
         "fewer_than_10": 0.13,
@@ -2002,7 +2185,6 @@
         "other": 0.2
       },
       "job_level": {
-        "ceo": 0.19,
         "senior_executive": 0.24,
         "senior_leader": 0.23,
         "mid_level_leader": 0.2,
@@ -2031,7 +2213,15 @@
     "question": "2. Factors to Stay at Current Company",
     "response": "Status and respect for my position in the company",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.17,
+        "united_states": 0.22,
+        "australia": 0.16,
+        "india": 0.26,
+        "brazil": 0.19,
+        "saudi_arabia_uae": 0.25,
+        "country_overall": 0.21
+      },
       "age": {
         "18-24": 0.21,
         "25-34": 0.21,
@@ -2040,8 +2230,8 @@
         "55-65": 0.18
       },
       "gender": {
-        "female": 0.2,
-        "male": 0.21
+        "male": 0.21,
+        "female": 0.2
       },
       "org_size": {
         "fewer_than_10": 0.16,
@@ -2080,7 +2270,6 @@
         "other": 0.2
       },
       "job_level": {
-        "ceo": 0.22,
         "senior_executive": 0.25,
         "senior_leader": 0.22,
         "mid_level_leader": 0.21,
@@ -2109,7 +2298,15 @@
     "question": "2. Factors to Stay at Current Company",
     "response": "Hybrid working options",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.22,
+        "united_states": 0.18,
+        "australia": 0.25,
+        "india": 0.17,
+        "brazil": 0.17,
+        "saudi_arabia_uae": 0.13,
+        "country_overall": 0.19
+      },
       "age": {
         "18-24": 0.17,
         "25-34": 0.19,
@@ -2118,8 +2315,8 @@
         "55-65": 0.21
       },
       "gender": {
-        "female": 0.19,
-        "male": 0.19
+        "male": 0.19,
+        "female": 0.19
       },
       "org_size": {
         "fewer_than_10": 0.15,
@@ -2158,7 +2355,6 @@
         "other": 0.2
       },
       "job_level": {
-        "ceo": 0.18,
         "senior_executive": 0.2,
         "senior_leader": 0.2,
         "mid_level_leader": 0.21,
@@ -2187,7 +2383,15 @@
     "question": "2. Factors to Stay at Current Company",
     "response": "Full-time remote working",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.19,
+        "united_states": 0.24,
+        "australia": 0.2,
+        "india": 0.15,
+        "brazil": 0.17,
+        "saudi_arabia_uae": 0.14,
+        "country_overall": 0.18
+      },
       "age": {
         "18-24": 0.17,
         "25-34": 0.18,
@@ -2196,8 +2400,8 @@
         "55-65": 0.2
       },
       "gender": {
-        "female": 0.19,
-        "male": 0.18
+        "male": 0.18,
+        "female": 0.19
       },
       "org_size": {
         "fewer_than_10": 0.26,
@@ -2236,7 +2440,6 @@
         "other": 0.22
       },
       "job_level": {
-        "ceo": 0.23,
         "senior_executive": 0.19,
         "senior_leader": 0.17,
         "mid_level_leader": 0.18,
@@ -2265,7 +2468,15 @@
     "question": "2. Factors to Stay at Current Company",
     "response": "Short commute to office",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.22,
+        "united_states": 0.17,
+        "australia": 0.24,
+        "india": 0.13,
+        "brazil": 0.15,
+        "saudi_arabia_uae": 0.19,
+        "country_overall": 0.18
+      },
       "age": {
         "18-24": 0.17,
         "25-34": 0.16,
@@ -2274,8 +2485,8 @@
         "55-65": 0.24
       },
       "gender": {
-        "female": 0.19,
-        "male": 0.18
+        "male": 0.18,
+        "female": 0.19
       },
       "org_size": {
         "fewer_than_10": 0.17,
@@ -2314,7 +2525,6 @@
         "other": 0.16
       },
       "job_level": {
-        "ceo": 0.16,
         "senior_executive": 0.15,
         "senior_leader": 0.18,
         "mid_level_leader": 0.19,
@@ -2343,7 +2553,15 @@
     "question": "2. Factors to Stay at Current Company",
     "response": "To be a part of a culture and value system that I respect",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.16,
+        "united_states": 0.19,
+        "australia": 0.2,
+        "india": 0.18,
+        "brazil": 0.17,
+        "saudi_arabia_uae": 0.18,
+        "country_overall": 0.18
+      },
       "age": {
         "18-24": 0.17,
         "25-34": 0.17,
@@ -2352,8 +2570,8 @@
         "55-65": 0.18
       },
       "gender": {
-        "female": 0.17,
-        "male": 0.19
+        "male": 0.19,
+        "female": 0.17
       },
       "org_size": {
         "fewer_than_10": 0.16,
@@ -2392,7 +2610,6 @@
         "other": 0.17
       },
       "job_level": {
-        "ceo": 0.17,
         "senior_executive": 0.22,
         "senior_leader": 0.19,
         "mid_level_leader": 0.18,
@@ -2421,7 +2638,15 @@
     "question": "2. Factors to Stay at Current Company",
     "response": "Full-time in the office",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.12,
+        "united_states": 0.23,
+        "australia": 0.12,
+        "india": 0.22,
+        "brazil": 0.1,
+        "saudi_arabia_uae": 0.19,
+        "country_overall": 0.16
+      },
       "age": {
         "18-24": 0.18,
         "25-34": 0.18,
@@ -2430,8 +2655,8 @@
         "55-65": 0.11
       },
       "gender": {
-        "female": 0.15,
-        "male": 0.19
+        "male": 0.19,
+        "female": 0.15
       },
       "org_size": {
         "fewer_than_10": 0.11,
@@ -2470,7 +2695,6 @@
         "other": 0.14
       },
       "job_level": {
-        "ceo": 0.19,
         "senior_executive": 0.22,
         "senior_leader": 0.18,
         "mid_level_leader": 0.16,
@@ -2499,7 +2723,15 @@
     "question": "2. Factors to Stay at Current Company",
     "response": "Excellent sustainability policies and practices within the company",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.12,
+        "united_states": 0.21,
+        "australia": 0.11,
+        "india": 0.24,
+        "brazil": 0.15,
+        "saudi_arabia_uae": 0.17,
+        "country_overall": 0.17
+      },
       "age": {
         "18-24": 0.15,
         "25-34": 0.18,
@@ -2508,8 +2740,8 @@
         "55-65": 0.11
       },
       "gender": {
-        "female": 0.15,
-        "male": 0.18
+        "male": 0.18,
+        "female": 0.15
       },
       "org_size": {
         "fewer_than_10": 0.11,
@@ -2548,7 +2780,6 @@
         "other": 0.15
       },
       "job_level": {
-        "ceo": 0.22,
         "senior_executive": 0.24,
         "senior_leader": 0.18,
         "mid_level_leader": 0.15,
@@ -2577,7 +2808,15 @@
     "question": "2. Factors to Stay at Current Company",
     "response": "Excellent diversity and inclusion within the company",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.14,
+        "united_states": 0.21,
+        "australia": 0.13,
+        "india": 0.21,
+        "brazil": 0.14,
+        "saudi_arabia_uae": 0.16,
+        "country_overall": 0.17
+      },
       "age": {
         "18-24": 0.18,
         "25-34": 0.17,
@@ -2586,8 +2825,8 @@
         "55-65": 0.12
       },
       "gender": {
-        "female": 0.15,
-        "male": 0.18
+        "male": 0.18,
+        "female": 0.15
       },
       "org_size": {
         "fewer_than_10": 0.1,
@@ -2626,7 +2865,6 @@
         "other": 0.15
       },
       "job_level": {
-        "ceo": 0.19,
         "senior_executive": 0.24,
         "senior_leader": 0.19,
         "mid_level_leader": 0.16,
@@ -2655,7 +2893,15 @@
     "question": "2. Factors to Stay at Current Company",
     "response": "Brand is well known and respected",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.13,
+        "united_states": 0.17,
+        "australia": 0.13,
+        "india": 0.22,
+        "brazil": 0.12,
+        "saudi_arabia_uae": 0.18,
+        "country_overall": 0.16
+      },
       "age": {
         "18-24": 0.16,
         "25-34": 0.17,
@@ -2664,8 +2910,8 @@
         "55-65": 0.12
       },
       "gender": {
-        "female": 0.15,
-        "male": 0.16
+        "male": 0.16,
+        "female": 0.15
       },
       "org_size": {
         "fewer_than_10": 0.1,
@@ -2704,7 +2950,6 @@
         "other": 0.17
       },
       "job_level": {
-        "ceo": 0.18,
         "senior_executive": 0.18,
         "senior_leader": 0.16,
         "mid_level_leader": 0.16,
@@ -2733,7 +2978,15 @@
     "question": "2. Factors to Stay at Current Company",
     "response": "Generous non-financial benefits",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.14,
+        "united_states": 0.15,
+        "australia": 0.16,
+        "india": 0.12,
+        "brazil": 0.15,
+        "saudi_arabia_uae": 0.12,
+        "country_overall": 0.14
+      },
       "age": {
         "18-24": 0.14,
         "25-34": 0.13,
@@ -2742,8 +2995,8 @@
         "55-65": 0.16
       },
       "gender": {
-        "female": 0.13,
-        "male": 0.15
+        "male": 0.15,
+        "female": 0.13
       },
       "org_size": {
         "fewer_than_10": 0.12,
@@ -2782,7 +3035,6 @@
         "other": 0.15
       },
       "job_level": {
-        "ceo": 0.15,
         "senior_executive": 0.14,
         "senior_leader": 0.15,
         "mid_level_leader": 0.14,
@@ -2811,7 +3063,15 @@
     "question": "2. Factors to Stay at Current Company",
     "response": "Low number of recent layoffs",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.1,
+        "united_states": 0.12,
+        "australia": 0.11,
+        "india": 0.1,
+        "brazil": 0.13,
+        "saudi_arabia_uae": 0.14,
+        "country_overall": 0.12
+      },
       "age": {
         "18-24": 0.12,
         "25-34": 0.13,
@@ -2820,8 +3080,8 @@
         "55-65": 0.09
       },
       "gender": {
-        "female": 0.1,
-        "male": 0.12
+        "male": 0.12,
+        "female": 0.1
       },
       "org_size": {
         "fewer_than_10": 0.08,
@@ -2860,7 +3120,6 @@
         "other": 0.11
       },
       "job_level": {
-        "ceo": 0.11,
         "senior_executive": 0.12,
         "senior_leader": 0.12,
         "mid_level_leader": 0.11,
@@ -2889,7 +3148,15 @@
     "question": "3. Factors to Leave Current Company",
     "response": "Low salary / compensation",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.47,
+        "united_states": 0.37,
+        "australia": 0.52,
+        "india": 0.3,
+        "brazil": 0.44,
+        "saudi_arabia_uae": 0.41,
+        "country_overall": 0.42
+      },
       "age": {
         "18-24": 0.33,
         "25-34": 0.37,
@@ -2898,8 +3165,8 @@
         "55-65": 0.57
       },
       "gender": {
-        "female": 0.44,
-        "male": 0.4
+        "male": 0.4,
+        "female": 0.44
       },
       "org_size": {
         "fewer_than_10": 0.44,
@@ -2938,7 +3205,6 @@
         "other": 0.46
       },
       "job_level": {
-        "ceo": 0.33,
         "senior_executive": 0.33,
         "senior_leader": 0.38,
         "mid_level_leader": 0.43,
@@ -2967,7 +3233,15 @@
     "question": "3. Factors to Leave Current Company",
     "response": "Lack of career advancement opportunities",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.24,
+        "united_states": 0.26,
+        "australia": 0.29,
+        "india": 0.29,
+        "brazil": 0.37,
+        "saudi_arabia_uae": 0.3,
+        "country_overall": 0.29
+      },
       "age": {
         "18-24": 0.25,
         "25-34": 0.28,
@@ -2976,8 +3250,8 @@
         "55-65": 0.22
       },
       "gender": {
-        "female": 0.28,
-        "male": 0.29
+        "male": 0.29,
+        "female": 0.28
       },
       "org_size": {
         "fewer_than_10": 0.25,
@@ -3016,7 +3290,6 @@
         "other": 0.27
       },
       "job_level": {
-        "ceo": 0.24,
         "senior_executive": 0.28,
         "senior_leader": 0.29,
         "mid_level_leader": 0.28,
@@ -3045,7 +3318,15 @@
     "question": "3. Factors to Leave Current Company",
     "response": "Lack of job security (employment contract)",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.27,
+        "united_states": 0.26,
+        "australia": 0.27,
+        "india": 0.26,
+        "brazil": 0.25,
+        "saudi_arabia_uae": 0.31,
+        "country_overall": 0.27
+      },
       "age": {
         "18-24": 0.22,
         "25-34": 0.26,
@@ -3054,8 +3335,8 @@
         "55-65": 0.3
       },
       "gender": {
-        "female": 0.26,
-        "male": 0.27
+        "male": 0.27,
+        "female": 0.26
       },
       "org_size": {
         "fewer_than_10": 0.22,
@@ -3094,7 +3375,6 @@
         "other": 0.27
       },
       "job_level": {
-        "ceo": 0.25,
         "senior_executive": 0.24,
         "senior_leader": 0.29,
         "mid_level_leader": 0.27,
@@ -3123,7 +3403,15 @@
     "question": "3. Factors to Leave Current Company",
     "response": "Inflexible working hours policy",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.28,
+        "united_states": 0.26,
+        "australia": 0.29,
+        "india": 0.26,
+        "brazil": 0.22,
+        "saudi_arabia_uae": 0.23,
+        "country_overall": 0.26
+      },
       "age": {
         "18-24": 0.23,
         "25-34": 0.24,
@@ -3132,8 +3420,8 @@
         "55-65": 0.3
       },
       "gender": {
-        "female": 0.27,
-        "male": 0.26
+        "male": 0.26,
+        "female": 0.27
       },
       "org_size": {
         "fewer_than_10": 0.24,
@@ -3172,7 +3460,6 @@
         "other": 0.24
       },
       "job_level": {
-        "ceo": 0.25,
         "senior_executive": 0.27,
         "senior_leader": 0.27,
         "mid_level_leader": 0.27,
@@ -3201,7 +3488,15 @@
     "question": "3. Factors to Leave Current Company",
     "response": "Poor company culture or values",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.28,
+        "united_states": 0.24,
+        "australia": 0.32,
+        "india": 0.21,
+        "brazil": 0.21,
+        "saudi_arabia_uae": 0.28,
+        "country_overall": 0.26
+      },
       "age": {
         "18-24": 0.22,
         "25-34": 0.24,
@@ -3210,8 +3505,8 @@
         "55-65": 0.3
       },
       "gender": {
-        "female": 0.26,
-        "male": 0.26
+        "male": 0.26,
+        "female": 0.26
       },
       "org_size": {
         "fewer_than_10": 0.22,
@@ -3250,7 +3545,6 @@
         "other": 0.24
       },
       "job_level": {
-        "ceo": 0.22,
         "senior_executive": 0.23,
         "senior_leader": 0.26,
         "mid_level_leader": 0.27,
@@ -3279,7 +3573,15 @@
     "question": "3. Factors to Leave Current Company",
     "response": "Personal challenges with colleagues or manager",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.27,
+        "united_states": 0.26,
+        "australia": 0.28,
+        "india": 0.23,
+        "brazil": 0.14,
+        "saudi_arabia_uae": 0.21,
+        "country_overall": 0.23
+      },
       "age": {
         "18-24": 0.23,
         "25-34": 0.24,
@@ -3288,8 +3590,8 @@
         "55-65": 0.3
       },
       "gender": {
-        "female": 0.25,
-        "male": 0.24
+        "male": 0.24,
+        "female": 0.25
       },
       "org_size": {
         "fewer_than_10": 0.21,
@@ -3328,7 +3630,6 @@
         "other": 0.24
       },
       "job_level": {
-        "ceo": 0.23,
         "senior_executive": 0.24,
         "senior_leader": 0.23,
         "mid_level_leader": 0.26,
@@ -3357,7 +3658,15 @@
     "question": "3. Factors to Leave Current Company",
     "response": "Long or difficult commute to office",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.27,
+        "united_states": 0.24,
+        "australia": 0.28,
+        "india": 0.23,
+        "brazil": 0.22,
+        "saudi_arabia_uae": 0.2,
+        "country_overall": 0.24
+      },
       "age": {
         "18-24": 0.22,
         "25-34": 0.23,
@@ -3366,8 +3675,8 @@
         "55-65": 0.31
       },
       "gender": {
-        "female": 0.26,
-        "male": 0.23
+        "male": 0.23,
+        "female": 0.26
       },
       "org_size": {
         "fewer_than_10": 0.24,
@@ -3406,7 +3715,6 @@
         "other": 0.22
       },
       "job_level": {
-        "ceo": 0.2,
         "senior_executive": 0.23,
         "senior_leader": 0.22,
         "mid_level_leader": 0.26,
@@ -3435,7 +3743,15 @@
     "question": "3. Factors to Leave Current Company",
     "response": "Full-time in-office attendance is being mandated",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.21,
+        "united_states": 0.24,
+        "australia": 0.23,
+        "india": 0.26,
+        "brazil": 0.16,
+        "saudi_arabia_uae": 0.16,
+        "country_overall": 0.21
+      },
       "age": {
         "18-24": 0.21,
         "25-34": 0.23,
@@ -3444,8 +3760,8 @@
         "55-65": 0.17
       },
       "gender": {
-        "female": 0.22,
-        "male": 0.22
+        "male": 0.22,
+        "female": 0.22
       },
       "org_size": {
         "fewer_than_10": 0.17,
@@ -3484,7 +3800,6 @@
         "other": 0.22
       },
       "job_level": {
-        "ceo": 0.25,
         "senior_executive": 0.25,
         "senior_leader": 0.22,
         "mid_level_leader": 0.21,
@@ -3513,7 +3828,15 @@
     "question": "3. Factors to Leave Current Company",
     "response": "Inadequate learning and development opportunities",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.18,
+        "united_states": 0.22,
+        "australia": 0.2,
+        "india": 0.22,
+        "brazil": 0.2,
+        "saudi_arabia_uae": 0.24,
+        "country_overall": 0.21
+      },
       "age": {
         "18-24": 0.21,
         "25-34": 0.22,
@@ -3522,8 +3845,8 @@
         "55-65": 0.14
       },
       "gender": {
-        "female": 0.19,
-        "male": 0.22
+        "male": 0.22,
+        "female": 0.19
       },
       "org_size": {
         "fewer_than_10": 0.15,
@@ -3562,7 +3885,6 @@
         "other": 0.2
       },
       "job_level": {
-        "ceo": 0.21,
         "senior_executive": 0.24,
         "senior_leader": 0.23,
         "mid_level_leader": 0.2,
@@ -3591,7 +3913,15 @@
     "question": "3. Factors to Leave Current Company",
     "response": "Inadequate non-financial benefits",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.16,
+        "united_states": 0.2,
+        "australia": 0.16,
+        "india": 0.17,
+        "brazil": 0.27,
+        "saudi_arabia_uae": 0.23,
+        "country_overall": 0.2
+      },
       "age": {
         "18-24": 0.18,
         "25-34": 0.19,
@@ -3600,8 +3930,8 @@
         "55-65": 0.17
       },
       "gender": {
-        "female": 0.18,
-        "male": 0.2
+        "male": 0.2,
+        "female": 0.18
       },
       "org_size": {
         "fewer_than_10": 0.16,
@@ -3640,7 +3970,6 @@
         "other": 0.2
       },
       "job_level": {
-        "ceo": 0.21,
         "senior_executive": 0.21,
         "senior_leader": 0.18,
         "mid_level_leader": 0.19,
@@ -3669,7 +3998,15 @@
     "question": "3. Factors to Leave Current Company",
     "response": "High number of recent layoffs",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.15,
+        "united_states": 0.22,
+        "australia": 0.16,
+        "india": 0.21,
+        "brazil": 0.17,
+        "saudi_arabia_uae": 0.22,
+        "country_overall": 0.19
+      },
       "age": {
         "18-24": 0.2,
         "25-34": 0.2,
@@ -3678,8 +4015,8 @@
         "55-65": 0.14
       },
       "gender": {
-        "female": 0.18,
-        "male": 0.2
+        "male": 0.2,
+        "female": 0.18
       },
       "org_size": {
         "fewer_than_10": 0.13,
@@ -3718,7 +4055,6 @@
         "other": 0.18
       },
       "job_level": {
-        "ceo": 0.21,
         "senior_executive": 0.21,
         "senior_leader": 0.18,
         "mid_level_leader": 0.18,
@@ -3747,7 +4083,15 @@
     "question": "3. Factors to Leave Current Company",
     "response": "Employer will relocate to a different area",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.18,
+        "united_states": 0.21,
+        "australia": 0.18,
+        "india": 0.22,
+        "brazil": 0.1,
+        "saudi_arabia_uae": 0.18,
+        "country_overall": 0.18
+      },
       "age": {
         "18-24": 0.19,
         "25-34": 0.18,
@@ -3756,8 +4100,8 @@
         "55-65": 0.21
       },
       "gender": {
-        "female": 0.17,
-        "male": 0.2
+        "male": 0.2,
+        "female": 0.17
       },
       "org_size": {
         "fewer_than_10": 0.13,
@@ -3796,7 +4140,6 @@
         "other": 0.18
       },
       "job_level": {
-        "ceo": 0.21,
         "senior_executive": 0.23,
         "senior_leader": 0.2,
         "mid_level_leader": 0.17,
@@ -3825,7 +4168,15 @@
     "question": "3. Factors to Leave Current Company",
     "response": "Poor sustainability policies and practices within the company",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.15,
+        "united_states": 0.21,
+        "australia": 0.14,
+        "india": 0.22,
+        "brazil": 0.11,
+        "saudi_arabia_uae": 0.22,
+        "country_overall": 0.18
+      },
       "age": {
         "18-24": 0.2,
         "25-34": 0.19,
@@ -3834,8 +4185,8 @@
         "55-65": 0.09
       },
       "gender": {
-        "female": 0.15,
-        "male": 0.2
+        "male": 0.2,
+        "female": 0.15
       },
       "org_size": {
         "fewer_than_10": 0.1,
@@ -3874,7 +4225,6 @@
         "other": 0.17
       },
       "job_level": {
-        "ceo": 0.18,
         "senior_executive": 0.24,
         "senior_leader": 0.19,
         "mid_level_leader": 0.18,
@@ -3903,7 +4253,15 @@
     "question": "3. Factors to Leave Current Company",
     "response": "Lack of diversity and inclusion within the company",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.14,
+        "united_states": 0.21,
+        "australia": 0.12,
+        "india": 0.21,
+        "brazil": 0.16,
+        "saudi_arabia_uae": 0.21,
+        "country_overall": 0.18
+      },
       "age": {
         "18-24": 0.2,
         "25-34": 0.19,
@@ -3912,8 +4270,8 @@
         "55-65": 0.11
       },
       "gender": {
-        "female": 0.16,
-        "male": 0.19
+        "male": 0.19,
+        "female": 0.16
       },
       "org_size": {
         "fewer_than_10": 0.13,
@@ -3952,7 +4310,6 @@
         "other": 0.15
       },
       "job_level": {
-        "ceo": 0.2,
         "senior_executive": 0.23,
         "senior_leader": 0.19,
         "mid_level_leader": 0.16,
@@ -3981,7 +4338,15 @@
     "question": "3. Factors to Leave Current Company",
     "response": "No allowance for full-time remote working",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.17,
+        "united_states": 0.19,
+        "australia": 0.15,
+        "india": 0.2,
+        "brazil": 0.15,
+        "saudi_arabia_uae": 0.16,
+        "country_overall": 0.17
+      },
       "age": {
         "18-24": 0.21,
         "25-34": 0.18,
@@ -3990,8 +4355,8 @@
         "55-65": 0.14
       },
       "gender": {
-        "female": 0.17,
-        "male": 0.17
+        "male": 0.17,
+        "female": 0.17
       },
       "org_size": {
         "fewer_than_10": 0.17,
@@ -4030,7 +4395,6 @@
         "other": 0.19
       },
       "job_level": {
-        "ceo": 0.18,
         "senior_executive": 0.18,
         "senior_leader": 0.18,
         "mid_level_leader": 0.18,
@@ -4059,7 +4423,15 @@
     "question": "3. Factors to Leave Current Company",
     "response": "Lack of affordable childcare during working hours",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.13,
+        "united_states": 0.16,
+        "australia": 0.09,
+        "india": 0.17,
+        "brazil": 0.08,
+        "saudi_arabia_uae": 0.13,
+        "country_overall": 0.13
+      },
       "age": {
         "18-24": 0.15,
         "25-34": 0.15,
@@ -4068,8 +4440,8 @@
         "55-65": 0.04
       },
       "gender": {
-        "female": 0.13,
-        "male": 0.13
+        "male": 0.13,
+        "female": 0.13
       },
       "org_size": {
         "fewer_than_10": 0.07,
@@ -4108,7 +4480,6 @@
         "other": 0.11
       },
       "job_level": {
-        "ceo": 0.16,
         "senior_executive": 0.19,
         "senior_leader": 0.14,
         "mid_level_leader": 0.14,
@@ -4137,7 +4508,15 @@
     "question": "4_1. The values a company promotes are extremely important to me",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.67,
+        "united_states": 0.77,
+        "australia": 0.7,
+        "india": 0.85,
+        "brazil": 0.82,
+        "saudi_arabia_uae": 0.83,
+        "country_overall": 0.77
+      },
       "age": {
         "18-24": 0.7,
         "25-34": 0.78,
@@ -4146,8 +4525,8 @@
         "55-65": 0.68
       },
       "gender": {
-        "female": 0.77,
-        "male": 0.76
+        "male": 0.76,
+        "female": 0.77
       },
       "org_size": {
         "fewer_than_10": 0.73,
@@ -4186,7 +4565,6 @@
         "other": 0.72
       },
       "job_level": {
-        "ceo": 0.82,
         "senior_executive": 0.82,
         "senior_leader": 0.77,
         "mid_level_leader": 0.74,
@@ -4215,7 +4593,15 @@
     "question": "4_1. The values a company promotes are extremely important to me",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.09,
+        "united_states": 0.06,
+        "australia": 0.07,
+        "india": 0.04,
+        "brazil": 0.05,
+        "saudi_arabia_uae": 0.04,
+        "country_overall": 0.06
+      },
       "age": {
         "18-24": 0.1,
         "25-34": 0.05,
@@ -4224,8 +4610,8 @@
         "55-65": 0.08
       },
       "gender": {
-        "female": 0.05,
-        "male": 0.07
+        "male": 0.07,
+        "female": 0.05
       },
       "org_size": {
         "fewer_than_10": 0.07,
@@ -4264,7 +4650,6 @@
         "other": 0.07
       },
       "job_level": {
-        "ceo": 0.06,
         "senior_executive": 0.06,
         "senior_leader": 0.07,
         "mid_level_leader": 0.07,
@@ -4293,7 +4678,15 @@
     "question": "4_2. The ability to work flexibly and from wherever I want is critical to my work-life balance",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.68,
+        "united_states": 0.75,
+        "australia": 0.69,
+        "india": 0.81,
+        "brazil": 0.81,
+        "saudi_arabia_uae": 0.83,
+        "country_overall": 0.76
+      },
       "age": {
         "18-24": 0.69,
         "25-34": 0.77,
@@ -4302,8 +4695,8 @@
         "55-65": 0.66
       },
       "gender": {
-        "female": 0.75,
-        "male": 0.75
+        "male": 0.75,
+        "female": 0.75
       },
       "org_size": {
         "fewer_than_10": 0.76,
@@ -4342,7 +4735,6 @@
         "other": 0.73
       },
       "job_level": {
-        "ceo": 0.81,
         "senior_executive": 0.79,
         "senior_leader": 0.75,
         "mid_level_leader": 0.74,
@@ -4371,7 +4763,15 @@
     "question": "4_2. The ability to work flexibly and from wherever I want is critical to my work-life balance",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.11,
+        "united_states": 0.08,
+        "australia": 0.08,
+        "india": 0.07,
+        "brazil": 0.06,
+        "saudi_arabia_uae": 0.05,
+        "country_overall": 0.07
+      },
       "age": {
         "18-24": 0.11,
         "25-34": 0.07,
@@ -4380,8 +4780,8 @@
         "55-65": 0.12
       },
       "gender": {
-        "female": 0.08,
-        "male": 0.08
+        "male": 0.08,
+        "female": 0.08
       },
       "org_size": {
         "fewer_than_10": 0.07,
@@ -4420,7 +4820,6 @@
         "other": 0.08
       },
       "job_level": {
-        "ceo": 0.06,
         "senior_executive": 0.07,
         "senior_leader": 0.09,
         "mid_level_leader": 0.07,
@@ -4449,7 +4848,15 @@
     "question": "4_3. It is important that a company understands the importance of the benefits that come alongside a salary",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.75,
+        "united_states": 0.81,
+        "australia": 0.78,
+        "india": 0.85,
+        "brazil": 0.87,
+        "saudi_arabia_uae": 0.85,
+        "country_overall": 0.82
+      },
       "age": {
         "18-24": 0.72,
         "25-34": 0.82,
@@ -4458,8 +4865,8 @@
         "55-65": 0.77
       },
       "gender": {
-        "female": 0.81,
-        "male": 0.81
+        "male": 0.81,
+        "female": 0.81
       },
       "org_size": {
         "fewer_than_10": 0.78,
@@ -4498,7 +4905,6 @@
         "other": 0.78
       },
       "job_level": {
-        "ceo": 0.83,
         "senior_executive": 0.84,
         "senior_leader": 0.81,
         "mid_level_leader": 0.79,
@@ -4527,7 +4933,15 @@
     "question": "4_3. It is important that a company understands the importance of the benefits that come alongside a salary",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.06,
+        "united_states": 0.06,
+        "australia": 0.04,
+        "india": 0.04,
+        "brazil": 0.03,
+        "saudi_arabia_uae": 0.04,
+        "country_overall": 0.05
+      },
       "age": {
         "18-24": 0.09,
         "25-34": 0.05,
@@ -4536,8 +4950,8 @@
         "55-65": 0.04
       },
       "gender": {
-        "female": 0.04,
-        "male": 0.05
+        "male": 0.05,
+        "female": 0.04
       },
       "org_size": {
         "fewer_than_10": 0.05,
@@ -4576,7 +4990,6 @@
         "other": 0.05
       },
       "job_level": {
-        "ceo": 0.05,
         "senior_executive": 0.05,
         "senior_leader": 0.05,
         "mid_level_leader": 0.05,
@@ -4605,7 +5018,15 @@
     "question": "4_4. I would stay at a job if it paid me the salary I want, even if I hated the role",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.52,
+        "united_states": 0.66,
+        "australia": 0.52,
+        "india": 0.68,
+        "brazil": 0.55,
+        "saudi_arabia_uae": 0.71,
+        "country_overall": 0.61
+      },
       "age": {
         "18-24": 0.61,
         "25-34": 0.65,
@@ -4614,8 +5035,8 @@
         "55-65": 0.4
       },
       "gender": {
-        "female": 0.58,
-        "male": 0.63
+        "male": 0.63,
+        "female": 0.58
       },
       "org_size": {
         "fewer_than_10": 0.49,
@@ -4654,7 +5075,6 @@
         "other": 0.55
       },
       "job_level": {
-        "ceo": 0.64,
         "senior_executive": 0.7,
         "senior_leader": 0.6,
         "mid_level_leader": 0.59,
@@ -4683,7 +5103,15 @@
     "question": "4_4. I would stay at a job if it paid me the salary I want, even if I hated the role",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.23,
+        "united_states": 0.14,
+        "australia": 0.22,
+        "india": 0.16,
+        "brazil": 0.27,
+        "saudi_arabia_uae": 0.12,
+        "country_overall": 0.19
+      },
       "age": {
         "18-24": 0.17,
         "25-34": 0.15,
@@ -4692,8 +5120,8 @@
         "55-65": 0.33
       },
       "gender": {
-        "female": 0.22,
-        "male": 0.16
+        "male": 0.16,
+        "female": 0.22
       },
       "org_size": {
         "fewer_than_10": 0.27,
@@ -4732,7 +5160,6 @@
         "other": 0.22
       },
       "job_level": {
-        "ceo": 0.19,
         "senior_executive": 0.15,
         "senior_leader": 0.19,
         "mid_level_leader": 0.18,
@@ -4761,7 +5188,15 @@
     "question": "4_5. I would stay at a job if it allowed me flexibility, even if I hated the role",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.48,
+        "united_states": 0.68,
+        "australia": 0.51,
+        "india": 0.71,
+        "brazil": 0.55,
+        "saudi_arabia_uae": 0.68,
+        "country_overall": 0.6
+      },
       "age": {
         "18-24": 0.62,
         "25-34": 0.65,
@@ -4770,8 +5205,8 @@
         "55-65": 0.38
       },
       "gender": {
-        "female": 0.57,
-        "male": 0.63
+        "male": 0.63,
+        "female": 0.57
       },
       "org_size": {
         "fewer_than_10": 0.51,
@@ -4810,7 +5245,6 @@
         "other": 0.53
       },
       "job_level": {
-        "ceo": 0.67,
         "senior_executive": 0.72,
         "senior_leader": 0.62,
         "mid_level_leader": 0.59,
@@ -4839,7 +5273,15 @@
     "question": "4_5. I would stay at a job if it allowed me flexibility, even if I hated the role",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.23,
+        "united_states": 0.13,
+        "australia": 0.22,
+        "india": 0.13,
+        "brazil": 0.26,
+        "saudi_arabia_uae": 0.12,
+        "country_overall": 0.18
+      },
       "age": {
         "18-24": 0.15,
         "25-34": 0.14,
@@ -4848,8 +5290,8 @@
         "55-65": 0.34
       },
       "gender": {
-        "female": 0.2,
-        "male": 0.16
+        "male": 0.16,
+        "female": 0.2
       },
       "org_size": {
         "fewer_than_10": 0.26,
@@ -4888,7 +5330,6 @@
         "other": 0.23
       },
       "job_level": {
-        "ceo": 0.16,
         "senior_executive": 0.13,
         "senior_leader": 0.17,
         "mid_level_leader": 0.17,
@@ -4917,7 +5358,15 @@
     "question": "4_6. I would stay at a job if it granted me opportunities to progress and upskill quickly, even if I hated the current role",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.55,
+        "united_states": 0.71,
+        "australia": 0.55,
+        "india": 0.8,
+        "brazil": 0.69,
+        "saudi_arabia_uae": 0.78,
+        "country_overall": 0.68
+      },
       "age": {
         "18-24": 0.68,
         "25-34": 0.72,
@@ -4926,8 +5375,8 @@
         "55-65": 0.43
       },
       "gender": {
-        "female": 0.63,
-        "male": 0.71
+        "male": 0.71,
+        "female": 0.63
       },
       "org_size": {
         "fewer_than_10": 0.58,
@@ -4966,7 +5415,6 @@
         "other": 0.6
       },
       "job_level": {
-        "ceo": 0.7,
         "senior_executive": 0.77,
         "senior_leader": 0.71,
         "mid_level_leader": 0.67,
@@ -4995,7 +5443,15 @@
     "question": "4_6. I would stay at a job if it granted me opportunities to progress and upskill quickly, even if I hated the current role",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.19,
+        "united_states": 0.12,
+        "australia": 0.18,
+        "india": 0.08,
+        "brazil": 0.16,
+        "saudi_arabia_uae": 0.08,
+        "country_overall": 0.13
+      },
       "age": {
         "18-24": 0.12,
         "25-34": 0.1,
@@ -5004,8 +5460,8 @@
         "55-65": 0.29
       },
       "gender": {
-        "female": 0.16,
-        "male": 0.11
+        "male": 0.11,
+        "female": 0.16
       },
       "org_size": {
         "fewer_than_10": 0.2,
@@ -5044,7 +5500,6 @@
         "other": 0.17
       },
       "job_level": {
-        "ceo": 0.13,
         "senior_executive": 0.1,
         "senior_leader": 0.12,
         "mid_level_leader": 0.12,
@@ -5073,7 +5528,15 @@
     "question": "4_7. I feel supported and encouraged to learn new skills and work on my own professional development",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.63,
+        "united_states": 0.76,
+        "australia": 0.64,
+        "india": 0.86,
+        "brazil": 0.76,
+        "saudi_arabia_uae": 0.8,
+        "country_overall": 0.74
+      },
       "age": {
         "18-24": 0.72,
         "25-34": 0.77,
@@ -5082,8 +5545,8 @@
         "55-65": 0.6
       },
       "gender": {
-        "female": 0.73,
-        "male": 0.75
+        "male": 0.75,
+        "female": 0.73
       },
       "org_size": {
         "fewer_than_10": 0.66,
@@ -5122,7 +5585,6 @@
         "other": 0.65
       },
       "job_level": {
-        "ceo": 0.81,
         "senior_executive": 0.83,
         "senior_leader": 0.77,
         "mid_level_leader": 0.71,
@@ -5151,7 +5613,15 @@
     "question": "4_7. I feel supported and encouraged to learn new skills and work on my own professional development",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.13,
+        "united_states": 0.07,
+        "australia": 0.12,
+        "india": 0.04,
+        "brazil": 0.08,
+        "saudi_arabia_uae": 0.05,
+        "country_overall": 0.08
+      },
       "age": {
         "18-24": 0.1,
         "25-34": 0.07,
@@ -5160,8 +5630,8 @@
         "55-65": 0.16
       },
       "gender": {
-        "female": 0.1,
-        "male": 0.08
+        "male": 0.08,
+        "female": 0.1
       },
       "org_size": {
         "fewer_than_10": 0.1,
@@ -5200,7 +5670,6 @@
         "other": 0.12
       },
       "job_level": {
-        "ceo": 0.05,
         "senior_executive": 0.05,
         "senior_leader": 0.07,
         "mid_level_leader": 0.1,
@@ -5229,7 +5698,15 @@
     "question": "4_8. I feel confident I could easily find a new role if I left my current company in the next few months",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.6,
+        "united_states": 0.75,
+        "australia": 0.64,
+        "india": 0.79,
+        "brazil": 0.67,
+        "saudi_arabia_uae": 0.74,
+        "country_overall": 0.7
+      },
       "age": {
         "18-24": 0.66,
         "25-34": 0.73,
@@ -5238,8 +5715,8 @@
         "55-65": 0.56
       },
       "gender": {
-        "female": 0.68,
-        "male": 0.72
+        "male": 0.72,
+        "female": 0.68
       },
       "org_size": {
         "fewer_than_10": 0.58,
@@ -5278,7 +5755,6 @@
         "other": 0.63
       },
       "job_level": {
-        "ceo": 0.75,
         "senior_executive": 0.79,
         "senior_leader": 0.73,
         "mid_level_leader": 0.68,
@@ -5307,7 +5783,15 @@
     "question": "4_8. I feel confident I could easily find a new role if I left my current company in the next few months",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.16,
+        "united_states": 0.09,
+        "australia": 0.14,
+        "india": 0.06,
+        "brazil": 0.12,
+        "saudi_arabia_uae": 0.1,
+        "country_overall": 0.11
+      },
       "age": {
         "18-24": 0.14,
         "25-34": 0.09,
@@ -5316,8 +5800,8 @@
         "55-65": 0.19
       },
       "gender": {
-        "female": 0.13,
-        "male": 0.1
+        "male": 0.1,
+        "female": 0.13
       },
       "org_size": {
         "fewer_than_10": 0.18,
@@ -5356,7 +5840,6 @@
         "other": 0.14
       },
       "job_level": {
-        "ceo": 0.09,
         "senior_executive": 0.07,
         "senior_leader": 0.1,
         "mid_level_leader": 0.11,
@@ -5385,7 +5868,15 @@
     "question": "4_9. AI - I feel excited and positive about how emerging technologies like AI will change the way I work",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.47,
+        "united_states": 0.66,
+        "australia": 0.5,
+        "india": 0.81,
+        "brazil": 0.71,
+        "saudi_arabia_uae": 0.78,
+        "country_overall": 0.65
+      },
       "age": {
         "18-24": 0.64,
         "25-34": 0.69,
@@ -5394,8 +5885,8 @@
         "55-65": 0.39
       },
       "gender": {
-        "female": 0.59,
-        "male": 0.69
+        "male": 0.69,
+        "female": 0.59
       },
       "org_size": {
         "fewer_than_10": 0.54,
@@ -5434,7 +5925,6 @@
         "other": 0.57
       },
       "job_level": {
-        "ceo": 0.73,
         "senior_executive": 0.8,
         "senior_leader": 0.69,
         "mid_level_leader": 0.63,
@@ -5463,7 +5953,15 @@
     "question": "4_9. AI - I feel excited and positive about how emerging technologies like AI will change the way I work",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.25,
+        "united_states": 0.15,
+        "australia": 0.2,
+        "india": 0.05,
+        "brazil": 0.09,
+        "saudi_arabia_uae": 0.05,
+        "country_overall": 0.13
+      },
       "age": {
         "18-24": 0.13,
         "25-34": 0.11,
@@ -5472,8 +5970,8 @@
         "55-65": 0.3
       },
       "gender": {
-        "female": 0.18,
-        "male": 0.11
+        "male": 0.11,
+        "female": 0.18
       },
       "org_size": {
         "fewer_than_10": 0.21,
@@ -5512,7 +6010,6 @@
         "other": 0.18
       },
       "job_level": {
-        "ceo": 0.1,
         "senior_executive": 0.06,
         "senior_leader": 0.12,
         "mid_level_leader": 0.14,
@@ -5541,7 +6038,15 @@
     "question": "4_10. AI - I think using AI in my role will bolster my value in the next three years",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.43,
+        "united_states": 0.62,
+        "australia": 0.45,
+        "india": 0.74,
+        "brazil": 0.62,
+        "saudi_arabia_uae": 0.72,
+        "country_overall": 0.6
+      },
       "age": {
         "18-24": 0.59,
         "25-34": 0.64,
@@ -5550,8 +6055,8 @@
         "55-65": 0.34
       },
       "gender": {
-        "female": 0.52,
-        "male": 0.64
+        "male": 0.64,
+        "female": 0.52
       },
       "org_size": {
         "fewer_than_10": 0.46,
@@ -5590,7 +6095,6 @@
         "other": 0.52
       },
       "job_level": {
-        "ceo": 0.72,
         "senior_executive": 0.75,
         "senior_leader": 0.65,
         "mid_level_leader": 0.56,
@@ -5619,7 +6123,15 @@
     "question": "4_10. AI - I think using AI in my role will bolster my value in the next three years",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.27,
+        "united_states": 0.17,
+        "australia": 0.24,
+        "india": 0.09,
+        "brazil": 0.13,
+        "saudi_arabia_uae": 0.09,
+        "country_overall": 0.17
+      },
       "age": {
         "18-24": 0.17,
         "25-34": 0.13,
@@ -5628,8 +6140,8 @@
         "55-65": 0.33
       },
       "gender": {
-        "female": 0.21,
-        "male": 0.14
+        "male": 0.14,
+        "female": 0.21
       },
       "org_size": {
         "fewer_than_10": 0.25,
@@ -5668,7 +6180,6 @@
         "other": 0.21
       },
       "job_level": {
-        "ceo": 0.13,
         "senior_executive": 0.1,
         "senior_leader": 0.13,
         "mid_level_leader": 0.17,
@@ -5697,7 +6208,15 @@
     "question": "4_11. AI - I feel certain that my role will be replaced by AI/tech in the next three years",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.34,
+        "united_states": 0.55,
+        "australia": 0.36,
+        "india": 0.66,
+        "brazil": 0.39,
+        "saudi_arabia_uae": 0.52,
+        "country_overall": 0.47
+      },
       "age": {
         "18-24": 0.51,
         "25-34": 0.53,
@@ -5706,8 +6225,8 @@
         "55-65": 0.27
       },
       "gender": {
-        "female": 0.44,
-        "male": 0.51
+        "male": 0.51,
+        "female": 0.44
       },
       "org_size": {
         "fewer_than_10": 0.37,
@@ -5746,7 +6265,6 @@
         "other": 0.39
       },
       "job_level": {
-        "ceo": 0.61,
         "senior_executive": 0.62,
         "senior_leader": 0.53,
         "mid_level_leader": 0.45,
@@ -5775,7 +6293,15 @@
     "question": "4_11. AI - I feel certain that my role will be replaced by AI/tech in the next three years",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.4,
+        "united_states": 0.25,
+        "australia": 0.38,
+        "india": 0.16,
+        "brazil": 0.39,
+        "saudi_arabia_uae": 0.25,
+        "country_overall": 0.3
+      },
       "age": {
         "18-24": 0.24,
         "25-34": 0.25,
@@ -5784,8 +6310,8 @@
         "55-65": 0.49
       },
       "gender": {
-        "female": 0.33,
-        "male": 0.27
+        "male": 0.27,
+        "female": 0.33
       },
       "org_size": {
         "fewer_than_10": 0.36,
@@ -5824,7 +6350,6 @@
         "other": 0.34
       },
       "job_level": {
-        "ceo": 0.22,
         "senior_executive": 0.21,
         "senior_leader": 0.28,
         "mid_level_leader": 0.3,
@@ -5853,7 +6378,15 @@
     "question": "4_12. Leaders value people over profits",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.53,
+        "united_states": 0.7,
+        "australia": 0.58,
+        "india": 0.79,
+        "brazil": 0.53,
+        "saudi_arabia_uae": 0.75,
+        "country_overall": 0.65
+      },
       "age": {
         "18-24": 0.6,
         "25-34": 0.67,
@@ -5862,8 +6395,8 @@
         "55-65": 0.55
       },
       "gender": {
-        "female": 0.63,
-        "male": 0.67
+        "male": 0.67,
+        "female": 0.63
       },
       "org_size": {
         "fewer_than_10": 0.55,
@@ -5902,7 +6435,6 @@
         "other": 0.57
       },
       "job_level": {
-        "ceo": 0.71,
         "senior_executive": 0.77,
         "senior_leader": 0.68,
         "mid_level_leader": 0.63,
@@ -5931,7 +6463,15 @@
     "question": "4_12. Leaders value people over profits",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.21,
+        "united_states": 0.11,
+        "australia": 0.16,
+        "india": 0.07,
+        "brazil": 0.25,
+        "saudi_arabia_uae": 0.1,
+        "country_overall": 0.15
+      },
       "age": {
         "18-24": 0.18,
         "25-34": 0.14,
@@ -5940,8 +6480,8 @@
         "55-65": 0.19
       },
       "gender": {
-        "female": 0.16,
-        "male": 0.13
+        "male": 0.13,
+        "female": 0.16
       },
       "org_size": {
         "fewer_than_10": 0.19,
@@ -5980,7 +6520,6 @@
         "other": 0.16
       },
       "job_level": {
-        "ceo": 0.12,
         "senior_executive": 0.08,
         "senior_leader": 0.13,
         "mid_level_leader": 0.15,
@@ -6009,7 +6548,15 @@
     "question": "4_13. Connection with my colleagues is one of the most important things about my job",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.64,
+        "united_states": 0.73,
+        "australia": 0.66,
+        "india": 0.83,
+        "brazil": 0.72,
+        "saudi_arabia_uae": 0.8,
+        "country_overall": 0.73
+      },
       "age": {
         "18-24": 0.67,
         "25-34": 0.74,
@@ -6018,8 +6565,8 @@
         "55-65": 0.64
       },
       "gender": {
-        "female": 0.71,
-        "male": 0.74
+        "male": 0.74,
+        "female": 0.71
       },
       "org_size": {
         "fewer_than_10": 0.61,
@@ -6058,7 +6605,6 @@
         "other": 0.66
       },
       "job_level": {
-        "ceo": 0.77,
         "senior_executive": 0.81,
         "senior_leader": 0.74,
         "mid_level_leader": 0.72,
@@ -6087,7 +6633,15 @@
     "question": "4_13. Connection with my colleagues is one of the most important things about my job",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.12,
+        "united_states": 0.1,
+        "australia": 0.1,
+        "india": 0.05,
+        "brazil": 0.1,
+        "saudi_arabia_uae": 0.06,
+        "country_overall": 0.09
+      },
       "age": {
         "18-24": 0.13,
         "25-34": 0.07,
@@ -6096,8 +6650,8 @@
         "55-65": 0.12
       },
       "gender": {
-        "female": 0.09,
-        "male": 0.08
+        "male": 0.08,
+        "female": 0.09
       },
       "org_size": {
         "fewer_than_10": 0.15,
@@ -6136,7 +6690,6 @@
         "other": 0.12
       },
       "job_level": {
-        "ceo": 0.09,
         "senior_executive": 0.06,
         "senior_leader": 0.07,
         "mid_level_leader": 0.08,
@@ -6165,7 +6718,15 @@
     "question": "4_14. I feel that the job I do reflects my value to society",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.6,
+        "united_states": 0.73,
+        "australia": 0.63,
+        "india": 0.83,
+        "brazil": 0.76,
+        "saudi_arabia_uae": 0.76,
+        "country_overall": 0.72
+      },
       "age": {
         "18-24": 0.66,
         "25-34": 0.73,
@@ -6174,8 +6735,8 @@
         "55-65": 0.61
       },
       "gender": {
-        "female": 0.71,
-        "male": 0.72
+        "male": 0.72,
+        "female": 0.71
       },
       "org_size": {
         "fewer_than_10": 0.63,
@@ -6214,7 +6775,6 @@
         "other": 0.66
       },
       "job_level": {
-        "ceo": 0.78,
         "senior_executive": 0.81,
         "senior_leader": 0.73,
         "mid_level_leader": 0.69,
@@ -6243,7 +6803,15 @@
     "question": "4_14. I feel that the job I do reflects my value to society",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.14,
+        "united_states": 0.08,
+        "australia": 0.1,
+        "india": 0.05,
+        "brazil": 0.06,
+        "saudi_arabia_uae": 0.07,
+        "country_overall": 0.08
+      },
       "age": {
         "18-24": 0.11,
         "25-34": 0.09,
@@ -6252,8 +6820,8 @@
         "55-65": 0.11
       },
       "gender": {
-        "female": 0.09,
-        "male": 0.08
+        "male": 0.08,
+        "female": 0.09
       },
       "org_size": {
         "fewer_than_10": 0.1,
@@ -6292,7 +6860,6 @@
         "other": 0.08
       },
       "job_level": {
-        "ceo": 0.06,
         "senior_executive": 0.06,
         "senior_leader": 0.09,
         "mid_level_leader": 0.11,
@@ -6321,7 +6888,15 @@
     "question": "4_15. It is important to me that the organization I work for prioritizes people over profit",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.7,
+        "united_states": 0.8,
+        "australia": 0.73,
+        "india": 0.82,
+        "brazil": 0.76,
+        "saudi_arabia_uae": 0.81,
+        "country_overall": 0.77
+      },
       "age": {
         "18-24": 0.69,
         "25-34": 0.76,
@@ -6330,8 +6905,8 @@
         "55-65": 0.74
       },
       "gender": {
-        "female": 0.77,
-        "male": 0.76
+        "male": 0.76,
+        "female": 0.77
       },
       "org_size": {
         "fewer_than_10": 0.69,
@@ -6370,7 +6945,6 @@
         "other": 0.73
       },
       "job_level": {
-        "ceo": 0.79,
         "senior_executive": 0.83,
         "senior_leader": 0.77,
         "mid_level_leader": 0.72,
@@ -6399,7 +6973,15 @@
     "question": "4_15. It is important to me that the organization I work for prioritizes people over profit",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.07,
+        "united_states": 0.06,
+        "australia": 0.06,
+        "india": 0.04,
+        "brazil": 0.06,
+        "saudi_arabia_uae": 0.04,
+        "country_overall": 0.06
+      },
       "age": {
         "18-24": 0.09,
         "25-34": 0.06,
@@ -6408,8 +6990,8 @@
         "55-65": 0.05
       },
       "gender": {
-        "female": 0.05,
-        "male": 0.06
+        "male": 0.06,
+        "female": 0.05
       },
       "org_size": {
         "fewer_than_10": 0.07,
@@ -6448,7 +7030,6 @@
         "other": 0.05
       },
       "job_level": {
-        "ceo": 0.06,
         "senior_executive": 0.05,
         "senior_leader": 0.06,
         "mid_level_leader": 0.07,
@@ -6477,7 +7058,15 @@
     "question": "4_16. My current role leaves me feeling fulfilled",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.59,
+        "united_states": 0.73,
+        "australia": 0.59,
+        "india": 0.77,
+        "brazil": 0.72,
+        "saudi_arabia_uae": 0.76,
+        "country_overall": 0.69
+      },
       "age": {
         "18-24": 0.63,
         "25-34": 0.7,
@@ -6486,8 +7075,8 @@
         "55-65": 0.63
       },
       "gender": {
-        "female": 0.67,
-        "male": 0.7
+        "male": 0.7,
+        "female": 0.67
       },
       "org_size": {
         "fewer_than_10": 0.64,
@@ -6526,7 +7115,6 @@
         "other": 0.63
       },
       "job_level": {
-        "ceo": 0.79,
         "senior_executive": 0.79,
         "senior_leader": 0.71,
         "mid_level_leader": 0.65,
@@ -6555,7 +7143,15 @@
     "question": "4_16. My current role leaves me feeling fulfilled",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.18,
+        "united_states": 0.1,
+        "australia": 0.16,
+        "india": 0.08,
+        "brazil": 0.11,
+        "saudi_arabia_uae": 0.07,
+        "country_overall": 0.12
+      },
       "age": {
         "18-24": 0.13,
         "25-34": 0.11,
@@ -6564,8 +7160,8 @@
         "55-65": 0.15
       },
       "gender": {
-        "female": 0.13,
-        "male": 0.11
+        "male": 0.11,
+        "female": 0.13
       },
       "org_size": {
         "fewer_than_10": 0.14,
@@ -6604,7 +7200,6 @@
         "other": 0.14
       },
       "job_level": {
-        "ceo": 0.08,
         "senior_executive": 0.07,
         "senior_leader": 0.1,
         "mid_level_leader": 0.13,
@@ -6633,7 +7228,15 @@
     "question": "4_17. I am totally competent and deliver what is needed in my role",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.78,
+        "united_states": 0.82,
+        "australia": 0.79,
+        "india": 0.85,
+        "brazil": 0.86,
+        "saudi_arabia_uae": 0.86,
+        "country_overall": 0.83
+      },
       "age": {
         "18-24": 0.71,
         "25-34": 0.82,
@@ -6642,8 +7245,8 @@
         "55-65": 0.85
       },
       "gender": {
-        "female": 0.83,
-        "male": 0.81
+        "male": 0.81,
+        "female": 0.83
       },
       "org_size": {
         "fewer_than_10": 0.81,
@@ -6682,7 +7285,6 @@
         "other": 0.79
       },
       "job_level": {
-        "ceo": 0.84,
         "senior_executive": 0.84,
         "senior_leader": 0.8,
         "mid_level_leader": 0.8,
@@ -6711,7 +7313,15 @@
     "question": "4_17. I am totally competent and deliver what is needed in my role",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.06,
+        "united_states": 0.05,
+        "australia": 0.05,
+        "india": 0.04,
+        "brazil": 0.03,
+        "saudi_arabia_uae": 0.03,
+        "country_overall": 0.04
+      },
       "age": {
         "18-24": 0.09,
         "25-34": 0.04,
@@ -6720,8 +7330,8 @@
         "55-65": 0.02
       },
       "gender": {
-        "female": 0.04,
-        "male": 0.05
+        "male": 0.05,
+        "female": 0.04
       },
       "org_size": {
         "fewer_than_10": 0.05,
@@ -6760,7 +7370,6 @@
         "other": 0.04
       },
       "job_level": {
-        "ceo": 0.04,
         "senior_executive": 0.05,
         "senior_leader": 0.05,
         "mid_level_leader": 0.05,
@@ -6789,7 +7398,15 @@
     "question": "4_18. I have imposter syndrome and feel I am stretched too far beyond my abilities",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.38,
+        "united_states": 0.54,
+        "australia": 0.38,
+        "india": 0.61,
+        "brazil": 0.38,
+        "saudi_arabia_uae": 0.46,
+        "country_overall": 0.46
+      },
       "age": {
         "18-24": 0.51,
         "25-34": 0.52,
@@ -6798,8 +7415,8 @@
         "55-65": 0.24
       },
       "gender": {
-        "female": 0.44,
-        "male": 0.49
+        "male": 0.49,
+        "female": 0.44
       },
       "org_size": {
         "fewer_than_10": 0.34,
@@ -6838,7 +7455,6 @@
         "other": 0.39
       },
       "job_level": {
-        "ceo": 0.58,
         "senior_executive": 0.58,
         "senior_leader": 0.49,
         "mid_level_leader": 0.45,
@@ -6867,7 +7483,15 @@
     "question": "4_18. I have imposter syndrome and feel I am stretched too far beyond my abilities",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.38,
+        "united_states": 0.27,
+        "australia": 0.35,
+        "india": 0.19,
+        "brazil": 0.4,
+        "saudi_arabia_uae": 0.33,
+        "country_overall": 0.32
+      },
       "age": {
         "18-24": 0.24,
         "25-34": 0.26,
@@ -6876,8 +7500,8 @@
         "55-65": 0.52
       },
       "gender": {
-        "female": 0.33,
-        "male": 0.29
+        "male": 0.29,
+        "female": 0.33
       },
       "org_size": {
         "fewer_than_10": 0.37,
@@ -6916,7 +7540,6 @@
         "other": 0.35
       },
       "job_level": {
-        "ceo": 0.24,
         "senior_executive": 0.25,
         "senior_leader": 0.29,
         "mid_level_leader": 0.31,
@@ -6945,7 +7568,15 @@
     "question": "5_1. I feel that I can be my full self around my co-workers.",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.65,
+        "united_states": 0.74,
+        "australia": 0.66,
+        "india": 0.84,
+        "brazil": 0.73,
+        "saudi_arabia_uae": 0.81,
+        "country_overall": 0.74
+      },
       "age": {
         "18-24": 0.67,
         "25-34": 0.75,
@@ -6954,8 +7585,8 @@
         "55-65": 0.68
       },
       "gender": {
-        "female": 0.71,
-        "male": 0.75
+        "male": 0.75,
+        "female": 0.71
       },
       "org_size": {
         "fewer_than_10": 0.67,
@@ -6994,7 +7625,6 @@
         "other": 0.68
       },
       "job_level": {
-        "ceo": 0.79,
         "senior_executive": 0.82,
         "senior_leader": 0.77,
         "mid_level_leader": 0.7,
@@ -7023,7 +7653,15 @@
     "question": "5_1. I feel that I can be my full self around my co-workers.",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.14,
+        "united_states": 0.09,
+        "australia": 0.14,
+        "india": 0.05,
+        "brazil": 0.12,
+        "saudi_arabia_uae": 0.06,
+        "country_overall": 0.1
+      },
       "age": {
         "18-24": 0.11,
         "25-34": 0.09,
@@ -7032,8 +7670,8 @@
         "55-65": 0.16
       },
       "gender": {
-        "female": 0.12,
-        "male": 0.08
+        "male": 0.08,
+        "female": 0.12
       },
       "org_size": {
         "fewer_than_10": 0.13,
@@ -7072,7 +7710,6 @@
         "other": 0.12
       },
       "job_level": {
-        "ceo": 0.06,
         "senior_executive": 0.06,
         "senior_leader": 0.09,
         "mid_level_leader": 0.11,
@@ -7101,7 +7738,15 @@
     "question": "5_2. I’m comfortable discussing my personal life with my colleagues",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.58,
+        "united_states": 0.69,
+        "australia": 0.6,
+        "india": 0.77,
+        "brazil": 0.52,
+        "saudi_arabia_uae": 0.56,
+        "country_overall": 0.62
+      },
       "age": {
         "18-24": 0.62,
         "25-34": 0.67,
@@ -7110,8 +7755,8 @@
         "55-65": 0.51
       },
       "gender": {
-        "female": 0.61,
-        "male": 0.66
+        "male": 0.66,
+        "female": 0.61
       },
       "org_size": {
         "fewer_than_10": 0.51,
@@ -7150,7 +7795,6 @@
         "other": 0.56
       },
       "job_level": {
-        "ceo": 0.69,
         "senior_executive": 0.75,
         "senior_leader": 0.68,
         "mid_level_leader": 0.64,
@@ -7179,7 +7823,15 @@
     "question": "5_2. I’m comfortable discussing my personal life with my colleagues",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.18,
+        "united_states": 0.14,
+        "australia": 0.17,
+        "india": 0.1,
+        "brazil": 0.29,
+        "saudi_arabia_uae": 0.26,
+        "country_overall": 0.19
+      },
       "age": {
         "18-24": 0.16,
         "25-34": 0.15,
@@ -7188,8 +7840,8 @@
         "55-65": 0.24
       },
       "gender": {
-        "female": 0.2,
-        "male": 0.15
+        "male": 0.15,
+        "female": 0.2
       },
       "org_size": {
         "fewer_than_10": 0.26,
@@ -7228,7 +7880,6 @@
         "other": 0.22
       },
       "job_level": {
-        "ceo": 0.13,
         "senior_executive": 0.11,
         "senior_leader": 0.14,
         "mid_level_leader": 0.17,
@@ -7257,7 +7908,15 @@
     "question": "5_3. If a problem in my personal life is affecting my work/performance, I feel comfortable telling my manager about it",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.62,
+        "united_states": 0.73,
+        "australia": 0.64,
+        "india": 0.8,
+        "brazil": 0.64,
+        "saudi_arabia_uae": 0.67,
+        "country_overall": 0.68
+      },
       "age": {
         "18-24": 0.65,
         "25-34": 0.7,
@@ -7266,8 +7925,8 @@
         "55-65": 0.6
       },
       "gender": {
-        "female": 0.66,
-        "male": 0.71
+        "male": 0.71,
+        "female": 0.66
       },
       "org_size": {
         "fewer_than_10": 0.58,
@@ -7306,7 +7965,6 @@
         "other": 0.63
       },
       "job_level": {
-        "ceo": 0.73,
         "senior_executive": 0.79,
         "senior_leader": 0.72,
         "mid_level_leader": 0.67,
@@ -7335,7 +7993,15 @@
     "question": "5_3. If a problem in my personal life is affecting my work/performance, I feel comfortable telling my manager about it",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.16,
+        "united_states": 0.12,
+        "australia": 0.15,
+        "india": 0.09,
+        "brazil": 0.18,
+        "saudi_arabia_uae": 0.16,
+        "country_overall": 0.14
+      },
       "age": {
         "18-24": 0.15,
         "25-34": 0.12,
@@ -7344,8 +8010,8 @@
         "55-65": 0.2
       },
       "gender": {
-        "female": 0.16,
-        "male": 0.11
+        "male": 0.11,
+        "female": 0.16
       },
       "org_size": {
         "fewer_than_10": 0.19,
@@ -7384,7 +8050,6 @@
         "other": 0.15
       },
       "job_level": {
-        "ceo": 0.11,
         "senior_executive": 0.08,
         "senior_leader": 0.12,
         "mid_level_leader": 0.14,
@@ -7413,7 +8078,15 @@
     "question": "5_4. I feel that my ideas and opinions will be welcomed by company leaders",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.61,
+        "united_states": 0.76,
+        "australia": 0.63,
+        "india": 0.85,
+        "brazil": 0.73,
+        "saudi_arabia_uae": 0.8,
+        "country_overall": 0.73
+      },
       "age": {
         "18-24": 0.68,
         "25-34": 0.75,
@@ -7422,8 +8095,8 @@
         "55-65": 0.62
       },
       "gender": {
-        "female": 0.7,
-        "male": 0.74
+        "male": 0.74,
+        "female": 0.7
       },
       "org_size": {
         "fewer_than_10": 0.66,
@@ -7462,7 +8135,6 @@
         "other": 0.66
       },
       "job_level": {
-        "ceo": 0.79,
         "senior_executive": 0.85,
         "senior_leader": 0.77,
         "mid_level_leader": 0.7,
@@ -7491,7 +8163,15 @@
     "question": "5_4. I feel that my ideas and opinions will be welcomed by company leaders",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.15,
+        "united_states": 0.09,
+        "australia": 0.15,
+        "india": 0.04,
+        "brazil": 0.1,
+        "saudi_arabia_uae": 0.05,
+        "country_overall": 0.1
+      },
       "age": {
         "18-24": 0.12,
         "25-34": 0.08,
@@ -7500,8 +8180,8 @@
         "55-65": 0.16
       },
       "gender": {
-        "female": 0.11,
-        "male": 0.09
+        "male": 0.09,
+        "female": 0.11
       },
       "org_size": {
         "fewer_than_10": 0.11,
@@ -7540,7 +8220,6 @@
         "other": 0.12
       },
       "job_level": {
-        "ceo": 0.06,
         "senior_executive": 0.05,
         "senior_leader": 0.08,
         "mid_level_leader": 0.11,
@@ -7569,7 +8248,15 @@
     "question": "5_5. I am comfortable talking to my manager about needs related to my health and wellbeing",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.64,
+        "united_states": 0.75,
+        "australia": 0.67,
+        "india": 0.84,
+        "brazil": 0.69,
+        "saudi_arabia_uae": 0.73,
+        "country_overall": 0.72
+      },
       "age": {
         "18-24": 0.66,
         "25-34": 0.74,
@@ -7578,8 +8265,8 @@
         "55-65": 0.64
       },
       "gender": {
-        "female": 0.7,
-        "male": 0.74
+        "male": 0.74,
+        "female": 0.7
       },
       "org_size": {
         "fewer_than_10": 0.63,
@@ -7618,7 +8305,6 @@
         "other": 0.66
       },
       "job_level": {
-        "ceo": 0.76,
         "senior_executive": 0.84,
         "senior_leader": 0.75,
         "mid_level_leader": 0.7,
@@ -7647,7 +8333,15 @@
     "question": "5_5. I am comfortable talking to my manager about needs related to my health and wellbeing",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.15,
+        "united_states": 0.1,
+        "australia": 0.14,
+        "india": 0.05,
+        "brazil": 0.15,
+        "saudi_arabia_uae": 0.1,
+        "country_overall": 0.11
+      },
       "age": {
         "18-24": 0.12,
         "25-34": 0.1,
@@ -7656,8 +8350,8 @@
         "55-65": 0.18
       },
       "gender": {
-        "female": 0.14,
-        "male": 0.09
+        "male": 0.09,
+        "female": 0.14
       },
       "org_size": {
         "fewer_than_10": 0.15,
@@ -7696,7 +8390,6 @@
         "other": 0.14
       },
       "job_level": {
-        "ceo": 0.08,
         "senior_executive": 0.05,
         "senior_leader": 0.09,
         "mid_level_leader": 0.12,
@@ -7725,7 +8418,15 @@
     "question": "6_1. To what extent is your company committed to Diversity, Equity & Inclusion (DE&I) in the workplace?",
     "response": "Not committed enough",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.24,
+        "united_states": 0.16,
+        "australia": 0.17,
+        "india": 0.24,
+        "brazil": 0.3,
+        "saudi_arabia_uae": 0.22,
+        "country_overall": 0.22
+      },
       "age": {
         "18-24": 0.32,
         "25-34": 0.24,
@@ -7734,8 +8435,8 @@
         "55-65": 0.17
       },
       "gender": {
-        "female": 0.21,
-        "male": 0.21
+        "male": 0.21,
+        "female": 0.21
       },
       "org_size": {
         "fewer_than_10": 0.26,
@@ -7774,7 +8475,6 @@
         "other": 0.2
       },
       "job_level": {
-        "ceo": 0.18,
         "senior_executive": 0.21,
         "senior_leader": 0.21,
         "mid_level_leader": 0.23,
@@ -7803,7 +8503,15 @@
     "question": "6_1. To what extent is your company committed to Diversity, Equity & Inclusion (DE&I) in the workplace?",
     "response": "Too committed",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.2,
+        "united_states": 0.34,
+        "australia": 0.25,
+        "india": 0.39,
+        "brazil": 0.27,
+        "saudi_arabia_uae": 0.37,
+        "country_overall": 0.3
+      },
       "age": {
         "18-24": 0.23,
         "25-34": 0.31,
@@ -7812,8 +8520,8 @@
         "55-65": 0.17
       },
       "gender": {
-        "female": 0.27,
-        "male": 0.33
+        "male": 0.33,
+        "female": 0.27
       },
       "org_size": {
         "fewer_than_10": 0.14,
@@ -7852,7 +8560,6 @@
         "other": 0.26
       },
       "job_level": {
-        "ceo": 0.35,
         "senior_executive": 0.42,
         "senior_leader": 0.36,
         "mid_level_leader": 0.3,
@@ -7881,7 +8588,15 @@
     "question": "6_2. To what extent is your company committed to corporate social responsibility and sustainability goals?",
     "response": "Not committed enough",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.26,
+        "united_states": 0.18,
+        "australia": 0.21,
+        "india": 0.24,
+        "brazil": 0.29,
+        "saudi_arabia_uae": 0.22,
+        "country_overall": 0.23
+      },
       "age": {
         "18-24": 0.34,
         "25-34": 0.23,
@@ -7890,8 +8605,8 @@
         "55-65": 0.22
       },
       "gender": {
-        "female": 0.22,
-        "male": 0.23
+        "male": 0.23,
+        "female": 0.22
       },
       "org_size": {
         "fewer_than_10": 0.29,
@@ -7930,7 +8645,6 @@
         "other": 0.22
       },
       "job_level": {
-        "ceo": 0.2,
         "senior_executive": 0.21,
         "senior_leader": 0.22,
         "mid_level_leader": 0.24,
@@ -7959,7 +8673,15 @@
     "question": "6_2. To what extent is your company committed to corporate social responsibility and sustainability goals?",
     "response": "Too committed",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.19,
+        "united_states": 0.33,
+        "australia": 0.2,
+        "india": 0.41,
+        "brazil": 0.28,
+        "saudi_arabia_uae": 0.39,
+        "country_overall": 0.3
+      },
       "age": {
         "18-24": 0.24,
         "25-34": 0.33,
@@ -7968,8 +8690,8 @@
         "55-65": 0.13
       },
       "gender": {
-        "female": 0.26,
-        "male": 0.32
+        "male": 0.32,
+        "female": 0.26
       },
       "org_size": {
         "fewer_than_10": 0.15,
@@ -8008,7 +8730,6 @@
         "other": 0.23
       },
       "job_level": {
-        "ceo": 0.37,
         "senior_executive": 0.43,
         "senior_leader": 0.35,
         "mid_level_leader": 0.29,
@@ -8037,7 +8758,15 @@
     "question": "7. How confident are you in the senior leadership in your company?",
     "response": "Confident",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.76,
+        "united_states": 0.87,
+        "australia": 0.77,
+        "india": 0.95,
+        "brazil": 0.87,
+        "saudi_arabia_uae": 0.87,
+        "country_overall": 0.85
+      },
       "age": {
         "18-24": 0.87,
         "25-34": 0.88,
@@ -8046,8 +8775,8 @@
         "55-65": 0.75
       },
       "gender": {
-        "female": 0.82,
-        "male": 0.87
+        "male": 0.87,
+        "female": 0.82
       },
       "org_size": {
         "fewer_than_10": 0.84,
@@ -8086,7 +8815,6 @@
         "other": 0.79
       },
       "job_level": {
-        "ceo": 0.94,
         "senior_executive": 0.94,
         "senior_leader": 0.88,
         "mid_level_leader": 0.84,
@@ -8115,7 +8843,15 @@
     "question": "7. How confident are you in the senior leadership in your company?",
     "response": "Unconfident",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.22,
+        "united_states": 0.11,
+        "australia": 0.21,
+        "india": 0.04,
+        "brazil": 0.12,
+        "saudi_arabia_uae": 0.12,
+        "country_overall": 0.14
+      },
       "age": {
         "18-24": 0.12,
         "25-34": 0.11,
@@ -8124,8 +8860,8 @@
         "55-65": 0.22
       },
       "gender": {
-        "female": 0.15,
-        "male": 0.12
+        "male": 0.12,
+        "female": 0.15
       },
       "org_size": {
         "fewer_than_10": 0.12,
@@ -8164,7 +8900,6 @@
         "other": 0.15
       },
       "job_level": {
-        "ceo": 0.05,
         "senior_executive": 0.06,
         "senior_leader": 0.12,
         "mid_level_leader": 0.15,
@@ -8193,7 +8928,15 @@
     "question": "8. How well do you think you are paid for your work and skillset?",
     "response": "Below my contribution",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.38,
+        "united_states": 0.39,
+        "australia": 0.38,
+        "india": 0.4,
+        "brazil": 0.34,
+        "saudi_arabia_uae": 0.38,
+        "country_overall": 0.38
+      },
       "age": {
         "18-24": 0.39,
         "25-34": 0.39,
@@ -8202,8 +8945,8 @@
         "55-65": 0.35
       },
       "gender": {
-        "female": 0.38,
-        "male": 0.38
+        "male": 0.38,
+        "female": 0.38
       },
       "org_size": {
         "fewer_than_10": 0.4,
@@ -8242,7 +8985,6 @@
         "other": 0.4
       },
       "job_level": {
-        "ceo": 0.42,
         "senior_executive": 0.37,
         "senior_leader": 0.35,
         "mid_level_leader": 0.35,
@@ -8271,7 +9013,15 @@
     "question": "8. How well do you think you are paid for your work and skillset?",
     "response": "Match my contribution",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.56,
+        "united_states": 0.5,
+        "australia": 0.57,
+        "india": 0.49,
+        "brazil": 0.6,
+        "saudi_arabia_uae": 0.58,
+        "country_overall": 0.55
+      },
       "age": {
         "18-24": 0.54,
         "25-34": 0.53,
@@ -8280,8 +9030,8 @@
         "55-65": 0.6
       },
       "gender": {
-        "female": 0.54,
-        "male": 0.54
+        "male": 0.54,
+        "female": 0.54
       },
       "org_size": {
         "fewer_than_10": 0.55,
@@ -8320,7 +9070,6 @@
         "other": 0.53
       },
       "job_level": {
-        "ceo": 0.45,
         "senior_executive": 0.51,
         "senior_leader": 0.59,
         "mid_level_leader": 0.58,
@@ -8349,7 +9098,15 @@
     "question": "8. How well do you think you are paid for your work and skillset?",
     "response": "Exceed my contribution",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.06,
+        "united_states": 0.12,
+        "australia": 0.05,
+        "india": 0.11,
+        "brazil": 0.06,
+        "saudi_arabia_uae": 0.05,
+        "country_overall": 0.07
+      },
       "age": {
         "18-24": 0.07,
         "25-34": 0.08,
@@ -8358,8 +9115,8 @@
         "55-65": 0.04
       },
       "gender": {
-        "female": 0.07,
-        "male": 0.08
+        "male": 0.08,
+        "female": 0.07
       },
       "org_size": {
         "fewer_than_10": 0.05,
@@ -8398,7 +9155,6 @@
         "other": 0.08
       },
       "job_level": {
-        "ceo": 0.12,
         "senior_executive": 0.12,
         "senior_leader": 0.07,
         "mid_level_leader": 0.06,
@@ -8427,7 +9183,15 @@
     "question": "9. Are you planning on leaving your current role in the next three months?",
     "response": "No",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.42,
+        "united_states": 0.39,
+        "australia": 0.47,
+        "india": 0.34,
+        "brazil": 0.45,
+        "saudi_arabia_uae": 0.38,
+        "country_overall": 0.41
+      },
       "age": {
         "18-24": 0.37,
         "25-34": 0.38,
@@ -8436,8 +9200,8 @@
         "55-65": 0.56
       },
       "gender": {
-        "female": 0.42,
-        "male": 0.4
+        "male": 0.4,
+        "female": 0.42
       },
       "org_size": {
         "fewer_than_10": 0.51,
@@ -8476,7 +9240,6 @@
         "other": 0.41
       },
       "job_level": {
-        "ceo": 0.4,
         "senior_executive": 0.35,
         "senior_leader": 0.37,
         "mid_level_leader": 0.37,
@@ -8505,7 +9268,15 @@
     "question": "9. Are you planning on leaving your current role in the next three months?",
     "response": "Considering",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.46,
+        "united_states": 0.39,
+        "australia": 0.41,
+        "india": 0.51,
+        "brazil": 0.46,
+        "saudi_arabia_uae": 0.48,
+        "country_overall": 0.45
+      },
       "age": {
         "18-24": 0.51,
         "25-34": 0.49,
@@ -8514,8 +9285,8 @@
         "55-65": 0.29
       },
       "gender": {
-        "female": 0.45,
-        "male": 0.45
+        "male": 0.45,
+        "female": 0.45
       },
       "org_size": {
         "fewer_than_10": 0.4,
@@ -8554,7 +9325,6 @@
         "other": 0.45
       },
       "job_level": {
-        "ceo": 0.37,
         "senior_executive": 0.46,
         "senior_leader": 0.5,
         "mid_level_leader": 0.51,
@@ -8583,7 +9353,15 @@
     "question": "9. Are you planning on leaving your current role in the next three months?",
     "response": "Applying and interviewing",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.1,
+        "united_states": 0.21,
+        "australia": 0.11,
+        "india": 0.14,
+        "brazil": 0.09,
+        "saudi_arabia_uae": 0.13,
+        "country_overall": 0.13
+      },
       "age": {
         "18-24": 0.12,
         "25-34": 0.13,
@@ -8592,8 +9370,8 @@
         "55-65": 0.09
       },
       "gender": {
-        "female": 0.12,
-        "male": 0.15
+        "male": 0.15,
+        "female": 0.12
       },
       "org_size": {
         "fewer_than_10": 0.08,
@@ -8632,7 +9410,6 @@
         "other": 0.12
       },
       "job_level": {
-        "ceo": 0.21,
         "senior_executive": 0.18,
         "senior_leader": 0.12,
         "mid_level_leader": 0.1,
@@ -8661,17 +9438,22 @@
     "question": "9. Are you planning on leaving your current role in the next three months?",
     "response": "Preparing to retire",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.01,
+        "united_states": 0.01,
+        "australia": 0.01,
+        "india": 0.01,
+        "brazil": 0.01,
+        "saudi_arabia_uae": 0,
+        "country_overall": 0.01
+      },
       "age": {
-        "18-24": null,
-        "25-34": null,
-        "35-44": null,
         "45-54": 0.03,
         "55-65": 0.06
       },
       "gender": {
-        "female": 0.01,
-        "male": 0.01
+        "male": 0.01,
+        "female": 0.01
       },
       "org_size": {
         "fewer_than_10": 0.02,
@@ -8686,23 +9468,18 @@
         "agriculture_forestry_fishing": 0.01,
         "automotive": 0.02,
         "business_administration_support_services": 0.01,
-        "clean_technology": null,
         "technology": 0,
         "construction": 0.02,
         "education": 0.01,
-        "energy_utilities": null,
         "financial_services": 0.01,
-        "food_drink": null,
         "government": 0.03,
         "healthcare_life_sciences": 0.02,
         "leisure_sport_entertainment_recreation": 0.02,
         "manufacturing_industrial": 0.01,
         "marketing_services": 0.01,
-        "media_entertainment": null,
         "not_for_profit": 0.02,
         "real_estate_property_services": 0.01,
         "retail": 0.02,
-        "sports": null,
         "telecommunications": 0.01,
         "transport_storage": 0.01,
         "travel_hospitality_leisure": 0.01,
@@ -8710,7 +9487,6 @@
         "other": 0.01
       },
       "job_level": {
-        "ceo": 0.02,
         "senior_executive": 0.01,
         "senior_leader": 0.01,
         "mid_level_leader": 0.01,
@@ -8739,7 +9515,15 @@
     "question": "10. What would your ideal role be?",
     "response": "Permanent",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.8,
+        "united_states": 0.8,
+        "australia": 0.82,
+        "india": 0.83,
+        "brazil": 0.65,
+        "saudi_arabia_uae": 0.74,
+        "country_overall": 0.77
+      },
       "age": {
         "18-24": 0.67,
         "25-34": 0.8,
@@ -8748,8 +9532,8 @@
         "55-65": 0.75
       },
       "gender": {
-        "female": 0.77,
-        "male": 0.81
+        "male": 0.81,
+        "female": 0.77
       },
       "org_size": {
         "fewer_than_10": 0.55,
@@ -8788,7 +9572,6 @@
         "other": 0.69
       },
       "job_level": {
-        "ceo": 0.74,
         "senior_executive": 0.81,
         "senior_leader": 0.79,
         "mid_level_leader": 0.8,
@@ -8817,7 +9600,15 @@
     "question": "10. What would your ideal role be?",
     "response": "Part time PAYE",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.12,
+        "united_states": 0.11,
+        "australia": 0.12,
+        "india": 0.09,
+        "brazil": 0.19,
+        "saudi_arabia_uae": 0.16,
+        "country_overall": 0.13
+      },
       "age": {
         "18-24": 0.19,
         "25-34": 0.12,
@@ -8826,8 +9617,8 @@
         "55-65": 0.14
       },
       "gender": {
-        "female": 0.14,
-        "male": 0.1
+        "male": 0.1,
+        "female": 0.14
       },
       "org_size": {
         "fewer_than_10": 0.19,
@@ -8866,7 +9657,6 @@
         "other": 0.16
       },
       "job_level": {
-        "ceo": 0.11,
         "senior_executive": 0.12,
         "senior_leader": 0.13,
         "mid_level_leader": 0.13,
@@ -8895,7 +9685,15 @@
     "question": "10. What would your ideal role be?",
     "response": "Contract / Interim",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.04,
+        "united_states": 0.05,
+        "australia": 0.03,
+        "india": 0.05,
+        "brazil": 0.05,
+        "saudi_arabia_uae": 0.05,
+        "country_overall": 0.04
+      },
       "age": {
         "18-24": 0.09,
         "25-34": 0.05,
@@ -8904,8 +9702,8 @@
         "55-65": 0.04
       },
       "gender": {
-        "female": 0.04,
-        "male": 0.05
+        "male": 0.05,
+        "female": 0.04
       },
       "org_size": {
         "fewer_than_10": 0.05,
@@ -8944,7 +9742,6 @@
         "other": 0.05
       },
       "job_level": {
-        "ceo": 0.04,
         "senior_executive": 0.04,
         "senior_leader": 0.05,
         "mid_level_leader": 0.05,
@@ -8973,7 +9770,15 @@
     "question": "10. What would your ideal role be?",
     "response": "Freelance",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.05,
+        "united_states": 0.05,
+        "australia": 0.04,
+        "india": 0.03,
+        "brazil": 0.11,
+        "saudi_arabia_uae": 0.05,
+        "country_overall": 0.06
+      },
       "age": {
         "18-24": 0.05,
         "25-34": 0.04,
@@ -8982,8 +9787,8 @@
         "55-65": 0.08
       },
       "gender": {
-        "female": 0.05,
-        "male": 0.05
+        "male": 0.05,
+        "female": 0.05
       },
       "org_size": {
         "fewer_than_10": 0.21,
@@ -9022,7 +9827,6 @@
         "other": 0.1
       },
       "job_level": {
-        "ceo": 0.1,
         "senior_executive": 0.02,
         "senior_leader": 0.03,
         "mid_level_leader": 0.03,
@@ -9051,7 +9855,15 @@
     "question": "18. Motivation - I feel motivated to do more than is required of me.",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.6,
+        "united_states": 0.75,
+        "australia": 0.62,
+        "india": 0.83,
+        "brazil": 0.72,
+        "saudi_arabia_uae": 0.78,
+        "country_overall": 0.72
+      },
       "age": {
         "18-24": 0.65,
         "25-34": 0.73,
@@ -9060,8 +9872,8 @@
         "55-65": 0.65
       },
       "gender": {
-        "female": 0.7,
-        "male": 0.73
+        "male": 0.73,
+        "female": 0.7
       },
       "org_size": {
         "fewer_than_10": 0.66,
@@ -9100,7 +9912,6 @@
         "other": 0.64
       },
       "job_level": {
-        "ceo": 0.82,
         "senior_executive": 0.82,
         "senior_leader": 0.75,
         "mid_level_leader": 0.7,
@@ -9129,7 +9940,15 @@
     "question": "18. Motivation - I feel motivated to do more than is required of me.",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.16,
+        "united_states": 0.09,
+        "australia": 0.14,
+        "india": 0.05,
+        "brazil": 0.12,
+        "saudi_arabia_uae": 0.06,
+        "country_overall": 0.1
+      },
       "age": {
         "18-24": 0.12,
         "25-34": 0.09,
@@ -9138,8 +9957,8 @@
         "55-65": 0.14
       },
       "gender": {
-        "female": 0.12,
-        "male": 0.09
+        "male": 0.09,
+        "female": 0.12
       },
       "org_size": {
         "fewer_than_10": 0.09,
@@ -9178,7 +9997,6 @@
         "other": 0.12
       },
       "job_level": {
-        "ceo": 0.05,
         "senior_executive": 0.05,
         "senior_leader": 0.09,
         "mid_level_leader": 0.11,
@@ -9207,7 +10025,15 @@
     "question": "18. Motivation - The company motivates me to do more than is required.",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.55,
+        "united_states": 0.72,
+        "australia": 0.57,
+        "india": 0.84,
+        "brazil": 0.68,
+        "saudi_arabia_uae": 0.75,
+        "country_overall": 0.68
+      },
       "age": {
         "18-24": 0.64,
         "25-34": 0.71,
@@ -9216,8 +10042,8 @@
         "55-65": 0.56
       },
       "gender": {
-        "female": 0.66,
-        "male": 0.7
+        "male": 0.7,
+        "female": 0.66
       },
       "org_size": {
         "fewer_than_10": 0.59,
@@ -9256,7 +10082,6 @@
         "other": 0.61
       },
       "job_level": {
-        "ceo": 0.78,
         "senior_executive": 0.8,
         "senior_leader": 0.71,
         "mid_level_leader": 0.68,
@@ -9285,7 +10110,15 @@
     "question": "18. Motivation - The company motivates me to do more than is required.",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.18,
+        "united_states": 0.1,
+        "australia": 0.16,
+        "india": 0.04,
+        "brazil": 0.13,
+        "saudi_arabia_uae": 0.08,
+        "country_overall": 0.12
+      },
       "age": {
         "18-24": 0.12,
         "25-34": 0.1,
@@ -9294,8 +10127,8 @@
         "55-65": 0.18
       },
       "gender": {
-        "female": 0.13,
-        "male": 0.1
+        "male": 0.1,
+        "female": 0.13
       },
       "org_size": {
         "fewer_than_10": 0.12,
@@ -9334,7 +10167,6 @@
         "other": 0.13
       },
       "job_level": {
-        "ceo": 0.06,
         "senior_executive": 0.07,
         "senior_leader": 0.1,
         "mid_level_leader": 0.13,
@@ -9363,7 +10195,15 @@
     "question": "18. Motivation - My job provides opportunities to do challenging and interesting work.",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.63,
+        "united_states": 0.76,
+        "australia": 0.66,
+        "india": 0.85,
+        "brazil": 0.71,
+        "saudi_arabia_uae": 0.77,
+        "country_overall": 0.73
+      },
       "age": {
         "18-24": 0.65,
         "25-34": 0.74,
@@ -9372,8 +10212,8 @@
         "55-65": 0.68
       },
       "gender": {
-        "female": 0.72,
-        "male": 0.74
+        "male": 0.74,
+        "female": 0.72
       },
       "org_size": {
         "fewer_than_10": 0.68,
@@ -9412,7 +10252,6 @@
         "other": 0.67
       },
       "job_level": {
-        "ceo": 0.81,
         "senior_executive": 0.84,
         "senior_leader": 0.77,
         "mid_level_leader": 0.7,
@@ -9441,7 +10280,15 @@
     "question": "18. Motivation - My job provides opportunities to do challenging and interesting work.",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.13,
+        "united_states": 0.07,
+        "australia": 0.12,
+        "india": 0.04,
+        "brazil": 0.1,
+        "saudi_arabia_uae": 0.06,
+        "country_overall": 0.09
+      },
       "age": {
         "18-24": 0.14,
         "25-34": 0.08,
@@ -9450,8 +10297,8 @@
         "55-65": 0.12
       },
       "gender": {
-        "female": 0.1,
-        "male": 0.08
+        "male": 0.08,
+        "female": 0.1
       },
       "org_size": {
         "fewer_than_10": 0.1,
@@ -9490,7 +10337,6 @@
         "other": 0.09
       },
       "job_level": {
-        "ceo": 0.04,
         "senior_executive": 0.05,
         "senior_leader": 0.07,
         "mid_level_leader": 0.1,
@@ -9519,7 +10365,15 @@
     "question": "18. Motivation - My job makes good use of my skills and abilities.",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.66,
+        "united_states": 0.79,
+        "australia": 0.69,
+        "india": 0.86,
+        "brazil": 0.78,
+        "saudi_arabia_uae": 0.82,
+        "country_overall": 0.77
+      },
       "age": {
         "18-24": 0.68,
         "25-34": 0.77,
@@ -9528,8 +10382,8 @@
         "55-65": 0.72
       },
       "gender": {
-        "female": 0.76,
-        "male": 0.77
+        "male": 0.77,
+        "female": 0.76
       },
       "org_size": {
         "fewer_than_10": 0.72,
@@ -9568,7 +10422,6 @@
         "other": 0.72
       },
       "job_level": {
-        "ceo": 0.83,
         "senior_executive": 0.84,
         "senior_leader": 0.77,
         "mid_level_leader": 0.74,
@@ -9597,7 +10450,15 @@
     "question": "18. Motivation - My job makes good use of my skills and abilities.",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.13,
+        "united_states": 0.07,
+        "australia": 0.11,
+        "india": 0.04,
+        "brazil": 0.08,
+        "saudi_arabia_uae": 0.04,
+        "country_overall": 0.08
+      },
       "age": {
         "18-24": 0.1,
         "25-34": 0.07,
@@ -9606,8 +10467,8 @@
         "55-65": 0.1
       },
       "gender": {
-        "female": 0.09,
-        "male": 0.07
+        "male": 0.07,
+        "female": 0.09
       },
       "org_size": {
         "fewer_than_10": 0.08,
@@ -9646,7 +10507,6 @@
         "other": 0.09
       },
       "job_level": {
-        "ceo": 0.05,
         "senior_executive": 0.05,
         "senior_leader": 0.08,
         "mid_level_leader": 0.08,
@@ -9675,7 +10535,15 @@
     "question": "18. Motivation - I have good opportunities for learning and development at the company.",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.59,
+        "united_states": 0.76,
+        "australia": 0.62,
+        "india": 0.85,
+        "brazil": 0.72,
+        "saudi_arabia_uae": 0.78,
+        "country_overall": 0.72
+      },
       "age": {
         "18-24": 0.69,
         "25-34": 0.74,
@@ -9684,8 +10552,8 @@
         "55-65": 0.59
       },
       "gender": {
-        "female": 0.7,
-        "male": 0.73
+        "male": 0.73,
+        "female": 0.7
       },
       "org_size": {
         "fewer_than_10": 0.64,
@@ -9724,7 +10592,6 @@
         "other": 0.65
       },
       "job_level": {
-        "ceo": 0.81,
         "senior_executive": 0.83,
         "senior_leader": 0.74,
         "mid_level_leader": 0.69,
@@ -9753,7 +10620,15 @@
     "question": "18. Motivation - I have good opportunities for learning and development at the company.",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.17,
+        "united_states": 0.08,
+        "australia": 0.14,
+        "india": 0.04,
+        "brazil": 0.12,
+        "saudi_arabia_uae": 0.07,
+        "country_overall": 0.1
+      },
       "age": {
         "18-24": 0.11,
         "25-34": 0.09,
@@ -9762,8 +10637,8 @@
         "55-65": 0.16
       },
       "gender": {
-        "female": 0.12,
-        "male": 0.09
+        "male": 0.09,
+        "female": 0.12
       },
       "org_size": {
         "fewer_than_10": 0.12,
@@ -9802,7 +10677,6 @@
         "other": 0.12
       },
       "job_level": {
-        "ceo": 0.05,
         "senior_executive": 0.06,
         "senior_leader": 0.09,
         "mid_level_leader": 0.11,
@@ -9831,7 +10705,15 @@
     "question": "18. Motivation - I have trust and confidence in the company's senior leadership team.",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.59,
+        "united_states": 0.74,
+        "australia": 0.63,
+        "india": 0.85,
+        "brazil": 0.73,
+        "saudi_arabia_uae": 0.77,
+        "country_overall": 0.72
+      },
       "age": {
         "18-24": 0.69,
         "25-34": 0.74,
@@ -9840,8 +10722,8 @@
         "55-65": 0.62
       },
       "gender": {
-        "female": 0.7,
-        "male": 0.73
+        "male": 0.73,
+        "female": 0.7
       },
       "org_size": {
         "fewer_than_10": 0.66,
@@ -9880,7 +10762,6 @@
         "other": 0.66
       },
       "job_level": {
-        "ceo": 0.81,
         "senior_executive": 0.83,
         "senior_leader": 0.73,
         "mid_level_leader": 0.69,
@@ -9909,7 +10790,15 @@
     "question": "18. Motivation - I have trust and confidence in the company's senior leadership team.",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.18,
+        "united_states": 0.09,
+        "australia": 0.15,
+        "india": 0.04,
+        "brazil": 0.1,
+        "saudi_arabia_uae": 0.08,
+        "country_overall": 0.11
+      },
       "age": {
         "18-24": 0.12,
         "25-34": 0.08,
@@ -9918,8 +10807,8 @@
         "55-65": 0.19
       },
       "gender": {
-        "female": 0.12,
-        "male": 0.1
+        "male": 0.1,
+        "female": 0.12
       },
       "org_size": {
         "fewer_than_10": 0.1,
@@ -9958,7 +10847,6 @@
         "other": 0.12
       },
       "job_level": {
-        "ceo": 0.06,
         "senior_executive": 0.06,
         "senior_leader": 0.1,
         "mid_level_leader": 0.12,
@@ -9987,7 +10875,15 @@
     "question": "18. Motivation - The company is responding effectively to changes in the business environment.",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.58,
+        "united_states": 0.74,
+        "australia": 0.62,
+        "india": 0.83,
+        "brazil": 0.7,
+        "saudi_arabia_uae": 0.79,
+        "country_overall": 0.71
+      },
       "age": {
         "18-24": 0.67,
         "25-34": 0.73,
@@ -9996,8 +10892,8 @@
         "55-65": 0.59
       },
       "gender": {
-        "female": 0.68,
-        "male": 0.72
+        "male": 0.72,
+        "female": 0.68
       },
       "org_size": {
         "fewer_than_10": 0.63,
@@ -10036,7 +10932,6 @@
         "other": 0.63
       },
       "job_level": {
-        "ceo": 0.78,
         "senior_executive": 0.81,
         "senior_leader": 0.74,
         "mid_level_leader": 0.68,
@@ -10065,7 +10960,15 @@
     "question": "18. Motivation - The company is responding effectively to changes in the business environment.",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.14,
+        "united_states": 0.08,
+        "australia": 0.12,
+        "india": 0.04,
+        "brazil": 0.11,
+        "saudi_arabia_uae": 0.06,
+        "country_overall": 0.09
+      },
       "age": {
         "18-24": 0.11,
         "25-34": 0.08,
@@ -10074,8 +10977,8 @@
         "55-65": 0.13
       },
       "gender": {
-        "female": 0.1,
-        "male": 0.08
+        "male": 0.08,
+        "female": 0.1
       },
       "org_size": {
         "fewer_than_10": 0.09,
@@ -10114,7 +11017,6 @@
         "other": 0.09
       },
       "job_level": {
-        "ceo": 0.05,
         "senior_executive": 0.06,
         "senior_leader": 0.08,
         "mid_level_leader": 0.11,
@@ -10143,7 +11045,15 @@
     "question": "18. Motivation - The company shows care and concern for its employees.",
     "response": "Agree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.61,
+        "united_states": 0.74,
+        "australia": 0.63,
+        "india": 0.83,
+        "brazil": 0.7,
+        "saudi_arabia_uae": 0.79,
+        "country_overall": 0.72
+      },
       "age": {
         "18-24": 0.67,
         "25-34": 0.74,
@@ -10152,8 +11062,8 @@
         "55-65": 0.61
       },
       "gender": {
-        "female": 0.7,
-        "male": 0.72
+        "male": 0.72,
+        "female": 0.7
       },
       "org_size": {
         "fewer_than_10": 0.66,
@@ -10192,7 +11102,6 @@
         "other": 0.66
       },
       "job_level": {
-        "ceo": 0.8,
         "senior_executive": 0.82,
         "senior_leader": 0.75,
         "mid_level_leader": 0.68,
@@ -10221,7 +11130,15 @@
     "question": "18. Motivation - The company shows care and concern for its employees.",
     "response": "Disagree",
     "data": {
-      "region": {},
+      "region": {
+        "united_kingdom": 0.16,
+        "united_states": 0.08,
+        "australia": 0.14,
+        "india": 0.06,
+        "brazil": 0.13,
+        "saudi_arabia_uae": 0.07,
+        "country_overall": 0.11
+      },
       "age": {
         "18-24": 0.13,
         "25-34": 0.09,
@@ -10230,8 +11147,8 @@
         "55-65": 0.17
       },
       "gender": {
-        "female": 0.12,
-        "male": 0.1
+        "male": 0.1,
+        "female": 0.12
       },
       "org_size": {
         "fewer_than_10": 0.11,
@@ -10270,7 +11187,6 @@
         "other": 0.11
       },
       "job_level": {
-        "ceo": 0.06,
         "senior_executive": 0.07,
         "senior_leader": 0.09,
         "mid_level_leader": 0.12,

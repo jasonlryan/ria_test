@@ -1,6 +1,7 @@
 {
   "metadata": {
     "topicId": "Learning_and_Development",
+    "theme": "Skills & Development",
     "questionId": "Q4_6",
     "year": 2024,
     "keywords": [
@@ -15,11 +16,7 @@
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
-    "relatedTopics": [
-      "Skills_Utilization",
-      "AI_Attitudes",
-      "AI_Readiness"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -42,12 +39,20 @@
       "sortOrder": "descending"
     }
   },
-  "question": "4_6. I would stay at a job if it granted me opportunities to progress and upskill quickly, even if I hated the current role",
+  "question": "4_1. The values a company promotes are extremely important to me",
   "responses": [
     {
       "response": "Agree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.55,
+          "united_states": 0.71,
+          "australia": 0.55,
+          "india": 0.8,
+          "brazil": 0.69,
+          "saudi_arabia_uae": 0.78,
+          "country_overall": 0.68
+        },
         "age": {
           "18-24": 0.68,
           "25-34": 0.72,
@@ -56,8 +61,8 @@
           "55-65": 0.43
         },
         "gender": {
-          "female": 0.63,
-          "male": 0.71
+          "male": 0.71,
+          "female": 0.63
         },
         "org_size": {
           "fewer_than_10": 0.58,
@@ -96,7 +101,6 @@
           "other": 0.6
         },
         "job_level": {
-          "ceo": 0.7,
           "senior_executive": 0.77,
           "senior_leader": 0.71,
           "mid_level_leader": 0.67,
@@ -124,7 +128,15 @@
     {
       "response": "Disagree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.19,
+          "united_states": 0.12,
+          "australia": 0.18,
+          "india": 0.08,
+          "brazil": 0.16,
+          "saudi_arabia_uae": 0.08,
+          "country_overall": 0.13
+        },
         "age": {
           "18-24": 0.12,
           "25-34": 0.1,
@@ -133,8 +145,8 @@
           "55-65": 0.29
         },
         "gender": {
-          "female": 0.16,
-          "male": 0.11
+          "male": 0.11,
+          "female": 0.16
         },
         "org_size": {
           "fewer_than_10": 0.2,
@@ -173,7 +185,6 @@
           "other": 0.17
         },
         "job_level": {
-          "ceo": 0.13,
           "senior_executive": 0.1,
           "senior_leader": 0.12,
           "mid_level_leader": 0.12,

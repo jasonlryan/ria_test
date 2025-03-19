@@ -1,6 +1,7 @@
 {
   "metadata": {
     "topicId": "AI_Attitudes",
+    "theme": "Skills & Development",
     "questionId": "Q4_9",
     "year": 2024,
     "keywords": [
@@ -26,11 +27,7 @@
       "India",
       "Brazil"
     ],
-    "relatedTopics": [
-      "Learning_and_Development",
-      "Skills_Utilization",
-      "AI_Readiness"
-    ],
+    "relatedTopics": [],
     "dataStructure": {
       "questionField": "question",
       "responsesArray": "responses",
@@ -53,12 +50,20 @@
       "sortOrder": "descending"
     }
   },
-  "question": "4_9. AI - I feel excited and positive about how emerging technologies like AI will change the way I work",
+  "question": "4_1. The values a company promotes are extremely important to me",
   "responses": [
     {
       "response": "Agree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.47,
+          "united_states": 0.66,
+          "australia": 0.5,
+          "india": 0.81,
+          "brazil": 0.71,
+          "saudi_arabia_uae": 0.78,
+          "country_overall": 0.65
+        },
         "age": {
           "18-24": 0.64,
           "25-34": 0.69,
@@ -67,8 +72,8 @@
           "55-65": 0.39
         },
         "gender": {
-          "female": 0.59,
-          "male": 0.69
+          "male": 0.69,
+          "female": 0.59
         },
         "org_size": {
           "fewer_than_10": 0.54,
@@ -107,7 +112,6 @@
           "other": 0.57
         },
         "job_level": {
-          "ceo": 0.73,
           "senior_executive": 0.8,
           "senior_leader": 0.69,
           "mid_level_leader": 0.63,
@@ -135,7 +139,15 @@
     {
       "response": "Disagree",
       "data": {
-        "region": {},
+        "region": {
+          "united_kingdom": 0.25,
+          "united_states": 0.15,
+          "australia": 0.2,
+          "india": 0.05,
+          "brazil": 0.09,
+          "saudi_arabia_uae": 0.05,
+          "country_overall": 0.13
+        },
         "age": {
           "18-24": 0.13,
           "25-34": 0.11,
@@ -144,8 +156,8 @@
           "55-65": 0.3
         },
         "gender": {
-          "female": 0.18,
-          "male": 0.11
+          "male": 0.11,
+          "female": 0.18
         },
         "org_size": {
           "fewer_than_10": 0.21,
@@ -184,7 +196,6 @@
           "other": 0.18
         },
         "job_level": {
-          "ceo": 0.1,
           "senior_executive": 0.06,
           "senior_leader": 0.12,
           "mid_level_leader": 0.14,
