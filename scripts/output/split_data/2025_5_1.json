@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "topicId": "Learning_and_Development",
+    "theme": "Skills & Development",
+    "questionId": "Q5_1",
+    "year": 2025,
+    "keywords": [
+      "professional development",
+      "training opportunities",
+      "skill advancement",
+      "career growth",
+      "Learning_and_Development"
+    ],
+    "canonicalQuestion": "How would you rate your learning and development opportunities?",
+    "subQuestion": "I feel adequately trained to use AI tools",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q5 - To what extent do you agree with the following statements about AI in the workplace and skills.",
+  "responses": [
+    {
+      "response": "I feel adequately trained to use AI tools",
+      "data": {
+        "region": {
+          "australia": 62,
+          "india": 40,
+          "brazil": 73,
+          "country_overall": 58.33
+        },
+        "age": {
+          "18-24": 63,
+          "25-34": 61,
+          "35-44": 47,
+          "45-54": 33,
+          "55-65": 38
+        },
+        "gender": {
+          "male": 45,
+          "female": 59
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

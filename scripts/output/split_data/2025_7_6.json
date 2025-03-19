@@ -1,0 +1,85 @@
+{
+  "metadata": {
+    "topicId": "Leadership_Confidence",
+    "theme": "Leadership & Management",
+    "questionId": "Q7_6",
+    "year": 2025,
+    "keywords": [
+      "trust in leadership",
+      "executive confidence",
+      "leadership effectiveness",
+      "management trust",
+      "Leadership_Confidence",
+      "leadership trust",
+      "confidence in management",
+      "executive effectiveness",
+      "leadership quality",
+      "senior leadership"
+    ],
+    "canonicalQuestion": "How confident are you in your organization's leadership?",
+    "subQuestion": "I feel my company is using Return to Office policies and other rules to push me out",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q7 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "I feel my company is using Return to Office policies and other rules to push me out",
+      "data": {
+        "region": {
+          "australia": 46,
+          "india": 34,
+          "brazil": 48,
+          "country_overall": 42.67
+        },
+        "age": {
+          "18-24": 44,
+          "25-34": 41,
+          "35-44": 34,
+          "45-54": 21,
+          "55-65": 19
+        },
+        "gender": {
+          "male": 27,
+          "female": 42
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

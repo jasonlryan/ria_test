@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "topicId": "Skills_Utilization",
+    "theme": "Skills & Development",
+    "questionId": "Q8_10",
+    "year": 2025,
+    "keywords": [
+      "skills usage",
+      "talent utilization",
+      "capability application",
+      "competency use",
+      "Skills_Utilization"
+    ],
+    "canonicalQuestion": "How well are your skills utilized in your current role?",
+    "subQuestion": "I struggle with imposter syndrome",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q8 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "I struggle with imposter syndrome",
+      "data": {
+        "region": {
+          "australia": 43,
+          "india": 32,
+          "brazil": 26,
+          "country_overall": 33.67
+        },
+        "age": {
+          "18-24": 39,
+          "25-34": 34,
+          "35-44": 30,
+          "45-54": 17,
+          "55-65": 13
+        },
+        "gender": {
+          "male": 27,
+          "female": 33
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "topicId": "Culture_and_Values",
+    "theme": "Employee Experience & Work‑Life",
+    "questionId": "Q8_11",
+    "year": 2025,
+    "keywords": [
+      "organizational culture",
+      "company values",
+      "workplace ethos",
+      "cultural fit",
+      "Culture_and_Values"
+    ],
+    "canonicalQuestion": "How important are company culture and values to your work experience?",
+    "subQuestion": "Leaders at my organization are often not aligned",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q8 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "Leaders at my organization are often not aligned",
+      "data": {
+        "region": {
+          "australia": 48,
+          "india": 41,
+          "brazil": 37,
+          "country_overall": 42
+        },
+        "age": {
+          "18-24": 47,
+          "25-34": 46,
+          "35-44": 42,
+          "45-54": 33,
+          "55-65": 29
+        },
+        "gender": {
+          "male": 32,
+          "female": 45
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

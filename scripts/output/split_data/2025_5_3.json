@@ -1,0 +1,85 @@
+{
+  "metadata": {
+    "topicId": "AI_Attitudes",
+    "theme": "Skills & Development",
+    "questionId": "Q5_3",
+    "year": 2025,
+    "keywords": [
+      "AI attitudes",
+      "AI perception",
+      "excitement about AI",
+      "role impact of AI",
+      "emerging technology sentiment",
+      "optimism regarding AI",
+      "AI value",
+      "AI influence",
+      "AI_Attitudes",
+      "artificial intelligence"
+    ],
+    "canonicalQuestion": "What are your attitudes toward AI in the workplace?",
+    "subQuestion": "I feel excited and positive about how emerging technologies like AI will change the way I work",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q5 - To what extent do you agree with the following statements about AI in the workplace and skills.",
+  "responses": [
+    {
+      "response": "I feel excited and positive about how emerging technologies like AI will change the way I work",
+      "data": {
+        "region": {
+          "australia": 64,
+          "india": 49,
+          "brazil": 84,
+          "country_overall": 65.67
+        },
+        "age": {
+          "18-24": 70,
+          "25-34": 68,
+          "35-44": 55,
+          "45-54": 41,
+          "55-65": 43
+        },
+        "gender": {
+          "male": 49,
+          "female": 66
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

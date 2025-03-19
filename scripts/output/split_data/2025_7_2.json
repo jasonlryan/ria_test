@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "topicId": "Intention_to_Leave",
+    "theme": "Talent Attraction & Retention",
+    "questionId": "Q7_2",
+    "year": 2025,
+    "keywords": [
+      "quit intentions",
+      "planning to leave",
+      "short-term turnover",
+      "resignation plans",
+      "Intention_to_Leave"
+    ],
+    "canonicalQuestion": "Are you planning on leaving your current role in the next three months?",
+    "subQuestion": "I am concerned that protectionism policies around immigration are affecting my ability to find work",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q7 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "I am concerned that protectionism policies around immigration are affecting my ability to find work",
+      "data": {
+        "region": {
+          "australia": 49,
+          "india": 35,
+          "brazil": 51,
+          "country_overall": 45
+        },
+        "age": {
+          "18-24": 48,
+          "25-34": 45,
+          "35-44": 36,
+          "45-54": 25,
+          "55-65": 25
+        },
+        "gender": {
+          "male": 35,
+          "female": 46
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

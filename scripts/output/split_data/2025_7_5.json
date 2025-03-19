@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "topicId": "Intention_to_Leave",
+    "theme": "Talent Attraction & Retention",
+    "questionId": "Q7_5",
+    "year": 2025,
+    "keywords": [
+      "quit intentions",
+      "planning to leave",
+      "short-term turnover",
+      "resignation plans",
+      "Intention_to_Leave"
+    ],
+    "canonicalQuestion": "Are you planning on leaving your current role in the next three months?",
+    "subQuestion": "I expect a significant reduction in DEI initiatives at my company since new governments were elected",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q7 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "I expect a significant reduction in DEI initiatives at my company since new governments were elected",
+      "data": {
+        "region": {
+          "australia": 48,
+          "india": 32,
+          "brazil": 46,
+          "country_overall": 42
+        },
+        "age": {
+          "18-24": 48,
+          "25-34": 44,
+          "35-44": 37,
+          "45-54": 25,
+          "55-65": 26
+        },
+        "gender": {
+          "male": 32,
+          "female": 45
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

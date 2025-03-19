@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "topicId": "Communication_and_Connection",
+    "theme": "Employee Experience & Work‑Life",
+    "questionId": "Q9_5",
+    "year": 2025,
+    "keywords": [
+      "workplace relationships",
+      "peer communication",
+      "colleague connections",
+      "collaboration comfort",
+      "Communication_and_Connection"
+    ],
+    "canonicalQuestion": "How comfortable are you communicating and connecting with colleagues?",
+    "subQuestion": "My manager empowers me",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q9 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "My manager empowers me",
+      "data": {
+        "region": {
+          "australia": 62,
+          "india": 65,
+          "brazil": 75,
+          "country_overall": 67.33
+        },
+        "age": {
+          "18-24": 68,
+          "25-34": 65,
+          "35-44": 58,
+          "45-54": 52,
+          "55-65": 54
+        },
+        "gender": {
+          "male": 52,
+          "female": 63
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

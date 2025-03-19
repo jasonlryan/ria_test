@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "topicId": "Intergenerational_Collaboration",
+    "theme": "Workplace Dynamics",
+    "questionId": "Q6_2",
+    "year": 2025,
+    "keywords": [
+      "generational diversity",
+      "age-diverse teams",
+      "cross-generational work",
+      "multigenerational workplace",
+      "Intergenerational_Collaboration"
+    ],
+    "canonicalQuestion": "How effectively do different generations collaborate in your workplace?",
+    "subQuestion": "I feel leaders in my company respect the needs of employees across generations",
+    "comparable": false,
+    "userMessage": "New in 2025; no year‑on‑year comparison.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q6 - To what extent do you agree with the following statements with regards to your workplace.",
+  "responses": [
+    {
+      "response": "I feel leaders in my company respect the needs of employees across generations",
+      "data": {
+        "region": {
+          "australia": 68,
+          "india": 55,
+          "brazil": 77,
+          "country_overall": 66.67
+        },
+        "age": {
+          "18-24": 73,
+          "25-34": 69,
+          "35-44": 61,
+          "45-54": 53,
+          "55-65": 59
+        },
+        "gender": {
+          "male": 62,
+          "female": 68
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

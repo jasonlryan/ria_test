@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "topicId": "Culture_and_Values",
+    "theme": "Employee Experience & Work‑Life",
+    "questionId": "Q7_3",
+    "year": 2025,
+    "keywords": [
+      "organizational culture",
+      "company values",
+      "workplace ethos",
+      "cultural fit",
+      "Culture_and_Values"
+    ],
+    "canonicalQuestion": "How important are company culture and values to your work experience?",
+    "subQuestion": "I am open to relocating to another country to secure a job",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q7 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "I am open to relocating to another country to secure a job",
+      "data": {
+        "region": {
+          "australia": 57,
+          "india": 35,
+          "brazil": 65,
+          "country_overall": 52.33
+        },
+        "age": {
+          "18-24": 57,
+          "25-34": 52,
+          "35-44": 42,
+          "45-54": 25,
+          "55-65": 22
+        },
+        "gender": {
+          "male": 40,
+          "female": 53
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

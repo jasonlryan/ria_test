@@ -1,0 +1,219 @@
+{
+  "metadata": {
+    "topicId": "Skills_Utilization",
+    "theme": "Skills & Development",
+    "questionId": "Q4_17",
+    "year": 2024,
+    "keywords": [
+      "skills usage",
+      "talent utilization",
+      "capability application",
+      "competency use",
+      "Skills_Utilization"
+    ],
+    "canonicalQuestion": "How well are your skills utilized in your current role?",
+    "subQuestion": "Agree",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "4_1. The values a company promotes are extremely important to me",
+  "responses": [
+    {
+      "response": "Agree",
+      "data": {
+        "region": {
+          "united_kingdom": 0.78,
+          "united_states": 0.82,
+          "australia": 0.79,
+          "india": 0.85,
+          "brazil": 0.86,
+          "saudi_arabia_uae": 0.86,
+          "country_overall": 0.83
+        },
+        "age": {
+          "18-24": 0.71,
+          "25-34": 0.82,
+          "35-44": 0.83,
+          "45-54": 0.84,
+          "55-65": 0.85
+        },
+        "gender": {
+          "male": 0.81,
+          "female": 0.83
+        },
+        "org_size": {
+          "fewer_than_10": 0.81,
+          "10_to_49": 0.79,
+          "50_to_99": 0.76,
+          "100_to_249": 0.81,
+          "250_to_499": 0.84,
+          "500_to_999": 0.86,
+          "1000_or_more": 0.85
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.72,
+          "automotive": 0.78,
+          "business_administration_support_services": 0.8,
+          "clean_technology": 0.66,
+          "technology": 0.85,
+          "construction": 0.87,
+          "education": 0.83,
+          "energy_utilities": 0.76,
+          "financial_services": 0.83,
+          "food_drink": 0.76,
+          "government": 0.8,
+          "healthcare_life_sciences": 0.83,
+          "leisure_sport_entertainment_recreation": 0.89,
+          "manufacturing_industrial": 0.83,
+          "marketing_services": 0.83,
+          "media_entertainment": 0.79,
+          "not_for_profit": 0.86,
+          "real_estate_property_services": 0.82,
+          "retail": 0.81,
+          "sports": 0.66,
+          "telecommunications": 0.82,
+          "transport_storage": 0.78,
+          "travel_hospitality_leisure": 0.89,
+          "wholesale_distribution": 0.83,
+          "other": 0.79
+        },
+        "job_level": {
+          "senior_executive": 0.84,
+          "senior_leader": 0.8,
+          "mid_level_leader": 0.8,
+          "first_level_supervisor": 0.84,
+          "individual_contributor": 0.8
+        },
+        "relationship_status": {
+          "single": 0.77,
+          "cohabiting": 0.79,
+          "married": 0.85,
+          "divorced_separated": 0.79,
+          "widowed": 0.79
+        },
+        "education": {
+          "secondary": 0.77,
+          "tertiary": 0.79,
+          "undergraduate": 0.81,
+          "postgraduate": 0.85,
+          "doctorate": 0.8
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Disagree",
+      "data": {
+        "region": {
+          "united_kingdom": 0.06,
+          "united_states": 0.05,
+          "australia": 0.05,
+          "india": 0.04,
+          "brazil": 0.03,
+          "saudi_arabia_uae": 0.03,
+          "country_overall": 0.04
+        },
+        "age": {
+          "18-24": 0.09,
+          "25-34": 0.04,
+          "35-44": 0.04,
+          "45-54": 0.04,
+          "55-65": 0.02
+        },
+        "gender": {
+          "male": 0.05,
+          "female": 0.04
+        },
+        "org_size": {
+          "fewer_than_10": 0.05,
+          "10_to_49": 0.06,
+          "50_to_99": 0.07,
+          "100_to_249": 0.05,
+          "250_to_499": 0.04,
+          "500_to_999": 0.03,
+          "1000_or_more": 0.03
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.14,
+          "automotive": 0.09,
+          "business_administration_support_services": 0.05,
+          "clean_technology": 0.15,
+          "technology": 0.04,
+          "construction": 0.03,
+          "education": 0.04,
+          "energy_utilities": 0.08,
+          "financial_services": 0.03,
+          "food_drink": 0.06,
+          "government": 0.05,
+          "healthcare_life_sciences": 0.03,
+          "leisure_sport_entertainment_recreation": 0.06,
+          "manufacturing_industrial": 0.03,
+          "marketing_services": 0.05,
+          "media_entertainment": 0.04,
+          "not_for_profit": 0.03,
+          "real_estate_property_services": 0.04,
+          "retail": 0.04,
+          "sports": 0.05,
+          "telecommunications": 0.04,
+          "transport_storage": 0.06,
+          "travel_hospitality_leisure": 0.03,
+          "wholesale_distribution": 0.08,
+          "other": 0.04
+        },
+        "job_level": {
+          "senior_executive": 0.05,
+          "senior_leader": 0.05,
+          "mid_level_leader": 0.05,
+          "first_level_supervisor": 0.04,
+          "individual_contributor": 0.04
+        },
+        "relationship_status": {
+          "single": 0.06,
+          "cohabiting": 0.05,
+          "married": 0.03,
+          "divorced_separated": 0.05,
+          "widowed": 0.11
+        },
+        "education": {
+          "secondary": 0.06,
+          "tertiary": 0.07,
+          "undergraduate": 0.04,
+          "postgraduate": 0.03,
+          "doctorate": 0.05
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

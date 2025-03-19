@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "topicId": "Intergenerational_Collaboration",
+    "theme": "Workplace Dynamics",
+    "questionId": "Q6_7",
+    "year": 2025,
+    "keywords": [
+      "generational diversity",
+      "age-diverse teams",
+      "cross-generational work",
+      "multigenerational workplace",
+      "Intergenerational_Collaboration"
+    ],
+    "canonicalQuestion": "How effectively do different generations collaborate in your workplace?",
+    "subQuestion": "I would stay at a job if it paid me the salary I want, even if I hated the role",
+    "comparable": false,
+    "userMessage": "New in 2025; no year‑on‑year comparison.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q6 - To what extent do you agree with the following statements with regards to your workplace.",
+  "responses": [
+    {
+      "response": "I would stay at a job if it paid me the salary I want, even if I hated the role",
+      "data": {
+        "region": {
+          "australia": 66,
+          "india": 51,
+          "brazil": 70,
+          "country_overall": 62.33
+        },
+        "age": {
+          "18-24": 66,
+          "25-34": 62,
+          "35-44": 54,
+          "45-54": 45,
+          "55-65": 43
+        },
+        "gender": {
+          "male": 49,
+          "female": 62
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

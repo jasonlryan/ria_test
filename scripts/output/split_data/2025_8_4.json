@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "topicId": "Intergenerational_Collaboration",
+    "theme": "Workplace Dynamics",
+    "questionId": "Q8_4",
+    "year": 2025,
+    "keywords": [
+      "generational diversity",
+      "age-diverse teams",
+      "cross-generational work",
+      "multigenerational workplace",
+      "Intergenerational_Collaboration"
+    ],
+    "canonicalQuestion": "How effectively do different generations collaborate in your workplace?",
+    "subQuestion": "I feel that I am overlooked for promotions, pay rises, or leadership training because of my class.",
+    "comparable": false,
+    "userMessage": "New in 2025; no year‑on‑year comparison.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q8 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "I feel that I am overlooked for promotions, pay rises, or leadership training because of my class.",
+      "data": {
+        "region": {
+          "australia": 45,
+          "india": 28,
+          "brazil": 42,
+          "country_overall": 38.33
+        },
+        "age": {
+          "18-24": 42,
+          "25-34": 38,
+          "35-44": 31,
+          "45-54": 21,
+          "55-65": 20
+        },
+        "gender": {
+          "male": 25,
+          "female": 40
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

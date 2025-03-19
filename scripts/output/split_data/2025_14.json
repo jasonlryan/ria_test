@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "topicId": "Intergenerational_Collaboration",
+    "theme": "Workplace Dynamics",
+    "questionId": "Q14",
+    "year": 2025,
+    "keywords": [
+      "generational diversity",
+      "age-diverse teams",
+      "cross-generational work",
+      "multigenerational workplace",
+      "Intergenerational_Collaboration"
+    ],
+    "canonicalQuestion": "How effectively do different generations collaborate in your workplace?",
+    "subQuestion": "Sigma",
+    "comparable": false,
+    "userMessage": "New in 2025; no year‑on‑year comparison.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q14 - What are the biggest challenges you face when working with colleagues from different generations?",
+  "responses": [
+    {
+      "response": "Sigma",
+      "data": {
+        "region": {
+          "australia": 170,
+          "india": 126,
+          "brazil": 172,
+          "country_overall": 156
+        },
+        "age": {
+          "18-24": 175,
+          "25-34": 164,
+          "35-44": 149,
+          "45-54": 136,
+          "55-65": 136
+        },
+        "gender": {
+          "male": 141,
+          "female": 162
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

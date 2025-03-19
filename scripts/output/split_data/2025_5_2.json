@@ -1,0 +1,85 @@
+{
+  "metadata": {
+    "topicId": "AI_Attitudes",
+    "theme": "Skills & Development",
+    "questionId": "Q5_2",
+    "year": 2025,
+    "keywords": [
+      "AI attitudes",
+      "AI perception",
+      "excitement about AI",
+      "role impact of AI",
+      "emerging technology sentiment",
+      "optimism regarding AI",
+      "AI value",
+      "AI influence",
+      "AI_Attitudes",
+      "artificial intelligence"
+    ],
+    "canonicalQuestion": "What are your attitudes toward AI in the workplace?",
+    "subQuestion": "I feel certain that my role will be replaced by AI/tech in the next three years",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q5 - To what extent do you agree with the following statements about AI in the workplace and skills.",
+  "responses": [
+    {
+      "response": "I feel certain that my role will be replaced by AI/tech in the next three years",
+      "data": {
+        "region": {
+          "australia": 50,
+          "india": 38,
+          "brazil": 53,
+          "country_overall": 47
+        },
+        "age": {
+          "18-24": 50,
+          "25-34": 48,
+          "35-44": 41,
+          "45-54": 29,
+          "55-65": 31
+        },
+        "gender": {
+          "male": 36,
+          "female": 47
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

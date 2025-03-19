@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "topicId": "Communication_and_Connection",
+    "theme": "Employee Experience & Work‑Life",
+    "questionId": "Q6_4",
+    "year": 2025,
+    "keywords": [
+      "workplace relationships",
+      "peer communication",
+      "colleague connections",
+      "collaboration comfort",
+      "Communication_and_Connection"
+    ],
+    "canonicalQuestion": "How comfortable are you communicating and connecting with colleagues?",
+    "subQuestion": "I feel my company provides adequate support for employee mental well-being",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q6 - To what extent do you agree with the following statements with regards to your workplace.",
+  "responses": [
+    {
+      "response": "I feel my company provides adequate support for employee mental well-being",
+      "data": {
+        "region": {
+          "australia": 64,
+          "india": 50,
+          "brazil": 75,
+          "country_overall": 63
+        },
+        "age": {
+          "18-24": 71,
+          "25-34": 67,
+          "35-44": 58,
+          "45-54": 50,
+          "55-65": 59
+        },
+        "gender": {
+          "male": 57,
+          "female": 65
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

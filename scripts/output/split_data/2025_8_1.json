@@ -1,0 +1,85 @@
+{
+  "metadata": {
+    "topicId": "Leadership_Confidence",
+    "theme": "Leadership & Management",
+    "questionId": "Q8_1",
+    "year": 2025,
+    "keywords": [
+      "trust in leadership",
+      "executive confidence",
+      "leadership effectiveness",
+      "management trust",
+      "Leadership_Confidence",
+      "leadership trust",
+      "confidence in management",
+      "executive effectiveness",
+      "leadership quality",
+      "senior leadership"
+    ],
+    "canonicalQuestion": "How confident are you in your organization's leadership?",
+    "subQuestion": "I am stretched too far beyond my capabilities at work",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q8 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "I am stretched too far beyond my capabilities at work",
+      "data": {
+        "region": {
+          "australia": 46,
+          "india": 36,
+          "brazil": 38,
+          "country_overall": 40
+        },
+        "age": {
+          "18-24": 46,
+          "25-34": 43,
+          "35-44": 38,
+          "45-54": 27,
+          "55-65": 22
+        },
+        "gender": {
+          "male": 34,
+          "female": 42
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

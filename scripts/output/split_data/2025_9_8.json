@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "topicId": "Manager_Capability",
+    "theme": "Leadership & Management",
+    "questionId": "Q9_8",
+    "year": 2025,
+    "keywords": [
+      "supervisory effectiveness",
+      "line manager capability",
+      "manager performance",
+      "leader effectiveness",
+      "Manager_Capability"
+    ],
+    "canonicalQuestion": "How effective is your direct manager?",
+    "subQuestion": "The lack of managers at my organization leaves me feeling directionless",
+    "comparable": false,
+    "userMessage": "New in 2025; no year‑on‑year comparison.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q9 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "The lack of managers at my organization leaves me feeling directionless",
+      "data": {
+        "region": {
+          "australia": 46,
+          "india": 35,
+          "brazil": 49,
+          "country_overall": 43.33
+        },
+        "age": {
+          "18-24": 44,
+          "25-34": 40,
+          "35-44": 34,
+          "45-54": 22,
+          "55-65": 20
+        },
+        "gender": {
+          "male": 28,
+          "female": 41
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

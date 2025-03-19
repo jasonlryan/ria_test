@@ -1,0 +1,213 @@
+{
+  "metadata": {
+    "topicId": "Culture_and_Values",
+    "theme": "Employee Experience & Work‑Life",
+    "questionId": "Q4_3",
+    "year": 2024,
+    "keywords": [
+      "organizational culture",
+      "company values",
+      "workplace ethos",
+      "cultural fit",
+      "Culture_and_Values"
+    ],
+    "canonicalQuestion": "How important are company culture and values to your work experience?",
+    "subQuestion": "Agree",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "4_1. The values a company promotes are extremely important to me",
+  "responses": [
+    {
+      "response": "Agree",
+      "data": {
+        "region": {
+          "united_kingdom": 0.75,
+          "united_states": 0.81,
+          "australia": 0.78,
+          "india": 0.85,
+          "brazil": 0.87,
+          "saudi_arabia_uae": 0.85,
+          "country_overall": 0.82
+        },
+        "age": {
+          "18-24": 0.72,
+          "25-34": 0.82,
+          "35-44": 0.84,
+          "45-54": 0.81,
+          "55-65": 0.77
+        },
+        "gender": {
+          "male": 0.81,
+          "female": 0.81
+        },
+        "org_size": {
+          "fewer_than_10": 0.78,
+          "10_to_49": 0.78,
+          "50_to_99": 0.75,
+          "100_to_249": 0.8,
+          "250_to_499": 0.84,
+          "500_to_999": 0.87,
+          "1000_or_more": 0.83
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.74,
+          "automotive": 0.75,
+          "business_administration_support_services": 0.83,
+          "clean_technology": 0.62,
+          "technology": 0.86,
+          "construction": 0.83,
+          "education": 0.8,
+          "energy_utilities": 0.84,
+          "financial_services": 0.82,
+          "food_drink": 0.71,
+          "government": 0.76,
+          "healthcare_life_sciences": 0.81,
+          "leisure_sport_entertainment_recreation": 0.87,
+          "manufacturing_industrial": 0.81,
+          "marketing_services": 0.82,
+          "media_entertainment": 0.8,
+          "not_for_profit": 0.83,
+          "real_estate_property_services": 0.79,
+          "retail": 0.81,
+          "sports": 0.74,
+          "telecommunications": 0.84,
+          "transport_storage": 0.78,
+          "travel_hospitality_leisure": 0.83,
+          "wholesale_distribution": 0.84,
+          "other": 0.78
+        },
+        "job_level": {
+          "senior_executive": 0.84,
+          "senior_leader": 0.81,
+          "mid_level_leader": 0.79,
+          "first_level_supervisor": 0.84,
+          "individual_contributor": 0.78
+        },
+        "relationship_status": {
+          "single": 0.76,
+          "cohabiting": 0.78,
+          "married": 0.84,
+          "divorced_separated": 0.76,
+          "widowed": 0.7
+        },
+        "education": {
+          "secondary": 0.76,
+          "tertiary": 0.75,
+          "undergraduate": 0.82,
+          "postgraduate": 0.84,
+          "doctorate": 0.81
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Disagree",
+      "data": {
+        "region": {
+          "united_kingdom": 0.06,
+          "united_states": 0.06,
+          "australia": 0.04,
+          "india": 0.04,
+          "brazil": 0.03,
+          "saudi_arabia_uae": 0.04,
+          "country_overall": 0.05
+        },
+        "age": {
+          "18-24": 0.09,
+          "25-34": 0.05,
+          "35-44": 0.04,
+          "45-54": 0.04,
+          "55-65": 0.04
+        },
+        "gender": {
+          "male": 0.05,
+          "female": 0.04
+        },
+        "org_size": {
+          "fewer_than_10": 0.05,
+          "10_to_49": 0.06,
+          "50_to_99": 0.07,
+          "100_to_249": 0.06,
+          "250_to_499": 0.04,
+          "500_to_999": 0.03,
+          "1000_or_more": 0.03
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.08,
+          "automotive": 0.07,
+          "business_administration_support_services": 0.05,
+          "clean_technology": 0.1,
+          "technology": 0.03,
+          "construction": 0.04,
+          "education": 0.05,
+          "energy_utilities": 0.04,
+          "financial_services": 0.04,
+          "food_drink": 0.09,
+          "government": 0.05,
+          "healthcare_life_sciences": 0.04,
+          "leisure_sport_entertainment_recreation": 0.06,
+          "manufacturing_industrial": 0.04,
+          "marketing_services": 0.03,
+          "media_entertainment": 0.03,
+          "not_for_profit": 0.01,
+          "real_estate_property_services": 0.04,
+          "retail": 0.04,
+          "sports": 0.11,
+          "telecommunications": 0.04,
+          "transport_storage": 0.08,
+          "travel_hospitality_leisure": 0.06,
+          "wholesale_distribution": 0.06,
+          "other": 0.05
+        },
+        "job_level": {
+          "senior_executive": 0.05,
+          "senior_leader": 0.05,
+          "mid_level_leader": 0.05,
+          "first_level_supervisor": 0.04,
+          "individual_contributor": 0.04
+        },
+        "relationship_status": {
+          "single": 0.06,
+          "cohabiting": 0.06,
+          "married": 0.04,
+          "divorced_separated": 0.05,
+          "widowed": 0.15
+        },
+        "education": {
+          "secondary": 0.06,
+          "tertiary": 0.07,
+          "undergraduate": 0.04,
+          "postgraduate": 0.04,
+          "doctorate": 0.07
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

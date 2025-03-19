@@ -1,0 +1,135 @@
+{
+  "metadata": {
+    "topicId": "Organizational_Adaptation",
+    "theme": "Leadership & Management",
+    "questionId": "Q18_7",
+    "year": 2024,
+    "keywords": [
+      "change management",
+      "business agility",
+      "organizational flexibility",
+      "adaptive capability",
+      "Organizational_Adaptation"
+    ],
+    "canonicalQuestion": "How effectively does your organization adapt to change?",
+    "subQuestion": "Agree",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "18. Motivation - I feel motivated to do more than is required of me.",
+  "responses": [
+    {
+      "response": "Agree",
+      "data": {
+        "region": {
+          "united_kingdom": 0.66,
+          "united_states": 0.79,
+          "australia": 0.69,
+          "india": 0.86,
+          "brazil": 0.78,
+          "saudi_arabia_uae": 0.82,
+          "country_overall": 0.77
+        },
+        "age": {
+          "18-24": 0.68,
+          "25-34": 0.77,
+          "35-44": 0.79,
+          "45-54": 0.76,
+          "55-65": 0.72
+        },
+        "gender": {
+          "male": 0.77,
+          "female": 0.76
+        },
+        "org_size": {
+          "fewer_than_10": 0.72,
+          "10_to_49": 0.73,
+          "50_to_99": 0.72,
+          "100_to_249": 0.75,
+          "250_to_499": 0.79,
+          "500_to_999": 0.84,
+          "1000_or_more": 0.76
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.76,
+          "automotive": 0.73,
+          "business_administration_support_services": 0.75,
+          "clean_technology": 0.61,
+          "technology": 0.83,
+          "construction": 0.81,
+          "education": 0.77,
+          "energy_utilities": 0.72,
+          "financial_services": 0.78,
+          "food_drink": 0.71,
+          "government": 0.67,
+          "healthcare_life_sciences": 0.75,
+          "leisure_sport_entertainment_recreation": 0.71,
+          "manufacturing_industrial": 0.77,
+          "marketing_services": 0.83,
+          "media_entertainment": 0.74,
+          "not_for_profit": 0.68,
+          "real_estate_property_services": 0.74,
+          "retail": 0.78,
+          "sports": 0.55,
+          "telecommunications": 0.74,
+          "transport_storage": 0.63,
+          "travel_hospitality_leisure": 0.78,
+          "wholesale_distribution": 0.73,
+          "other": 0.72
+        },
+        "job_level": {
+          "senior_executive": 0.84,
+          "senior_leader": 0.77,
+          "mid_level_leader": 0.74,
+          "first_level_supervisor": 0.78,
+          "individual_contributor": 0.66
+        },
+        "relationship_status": {
+          "single": 0.69,
+          "cohabiting": 0.68,
+          "married": 0.81,
+          "divorced_separated": 0.7,
+          "widowed": 0.64
+        },
+        "education": {
+          "secondary": 0.68,
+          "tertiary": 0.69,
+          "undergraduate": 0.75,
+          "postgraduate": 0.83,
+          "doctorate": 0.73
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

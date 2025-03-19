@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "topicId": "Culture_and_Values",
+    "theme": "Employee Experience & Work‑Life",
+    "questionId": "Q9_4",
+    "year": 2025,
+    "keywords": [
+      "organizational culture",
+      "company values",
+      "workplace ethos",
+      "cultural fit",
+      "Culture_and_Values"
+    ],
+    "canonicalQuestion": "How important are company culture and values to your work experience?",
+    "subQuestion": "My manager appears overwhelmed at work",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q9 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "My manager appears overwhelmed at work",
+      "data": {
+        "region": {
+          "australia": 53,
+          "india": 39,
+          "brazil": 37,
+          "country_overall": 43
+        },
+        "age": {
+          "18-24": 50,
+          "25-34": 48,
+          "35-44": 43,
+          "45-54": 32,
+          "55-65": 31
+        },
+        "gender": {
+          "male": 35,
+          "female": 47
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

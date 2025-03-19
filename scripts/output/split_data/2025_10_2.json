@@ -1,0 +1,85 @@
+{
+  "metadata": {
+    "topicId": "DEI",
+    "theme": "Workplace Dynamics",
+    "questionId": "Q10_2",
+    "year": 2025,
+    "keywords": [
+      "diversity initiatives",
+      "equity programs",
+      "inclusion efforts",
+      "workplace diversity",
+      "DEI commitment",
+      "corporate social responsibility",
+      "sustainability goals",
+      "DEI",
+      "diversity",
+      "equity"
+    ],
+    "canonicalQuestion": "How committed is your organization to diversity, equity, and inclusion?",
+    "subQuestion": "Is your company committed to corporate social responsibility and sustainability goals? - (4) Slightly too committed",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q10 - To what extent do you think your company is committed to greater inclusion and social responsibility?",
+  "responses": [
+    {
+      "response": "Is your company committed to corporate social responsibility and sustainability goals? - (4) Slightly too committed",
+      "data": {
+        "region": {
+          "australia": 14,
+          "india": 11,
+          "brazil": 22,
+          "country_overall": 15.67
+        },
+        "age": {
+          "18-24": 17,
+          "25-34": 17,
+          "35-44": 12,
+          "45-54": 8,
+          "55-65": 8
+        },
+        "gender": {
+          "male": 8,
+          "female": 16
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

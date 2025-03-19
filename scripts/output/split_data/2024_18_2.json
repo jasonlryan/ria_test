@@ -1,0 +1,129 @@
+{
+  "metadata": {
+    "topicId": "Motivation_and_Fulfillment",
+    "theme": "Employee Experience & Work‑Life",
+    "questionId": "Q18_2",
+    "year": 2024,
+    "keywords": [
+      "job satisfaction",
+      "work engagement",
+      "employee motivation",
+      "workplace fulfillment",
+      "Motivation_and_Fulfillment"
+    ],
+    "canonicalQuestion": "How motivated and fulfilled do you feel in your role?",
+    "subQuestion": "Disagree",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "18. Motivation - I feel motivated to do more than is required of me.",
+  "responses": [
+    {
+      "response": "Disagree",
+      "data": {
+        "region": {
+          "united_kingdom": 0.16,
+          "united_states": 0.09,
+          "australia": 0.14,
+          "india": 0.05,
+          "brazil": 0.12,
+          "saudi_arabia_uae": 0.06,
+          "country_overall": 0.1
+        },
+        "age": {
+          "18-24": 0.12,
+          "25-34": 0.09,
+          "35-44": 0.09,
+          "45-54": 0.13,
+          "55-65": 0.14
+        },
+        "gender": {
+          "male": 0.09,
+          "female": 0.12
+        },
+        "org_size": {
+          "fewer_than_10": 0.09,
+          "10_to_49": 0.11,
+          "50_to_99": 0.1,
+          "100_to_249": 0.11,
+          "250_to_499": 0.08,
+          "500_to_999": 0.08,
+          "1000_or_more": 0.13
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.1,
+          "automotive": 0.14,
+          "business_administration_support_services": 0.11,
+          "clean_technology": 0.15,
+          "technology": 0.06,
+          "construction": 0.09,
+          "education": 0.11,
+          "energy_utilities": 0.15,
+          "financial_services": 0.09,
+          "food_drink": 0.06,
+          "government": 0.19,
+          "healthcare_life_sciences": 0.14,
+          "leisure_sport_entertainment_recreation": 0.13,
+          "manufacturing_industrial": 0.06,
+          "marketing_services": 0.07,
+          "media_entertainment": 0.13,
+          "not_for_profit": 0.2,
+          "real_estate_property_services": 0.1,
+          "retail": 0.06,
+          "sports": 0.16,
+          "telecommunications": 0.12,
+          "transport_storage": 0.16,
+          "travel_hospitality_leisure": 0.12,
+          "wholesale_distribution": 0.09,
+          "other": 0.12
+        },
+        "job_level": {
+          "senior_executive": 0.05,
+          "senior_leader": 0.09,
+          "mid_level_leader": 0.11,
+          "first_level_supervisor": 0.09,
+          "individual_contributor": 0.18
+        },
+        "relationship_status": {
+          "single": 0.13,
+          "cohabiting": 0.14,
+          "married": 0.08,
+          "divorced_separated": 0.16,
+          "widowed": 0.21
+        },
+        "education": {
+          "secondary": 0.12,
+          "tertiary": 0.16,
+          "undergraduate": 0.12,
+          "postgraduate": 0.07,
+          "doctorate": 0.1
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

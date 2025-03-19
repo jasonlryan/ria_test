@@ -1,0 +1,108 @@
+{
+  "metadata": {
+    "topicId": "Ideal_Role",
+    "theme": "Talent Attraction & Retention",
+    "questionId": "Q13",
+    "year": 2025,
+    "keywords": [
+      "preferred employment type",
+      "ideal employment arrangement",
+      "preferred work mode",
+      "Ideal_Role"
+    ],
+    "canonicalQuestion": "What would your ideal role be?",
+    "subQuestion": "Freelance Full Time",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q13 - What would your ideal role be?",
+  "responses": [
+    {
+      "response": "Freelance Full Time",
+      "data": {
+        "region": {
+          "australia": 6,
+          "india": 4,
+          "brazil": 4,
+          "country_overall": 4.67
+        },
+        "age": {
+          "18-24": 5,
+          "25-34": 4,
+          "35-44": 4,
+          "45-54": 3,
+          "55-65": 4
+        },
+        "gender": {
+          "male": 16,
+          "female": 4
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Sigma",
+      "data": {
+        "region": {
+          "australia": 100,
+          "india": 100,
+          "brazil": 100,
+          "country_overall": 100
+        },
+        "age": {
+          "18-24": 100,
+          "25-34": 100,
+          "35-44": 100,
+          "45-54": 100,
+          "55-65": 100
+        },
+        "gender": {
+          "male": 100,
+          "female": 100
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

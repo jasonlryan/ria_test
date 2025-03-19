@@ -1,0 +1,85 @@
+{
+  "metadata": {
+    "topicId": "Leadership_Confidence",
+    "theme": "Leadership & Management",
+    "questionId": "Q9_2",
+    "year": 2025,
+    "keywords": [
+      "trust in leadership",
+      "executive confidence",
+      "leadership effectiveness",
+      "management trust",
+      "Leadership_Confidence",
+      "leadership trust",
+      "confidence in management",
+      "executive effectiveness",
+      "leadership quality",
+      "senior leadership"
+    ],
+    "canonicalQuestion": "How confident are you in your organization's leadership?",
+    "subQuestion": "I'm comfortable discussing my personal life with my colleagues",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q9 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "I'm comfortable discussing my personal life with my colleagues",
+      "data": {
+        "region": {
+          "australia": 61,
+          "india": 58,
+          "brazil": 52,
+          "country_overall": 57
+        },
+        "age": {
+          "18-24": 61,
+          "25-34": 60,
+          "35-44": 56,
+          "45-54": 50,
+          "55-65": 49
+        },
+        "gender": {
+          "male": 46,
+          "female": 59
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

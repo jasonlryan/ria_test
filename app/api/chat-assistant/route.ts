@@ -33,18 +33,57 @@ export async function POST(request: NextRequest) {
       contentLength: newMessage.content?.length
     });
 
+    // Log API key info (safely)
+    const openaiKey = process.env.OPENAI_API_KEY || '';
+    console.log("OpenAI API Key info:", {
+      defined: !!process.env.OPENAI_API_KEY,
+      length: openaiKey.length,
+      prefix: openaiKey.substring(0, 7),
+      suffix: openaiKey.substring(openaiKey.length - 4)
+    });
+
     // create OpenAI client
-    const openai = new OpenAI();
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY
+    });
 
     // if no thread id then create a new openai thread
     if (newMessage.threadId == null) {
       try {
+        console.log("Creating new thread...");
         const thread = await openai.beta.threads.create();
         newMessage.threadId = thread.id;
         console.log("Created new thread:", thread.id);
       } catch (threadError) {
         console.error("Error creating thread:", threadError);
-        return new Response(JSON.stringify({ error: "Failed to create thread" }), {
+        
+        // Get more detailed error information
+        let errorMessage = "Failed to create thread";
+        let errorDetails = {};
+        
+        if (threadError instanceof Error) {
+          errorMessage = threadError.message;
+          errorDetails = {
+            name: threadError.name,
+            stack: threadError.stack,
+          };
+          
+          // Check for OpenAI API error
+          if ('status' in threadError) {
+            errorDetails['status'] = threadError['status'];
+          }
+          if ('headers' in threadError) {
+            errorDetails['headers'] = threadError['headers'];
+          }
+          if ('error' in threadError) {
+            errorDetails['error'] = threadError['error'];
+          }
+        }
+        
+        return new Response(JSON.stringify({ 
+          error: errorMessage,
+          details: errorDetails
+        }), {
           status: 500,
           headers: { 
             "Content-Type": "application/json",

@@ -1,0 +1,129 @@
+{
+  "metadata": {
+    "topicId": "Learning_and_Development",
+    "theme": "Skills & Development",
+    "questionId": "Q18_5",
+    "year": 2024,
+    "keywords": [
+      "professional development",
+      "training opportunities",
+      "skill advancement",
+      "career growth",
+      "Learning_and_Development"
+    ],
+    "canonicalQuestion": "How would you rate your learning and development opportunities?",
+    "subQuestion": "Agree",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "18. Motivation - I feel motivated to do more than is required of me.",
+  "responses": [
+    {
+      "response": "Agree",
+      "data": {
+        "region": {
+          "united_kingdom": 0.63,
+          "united_states": 0.76,
+          "australia": 0.66,
+          "india": 0.85,
+          "brazil": 0.71,
+          "saudi_arabia_uae": 0.77,
+          "country_overall": 0.73
+        },
+        "age": {
+          "18-24": 0.65,
+          "25-34": 0.74,
+          "35-44": 0.76,
+          "45-54": 0.71,
+          "55-65": 0.68
+        },
+        "gender": {
+          "male": 0.74,
+          "female": 0.72
+        },
+        "org_size": {
+          "fewer_than_10": 0.68,
+          "10_to_49": 0.68,
+          "50_to_99": 0.68,
+          "100_to_249": 0.73,
+          "250_to_499": 0.78,
+          "500_to_999": 0.81,
+          "1000_or_more": 0.73
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.71,
+          "automotive": 0.67,
+          "business_administration_support_services": 0.72,
+          "clean_technology": 0.68,
+          "technology": 0.82,
+          "construction": 0.78,
+          "education": 0.73,
+          "energy_utilities": 0.7,
+          "financial_services": 0.77,
+          "food_drink": 0.71,
+          "government": 0.6,
+          "healthcare_life_sciences": 0.7,
+          "leisure_sport_entertainment_recreation": 0.66,
+          "manufacturing_industrial": 0.77,
+          "marketing_services": 0.8,
+          "media_entertainment": 0.67,
+          "not_for_profit": 0.66,
+          "real_estate_property_services": 0.74,
+          "retail": 0.71,
+          "sports": 0.55,
+          "telecommunications": 0.7,
+          "transport_storage": 0.63,
+          "travel_hospitality_leisure": 0.7,
+          "wholesale_distribution": 0.64,
+          "other": 0.67
+        },
+        "job_level": {
+          "senior_executive": 0.84,
+          "senior_leader": 0.77,
+          "mid_level_leader": 0.7,
+          "first_level_supervisor": 0.74,
+          "individual_contributor": 0.6
+        },
+        "relationship_status": {
+          "single": 0.66,
+          "cohabiting": 0.63,
+          "married": 0.78,
+          "divorced_separated": 0.65,
+          "widowed": 0.64
+        },
+        "education": {
+          "secondary": 0.63,
+          "tertiary": 0.64,
+          "undergraduate": 0.71,
+          "postgraduate": 0.81,
+          "doctorate": 0.78
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

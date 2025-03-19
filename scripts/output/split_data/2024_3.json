@@ -1,0 +1,1388 @@
+{
+  "metadata": {
+    "topicId": "Attrition_Factors",
+    "theme": "Talent Attraction & Retention",
+    "questionId": "Q3",
+    "year": 2024,
+    "keywords": [
+      "turnover factors",
+      "reasons employees leave",
+      "attrition drivers",
+      "Attrition_Factors"
+    ],
+    "canonicalQuestion": "What factors would make you leave your current company?",
+    "subQuestion": "Low salary / compensation",
+    "comparable": false,
+    "userMessage": "Year‑on‑year comparisons not available due to methodology changes.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "3. Factors to Leave Current Company",
+  "responses": [
+    {
+      "response": "Low salary / compensation",
+      "data": {
+        "region": {
+          "united_kingdom": 0.47,
+          "united_states": 0.37,
+          "australia": 0.52,
+          "india": 0.3,
+          "brazil": 0.44,
+          "saudi_arabia_uae": 0.41,
+          "country_overall": 0.42
+        },
+        "age": {
+          "18-24": 0.33,
+          "25-34": 0.37,
+          "35-44": 0.41,
+          "45-54": 0.5,
+          "55-65": 0.57
+        },
+        "gender": {
+          "male": 0.4,
+          "female": 0.44
+        },
+        "org_size": {
+          "fewer_than_10": 0.44,
+          "10_to_49": 0.43,
+          "50_to_99": 0.38,
+          "100_to_249": 0.42,
+          "250_to_499": 0.4,
+          "500_to_999": 0.35,
+          "1000_or_more": 0.48
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.26,
+          "automotive": 0.39,
+          "business_administration_support_services": 0.38,
+          "clean_technology": 0.22,
+          "technology": 0.36,
+          "construction": 0.38,
+          "education": 0.43,
+          "energy_utilities": 0.35,
+          "financial_services": 0.39,
+          "food_drink": 0.35,
+          "government": 0.55,
+          "healthcare_life_sciences": 0.47,
+          "leisure_sport_entertainment_recreation": 0.5,
+          "manufacturing_industrial": 0.42,
+          "marketing_services": 0.42,
+          "media_entertainment": 0.43,
+          "not_for_profit": 0.52,
+          "real_estate_property_services": 0.6,
+          "retail": 0.42,
+          "sports": 0.32,
+          "telecommunications": 0.44,
+          "transport_storage": 0.49,
+          "travel_hospitality_leisure": 0.5,
+          "wholesale_distribution": 0.54,
+          "other": 0.46
+        },
+        "job_level": {
+          "senior_executive": 0.33,
+          "senior_leader": 0.38,
+          "mid_level_leader": 0.43,
+          "first_level_supervisor": 0.43,
+          "individual_contributor": 0.54
+        },
+        "relationship_status": {
+          "single": 0.41,
+          "cohabiting": 0.51,
+          "married": 0.4,
+          "divorced_separated": 0.53,
+          "widowed": 0.4
+        },
+        "education": {
+          "secondary": 0.41,
+          "tertiary": 0.46,
+          "undergraduate": 0.47,
+          "postgraduate": 0.37,
+          "doctorate": 0.33
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Lack of career advancement opportunities",
+      "data": {
+        "region": {
+          "united_kingdom": 0.24,
+          "united_states": 0.26,
+          "australia": 0.29,
+          "india": 0.29,
+          "brazil": 0.37,
+          "saudi_arabia_uae": 0.3,
+          "country_overall": 0.29
+        },
+        "age": {
+          "18-24": 0.25,
+          "25-34": 0.28,
+          "35-44": 0.31,
+          "45-54": 0.29,
+          "55-65": 0.22
+        },
+        "gender": {
+          "male": 0.29,
+          "female": 0.28
+        },
+        "org_size": {
+          "fewer_than_10": 0.25,
+          "10_to_49": 0.26,
+          "50_to_99": 0.23,
+          "100_to_249": 0.28,
+          "250_to_499": 0.31,
+          "500_to_999": 0.3,
+          "1000_or_more": 0.32
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.24,
+          "automotive": 0.19,
+          "business_administration_support_services": 0.26,
+          "clean_technology": 0.17,
+          "technology": 0.3,
+          "construction": 0.27,
+          "education": 0.31,
+          "energy_utilities": 0.28,
+          "financial_services": 0.27,
+          "food_drink": 0.26,
+          "government": 0.29,
+          "healthcare_life_sciences": 0.33,
+          "leisure_sport_entertainment_recreation": 0.27,
+          "manufacturing_industrial": 0.28,
+          "marketing_services": 0.32,
+          "media_entertainment": 0.29,
+          "not_for_profit": 0.32,
+          "real_estate_property_services": 0.28,
+          "retail": 0.27,
+          "sports": 0.26,
+          "telecommunications": 0.3,
+          "transport_storage": 0.33,
+          "travel_hospitality_leisure": 0.27,
+          "wholesale_distribution": 0.32,
+          "other": 0.27
+        },
+        "job_level": {
+          "senior_executive": 0.28,
+          "senior_leader": 0.29,
+          "mid_level_leader": 0.28,
+          "first_level_supervisor": 0.3,
+          "individual_contributor": 0.3
+        },
+        "relationship_status": {
+          "single": 0.26,
+          "cohabiting": 0.28,
+          "married": 0.3,
+          "divorced_separated": 0.23,
+          "widowed": 0.25
+        },
+        "education": {
+          "secondary": 0.23,
+          "tertiary": 0.26,
+          "undergraduate": 0.29,
+          "postgraduate": 0.31,
+          "doctorate": 0.33
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Lack of job security (employment contract)",
+      "data": {
+        "region": {
+          "united_kingdom": 0.27,
+          "united_states": 0.26,
+          "australia": 0.27,
+          "india": 0.26,
+          "brazil": 0.25,
+          "saudi_arabia_uae": 0.31,
+          "country_overall": 0.27
+        },
+        "age": {
+          "18-24": 0.22,
+          "25-34": 0.26,
+          "35-44": 0.27,
+          "45-54": 0.29,
+          "55-65": 0.3
+        },
+        "gender": {
+          "male": 0.27,
+          "female": 0.26
+        },
+        "org_size": {
+          "fewer_than_10": 0.22,
+          "10_to_49": 0.25,
+          "50_to_99": 0.27,
+          "100_to_249": 0.29,
+          "250_to_499": 0.24,
+          "500_to_999": 0.28,
+          "1000_or_more": 0.28
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.23,
+          "automotive": 0.19,
+          "business_administration_support_services": 0.26,
+          "clean_technology": 0.32,
+          "technology": 0.27,
+          "construction": 0.25,
+          "education": 0.27,
+          "energy_utilities": 0.2,
+          "financial_services": 0.26,
+          "food_drink": 0.19,
+          "government": 0.3,
+          "healthcare_life_sciences": 0.28,
+          "leisure_sport_entertainment_recreation": 0.21,
+          "manufacturing_industrial": 0.28,
+          "marketing_services": 0.27,
+          "media_entertainment": 0.31,
+          "not_for_profit": 0.28,
+          "real_estate_property_services": 0.31,
+          "retail": 0.28,
+          "sports": 0.18,
+          "telecommunications": 0.31,
+          "transport_storage": 0.25,
+          "travel_hospitality_leisure": 0.22,
+          "wholesale_distribution": 0.29,
+          "other": 0.27
+        },
+        "job_level": {
+          "senior_executive": 0.24,
+          "senior_leader": 0.29,
+          "mid_level_leader": 0.27,
+          "first_level_supervisor": 0.25,
+          "individual_contributor": 0.29
+        },
+        "relationship_status": {
+          "single": 0.25,
+          "cohabiting": 0.26,
+          "married": 0.27,
+          "divorced_separated": 0.29,
+          "widowed": 0.23
+        },
+        "education": {
+          "secondary": 0.24,
+          "tertiary": 0.27,
+          "undergraduate": 0.28,
+          "postgraduate": 0.26,
+          "doctorate": 0.23
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Inflexible working hours policy",
+      "data": {
+        "region": {
+          "united_kingdom": 0.28,
+          "united_states": 0.26,
+          "australia": 0.29,
+          "india": 0.26,
+          "brazil": 0.22,
+          "saudi_arabia_uae": 0.23,
+          "country_overall": 0.26
+        },
+        "age": {
+          "18-24": 0.23,
+          "25-34": 0.24,
+          "35-44": 0.28,
+          "45-54": 0.28,
+          "55-65": 0.3
+        },
+        "gender": {
+          "male": 0.26,
+          "female": 0.27
+        },
+        "org_size": {
+          "fewer_than_10": 0.24,
+          "10_to_49": 0.24,
+          "50_to_99": 0.23,
+          "100_to_249": 0.27,
+          "250_to_499": 0.27,
+          "500_to_999": 0.29,
+          "1000_or_more": 0.29
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.19,
+          "automotive": 0.19,
+          "business_administration_support_services": 0.24,
+          "clean_technology": 0.13,
+          "technology": 0.27,
+          "construction": 0.27,
+          "education": 0.25,
+          "energy_utilities": 0.32,
+          "financial_services": 0.28,
+          "food_drink": 0.2,
+          "government": 0.32,
+          "healthcare_life_sciences": 0.27,
+          "leisure_sport_entertainment_recreation": 0.35,
+          "manufacturing_industrial": 0.27,
+          "marketing_services": 0.29,
+          "media_entertainment": 0.32,
+          "not_for_profit": 0.24,
+          "real_estate_property_services": 0.27,
+          "retail": 0.29,
+          "sports": 0.16,
+          "telecommunications": 0.29,
+          "transport_storage": 0.28,
+          "travel_hospitality_leisure": 0.23,
+          "wholesale_distribution": 0.26,
+          "other": 0.24
+        },
+        "job_level": {
+          "senior_executive": 0.27,
+          "senior_leader": 0.27,
+          "mid_level_leader": 0.27,
+          "first_level_supervisor": 0.26,
+          "individual_contributor": 0.27
+        },
+        "relationship_status": {
+          "single": 0.25,
+          "cohabiting": 0.26,
+          "married": 0.27,
+          "divorced_separated": 0.27,
+          "widowed": 0.27
+        },
+        "education": {
+          "secondary": 0.26,
+          "tertiary": 0.26,
+          "undergraduate": 0.27,
+          "postgraduate": 0.27,
+          "doctorate": 0.23
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Poor company culture or values",
+      "data": {
+        "region": {
+          "united_kingdom": 0.28,
+          "united_states": 0.24,
+          "australia": 0.32,
+          "india": 0.21,
+          "brazil": 0.21,
+          "saudi_arabia_uae": 0.28,
+          "country_overall": 0.26
+        },
+        "age": {
+          "18-24": 0.22,
+          "25-34": 0.24,
+          "35-44": 0.27,
+          "45-54": 0.27,
+          "55-65": 0.3
+        },
+        "gender": {
+          "male": 0.26,
+          "female": 0.26
+        },
+        "org_size": {
+          "fewer_than_10": 0.22,
+          "10_to_49": 0.25,
+          "50_to_99": 0.26,
+          "100_to_249": 0.26,
+          "250_to_499": 0.27,
+          "500_to_999": 0.24,
+          "1000_or_more": 0.29
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.17,
+          "automotive": 0.22,
+          "business_administration_support_services": 0.24,
+          "clean_technology": 0.14,
+          "technology": 0.24,
+          "construction": 0.25,
+          "education": 0.29,
+          "energy_utilities": 0.25,
+          "financial_services": 0.25,
+          "food_drink": 0.26,
+          "government": 0.29,
+          "healthcare_life_sciences": 0.29,
+          "leisure_sport_entertainment_recreation": 0.31,
+          "manufacturing_industrial": 0.3,
+          "marketing_services": 0.29,
+          "media_entertainment": 0.25,
+          "not_for_profit": 0.28,
+          "real_estate_property_services": 0.37,
+          "retail": 0.24,
+          "sports": 0.34,
+          "telecommunications": 0.21,
+          "transport_storage": 0.24,
+          "travel_hospitality_leisure": 0.37,
+          "wholesale_distribution": 0.24,
+          "other": 0.24
+        },
+        "job_level": {
+          "senior_executive": 0.23,
+          "senior_leader": 0.26,
+          "mid_level_leader": 0.27,
+          "first_level_supervisor": 0.27,
+          "individual_contributor": 0.28
+        },
+        "relationship_status": {
+          "single": 0.25,
+          "cohabiting": 0.29,
+          "married": 0.26,
+          "divorced_separated": 0.25,
+          "widowed": 0.26
+        },
+        "education": {
+          "secondary": 0.24,
+          "tertiary": 0.27,
+          "undergraduate": 0.28,
+          "postgraduate": 0.25,
+          "doctorate": 0.24
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Personal challenges with colleagues or manager",
+      "data": {
+        "region": {
+          "united_kingdom": 0.27,
+          "united_states": 0.26,
+          "australia": 0.28,
+          "india": 0.23,
+          "brazil": 0.14,
+          "saudi_arabia_uae": 0.21,
+          "country_overall": 0.23
+        },
+        "age": {
+          "18-24": 0.23,
+          "25-34": 0.24,
+          "35-44": 0.24,
+          "45-54": 0.24,
+          "55-65": 0.3
+        },
+        "gender": {
+          "male": 0.24,
+          "female": 0.25
+        },
+        "org_size": {
+          "fewer_than_10": 0.21,
+          "10_to_49": 0.23,
+          "50_to_99": 0.24,
+          "100_to_249": 0.25,
+          "250_to_499": 0.24,
+          "500_to_999": 0.25,
+          "1000_or_more": 0.27
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.24,
+          "automotive": 0.2,
+          "business_administration_support_services": 0.2,
+          "clean_technology": 0.29,
+          "technology": 0.23,
+          "construction": 0.3,
+          "education": 0.24,
+          "energy_utilities": 0.22,
+          "financial_services": 0.26,
+          "food_drink": 0.22,
+          "government": 0.26,
+          "healthcare_life_sciences": 0.3,
+          "leisure_sport_entertainment_recreation": 0.31,
+          "manufacturing_industrial": 0.24,
+          "marketing_services": 0.23,
+          "media_entertainment": 0.25,
+          "not_for_profit": 0.27,
+          "real_estate_property_services": 0.28,
+          "retail": 0.22,
+          "sports": 0.13,
+          "telecommunications": 0.2,
+          "transport_storage": 0.27,
+          "travel_hospitality_leisure": 0.28,
+          "wholesale_distribution": 0.2,
+          "other": 0.24
+        },
+        "job_level": {
+          "senior_executive": 0.24,
+          "senior_leader": 0.23,
+          "mid_level_leader": 0.26,
+          "first_level_supervisor": 0.24,
+          "individual_contributor": 0.25
+        },
+        "relationship_status": {
+          "single": 0.23,
+          "cohabiting": 0.25,
+          "married": 0.25,
+          "divorced_separated": 0.26,
+          "widowed": 0.23
+        },
+        "education": {
+          "secondary": 0.22,
+          "tertiary": 0.27,
+          "undergraduate": 0.25,
+          "postgraduate": 0.24,
+          "doctorate": 0.27
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Long or difficult commute to office",
+      "data": {
+        "region": {
+          "united_kingdom": 0.27,
+          "united_states": 0.24,
+          "australia": 0.28,
+          "india": 0.23,
+          "brazil": 0.22,
+          "saudi_arabia_uae": 0.2,
+          "country_overall": 0.24
+        },
+        "age": {
+          "18-24": 0.22,
+          "25-34": 0.23,
+          "35-44": 0.24,
+          "45-54": 0.26,
+          "55-65": 0.31
+        },
+        "gender": {
+          "male": 0.23,
+          "female": 0.26
+        },
+        "org_size": {
+          "fewer_than_10": 0.24,
+          "10_to_49": 0.22,
+          "50_to_99": 0.23,
+          "100_to_249": 0.24,
+          "250_to_499": 0.24,
+          "500_to_999": 0.24,
+          "1000_or_more": 0.27
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.19,
+          "automotive": 0.19,
+          "business_administration_support_services": 0.22,
+          "clean_technology": 0.21,
+          "technology": 0.22,
+          "construction": 0.24,
+          "education": 0.25,
+          "energy_utilities": 0.2,
+          "financial_services": 0.25,
+          "food_drink": 0.19,
+          "government": 0.34,
+          "healthcare_life_sciences": 0.31,
+          "leisure_sport_entertainment_recreation": 0.24,
+          "manufacturing_industrial": 0.23,
+          "marketing_services": 0.23,
+          "media_entertainment": 0.27,
+          "not_for_profit": 0.28,
+          "real_estate_property_services": 0.23,
+          "retail": 0.24,
+          "sports": 0.21,
+          "telecommunications": 0.2,
+          "transport_storage": 0.27,
+          "travel_hospitality_leisure": 0.22,
+          "wholesale_distribution": 0.33,
+          "other": 0.22
+        },
+        "job_level": {
+          "senior_executive": 0.23,
+          "senior_leader": 0.22,
+          "mid_level_leader": 0.26,
+          "first_level_supervisor": 0.25,
+          "individual_contributor": 0.27
+        },
+        "relationship_status": {
+          "single": 0.24,
+          "cohabiting": 0.25,
+          "married": 0.24,
+          "divorced_separated": 0.3,
+          "widowed": 0.21
+        },
+        "education": {
+          "secondary": 0.24,
+          "tertiary": 0.27,
+          "undergraduate": 0.25,
+          "postgraduate": 0.24,
+          "doctorate": 0.23
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Full-time in-office attendance is being mandated",
+      "data": {
+        "region": {
+          "united_kingdom": 0.21,
+          "united_states": 0.24,
+          "australia": 0.23,
+          "india": 0.26,
+          "brazil": 0.16,
+          "saudi_arabia_uae": 0.16,
+          "country_overall": 0.21
+        },
+        "age": {
+          "18-24": 0.21,
+          "25-34": 0.23,
+          "35-44": 0.25,
+          "45-54": 0.2,
+          "55-65": 0.17
+        },
+        "gender": {
+          "male": 0.22,
+          "female": 0.22
+        },
+        "org_size": {
+          "fewer_than_10": 0.17,
+          "10_to_49": 0.19,
+          "50_to_99": 0.19,
+          "100_to_249": 0.2,
+          "250_to_499": 0.25,
+          "500_to_999": 0.26,
+          "1000_or_more": 0.26
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.18,
+          "automotive": 0.19,
+          "business_administration_support_services": 0.24,
+          "clean_technology": 0.2,
+          "technology": 0.25,
+          "construction": 0.2,
+          "education": 0.22,
+          "energy_utilities": 0.24,
+          "financial_services": 0.27,
+          "food_drink": 0.19,
+          "government": 0.25,
+          "healthcare_life_sciences": 0.18,
+          "leisure_sport_entertainment_recreation": 0.15,
+          "manufacturing_industrial": 0.24,
+          "marketing_services": 0.24,
+          "media_entertainment": 0.23,
+          "not_for_profit": 0.22,
+          "real_estate_property_services": 0.19,
+          "retail": 0.19,
+          "sports": 0.26,
+          "telecommunications": 0.22,
+          "transport_storage": 0.2,
+          "travel_hospitality_leisure": 0.14,
+          "wholesale_distribution": 0.15,
+          "other": 0.22
+        },
+        "job_level": {
+          "senior_executive": 0.25,
+          "senior_leader": 0.22,
+          "mid_level_leader": 0.21,
+          "first_level_supervisor": 0.22,
+          "individual_contributor": 0.2
+        },
+        "relationship_status": {
+          "single": 0.21,
+          "cohabiting": 0.2,
+          "married": 0.23,
+          "divorced_separated": 0.2,
+          "widowed": 0.19
+        },
+        "education": {
+          "secondary": 0.19,
+          "tertiary": 0.17,
+          "undergraduate": 0.21,
+          "postgraduate": 0.25,
+          "doctorate": 0.31
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Inadequate learning and development opportunities",
+      "data": {
+        "region": {
+          "united_kingdom": 0.18,
+          "united_states": 0.22,
+          "australia": 0.2,
+          "india": 0.22,
+          "brazil": 0.2,
+          "saudi_arabia_uae": 0.24,
+          "country_overall": 0.21
+        },
+        "age": {
+          "18-24": 0.21,
+          "25-34": 0.22,
+          "35-44": 0.23,
+          "45-54": 0.18,
+          "55-65": 0.14
+        },
+        "gender": {
+          "male": 0.22,
+          "female": 0.19
+        },
+        "org_size": {
+          "fewer_than_10": 0.15,
+          "10_to_49": 0.18,
+          "50_to_99": 0.2,
+          "100_to_249": 0.22,
+          "250_to_499": 0.21,
+          "500_to_999": 0.26,
+          "1000_or_more": 0.21
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.19,
+          "automotive": 0.21,
+          "business_administration_support_services": 0.2,
+          "clean_technology": 0.2,
+          "technology": 0.23,
+          "construction": 0.24,
+          "education": 0.21,
+          "energy_utilities": 0.17,
+          "financial_services": 0.22,
+          "food_drink": 0.16,
+          "government": 0.15,
+          "healthcare_life_sciences": 0.2,
+          "leisure_sport_entertainment_recreation": 0.27,
+          "manufacturing_industrial": 0.21,
+          "marketing_services": 0.2,
+          "media_entertainment": 0.16,
+          "not_for_profit": 0.2,
+          "real_estate_property_services": 0.2,
+          "retail": 0.2,
+          "sports": 0.11,
+          "telecommunications": 0.22,
+          "transport_storage": 0.15,
+          "travel_hospitality_leisure": 0.2,
+          "wholesale_distribution": 0.15,
+          "other": 0.2
+        },
+        "job_level": {
+          "senior_executive": 0.24,
+          "senior_leader": 0.23,
+          "mid_level_leader": 0.2,
+          "first_level_supervisor": 0.21,
+          "individual_contributor": 0.16
+        },
+        "relationship_status": {
+          "single": 0.2,
+          "cohabiting": 0.18,
+          "married": 0.22,
+          "divorced_separated": 0.14,
+          "widowed": 0.19
+        },
+        "education": {
+          "secondary": 0.15,
+          "tertiary": 0.18,
+          "undergraduate": 0.21,
+          "postgraduate": 0.23,
+          "doctorate": 0.24
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Inadequate non-financial benefits",
+      "data": {
+        "region": {
+          "united_kingdom": 0.16,
+          "united_states": 0.2,
+          "australia": 0.16,
+          "india": 0.17,
+          "brazil": 0.27,
+          "saudi_arabia_uae": 0.23,
+          "country_overall": 0.2
+        },
+        "age": {
+          "18-24": 0.18,
+          "25-34": 0.19,
+          "35-44": 0.2,
+          "45-54": 0.18,
+          "55-65": 0.17
+        },
+        "gender": {
+          "male": 0.2,
+          "female": 0.18
+        },
+        "org_size": {
+          "fewer_than_10": 0.16,
+          "10_to_49": 0.18,
+          "50_to_99": 0.19,
+          "100_to_249": 0.2,
+          "250_to_499": 0.19,
+          "500_to_999": 0.2,
+          "1000_or_more": 0.19
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.13,
+          "automotive": 0.19,
+          "business_administration_support_services": 0.19,
+          "clean_technology": 0.2,
+          "technology": 0.21,
+          "construction": 0.21,
+          "education": 0.21,
+          "energy_utilities": 0.19,
+          "financial_services": 0.16,
+          "food_drink": 0.15,
+          "government": 0.18,
+          "healthcare_life_sciences": 0.15,
+          "leisure_sport_entertainment_recreation": 0.18,
+          "manufacturing_industrial": 0.17,
+          "marketing_services": 0.21,
+          "media_entertainment": 0.14,
+          "not_for_profit": 0.23,
+          "real_estate_property_services": 0.23,
+          "retail": 0.17,
+          "sports": 0.18,
+          "telecommunications": 0.22,
+          "transport_storage": 0.16,
+          "travel_hospitality_leisure": 0.14,
+          "wholesale_distribution": 0.24,
+          "other": 0.2
+        },
+        "job_level": {
+          "senior_executive": 0.21,
+          "senior_leader": 0.18,
+          "mid_level_leader": 0.19,
+          "first_level_supervisor": 0.18,
+          "individual_contributor": 0.17
+        },
+        "relationship_status": {
+          "single": 0.17,
+          "cohabiting": 0.16,
+          "married": 0.2,
+          "divorced_separated": 0.17,
+          "widowed": 0.22
+        },
+        "education": {
+          "secondary": 0.16,
+          "tertiary": 0.17,
+          "undergraduate": 0.19,
+          "postgraduate": 0.21,
+          "doctorate": 0.17
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "High number of recent layoffs",
+      "data": {
+        "region": {
+          "united_kingdom": 0.15,
+          "united_states": 0.22,
+          "australia": 0.16,
+          "india": 0.21,
+          "brazil": 0.17,
+          "saudi_arabia_uae": 0.22,
+          "country_overall": 0.19
+        },
+        "age": {
+          "18-24": 0.2,
+          "25-34": 0.2,
+          "35-44": 0.2,
+          "45-54": 0.16,
+          "55-65": 0.14
+        },
+        "gender": {
+          "male": 0.2,
+          "female": 0.18
+        },
+        "org_size": {
+          "fewer_than_10": 0.13,
+          "10_to_49": 0.18,
+          "50_to_99": 0.17,
+          "100_to_249": 0.19,
+          "250_to_499": 0.21,
+          "500_to_999": 0.24,
+          "1000_or_more": 0.18
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.19,
+          "automotive": 0.14,
+          "business_administration_support_services": 0.18,
+          "clean_technology": 0.17,
+          "technology": 0.22,
+          "construction": 0.21,
+          "education": 0.19,
+          "energy_utilities": 0.19,
+          "financial_services": 0.21,
+          "food_drink": 0.23,
+          "government": 0.13,
+          "healthcare_life_sciences": 0.19,
+          "leisure_sport_entertainment_recreation": 0.18,
+          "manufacturing_industrial": 0.17,
+          "marketing_services": 0.17,
+          "media_entertainment": 0.11,
+          "not_for_profit": 0.12,
+          "real_estate_property_services": 0.13,
+          "retail": 0.18,
+          "sports": 0.18,
+          "telecommunications": 0.18,
+          "transport_storage": 0.18,
+          "travel_hospitality_leisure": 0.16,
+          "wholesale_distribution": 0.17,
+          "other": 0.18
+        },
+        "job_level": {
+          "senior_executive": 0.21,
+          "senior_leader": 0.18,
+          "mid_level_leader": 0.18,
+          "first_level_supervisor": 0.21,
+          "individual_contributor": 0.16
+        },
+        "relationship_status": {
+          "single": 0.18,
+          "cohabiting": 0.17,
+          "married": 0.2,
+          "divorced_separated": 0.17,
+          "widowed": 0.11
+        },
+        "education": {
+          "secondary": 0.18,
+          "tertiary": 0.14,
+          "undergraduate": 0.18,
+          "postgraduate": 0.21,
+          "doctorate": 0.2
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Employer will relocate to a different area",
+      "data": {
+        "region": {
+          "united_kingdom": 0.18,
+          "united_states": 0.21,
+          "australia": 0.18,
+          "india": 0.22,
+          "brazil": 0.1,
+          "saudi_arabia_uae": 0.18,
+          "country_overall": 0.18
+        },
+        "age": {
+          "18-24": 0.19,
+          "25-34": 0.18,
+          "35-44": 0.18,
+          "45-54": 0.18,
+          "55-65": 0.21
+        },
+        "gender": {
+          "male": 0.2,
+          "female": 0.17
+        },
+        "org_size": {
+          "fewer_than_10": 0.13,
+          "10_to_49": 0.17,
+          "50_to_99": 0.2,
+          "100_to_249": 0.19,
+          "250_to_499": 0.2,
+          "500_to_999": 0.22,
+          "1000_or_more": 0.18
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.11,
+          "automotive": 0.15,
+          "business_administration_support_services": 0.17,
+          "clean_technology": 0.27,
+          "technology": 0.2,
+          "construction": 0.22,
+          "education": 0.17,
+          "energy_utilities": 0.19,
+          "financial_services": 0.2,
+          "food_drink": 0.21,
+          "government": 0.17,
+          "healthcare_life_sciences": 0.19,
+          "leisure_sport_entertainment_recreation": 0.21,
+          "manufacturing_industrial": 0.25,
+          "marketing_services": 0.16,
+          "media_entertainment": 0.11,
+          "not_for_profit": 0.14,
+          "real_estate_property_services": 0.16,
+          "retail": 0.17,
+          "sports": 0.16,
+          "telecommunications": 0.17,
+          "transport_storage": 0.15,
+          "travel_hospitality_leisure": 0.16,
+          "wholesale_distribution": 0.2,
+          "other": 0.18
+        },
+        "job_level": {
+          "senior_executive": 0.23,
+          "senior_leader": 0.2,
+          "mid_level_leader": 0.17,
+          "first_level_supervisor": 0.18,
+          "individual_contributor": 0.15
+        },
+        "relationship_status": {
+          "single": 0.16,
+          "cohabiting": 0.16,
+          "married": 0.2,
+          "divorced_separated": 0.17,
+          "widowed": 0.28
+        },
+        "education": {
+          "secondary": 0.17,
+          "tertiary": 0.16,
+          "undergraduate": 0.17,
+          "postgraduate": 0.21,
+          "doctorate": 0.2
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Poor sustainability policies and practices within the company",
+      "data": {
+        "region": {
+          "united_kingdom": 0.15,
+          "united_states": 0.21,
+          "australia": 0.14,
+          "india": 0.22,
+          "brazil": 0.11,
+          "saudi_arabia_uae": 0.22,
+          "country_overall": 0.18
+        },
+        "age": {
+          "18-24": 0.2,
+          "25-34": 0.19,
+          "35-44": 0.19,
+          "45-54": 0.14,
+          "55-65": 0.09
+        },
+        "gender": {
+          "male": 0.2,
+          "female": 0.15
+        },
+        "org_size": {
+          "fewer_than_10": 0.1,
+          "10_to_49": 0.15,
+          "50_to_99": 0.18,
+          "100_to_249": 0.18,
+          "250_to_499": 0.22,
+          "500_to_999": 0.22,
+          "1000_or_more": 0.17
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.2,
+          "automotive": 0.18,
+          "business_administration_support_services": 0.18,
+          "clean_technology": 0.18,
+          "technology": 0.21,
+          "construction": 0.23,
+          "education": 0.18,
+          "energy_utilities": 0.17,
+          "financial_services": 0.18,
+          "food_drink": 0.19,
+          "government": 0.12,
+          "healthcare_life_sciences": 0.16,
+          "leisure_sport_entertainment_recreation": 0.11,
+          "manufacturing_industrial": 0.16,
+          "marketing_services": 0.15,
+          "media_entertainment": 0.06,
+          "not_for_profit": 0.13,
+          "real_estate_property_services": 0.2,
+          "retail": 0.17,
+          "sports": 0.11,
+          "telecommunications": 0.18,
+          "transport_storage": 0.18,
+          "travel_hospitality_leisure": 0.16,
+          "wholesale_distribution": 0.16,
+          "other": 0.17
+        },
+        "job_level": {
+          "senior_executive": 0.24,
+          "senior_leader": 0.19,
+          "mid_level_leader": 0.18,
+          "first_level_supervisor": 0.18,
+          "individual_contributor": 0.12
+        },
+        "relationship_status": {
+          "single": 0.17,
+          "cohabiting": 0.15,
+          "married": 0.19,
+          "divorced_separated": 0.09,
+          "widowed": 0.12
+        },
+        "education": {
+          "secondary": 0.13,
+          "tertiary": 0.13,
+          "undergraduate": 0.16,
+          "postgraduate": 0.22,
+          "doctorate": 0.25
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Lack of diversity and inclusion within the company",
+      "data": {
+        "region": {
+          "united_kingdom": 0.14,
+          "united_states": 0.21,
+          "australia": 0.12,
+          "india": 0.21,
+          "brazil": 0.16,
+          "saudi_arabia_uae": 0.21,
+          "country_overall": 0.18
+        },
+        "age": {
+          "18-24": 0.2,
+          "25-34": 0.19,
+          "35-44": 0.19,
+          "45-54": 0.13,
+          "55-65": 0.11
+        },
+        "gender": {
+          "male": 0.19,
+          "female": 0.16
+        },
+        "org_size": {
+          "fewer_than_10": 0.13,
+          "10_to_49": 0.15,
+          "50_to_99": 0.17,
+          "100_to_249": 0.17,
+          "250_to_499": 0.21,
+          "500_to_999": 0.21,
+          "1000_or_more": 0.17
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.16,
+          "automotive": 0.19,
+          "business_administration_support_services": 0.16,
+          "clean_technology": 0.18,
+          "technology": 0.21,
+          "construction": 0.21,
+          "education": 0.17,
+          "energy_utilities": 0.18,
+          "financial_services": 0.18,
+          "food_drink": 0.19,
+          "government": 0.13,
+          "healthcare_life_sciences": 0.17,
+          "leisure_sport_entertainment_recreation": 0.1,
+          "manufacturing_industrial": 0.17,
+          "marketing_services": 0.16,
+          "media_entertainment": 0.07,
+          "not_for_profit": 0.09,
+          "real_estate_property_services": 0.14,
+          "retail": 0.16,
+          "sports": 0.18,
+          "telecommunications": 0.17,
+          "transport_storage": 0.2,
+          "travel_hospitality_leisure": 0.16,
+          "wholesale_distribution": 0.17,
+          "other": 0.15
+        },
+        "job_level": {
+          "senior_executive": 0.23,
+          "senior_leader": 0.19,
+          "mid_level_leader": 0.16,
+          "first_level_supervisor": 0.17,
+          "individual_contributor": 0.12
+        },
+        "relationship_status": {
+          "single": 0.17,
+          "cohabiting": 0.13,
+          "married": 0.19,
+          "divorced_separated": 0.1,
+          "widowed": 0.1
+        },
+        "education": {
+          "secondary": 0.14,
+          "tertiary": 0.11,
+          "undergraduate": 0.15,
+          "postgraduate": 0.21,
+          "doctorate": 0.25
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "No allowance for full-time remote working",
+      "data": {
+        "region": {
+          "united_kingdom": 0.17,
+          "united_states": 0.19,
+          "australia": 0.15,
+          "india": 0.2,
+          "brazil": 0.15,
+          "saudi_arabia_uae": 0.16,
+          "country_overall": 0.17
+        },
+        "age": {
+          "18-24": 0.21,
+          "25-34": 0.18,
+          "35-44": 0.17,
+          "45-54": 0.15,
+          "55-65": 0.14
+        },
+        "gender": {
+          "male": 0.17,
+          "female": 0.17
+        },
+        "org_size": {
+          "fewer_than_10": 0.17,
+          "10_to_49": 0.17,
+          "50_to_99": 0.16,
+          "100_to_249": 0.18,
+          "250_to_499": 0.15,
+          "500_to_999": 0.19,
+          "1000_or_more": 0.18
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.2,
+          "automotive": 0.17,
+          "business_administration_support_services": 0.18,
+          "clean_technology": 0.17,
+          "technology": 0.19,
+          "construction": 0.16,
+          "education": 0.14,
+          "energy_utilities": 0.24,
+          "financial_services": 0.17,
+          "food_drink": 0.17,
+          "government": 0.17,
+          "healthcare_life_sciences": 0.14,
+          "leisure_sport_entertainment_recreation": 0.15,
+          "manufacturing_industrial": 0.12,
+          "marketing_services": 0.22,
+          "media_entertainment": 0.13,
+          "not_for_profit": 0.09,
+          "real_estate_property_services": 0.12,
+          "retail": 0.16,
+          "sports": 0.11,
+          "telecommunications": 0.24,
+          "transport_storage": 0.23,
+          "travel_hospitality_leisure": 0.22,
+          "wholesale_distribution": 0.12,
+          "other": 0.19
+        },
+        "job_level": {
+          "senior_executive": 0.18,
+          "senior_leader": 0.18,
+          "mid_level_leader": 0.18,
+          "first_level_supervisor": 0.17,
+          "individual_contributor": 0.16
+        },
+        "relationship_status": {
+          "single": 0.19,
+          "cohabiting": 0.14,
+          "married": 0.17,
+          "divorced_separated": 0.14,
+          "widowed": 0.25
+        },
+        "education": {
+          "secondary": 0.15,
+          "tertiary": 0.17,
+          "undergraduate": 0.17,
+          "postgraduate": 0.18,
+          "doctorate": 0.2
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Lack of affordable childcare during working hours",
+      "data": {
+        "region": {
+          "united_kingdom": 0.13,
+          "united_states": 0.16,
+          "australia": 0.09,
+          "india": 0.17,
+          "brazil": 0.08,
+          "saudi_arabia_uae": 0.13,
+          "country_overall": 0.13
+        },
+        "age": {
+          "18-24": 0.15,
+          "25-34": 0.15,
+          "35-44": 0.15,
+          "45-54": 0.08,
+          "55-65": 0.04
+        },
+        "gender": {
+          "male": 0.13,
+          "female": 0.13
+        },
+        "org_size": {
+          "fewer_than_10": 0.07,
+          "10_to_49": 0.12,
+          "50_to_99": 0.14,
+          "100_to_249": 0.14,
+          "250_to_499": 0.17,
+          "500_to_999": 0.17,
+          "1000_or_more": 0.11
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.15,
+          "automotive": 0.19,
+          "business_administration_support_services": 0.15,
+          "clean_technology": 0.16,
+          "technology": 0.16,
+          "construction": 0.13,
+          "education": 0.12,
+          "energy_utilities": 0.19,
+          "financial_services": 0.14,
+          "food_drink": 0.11,
+          "government": 0.08,
+          "healthcare_life_sciences": 0.12,
+          "leisure_sport_entertainment_recreation": 0.05,
+          "manufacturing_industrial": 0.13,
+          "marketing_services": 0.15,
+          "media_entertainment": 0.08,
+          "not_for_profit": 0.11,
+          "real_estate_property_services": 0.05,
+          "retail": 0.14,
+          "sports": 0.16,
+          "telecommunications": 0.11,
+          "transport_storage": 0.17,
+          "travel_hospitality_leisure": 0.11,
+          "wholesale_distribution": 0.13,
+          "other": 0.11
+        },
+        "job_level": {
+          "senior_executive": 0.19,
+          "senior_leader": 0.14,
+          "mid_level_leader": 0.14,
+          "first_level_supervisor": 0.13,
+          "individual_contributor": 0.07
+        },
+        "relationship_status": {
+          "single": 0.12,
+          "cohabiting": 0.11,
+          "married": 0.15,
+          "divorced_separated": 0.06,
+          "widowed": 0.1
+        },
+        "education": {
+          "secondary": 0.11,
+          "tertiary": 0.08,
+          "undergraduate": 0.12,
+          "postgraduate": 0.16,
+          "doctorate": 0.17
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

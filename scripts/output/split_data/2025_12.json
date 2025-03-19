@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "topicId": "Intention_to_Leave",
+    "theme": "Talent Attraction & Retention",
+    "questionId": "Q12",
+    "year": 2025,
+    "keywords": [
+      "quit intentions",
+      "planning to leave",
+      "short-term turnover",
+      "resignation plans",
+      "Intention_to_Leave"
+    ],
+    "canonicalQuestion": "Are you planning on leaving your current role in the next three months?",
+    "subQuestion": "Sigma",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q12 - Are you planning on leaving your current role in the next three months?",
+  "responses": [
+    {
+      "response": "Sigma",
+      "data": {
+        "region": {
+          "australia": 100,
+          "india": 100,
+          "brazil": 100,
+          "country_overall": 100
+        },
+        "age": {
+          "18-24": 100,
+          "25-34": 100,
+          "35-44": 100,
+          "45-54": 100,
+          "55-65": 100
+        },
+        "gender": {
+          "male": 100,
+          "female": 100
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

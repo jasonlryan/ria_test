@@ -1,0 +1,79 @@
+{
+  "metadata": {
+    "topicId": "AI_Readiness",
+    "theme": "Skills & Development",
+    "questionId": "Q5_6",
+    "year": 2025,
+    "keywords": [
+      "AI readiness",
+      "AI training",
+      "effective use of AI",
+      "AI adoption",
+      "AI competence",
+      "proficiency with AI",
+      "AI tool training",
+      "AI integration",
+      "readiness for AI",
+      "experimentation with AI"
+    ],
+    "canonicalQuestion": "How ready are you to adopt and use AI in your role?",
+    "subQuestion": "My organization encourages experimentation with new technologies",
+    "comparable": false,
+    "userMessage": "Year‑on‑year comparisons not available due to new question additions in 2025.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q5 - To what extent do you agree with the following statements about AI in the workplace and skills.",
+  "responses": [
+    {
+      "response": "My organization encourages experimentation with new technologies",
+      "data": {
+        "region": {
+          "australia": 64,
+          "india": 51,
+          "brazil": 78,
+          "country_overall": 64.33
+        },
+        "age": {
+          "18-24": 68,
+          "25-34": 66,
+          "35-44": 57,
+          "45-54": 45,
+          "55-65": 51
+        },
+        "gender": {
+          "male": 53,
+          "female": 65
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

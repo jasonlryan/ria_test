@@ -1,0 +1,85 @@
+{
+  "metadata": {
+    "topicId": "DEI",
+    "theme": "Workplace Dynamics",
+    "questionId": "Q8_8",
+    "year": 2025,
+    "keywords": [
+      "diversity initiatives",
+      "equity programs",
+      "inclusion efforts",
+      "workplace diversity",
+      "DEI commitment",
+      "corporate social responsibility",
+      "sustainability goals",
+      "DEI",
+      "diversity",
+      "equity"
+    ],
+    "canonicalQuestion": "How committed is your organization to diversity, equity, and inclusion?",
+    "subQuestion": "I frequently doubt my ability to fulfill my work responsibilities.",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q8 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "I frequently doubt my ability to fulfill my work responsibilities.",
+      "data": {
+        "region": {
+          "australia": 47,
+          "india": 30,
+          "brazil": 39,
+          "country_overall": 38.67
+        },
+        "age": {
+          "18-24": 43,
+          "25-34": 38,
+          "35-44": 33,
+          "45-54": 20,
+          "55-65": 17
+        },
+        "gender": {
+          "male": 29,
+          "female": 38
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

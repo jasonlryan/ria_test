@@ -1,0 +1,103 @@
+{
+  "metadata": {
+    "topicId": "Current_and_Preferred",
+    "theme": "Workplace",
+    "questionId": "Q4",
+    "year": 2025,
+    "keywords": [
+      "work location",
+      "office preferences",
+      "remote vs in-office",
+      "workplace location",
+      "Current_and_Preferred"
+    ],
+    "canonicalQuestion": "What is your current and preferred work location?",
+    "subQuestion": "Current place of work - Sigma",
+    "comparable": false,
+    "userMessage": "New in 2025; no year‑on‑year comparison.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q4 - Please confirm the location of your current place of work, and also where this would ideally be for you?",
+  "responses": [
+    {
+      "response": "Current place of work - Sigma",
+      "data": {
+        "region": {
+          "australia": 100,
+          "india": 100,
+          "brazil": 100,
+          "country_overall": 100
+        },
+        "age": {
+          "18-24": 100,
+          "25-34": 100,
+          "35-44": 100,
+          "45-54": 100,
+          "55-65": 100
+        },
+        "gender": {
+          "male": 100,
+          "female": 100
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Ideal place of work - Sigma",
+      "data": {
+        "region": {
+          "australia": 100,
+          "india": 100,
+          "brazil": 100,
+          "country_overall": 100
+        },
+        "age": {
+          "18-24": 100,
+          "25-34": 100,
+          "35-44": 100,
+          "45-54": 100,
+          "55-65": 100
+        },
+        "gender": {
+          "male": 100,
+          "female": 100
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

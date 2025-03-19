@@ -1,0 +1,202 @@
+[
+  {
+    "file": "2024_1.json",
+    "question": "1. Most important factors when looking for a new Job",
+    "topicId": "Attraction_Factors"
+  },
+  {
+    "file": "2024_2.json",
+    "question": "2. Factors to Stay at Current Company",
+    "topicId": "Retention_Factors"
+  },
+  {
+    "file": "2024_3.json",
+    "question": "3. Factors to Leave Current Company",
+    "topicId": "Attrition_Factors"
+  },
+  {
+    "file": "2024_9.json",
+    "question": "9. Are you planning on leaving your current role in the next three months?",
+    "topicId": "Intention_to_Leave"
+  },
+  {
+    "file": "2024_4_8.json",
+    "question": "4_1. The values a company promotes are extremely important to me",
+    "topicId": "Intention_to_Leave"
+  },
+  {
+    "file": "2024_10.json",
+    "question": "10. What would your ideal role be?",
+    "topicId": "Ideal_Role"
+  },
+  {
+    "file": "2024_4_2.json",
+    "question": "4_1. The values a company promotes are extremely important to me",
+    "topicId": "Work_Life_Flexibility"
+  },
+  {
+    "file": "2024_4_5.json",
+    "question": "4_1. The values a company promotes are extremely important to me",
+    "topicId": "Work_Life_Flexibility"
+  },
+  {
+    "file": "2024_4_1.json",
+    "question": "4_1. The values a company promotes are extremely important to me",
+    "topicId": "Culture_and_Values"
+  },
+  {
+    "file": "2024_4_3.json",
+    "question": "4_1. The values a company promotes are extremely important to me",
+    "topicId": "Culture_and_Values"
+  },
+  {
+    "file": "2024_4_12.json",
+    "question": "4_1. The values a company promotes are extremely important to me",
+    "topicId": "Culture_and_Values"
+  },
+  {
+    "file": "2024_4_13.json",
+    "question": "4_1. The values a company promotes are extremely important to me",
+    "topicId": "Culture_and_Values"
+  },
+  {
+    "file": "2024_4_14.json",
+    "question": "4_1. The values a company promotes are extremely important to me",
+    "topicId": "Culture_and_Values"
+  },
+  {
+    "file": "2024_4_15.json",
+    "question": "4_1. The values a company promotes are extremely important to me",
+    "topicId": "Culture_and_Values"
+  },
+  {
+    "file": "2024_6_2.json",
+    "question": "6_1. To what extent is your company committed to Diversity, Equity & Inclusion (DE&I) in the workpla...",
+    "topicId": "DEI"
+  },
+  {
+    "file": "2024_18_8.json",
+    "question": "18. Motivation - I feel motivated to do more than is required of me.",
+    "topicId": "Culture_and_Values"
+  },
+  {
+    "file": "2024_5_3.json",
+    "question": "5_1. I feel that I can be my full self around my co-workers.",
+    "topicId": "Employee_Wellbeing"
+  },
+  {
+    "file": "2024_5_5.json",
+    "question": "5_1. I feel that I can be my full self around my co-workers.",
+    "topicId": "Employee_Wellbeing"
+  },
+  {
+    "file": "2024_5_1.json",
+    "question": "5_1. I feel that I can be my full self around my co-workers.",
+    "topicId": "Communication_and_Connection"
+  },
+  {
+    "file": "2024_5_2.json",
+    "question": "5_1. I feel that I can be my full self around my co-workers.",
+    "topicId": "Communication_and_Connection"
+  },
+  {
+    "file": "2024_5_4.json",
+    "question": "5_1. I feel that I can be my full self around my co-workers.",
+    "topicId": "Communication_and_Connection"
+  },
+  {
+    "file": "2024_4_16.json",
+    "question": "4_1. The values a company promotes are extremely important to me",
+    "topicId": "Motivation_and_Fulfillment"
+  },
+  {
+    "file": "2024_18_1.json",
+    "question": "18. Motivation - I feel motivated to do more than is required of me.",
+    "topicId": "Motivation_and_Fulfillment"
+  },
+  {
+    "file": "2024_18_2.json",
+    "question": "18. Motivation - I feel motivated to do more than is required of me.",
+    "topicId": "Motivation_and_Fulfillment"
+  },
+  {
+    "file": "2024_18_3.json",
+    "question": "18. Motivation - I feel motivated to do more than is required of me.",
+    "topicId": "Motivation_and_Fulfillment"
+  },
+  {
+    "file": "2024_4_6.json",
+    "question": "4_1. The values a company promotes are extremely important to me",
+    "topicId": "Learning_and_Development"
+  },
+  {
+    "file": "2024_4_7.json",
+    "question": "4_1. The values a company promotes are extremely important to me",
+    "topicId": "Learning_and_Development"
+  },
+  {
+    "file": "2024_18_5.json",
+    "question": "18. Motivation - I feel motivated to do more than is required of me.",
+    "topicId": "Learning_and_Development"
+  },
+  {
+    "file": "2024_18_4.json",
+    "question": "18. Motivation - I feel motivated to do more than is required of me.",
+    "topicId": "Skills_Utilization"
+  },
+  {
+    "file": "2024_4_17.json",
+    "question": "4_1. The values a company promotes are extremely important to me",
+    "topicId": "Skills_Utilization"
+  },
+  {
+    "file": "2024_4_18.json",
+    "question": "4_1. The values a company promotes are extremely important to me",
+    "topicId": "Skills_Utilization"
+  },
+  {
+    "file": "2024_4_9.json",
+    "question": "4_1. The values a company promotes are extremely important to me",
+    "topicId": "AI_Attitudes"
+  },
+  {
+    "file": "2024_4_10.json",
+    "question": "4_1. The values a company promotes are extremely important to me",
+    "topicId": "AI_Attitudes"
+  },
+  {
+    "file": "2024_4_11.json",
+    "question": "4_1. The values a company promotes are extremely important to me",
+    "topicId": "AI_Attitudes"
+  },
+  {
+    "file": "2024_7.json",
+    "question": "7. How confident are you in the senior leadership in your company?",
+    "topicId": "Leadership_Confidence"
+  },
+  {
+    "file": "2024_18_6.json",
+    "question": "18. Motivation - I feel motivated to do more than is required of me.",
+    "topicId": "Leadership_Confidence"
+  },
+  {
+    "file": "2024_18_7.json",
+    "question": "18. Motivation - I feel motivated to do more than is required of me.",
+    "topicId": "Organizational_Adaptation"
+  },
+  {
+    "file": "2024_6_1.json",
+    "question": "6_1. To what extent is your company committed to Diversity, Equity & Inclusion (DE&I) in the workpla...",
+    "topicId": "DEI"
+  },
+  {
+    "file": "2024_8.json",
+    "question": "8. How well do you think you are paid for your work and skillset?",
+    "topicId": "Pay_and_Reward"
+  },
+  {
+    "file": "2024_4_4.json",
+    "question": "4_1. The values a company promotes are extremely important to me",
+    "topicId": "Pay_and_Reward"
+  }
+]

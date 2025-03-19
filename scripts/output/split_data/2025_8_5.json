@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "topicId": "Skills_Utilization",
+    "theme": "Skills & Development",
+    "questionId": "Q8_5",
+    "year": 2025,
+    "keywords": [
+      "skills usage",
+      "talent utilization",
+      "capability application",
+      "competency use",
+      "Skills_Utilization"
+    ],
+    "canonicalQuestion": "How well are your skills utilized in your current role?",
+    "subQuestion": "I feel that I am overlooked for promotions, pay rises, or leadership training because of my race.",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q8 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "I feel that I am overlooked for promotions, pay rises, or leadership training because of my race.",
+      "data": {
+        "region": {
+          "australia": 42,
+          "india": 24,
+          "brazil": 40,
+          "country_overall": 35.33
+        },
+        "age": {
+          "18-24": 40,
+          "25-34": 36,
+          "35-44": 29,
+          "45-54": 17,
+          "55-65": 14
+        },
+        "gender": {
+          "male": 25,
+          "female": 38
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "metadata": {
+    "topicId": "AI_Attitudes",
+    "theme": "Skills & Development",
+    "questionId": "Q5_8",
+    "year": 2025,
+    "keywords": [
+      "AI attitudes",
+      "AI perception",
+      "excitement about AI",
+      "role impact of AI",
+      "emerging technology sentiment",
+      "optimism regarding AI",
+      "AI value",
+      "AI influence",
+      "AI_Attitudes",
+      "artificial intelligence"
+    ],
+    "canonicalQuestion": "What are your attitudes toward AI in the workplace?",
+    "subQuestion": "When I've been asked to use AI to help with my job, I found it produced better results and/or improved efficiency.",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q5 - To what extent do you agree with the following statements about AI in the workplace and skills.",
+  "responses": [
+    {
+      "response": "When I've been asked to use AI to help with my job, I found it produced better results and/or improved efficiency.",
+      "data": {
+        "region": {
+          "australia": 61,
+          "india": 45,
+          "brazil": 75,
+          "country_overall": 60.33
+        },
+        "age": {
+          "18-24": 66,
+          "25-34": 62,
+          "35-44": 50,
+          "45-54": 37,
+          "55-65": 41
+        },
+        "gender": {
+          "male": 45,
+          "female": 61
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

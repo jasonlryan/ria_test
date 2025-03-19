@@ -1,0 +1,79 @@
+{
+  "metadata": {
+    "topicId": "AI_Readiness",
+    "theme": "Skills & Development",
+    "questionId": "Q5_7",
+    "year": 2025,
+    "keywords": [
+      "AI readiness",
+      "AI training",
+      "effective use of AI",
+      "AI adoption",
+      "AI competence",
+      "proficiency with AI",
+      "AI tool training",
+      "AI integration",
+      "readiness for AI",
+      "experimentation with AI"
+    ],
+    "canonicalQuestion": "How ready are you to adopt and use AI in your role?",
+    "subQuestion": "My organization offers a broad enough range of learning approaches [e.g. self-directed video/e-learning/podcasts/short modules/practical workshops] to suit my needs",
+    "comparable": false,
+    "userMessage": "Year‑on‑year comparisons not available due to new question additions in 2025.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q5 - To what extent do you agree with the following statements about AI in the workplace and skills.",
+  "responses": [
+    {
+      "response": "My organization offers a broad enough range of learning approaches [e.g. self-directed video/e-learning/podcasts/short modules/practical workshops] to suit my needs",
+      "data": {
+        "region": {
+          "australia": 67,
+          "india": 51,
+          "brazil": 77,
+          "country_overall": 65
+        },
+        "age": {
+          "18-24": 70,
+          "25-34": 66,
+          "35-44": 57,
+          "45-54": 48,
+          "55-65": 53
+        },
+        "gender": {
+          "male": 52,
+          "female": 64
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

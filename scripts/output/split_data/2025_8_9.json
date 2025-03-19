@@ -1,0 +1,85 @@
+{
+  "metadata": {
+    "topicId": "DEI",
+    "theme": "Workplace Dynamics",
+    "questionId": "Q8_9",
+    "year": 2025,
+    "keywords": [
+      "diversity initiatives",
+      "equity programs",
+      "inclusion efforts",
+      "workplace diversity",
+      "DEI commitment",
+      "corporate social responsibility",
+      "sustainability goals",
+      "DEI",
+      "diversity",
+      "equity"
+    ],
+    "canonicalQuestion": "How committed is your organization to diversity, equity, and inclusion?",
+    "subQuestion": "I share negative reviews about my employer on social media or review sites (such as Glassdoor)",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q8 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "I share negative reviews about my employer on social media or review sites (such as Glassdoor)",
+      "data": {
+        "region": {
+          "australia": 36,
+          "india": 23,
+          "brazil": 38,
+          "country_overall": 32.33
+        },
+        "age": {
+          "18-24": 35,
+          "25-34": 31,
+          "35-44": 24,
+          "45-54": 15,
+          "55-65": 13
+        },
+        "gender": {
+          "male": 25,
+          "female": 33
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

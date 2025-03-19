@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "topicId": "Intergenerational_Collaboration",
+    "theme": "Workplace Dynamics",
+    "questionId": "Q6_8",
+    "year": 2025,
+    "keywords": [
+      "generational diversity",
+      "age-diverse teams",
+      "cross-generational work",
+      "multigenerational workplace",
+      "Intergenerational_Collaboration"
+    ],
+    "canonicalQuestion": "How effectively do different generations collaborate in your workplace?",
+    "subQuestion": "My organization has taken steps to reduce cultural gaps between different generations of workers",
+    "comparable": false,
+    "userMessage": "New in 2025; no year‑on‑year comparison.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q6 - To what extent do you agree with the following statements with regards to your workplace.",
+  "responses": [
+    {
+      "response": "My organization has taken steps to reduce cultural gaps between different generations of workers",
+      "data": {
+        "region": {
+          "australia": 63,
+          "india": 40,
+          "brazil": 74,
+          "country_overall": 59
+        },
+        "age": {
+          "18-24": 65,
+          "25-34": 63,
+          "35-44": 51,
+          "45-54": 42,
+          "55-65": 45
+        },
+        "gender": {
+          "male": 47,
+          "female": 61
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "metadata": {
+    "topicId": "Intergenerational_Collaboration",
+    "theme": "Workplace Dynamics",
+    "questionId": "Q15",
+    "year": 2025,
+    "keywords": [
+      "generational diversity",
+      "age-diverse teams",
+      "cross-generational work",
+      "multigenerational workplace",
+      "Intergenerational_Collaboration"
+    ],
+    "canonicalQuestion": "How effectively do different generations collaborate in your workplace?",
+    "subQuestion": "None of these",
+    "comparable": false,
+    "userMessage": "New in 2025; no year‑on‑year comparison.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q15 - Which of the following would help you collaborate better with colleagues from different generations?",
+  "responses": [
+    {
+      "response": "None of these",
+      "data": {
+        "region": {
+          "australia": 8,
+          "india": 32,
+          "brazil": 4,
+          "country_overall": 14.67
+        },
+        "age": {
+          "18-24": 8,
+          "25-34": 14,
+          "35-44": 22,
+          "45-54": 35,
+          "55-65": 35
+        },
+        "gender": {
+          "male": 27,
+          "female": 14
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Sigma",
+      "data": {
+        "region": {
+          "australia": 192,
+          "india": 136,
+          "brazil": 248,
+          "country_overall": 192
+        },
+        "age": {
+          "18-24": 216,
+          "25-34": 207,
+          "35-44": 177,
+          "45-54": 151,
+          "55-65": 148
+        },
+        "gender": {
+          "male": 154,
+          "female": 201
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

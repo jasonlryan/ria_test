@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "topicId": "Motivation_and_Fulfillment",
+    "theme": "Employee Experience & Work‑Life",
+    "questionId": "Q17_4",
+    "year": 2025,
+    "keywords": [
+      "job satisfaction",
+      "work engagement",
+      "employee motivation",
+      "workplace fulfillment",
+      "Motivation_and_Fulfillment"
+    ],
+    "canonicalQuestion": "How motivated and fulfilled do you feel in your role?",
+    "subQuestion": "The organization shows care and concern for its employees.",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q17 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "The organization shows care and concern for its employees.",
+      "data": {
+        "region": {
+          "australia": 70,
+          "india": 55,
+          "brazil": 76,
+          "country_overall": 67
+        },
+        "age": {
+          "18-24": 72,
+          "25-34": 70,
+          "35-44": 63,
+          "45-54": 56,
+          "55-65": 63
+        },
+        "gender": {
+          "male": 62,
+          "female": 68
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

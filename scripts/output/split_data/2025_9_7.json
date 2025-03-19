@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "topicId": "Manager_Capability",
+    "theme": "Leadership & Management",
+    "questionId": "Q9_7",
+    "year": 2025,
+    "keywords": [
+      "supervisory effectiveness",
+      "line manager capability",
+      "manager performance",
+      "leader effectiveness",
+      "Manager_Capability"
+    ],
+    "canonicalQuestion": "How effective is your direct manager?",
+    "subQuestion": "Our external reputation matches our internal culture.",
+    "comparable": false,
+    "userMessage": "New in 2025; no year‑on‑year comparison.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q9 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "Our external reputation matches our internal culture.",
+      "data": {
+        "region": {
+          "australia": 60,
+          "india": 52,
+          "brazil": 78,
+          "country_overall": 63.33
+        },
+        "age": {
+          "18-24": 65,
+          "25-34": 64,
+          "35-44": 54,
+          "45-54": 46,
+          "55-65": 51
+        },
+        "gender": {
+          "male": 51,
+          "female": 61
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

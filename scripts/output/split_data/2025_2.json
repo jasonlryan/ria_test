@@ -1,0 +1,566 @@
+{
+  "metadata": {
+    "topicId": "Retention_Factors",
+    "theme": "Talent Attraction & Retention",
+    "questionId": "Q2",
+    "year": 2025,
+    "keywords": [
+      "retention factors",
+      "why employees stay",
+      "reasons to remain at company",
+      "Retention_Factors"
+    ],
+    "canonicalQuestion": "What factors would make you stay at your current company?",
+    "subQuestion": "Career advancement",
+    "comparable": false,
+    "userMessage": "Year‑on‑year comparisons not available due to methodology changes.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q2 - When considering the below options which are would be most likely to make you stay at your current company?",
+  "responses": [
+    {
+      "response": "Career advancement",
+      "data": {
+        "region": {
+          "australia": 76,
+          "india": 78,
+          "brazil": 87,
+          "country_overall": 80.33
+        },
+        "age": {
+          "18-24": 83,
+          "25-34": 81,
+          "35-44": 74,
+          "45-54": 60,
+          "55-65": 55
+        },
+        "gender": {
+          "male": 68,
+          "female": 76
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Colleagues I work with",
+      "data": {
+        "region": {
+          "australia": 75,
+          "india": 79,
+          "brazil": 80,
+          "country_overall": 78
+        },
+        "age": {
+          "18-24": 78,
+          "25-34": 80,
+          "35-44": 80,
+          "45-54": 78,
+          "55-65": 83
+        },
+        "gender": {
+          "male": 73,
+          "female": 77
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Commute to office",
+      "data": {
+        "region": {
+          "australia": 70,
+          "india": 82,
+          "brazil": 70,
+          "country_overall": 74
+        },
+        "age": {
+          "18-24": 75,
+          "25-34": 78,
+          "35-44": 79,
+          "45-54": 76,
+          "55-65": 73
+        },
+        "gender": {
+          "male": 70,
+          "female": 73
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Employee benefits (e.g., healthcare , mental health and wellness services, Paid Time Off, complimentary food and services)",
+      "data": {
+        "region": {
+          "australia": 80,
+          "india": 82,
+          "brazil": 89,
+          "country_overall": 83.67
+        },
+        "age": {
+          "18-24": 84,
+          "25-34": 85,
+          "35-44": 82,
+          "45-54": 79,
+          "55-65": 80
+        },
+        "gender": {
+          "male": 74,
+          "female": 81
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Employer's respect for personal priorities outside of work",
+      "data": {
+        "region": {
+          "australia": 79,
+          "india": 78,
+          "brazil": 86,
+          "country_overall": 81
+        },
+        "age": {
+          "18-24": 82,
+          "25-34": 82,
+          "35-44": 78,
+          "45-54": 73,
+          "55-65": 73
+        },
+        "gender": {
+          "male": 76,
+          "female": 77
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Environmental sustainability policies and practices",
+      "data": {
+        "region": {
+          "australia": 63,
+          "india": 57,
+          "brazil": 71,
+          "country_overall": 63.67
+        },
+        "age": {
+          "18-24": 65,
+          "25-34": 64,
+          "35-44": 57,
+          "45-54": 52,
+          "55-65": 51
+        },
+        "gender": {
+          "male": 54,
+          "female": 61
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Flexible work hours",
+      "data": {
+        "region": {
+          "australia": 79,
+          "india": 78,
+          "brazil": 83,
+          "country_overall": 80
+        },
+        "age": {
+          "18-24": 82,
+          "25-34": 82,
+          "35-44": 79,
+          "45-54": 74,
+          "55-65": 73
+        },
+        "gender": {
+          "male": 78,
+          "female": 76
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Inclusive policies and practices",
+      "data": {
+        "region": {
+          "australia": 66,
+          "india": 56,
+          "brazil": 69,
+          "country_overall": 63.67
+        },
+        "age": {
+          "18-24": 69,
+          "25-34": 66,
+          "35-44": 59,
+          "45-54": 53,
+          "55-65": 52
+        },
+        "gender": {
+          "male": 57,
+          "female": 61
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Learning and development opportunities",
+      "data": {
+        "region": {
+          "australia": 77,
+          "india": 72,
+          "brazil": 87,
+          "country_overall": 78.67
+        },
+        "age": {
+          "18-24": 82,
+          "25-34": 79,
+          "35-44": 73,
+          "45-54": 63,
+          "55-65": 61
+        },
+        "gender": {
+          "male": 66,
+          "female": 75
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Manager I trust",
+      "data": {
+        "region": {
+          "australia": 75,
+          "india": 79,
+          "brazil": 82,
+          "country_overall": 78.67
+        },
+        "age": {
+          "18-24": 80,
+          "25-34": 81,
+          "35-44": 80,
+          "45-54": 80,
+          "55-65": 82
+        },
+        "gender": {
+          "male": 75,
+          "female": 78
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Organizational culture and values",
+      "data": {
+        "region": {
+          "australia": 69,
+          "india": 65,
+          "brazil": 77,
+          "country_overall": 70.33
+        },
+        "age": {
+          "18-24": 74,
+          "25-34": 74,
+          "35-44": 69,
+          "45-54": 64,
+          "55-65": 67
+        },
+        "gender": {
+          "male": 63,
+          "female": 70
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Organizational purpose and mission",
+      "data": {
+        "region": {
+          "australia": 67,
+          "india": 66,
+          "brazil": 79,
+          "country_overall": 70.67
+        },
+        "age": {
+          "18-24": 71,
+          "25-34": 72,
+          "35-44": 67,
+          "45-54": 64,
+          "55-65": 67
+        },
+        "gender": {
+          "male": 60,
+          "female": 69
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Other",
+      "data": {
+        "region": {
+          "australia": 6,
+          "india": 3,
+          "brazil": 5,
+          "country_overall": 4.67
+        },
+        "age": {
+          "18-24": 4,
+          "25-34": 4,
+          "35-44": 4,
+          "45-54": 4,
+          "55-65": 3
+        },
+        "gender": {
+          "male": 6,
+          "female": 5
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Reputation of the organization",
+      "data": {
+        "region": {
+          "australia": 73,
+          "india": 68,
+          "brazil": 85,
+          "country_overall": 75.33
+        },
+        "age": {
+          "18-24": 76,
+          "25-34": 76,
+          "35-44": 72,
+          "45-54": 69,
+          "55-65": 74
+        },
+        "gender": {
+          "male": 68,
+          "female": 73
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Social responsibility (e.g., societal justice, community outreach) policies and practices",
+      "data": {
+        "region": {
+          "australia": 65,
+          "india": 63,
+          "brazil": 78,
+          "country_overall": 68.67
+        },
+        "age": {
+          "18-24": 68,
+          "25-34": 67,
+          "35-44": 62,
+          "45-54": 57,
+          "55-65": 53
+        },
+        "gender": {
+          "male": 57,
+          "female": 64
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Use of advanced technologies (e.g., AI, automation)",
+      "data": {
+        "region": {
+          "australia": 59,
+          "india": 53,
+          "brazil": 73,
+          "country_overall": 61.67
+        },
+        "age": {
+          "18-24": 64,
+          "25-34": 63,
+          "35-44": 56,
+          "45-54": 45,
+          "55-65": 43
+        },
+        "gender": {
+          "male": 49,
+          "female": 63
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Visa sponsorship / immigration assistance from an employer",
+      "data": {
+        "region": {
+          "australia": 53,
+          "india": 40,
+          "brazil": 66,
+          "country_overall": 53
+        },
+        "age": {
+          "18-24": 55,
+          "25-34": 52,
+          "35-44": 42,
+          "45-54": 32,
+          "55-65": 31
+        },
+        "gender": {
+          "male": 39,
+          "female": 51
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Workplace policy (i.e. in office, from home, hybrid)",
+      "data": {
+        "region": {
+          "australia": 69,
+          "india": 69,
+          "brazil": 79,
+          "country_overall": 72.33
+        },
+        "age": {
+          "18-24": 76,
+          "25-34": 77,
+          "35-44": 71,
+          "45-54": 64,
+          "55-65": 65
+        },
+        "gender": {
+          "male": 67,
+          "female": 71
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

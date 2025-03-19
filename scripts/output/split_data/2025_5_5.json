@@ -1,0 +1,79 @@
+{
+  "metadata": {
+    "topicId": "AI_Readiness",
+    "theme": "Skills & Development",
+    "questionId": "Q5_5",
+    "year": 2025,
+    "keywords": [
+      "AI readiness",
+      "AI training",
+      "effective use of AI",
+      "AI adoption",
+      "AI competence",
+      "proficiency with AI",
+      "AI tool training",
+      "AI integration",
+      "readiness for AI",
+      "experimentation with AI"
+    ],
+    "canonicalQuestion": "How ready are you to adopt and use AI in your role?",
+    "subQuestion": "I think using AI in my role will bolster my value in the next three years",
+    "comparable": false,
+    "userMessage": "Year‑on‑year comparisons not available due to new question additions in 2025.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q5 - To what extent do you agree with the following statements about AI in the workplace and skills.",
+  "responses": [
+    {
+      "response": "I think using AI in my role will bolster my value in the next three years",
+      "data": {
+        "region": {
+          "australia": 57,
+          "india": 47,
+          "brazil": 77,
+          "country_overall": 60.33
+        },
+        "age": {
+          "18-24": 66,
+          "25-34": 64,
+          "35-44": 52,
+          "45-54": 40,
+          "55-65": 40
+        },
+        "gender": {
+          "male": 50,
+          "female": 62
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

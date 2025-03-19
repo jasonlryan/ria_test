@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "topicId": "Learning_and_Development",
+    "theme": "Skills & Development",
+    "questionId": "Q17_3",
+    "year": 2025,
+    "keywords": [
+      "professional development",
+      "training opportunities",
+      "skill advancement",
+      "career growth",
+      "Learning_and_Development"
+    ],
+    "canonicalQuestion": "How would you rate your learning and development opportunities?",
+    "subQuestion": "The organization is strategically adapting to changes in the business environment.",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q17 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "The organization is strategically adapting to changes in the business environment.",
+      "data": {
+        "region": {
+          "australia": 73,
+          "india": 59,
+          "brazil": 79,
+          "country_overall": 70.33
+        },
+        "age": {
+          "18-24": 74,
+          "25-34": 71,
+          "35-44": 63,
+          "45-54": 57,
+          "55-65": 63
+        },
+        "gender": {
+          "male": 62,
+          "female": 70
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

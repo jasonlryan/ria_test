@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "topicId": "Manager_Capability",
+    "theme": "Leadership & Management",
+    "questionId": "Q9_1",
+    "year": 2025,
+    "keywords": [
+      "supervisory effectiveness",
+      "line manager capability",
+      "manager performance",
+      "leader effectiveness",
+      "Manager_Capability"
+    ],
+    "canonicalQuestion": "How effective is your direct manager?",
+    "subQuestion": "I feel that my ideas and opinions will be welcomed by company leaders",
+    "comparable": false,
+    "userMessage": "New in 2025; no year‑on‑year comparison.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q9 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "I feel that my ideas and opinions will be welcomed by company leaders",
+      "data": {
+        "region": {
+          "australia": 59,
+          "india": 52,
+          "brazil": 76,
+          "country_overall": 62.33
+        },
+        "age": {
+          "18-24": 67,
+          "25-34": 66,
+          "35-44": 56,
+          "45-54": 50,
+          "55-65": 52
+        },
+        "gender": {
+          "male": 56,
+          "female": 63
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

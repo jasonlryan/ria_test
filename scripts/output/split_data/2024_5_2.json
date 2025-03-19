@@ -1,0 +1,213 @@
+{
+  "metadata": {
+    "topicId": "Communication_and_Connection",
+    "theme": "Employee Experience & Work‑Life",
+    "questionId": "Q5_2",
+    "year": 2024,
+    "keywords": [
+      "workplace relationships",
+      "peer communication",
+      "colleague connections",
+      "collaboration comfort",
+      "Communication_and_Connection"
+    ],
+    "canonicalQuestion": "How comfortable are you communicating and connecting with colleagues?",
+    "subQuestion": "Agree",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "5_1. I feel that I can be my full self around my co-workers.",
+  "responses": [
+    {
+      "response": "Agree",
+      "data": {
+        "region": {
+          "united_kingdom": 0.58,
+          "united_states": 0.69,
+          "australia": 0.6,
+          "india": 0.77,
+          "brazil": 0.52,
+          "saudi_arabia_uae": 0.56,
+          "country_overall": 0.62
+        },
+        "age": {
+          "18-24": 0.62,
+          "25-34": 0.67,
+          "35-44": 0.67,
+          "45-54": 0.58,
+          "55-65": 0.51
+        },
+        "gender": {
+          "male": 0.66,
+          "female": 0.61
+        },
+        "org_size": {
+          "fewer_than_10": 0.51,
+          "10_to_49": 0.58,
+          "50_to_99": 0.61,
+          "100_to_249": 0.65,
+          "250_to_499": 0.69,
+          "500_to_999": 0.73,
+          "1000_or_more": 0.64
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.69,
+          "automotive": 0.67,
+          "business_administration_support_services": 0.6,
+          "clean_technology": 0.66,
+          "technology": 0.71,
+          "construction": 0.69,
+          "education": 0.62,
+          "energy_utilities": 0.67,
+          "financial_services": 0.68,
+          "food_drink": 0.59,
+          "government": 0.58,
+          "healthcare_life_sciences": 0.61,
+          "leisure_sport_entertainment_recreation": 0.58,
+          "manufacturing_industrial": 0.69,
+          "marketing_services": 0.63,
+          "media_entertainment": 0.58,
+          "not_for_profit": 0.59,
+          "real_estate_property_services": 0.48,
+          "retail": 0.62,
+          "sports": 0.66,
+          "telecommunications": 0.65,
+          "transport_storage": 0.5,
+          "travel_hospitality_leisure": 0.61,
+          "wholesale_distribution": 0.57,
+          "other": 0.56
+        },
+        "job_level": {
+          "senior_executive": 0.75,
+          "senior_leader": 0.68,
+          "mid_level_leader": 0.64,
+          "first_level_supervisor": 0.62,
+          "individual_contributor": 0.51
+        },
+        "relationship_status": {
+          "single": 0.58,
+          "cohabiting": 0.58,
+          "married": 0.68,
+          "divorced_separated": 0.52,
+          "widowed": 0.54
+        },
+        "education": {
+          "secondary": 0.58,
+          "tertiary": 0.58,
+          "undergraduate": 0.6,
+          "postgraduate": 0.7,
+          "doctorate": 0.7
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    },
+    {
+      "response": "Disagree",
+      "data": {
+        "region": {
+          "united_kingdom": 0.18,
+          "united_states": 0.14,
+          "australia": 0.17,
+          "india": 0.1,
+          "brazil": 0.29,
+          "saudi_arabia_uae": 0.26,
+          "country_overall": 0.19
+        },
+        "age": {
+          "18-24": 0.16,
+          "25-34": 0.15,
+          "35-44": 0.15,
+          "45-54": 0.22,
+          "55-65": 0.24
+        },
+        "gender": {
+          "male": 0.15,
+          "female": 0.2
+        },
+        "org_size": {
+          "fewer_than_10": 0.26,
+          "10_to_49": 0.2,
+          "50_to_99": 0.17,
+          "100_to_249": 0.17,
+          "250_to_499": 0.14,
+          "500_to_999": 0.12,
+          "1000_or_more": 0.17
+        },
+        "sector": {
+          "agriculture_forestry_fishing": 0.17,
+          "automotive": 0.17,
+          "business_administration_support_services": 0.19,
+          "clean_technology": 0.16,
+          "technology": 0.12,
+          "construction": 0.13,
+          "education": 0.19,
+          "energy_utilities": 0.19,
+          "financial_services": 0.14,
+          "food_drink": 0.15,
+          "government": 0.19,
+          "healthcare_life_sciences": 0.2,
+          "leisure_sport_entertainment_recreation": 0.16,
+          "manufacturing_industrial": 0.15,
+          "marketing_services": 0.2,
+          "media_entertainment": 0.3,
+          "not_for_profit": 0.24,
+          "real_estate_property_services": 0.27,
+          "retail": 0.17,
+          "sports": 0.11,
+          "telecommunications": 0.19,
+          "transport_storage": 0.29,
+          "travel_hospitality_leisure": 0.17,
+          "wholesale_distribution": 0.19,
+          "other": 0.22
+        },
+        "job_level": {
+          "senior_executive": 0.11,
+          "senior_leader": 0.14,
+          "mid_level_leader": 0.17,
+          "first_level_supervisor": 0.18,
+          "individual_contributor": 0.25
+        },
+        "relationship_status": {
+          "single": 0.2,
+          "cohabiting": 0.19,
+          "married": 0.15,
+          "divorced_separated": 0.27,
+          "widowed": 0.31
+        },
+        "education": {
+          "secondary": 0.19,
+          "tertiary": 0.21,
+          "undergraduate": 0.2,
+          "postgraduate": 0.13,
+          "doctorate": 0.15
+        },
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

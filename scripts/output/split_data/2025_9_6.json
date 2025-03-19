@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "topicId": "Manager_Capability",
+    "theme": "Leadership & Management",
+    "questionId": "Q9_6",
+    "year": 2025,
+    "keywords": [
+      "supervisory effectiveness",
+      "line manager capability",
+      "manager performance",
+      "leader effectiveness",
+      "Manager_Capability"
+    ],
+    "canonicalQuestion": "How effective is your direct manager?",
+    "subQuestion": "My organization has cut back on the number of managers",
+    "comparable": false,
+    "userMessage": "New in 2025; no year‑on‑year comparison.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q9 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "My organization has cut back on the number of managers",
+      "data": {
+        "region": {
+          "australia": 49,
+          "india": 38,
+          "brazil": 46,
+          "country_overall": 44.33
+        },
+        "age": {
+          "18-24": 46,
+          "25-34": 44,
+          "35-44": 39,
+          "45-54": 28,
+          "55-65": 26
+        },
+        "gender": {
+          "male": 30,
+          "female": 45
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

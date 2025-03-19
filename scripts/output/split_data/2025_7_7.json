@@ -1,0 +1,85 @@
+{
+  "metadata": {
+    "topicId": "DEI",
+    "theme": "Workplace Dynamics",
+    "questionId": "Q7_7",
+    "year": 2025,
+    "keywords": [
+      "diversity initiatives",
+      "equity programs",
+      "inclusion efforts",
+      "workplace diversity",
+      "DEI commitment",
+      "corporate social responsibility",
+      "sustainability goals",
+      "DEI",
+      "diversity",
+      "equity"
+    ],
+    "canonicalQuestion": "How committed is your organization to diversity, equity, and inclusion?",
+    "subQuestion": "My organization's leaders value people over profits",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q7 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "My organization's leaders value people over profits",
+      "data": {
+        "region": {
+          "australia": 58,
+          "india": 39,
+          "brazil": 65,
+          "country_overall": 54
+        },
+        "age": {
+          "18-24": 59,
+          "25-34": 56,
+          "35-44": 45,
+          "45-54": 35,
+          "55-65": 40
+        },
+        "gender": {
+          "male": 46,
+          "female": 55
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

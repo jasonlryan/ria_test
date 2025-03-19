@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "topicId": "Skills_Utilization",
+    "theme": "Skills & Development",
+    "questionId": "Q17_2",
+    "year": 2025,
+    "keywords": [
+      "skills usage",
+      "talent utilization",
+      "capability application",
+      "competency use",
+      "Skills_Utilization"
+    ],
+    "canonicalQuestion": "How well are your skills utilized in your current role?",
+    "subQuestion": "I have trust and confidence in the company's senior leadership team.",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q17 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "I have trust and confidence in the company's senior leadership team.",
+      "data": {
+        "region": {
+          "australia": 69,
+          "india": 60,
+          "brazil": 80,
+          "country_overall": 69.67
+        },
+        "age": {
+          "18-24": 73,
+          "25-34": 70,
+          "35-44": 62,
+          "45-54": 57,
+          "55-65": 64
+        },
+        "gender": {
+          "male": 66,
+          "female": 68
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

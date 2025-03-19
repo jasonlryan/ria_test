@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "topicId": "Motivation_and_Fulfillment",
+    "theme": "Employee Experience & Work‑Life",
+    "questionId": "Q17_1",
+    "year": 2025,
+    "keywords": [
+      "job satisfaction",
+      "work engagement",
+      "employee motivation",
+      "workplace fulfillment",
+      "Motivation_and_Fulfillment"
+    ],
+    "canonicalQuestion": "How motivated and fulfilled do you feel in your role?",
+    "subQuestion": "I feel motivated to do more than is required of me.",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q17 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "I feel motivated to do more than is required of me.",
+      "data": {
+        "region": {
+          "australia": 69,
+          "india": 66,
+          "brazil": 79,
+          "country_overall": 71.33
+        },
+        "age": {
+          "18-24": 71,
+          "25-34": 70,
+          "35-44": 65,
+          "45-54": 60,
+          "55-65": 67
+        },
+        "gender": {
+          "male": 63,
+          "female": 69
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

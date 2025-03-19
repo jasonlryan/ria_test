@@ -1,0 +1,79 @@
+{
+  "metadata": {
+    "topicId": "AI_Readiness",
+    "theme": "Skills & Development",
+    "questionId": "Q5_4",
+    "year": 2025,
+    "keywords": [
+      "AI readiness",
+      "AI training",
+      "effective use of AI",
+      "AI adoption",
+      "AI competence",
+      "proficiency with AI",
+      "AI tool training",
+      "AI integration",
+      "readiness for AI",
+      "experimentation with AI"
+    ],
+    "canonicalQuestion": "How ready are you to adopt and use AI in your role?",
+    "subQuestion": "I feel leaders in my organization understand AI",
+    "comparable": false,
+    "userMessage": "Year‑on‑year comparisons not available due to new question additions in 2025.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q5 - To what extent do you agree with the following statements about AI in the workplace and skills.",
+  "responses": [
+    {
+      "response": "I feel leaders in my organization understand AI",
+      "data": {
+        "region": {
+          "australia": 61,
+          "india": 45,
+          "brazil": 73,
+          "country_overall": 59.67
+        },
+        "age": {
+          "18-24": 63,
+          "25-34": 60,
+          "35-44": 50,
+          "45-54": 40,
+          "55-65": 44
+        },
+        "gender": {
+          "male": 48,
+          "female": 59
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "topicId": "Pay_and_Reward",
+    "theme": "Compensation & Benefits",
+    "questionId": "Q6_5",
+    "year": 2025,
+    "keywords": [
+      "compensation fairness",
+      "salary satisfaction",
+      "pay equity",
+      "reward adequacy",
+      "Pay_and_Reward"
+    ],
+    "canonicalQuestion": "How fair do you consider your compensation relative to your contribution?",
+    "subQuestion": "I have strong connections with my remote colleagues",
+    "comparable": true,
+    "userMessage": "Note: Wording differs between Q8 (2024) and Q11 (2025).",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q6 - To what extent do you agree with the following statements with regards to your workplace.",
+  "responses": [
+    {
+      "response": "I have strong connections with my remote colleagues",
+      "data": {
+        "region": {
+          "australia": 60,
+          "india": 53,
+          "brazil": 80,
+          "country_overall": 64.33
+        },
+        "age": {
+          "18-24": 67,
+          "25-34": 64,
+          "35-44": 54,
+          "45-54": 45,
+          "55-65": 42
+        },
+        "gender": {
+          "male": 51,
+          "female": 62
+        },
+        "org_size": {},
+        "sector": {},
+        "job_level": {},
+        "relationship_status": {},
+        "education": {},
+        "generation": {},
+        "employment_status": {}
+      }
+    }
+  ]
+}
