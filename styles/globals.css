@@ -40,6 +40,19 @@
     @apply w-full text-left px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary hover:scale-[1.02] transition-all duration-200 text-xs sm:text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed;
   }
   
+  /* Collapsible blocks */
+  .collapsible-block {
+    @apply rounded-lg overflow-hidden shadow-sm transition-all duration-300 bg-primary-50;
+  }
+
+  .collapsible-header {
+    @apply w-full px-4 py-3 flex items-center justify-between bg-primary-100 hover:bg-primary-200 transition-colors cursor-pointer;
+  }
+
+  .collapsible-content {
+    @apply px-4 py-3 bg-primary-50;
+  }
+  
   /* Hero section */
   .hero-section {
     @apply bg-gradient-to-r from-secondary to-primary text-white;

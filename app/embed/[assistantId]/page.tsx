@@ -18,6 +18,7 @@ import PromptInput from "../../../components/PromptInput";
 // Helpers
 import { parseResponse } from "../../../utils/helpers";
 import chatConfig from "../../../config/chat.config.json";
+import CollapsibleContent from "../../../components/CollapsibleContent";
 
 function Embed({ params: { assistantId } }) {
   const title = "WORKFORCE 2025";
@@ -351,22 +352,11 @@ function Embed({ params: { assistantId } }) {
             </div>
           </div>
 
-          {/* Starter Questions Section */}
-          <div className="lg:w-64 flex flex-col gap-2">
-            <h2 className="font-medium text-sm text-gray-600 mb-1 hidden lg:block">
-              Suggested Questions
-            </h2>
-            {chatConfig.starterQuestions.map((q, i) => (
-              <button
-                key={i}
-                onClick={() => handleStarterQuestion(q.text)}
-                disabled={loading}
-                className="starter-question-btn"
-              >
-                {q.text}
-              </button>
-            ))}
-          </div>
+          {/* Collapsible Content Section */}
+          <CollapsibleContent
+            handleStarterQuestion={handleStarterQuestion}
+            loading={loading}
+          />
         </div>
 
         {/* Legal Text */}

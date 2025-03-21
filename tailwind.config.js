@@ -22,6 +22,18 @@ module.exports = {
         primary: "#00634f",
         secondary: "#009b77",
         tertiary: "#2c2c2c",
+
+        // Primary color scale for collapsible blocks
+        "primary-50": "#e6f7f4",
+        "primary-100": "#ccefe9",
+        "primary-200": "#99dfd3",
+        "primary-300": "#66cfbd",
+        "primary-400": "#33bfa7",
+        "primary-500": "#00af91",
+        "primary-600": "#00a184",
+        "primary-700": "#008c74",
+        "primary-800": "#007864",
+        "primary-900": "#006354",
       },
       listStyleType: {
         square: "square",
