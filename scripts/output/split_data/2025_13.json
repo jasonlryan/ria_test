@@ -11,7 +11,7 @@
       "Ideal_Role"
     ],
     "canonicalQuestion": "What would your ideal role be?",
-    "subQuestion": "Freelance Full Time",
+    "subQuestion": "Contract / Interim Full Time",
     "comparable": true,
     "userMessage": "Data based on comparable markets only.",
     "availableMarkets": [
@@ -47,61 +47,498 @@
   "question": "Q13 - What would your ideal role be?",
   "responses": [
     {
+      "response": "Contract / Interim Full Time",
+      "data": {
+        "region": {
+          "australia": 4,
+          "india": 2,
+          "brazil": 2,
+          "united_kingdom": 3,
+          "united_states": 2,
+          "saudi_arabia": 4,
+          "united_arab_emirates": 2,
+          "france": 1,
+          "germany": 2,
+          "japan": 3,
+          "country_overall": 2.5
+        },
+        "age": {
+          "18-24": 3,
+          "25-34": 2,
+          "35-44": 2,
+          "45-54": 1,
+          "55-65": 2,
+          "65+": 4
+        },
+        "gender": {
+          "male": 2,
+          "female": 3
+        },
+        "org_size": {
+          "fewer_than_10": 2,
+          "10_to_49": 3,
+          "50_to_99": 3,
+          "100_to_499": 3,
+          "500_to_999": 1,
+          "1000_or_more": 2
+        },
+        "sector": {
+          "automotive": 2,
+          "business_administration": 3,
+          "technology": 3,
+          "construction": 6,
+          "consumer_goods": 2,
+          "education": 2,
+          "energy_utilities": 2,
+          "financial_services": 1,
+          "government": 2,
+          "healthcare": 2,
+          "manufacturing_industrial": 14,
+          "marketing_services": 2,
+          "legal_in-house": 5,
+          "legal_agency": 1,
+          "life_sciences": 2,
+          "professional_services": 2,
+          "real_estate": 2,
+          "retail": 3,
+          "sales": 2,
+          "telecommunications": 1,
+          "transport_storage": 3,
+          "travel_hospitality_leisure": 2,
+          "wholesale_distribution": 1,
+          "other": 3
+        },
+        "job_level": {
+          "ceo": 3,
+          "senior_executive": 3,
+          "senior_leader": 2,
+          "mid_level_leader": 3,
+          "first_level_supervisor": 2,
+          "individual_contributor": 3
+        },
+        "relationship_status": {
+          "single": 2,
+          "cohabiting": 2,
+          "married": 2,
+          "divorced_separated": 3,
+          "widowed": 2
+        },
+        "education": {
+          "secondary": 3,
+          "tertiary": 2,
+          "professional_certifications": 3,
+          "undergraduate": 2,
+          "postgraduate": 2
+        },
+        "generation": {
+          "gen_z": 2,
+          "millennials": 2,
+          "gen_x": 1,
+          "baby_boomers": 2,
+          "65_plus": 4
+        },
+        "employment_status": {
+          "full_time": 2,
+          "part_time": 24,
+          "contract": 5,
+          "freelance": 2
+        }
+      }
+    },
+    {
+      "response": "Contract / Interim Part Time",
+      "data": {
+        "region": {
+          "australia": 4,
+          "india": 1,
+          "brazil": 1,
+          "united_kingdom": 2,
+          "united_states": 1,
+          "saudi_arabia": 2,
+          "united_arab_emirates": 4,
+          "france": 2,
+          "germany": 1,
+          "japan": 4,
+          "country_overall": 2.2
+        },
+        "age": {
+          "18-24": 2,
+          "25-34": 1,
+          "35-44": 1,
+          "45-54": 2,
+          "55-65": 3,
+          "65+": 3
+        },
+        "gender": {
+          "male": 3,
+          "female": 2
+        },
+        "org_size": {
+          "fewer_than_10": 3,
+          "10_to_49": 3,
+          "50_to_99": 3,
+          "100_to_499": 1,
+          "500_to_999": 1,
+          "1000_or_more": 1
+        },
+        "sector": {
+          "automotive": 5,
+          "business_administration": 2,
+          "technology": 2,
+          "construction": 3,
+          "consumer_goods": 3,
+          "education": 2,
+          "energy_utilities": 1,
+          "financial_services": 1,
+          "government": 2,
+          "healthcare": 1,
+          "manufacturing_industrial": 4,
+          "marketing_services": 2,
+          "legal_in-house": 2,
+          "legal_agency": 1,
+          "life_sciences": 1,
+          "professional_services": 2,
+          "real_estate": 1,
+          "retail": 2,
+          "sales": 3,
+          "telecommunications": 1,
+          "transport_storage": 1,
+          "travel_hospitality_leisure": 1,
+          "wholesale_distribution": 2,
+          "other": 1
+        },
+        "job_level": {
+          "ceo": 2,
+          "senior_executive": 2,
+          "senior_leader": 2,
+          "mid_level_leader": 1,
+          "first_level_supervisor": 2,
+          "individual_contributor": 2
+        },
+        "relationship_status": {
+          "single": 2,
+          "cohabiting": 2,
+          "married": 2,
+          "divorced_separated": 2,
+          "widowed": 2
+        },
+        "education": {
+          "secondary": 2,
+          "tertiary": 2,
+          "professional_certifications": 2,
+          "undergraduate": 1,
+          "postgraduate": 2
+        },
+        "generation": {
+          "gen_z": 1,
+          "millennials": 1,
+          "gen_x": 3,
+          "baby_boomers": 2,
+          "65_plus": 3
+        },
+        "employment_status": {
+          "full_time": 4,
+          "part_time": 21,
+          "contract": 4,
+          "freelance": 2
+        }
+      }
+    },
+    {
       "response": "Freelance Full Time",
       "data": {
         "region": {
           "australia": 6,
           "india": 4,
           "brazil": 4,
-          "country_overall": 4.67
+          "united_kingdom": 4,
+          "united_states": 3,
+          "saudi_arabia": 6,
+          "united_arab_emirates": 4,
+          "france": 5,
+          "germany": 5,
+          "japan": 4,
+          "country_overall": 4.5
         },
         "age": {
           "18-24": 5,
           "25-34": 4,
           "35-44": 4,
           "45-54": 3,
-          "55-65": 4
+          "55-65": 4,
+          "65+": 6
         },
         "gender": {
           "male": 16,
           "female": 4
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 3,
+          "10_to_49": 4,
+          "50_to_99": 4,
+          "100_to_499": 4,
+          "500_to_999": 4,
+          "1000_or_more": 4
+        },
+        "sector": {
+          "automotive": 5,
+          "business_administration": 3,
+          "technology": 6,
+          "construction": 4,
+          "consumer_goods": 3,
+          "education": 2,
+          "energy_utilities": 5,
+          "financial_services": 3,
+          "government": 3,
+          "healthcare": 3,
+          "manufacturing_industrial": 5,
+          "marketing_services": 6,
+          "legal_in-house": 5,
+          "legal_agency": 4,
+          "life_sciences": 7,
+          "professional_services": 4,
+          "real_estate": 5,
+          "retail": 8,
+          "sales": 3,
+          "telecommunications": 4,
+          "transport_storage": 5,
+          "travel_hospitality_leisure": 3,
+          "wholesale_distribution": 7,
+          "other": 13
+        },
+        "job_level": {
+          "ceo": 5,
+          "senior_executive": 4,
+          "senior_leader": 4,
+          "mid_level_leader": 3,
+          "first_level_supervisor": 5,
+          "individual_contributor": 5
+        },
+        "relationship_status": {
+          "single": 5,
+          "cohabiting": 4,
+          "married": 6,
+          "divorced_separated": 2,
+          "widowed": 5
+        },
+        "education": {
+          "secondary": 5,
+          "tertiary": 5,
+          "professional_certifications": 4,
+          "undergraduate": 4,
+          "postgraduate": 5
+        },
+        "generation": {
+          "gen_z": 5,
+          "millennials": 4,
+          "gen_x": 3,
+          "baby_boomers": 4,
+          "65_plus": 6
+        },
+        "employment_status": {
+          "full_time": 3,
+          "part_time": 5,
+          "contract": 33,
+          "freelance": 5
+        }
       }
     },
     {
-      "response": "Sigma",
+      "response": "Freelance Part Time",
       "data": {
         "region": {
-          "australia": 100,
-          "india": 100,
-          "brazil": 100,
-          "country_overall": 100
+          "australia": 4,
+          "india": 2,
+          "brazil": 3,
+          "united_kingdom": 2,
+          "united_states": 2,
+          "saudi_arabia": 3,
+          "united_arab_emirates": 3,
+          "france": 2,
+          "germany": 3,
+          "japan": 5,
+          "country_overall": 2.9
         },
         "age": {
-          "18-24": 100,
-          "25-34": 100,
-          "35-44": 100,
-          "45-54": 100,
-          "55-65": 100
+          "18-24": 2,
+          "25-34": 2,
+          "35-44": 2,
+          "45-54": 3,
+          "55-65": 10,
+          "65+": 3
         },
         "gender": {
-          "male": 100,
-          "female": 100
+          "male": 12,
+          "female": 2
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 2,
+          "10_to_49": 2,
+          "50_to_99": 2,
+          "100_to_499": 2,
+          "500_to_999": 2,
+          "1000_or_more": 1
+        },
+        "sector": {
+          "automotive": 4,
+          "business_administration": 1,
+          "technology": 3,
+          "construction": 4,
+          "consumer_goods": 5,
+          "education": 2,
+          "energy_utilities": 1,
+          "financial_services": 1,
+          "government": 2,
+          "healthcare": 2,
+          "manufacturing_industrial": 5,
+          "marketing_services": 1,
+          "legal_in-house": 5,
+          "legal_agency": 4,
+          "life_sciences": 4,
+          "professional_services": 3,
+          "real_estate": 3,
+          "retail": 2,
+          "sales": 1,
+          "telecommunications": 2,
+          "transport_storage": 3,
+          "travel_hospitality_leisure": 3,
+          "wholesale_distribution": 4,
+          "other": 4
+        },
+        "job_level": {
+          "ceo": 1,
+          "senior_executive": 1,
+          "senior_leader": 2,
+          "mid_level_leader": 2,
+          "first_level_supervisor": 4,
+          "individual_contributor": 3
+        },
+        "relationship_status": {
+          "single": 2,
+          "cohabiting": 2,
+          "married": 4,
+          "divorced_separated": 6,
+          "widowed": 3
+        },
+        "education": {
+          "secondary": 2,
+          "tertiary": 2,
+          "professional_certifications": 3,
+          "undergraduate": 2,
+          "postgraduate": 2
+        },
+        "generation": {
+          "gen_z": 2,
+          "millennials": 2,
+          "gen_x": 6,
+          "baby_boomers": 3,
+          "65_plus": 3
+        },
+        "employment_status": {
+          "full_time": 4,
+          "part_time": 7,
+          "contract": 27,
+          "freelance": 1
+        }
+      }
+    },
+    {
+      "response": "Part time",
+      "data": {
+        "region": {
+          "australia": 25,
+          "india": 14,
+          "brazil": 15,
+          "united_kingdom": 8,
+          "united_states": 18,
+          "saudi_arabia": 22,
+          "united_arab_emirates": 25,
+          "france": 17,
+          "germany": 10,
+          "japan": 11,
+          "country_overall": 16.5
+        },
+        "age": {
+          "18-24": 13,
+          "25-34": 12,
+          "35-44": 14,
+          "45-54": 21,
+          "55-65": 37,
+          "65+": 19
+        },
+        "gender": {
+          "male": 29,
+          "female": 9
+        },
+        "org_size": {
+          "fewer_than_10": 23,
+          "10_to_49": 17,
+          "50_to_99": 15,
+          "100_to_499": 12,
+          "500_to_999": 14,
+          "1000_or_more": 6
+        },
+        "sector": {
+          "automotive": 15,
+          "business_administration": 7,
+          "technology": 11,
+          "construction": 12,
+          "consumer_goods": 21,
+          "education": 9,
+          "energy_utilities": 9,
+          "financial_services": 18,
+          "government": 25,
+          "healthcare": 7,
+          "manufacturing_industrial": 11,
+          "marketing_services": 27,
+          "legal_in-house": 14,
+          "legal_agency": 5,
+          "life_sciences": 13,
+          "professional_services": 12,
+          "real_estate": 27,
+          "retail": 20,
+          "sales": 11,
+          "telecommunications": 12,
+          "transport_storage": 19,
+          "travel_hospitality_leisure": 14,
+          "wholesale_distribution": 20,
+          "other": 11
+        },
+        "job_level": {
+          "ceo": 8,
+          "senior_executive": 8,
+          "senior_leader": 12,
+          "mid_level_leader": 13,
+          "first_level_supervisor": 24,
+          "individual_contributor": 17
+        },
+        "relationship_status": {
+          "single": 16,
+          "cohabiting": 14,
+          "married": 22,
+          "divorced_separated": 29,
+          "widowed": 25
+        },
+        "education": {
+          "secondary": 20,
+          "tertiary": 20,
+          "professional_certifications": 12,
+          "undergraduate": 10,
+          "postgraduate": 9
+        },
+        "generation": {
+          "gen_z": 12,
+          "millennials": 15,
+          "gen_x": 28,
+          "baby_boomers": 23,
+          "65_plus": 19
+        },
+        "employment_status": {
+          "full_time": 68,
+          "part_time": 16,
+          "contract": 11,
+          "freelance": 11
+        }
       }
     }
   ]

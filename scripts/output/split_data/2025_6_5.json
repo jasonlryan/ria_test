@@ -12,7 +12,7 @@
       "Pay_and_Reward"
     ],
     "canonicalQuestion": "How fair do you consider your compensation relative to your contribution?",
-    "subQuestion": "I have strong connections with my remote colleagues",
+    "subQuestion": "I feel my company provides adequate support for employee mental well-being",
     "comparable": true,
     "userMessage": "Note: Wording differs between Q8 (2024) and Q11 (2025).",
     "availableMarkets": [
@@ -48,32 +48,102 @@
   "question": "Q6 - To what extent do you agree with the following statements with regards to your workplace.",
   "responses": [
     {
-      "response": "I have strong connections with my remote colleagues",
+      "response": "I feel my company provides adequate support for employee mental well-being",
       "data": {
         "region": {
-          "australia": 60,
-          "india": 53,
-          "brazil": 80,
-          "country_overall": 64.33
+          "australia": 64,
+          "india": 50,
+          "brazil": 75,
+          "united_kingdom": 82,
+          "united_states": 66,
+          "saudi_arabia": 65,
+          "united_arab_emirates": 68,
+          "france": 55,
+          "germany": 35,
+          "japan": 73,
+          "country_overall": 63.3
         },
         "age": {
-          "18-24": 67,
-          "25-34": 64,
-          "35-44": 54,
-          "45-54": 45,
-          "55-65": 42
+          "18-24": 71,
+          "25-34": 67,
+          "35-44": 58,
+          "45-54": 50,
+          "55-65": 59,
+          "65+": 67
         },
         "gender": {
-          "male": 51,
-          "female": 62
+          "male": 57,
+          "female": 65
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 57,
+          "10_to_49": 61,
+          "50_to_99": 63,
+          "100_to_499": 67,
+          "500_to_999": 62,
+          "1000_or_more": 65
+        },
+        "sector": {
+          "automotive": 66,
+          "business_administration": 81,
+          "technology": 68,
+          "construction": 66,
+          "consumer_goods": 59,
+          "education": 66,
+          "energy_utilities": 68,
+          "financial_services": 58,
+          "government": 58,
+          "healthcare": 61,
+          "manufacturing_industrial": 66,
+          "marketing_services": 58,
+          "legal_in-house": 61,
+          "legal_agency": 54,
+          "life_sciences": 59,
+          "professional_services": 59,
+          "real_estate": 59,
+          "retail": 61,
+          "sales": 68,
+          "telecommunications": 54,
+          "transport_storage": 57,
+          "travel_hospitality_leisure": 51,
+          "wholesale_distribution": 58,
+          "other": 77
+        },
+        "job_level": {
+          "ceo": 81,
+          "senior_executive": 74,
+          "senior_leader": 63,
+          "mid_level_leader": 65,
+          "first_level_supervisor": 51,
+          "individual_contributor": 57
+        },
+        "relationship_status": {
+          "single": 56,
+          "cohabiting": 70,
+          "married": 52,
+          "divorced_separated": 59,
+          "widowed": 60
+        },
+        "education": {
+          "secondary": 53,
+          "tertiary": 56,
+          "professional_certifications": 64,
+          "undergraduate": 72,
+          "postgraduate": 72
+        },
+        "generation": {
+          "gen_z": 69,
+          "millennials": 56,
+          "gen_x": 53,
+          "baby_boomers": 61,
+          "65_plus": 67
+        },
+        "employment_status": {
+          "full_time": 58,
+          "part_time": 53,
+          "contract": 53,
+          "freelance": 62
+        }
       }
     }
   ]

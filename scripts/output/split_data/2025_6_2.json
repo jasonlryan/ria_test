@@ -12,7 +12,7 @@
       "Intergenerational_Collaboration"
     ],
     "canonicalQuestion": "How effectively do different generations collaborate in your workplace?",
-    "subQuestion": "I feel leaders in my company respect the needs of employees across generations",
+    "subQuestion": "I feel I work better with people my own age",
     "comparable": false,
     "userMessage": "New in 2025; no year‑on‑year comparison.",
     "availableMarkets": [],
@@ -42,32 +42,102 @@
   "question": "Q6 - To what extent do you agree with the following statements with regards to your workplace.",
   "responses": [
     {
-      "response": "I feel leaders in my company respect the needs of employees across generations",
+      "response": "I feel I work better with people my own age",
       "data": {
         "region": {
-          "australia": 68,
-          "india": 55,
-          "brazil": 77,
-          "country_overall": 66.67
+          "australia": 66,
+          "india": 42,
+          "brazil": 76,
+          "united_kingdom": 82,
+          "united_states": 45,
+          "saudi_arabia": 51,
+          "united_arab_emirates": 50,
+          "france": 53,
+          "germany": 37,
+          "japan": 70,
+          "country_overall": 57.2
         },
         "age": {
-          "18-24": 73,
-          "25-34": 69,
-          "35-44": 61,
-          "45-54": 53,
-          "55-65": 59
+          "18-24": 64,
+          "25-34": 56,
+          "35-44": 47,
+          "45-54": 36,
+          "55-65": 39,
+          "65+": 67
         },
         "gender": {
-          "male": 62,
-          "female": 68
+          "male": 41,
+          "female": 59
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 52,
+          "10_to_49": 57,
+          "50_to_99": 61,
+          "100_to_499": 60,
+          "500_to_999": 50,
+          "1000_or_more": 56
+        },
+        "sector": {
+          "automotive": 60,
+          "business_administration": 71,
+          "technology": 59,
+          "construction": 60,
+          "consumer_goods": 52,
+          "education": 48,
+          "energy_utilities": 61,
+          "financial_services": 42,
+          "government": 48,
+          "healthcare": 53,
+          "manufacturing_industrial": 66,
+          "marketing_services": 37,
+          "legal_in-house": 40,
+          "legal_agency": 53,
+          "life_sciences": 51,
+          "professional_services": 52,
+          "real_estate": 50,
+          "retail": 56,
+          "sales": 61,
+          "telecommunications": 48,
+          "transport_storage": 50,
+          "travel_hospitality_leisure": 44,
+          "wholesale_distribution": 47,
+          "other": 65
+        },
+        "job_level": {
+          "ceo": 71,
+          "senior_executive": 65,
+          "senior_leader": 56,
+          "mid_level_leader": 56,
+          "first_level_supervisor": 41,
+          "individual_contributor": 53
+        },
+        "relationship_status": {
+          "single": 44,
+          "cohabiting": 59,
+          "married": 37,
+          "divorced_separated": 45,
+          "widowed": 48
+        },
+        "education": {
+          "secondary": 43,
+          "tertiary": 48,
+          "professional_certifications": 57,
+          "undergraduate": 63,
+          "postgraduate": 61
+        },
+        "generation": {
+          "gen_z": 60,
+          "millennials": 45,
+          "gen_x": 35,
+          "baby_boomers": 50,
+          "65_plus": 67
+        },
+        "employment_status": {
+          "full_time": 48,
+          "part_time": 49,
+          "contract": 46,
+          "freelance": 60
+        }
       }
     }
   ]

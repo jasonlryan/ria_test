@@ -12,7 +12,7 @@
       "Intention_to_Leave"
     ],
     "canonicalQuestion": "Are you planning on leaving your current role in the next three months?",
-    "subQuestion": "I expect a significant reduction in DEI initiatives at my company since new governments were elected",
+    "subQuestion": "I am open to relocating to another country to secure a job",
     "comparable": true,
     "userMessage": "Data based on comparable markets only.",
     "availableMarkets": [
@@ -48,32 +48,102 @@
   "question": "Q7 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "I expect a significant reduction in DEI initiatives at my company since new governments were elected",
+      "response": "I am open to relocating to another country to secure a job",
       "data": {
         "region": {
-          "australia": 48,
-          "india": 32,
-          "brazil": 46,
-          "country_overall": 42
+          "australia": 57,
+          "india": 35,
+          "brazil": 65,
+          "united_kingdom": 73,
+          "united_states": 43,
+          "saudi_arabia": 42,
+          "united_arab_emirates": 56,
+          "france": 41,
+          "germany": 26,
+          "japan": 68,
+          "country_overall": 50.6
         },
         "age": {
-          "18-24": 48,
-          "25-34": 44,
-          "35-44": 37,
+          "18-24": 57,
+          "25-34": 52,
+          "35-44": 42,
           "45-54": 25,
-          "55-65": 26
+          "55-65": 22,
+          "65+": 59
         },
         "gender": {
-          "male": 32,
-          "female": 45
+          "male": 40,
+          "female": 53
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 40,
+          "10_to_49": 49,
+          "50_to_99": 51,
+          "100_to_499": 53,
+          "500_to_999": 44,
+          "1000_or_more": 49
+        },
+        "sector": {
+          "automotive": 51,
+          "business_administration": 67,
+          "technology": 55,
+          "construction": 50,
+          "consumer_goods": 42,
+          "education": 45,
+          "energy_utilities": 56,
+          "financial_services": 36,
+          "government": 39,
+          "healthcare": 45,
+          "manufacturing_industrial": 60,
+          "marketing_services": 30,
+          "legal_in-house": 39,
+          "legal_agency": 49,
+          "life_sciences": 43,
+          "professional_services": 39,
+          "real_estate": 41,
+          "retail": 52,
+          "sales": 55,
+          "telecommunications": 37,
+          "transport_storage": 44,
+          "travel_hospitality_leisure": 44,
+          "wholesale_distribution": 39,
+          "other": 61
+        },
+        "job_level": {
+          "ceo": 65,
+          "senior_executive": 61,
+          "senior_leader": 51,
+          "mid_level_leader": 49,
+          "first_level_supervisor": 31,
+          "individual_contributor": 48
+        },
+        "relationship_status": {
+          "single": 37,
+          "cohabiting": 52,
+          "married": 30,
+          "divorced_separated": 30,
+          "widowed": 38
+        },
+        "education": {
+          "secondary": 38,
+          "tertiary": 38,
+          "professional_certifications": 50,
+          "undergraduate": 57,
+          "postgraduate": 54
+        },
+        "generation": {
+          "gen_z": 54,
+          "millennials": 38,
+          "gen_x": 20,
+          "baby_boomers": 41,
+          "65_plus": 59
+        },
+        "employment_status": {
+          "full_time": 37,
+          "part_time": 45,
+          "contract": 44,
+          "freelance": 48
+        }
       }
     }
   ]

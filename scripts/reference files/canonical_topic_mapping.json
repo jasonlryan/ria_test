@@ -12,6 +12,18 @@
             "Australia",
             "India",
             "Brazil"
+        ],
+        "allMarkets2025": [
+            "United Kingdom",
+            "United States",
+            "Australia",
+            "India",
+            "Brazil",
+            "France",
+            "Germany",
+            "Japan",
+            "United Arab Emirates",
+            "Saudi Arabia"
         ]
     },
     "retrievalRules": {

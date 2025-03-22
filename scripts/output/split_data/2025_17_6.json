@@ -1,0 +1,144 @@
+{
+  "metadata": {
+    "topicId": "Motivation_and_Fulfillment",
+    "theme": "Employee Experience & Work‑Life",
+    "questionId": "Q17_6",
+    "year": 2025,
+    "keywords": [
+      "job satisfaction",
+      "work engagement",
+      "employee motivation",
+      "workplace fulfillment",
+      "Motivation_and_Fulfillment"
+    ],
+    "canonicalQuestion": "How motivated and fulfilled do you feel in your role?",
+    "subQuestion": "The organization is strategically adapting to changes in the business environment.",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q17 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "The organization is strategically adapting to changes in the business environment.",
+      "data": {
+        "region": {
+          "australia": 73,
+          "india": 59,
+          "brazil": 79,
+          "united_kingdom": 84,
+          "united_states": 66,
+          "saudi_arabia": 68,
+          "united_arab_emirates": 76,
+          "france": 67,
+          "germany": 38,
+          "japan": 76,
+          "country_overall": 68.6
+        },
+        "age": {
+          "18-24": 74,
+          "25-34": 71,
+          "35-44": 63,
+          "45-54": 57,
+          "55-65": 63,
+          "65+": 73
+        },
+        "gender": {
+          "male": 62,
+          "female": 70
+        },
+        "org_size": {
+          "fewer_than_10": 63,
+          "10_to_49": 67,
+          "50_to_99": 69,
+          "100_to_499": 72,
+          "500_to_999": 67,
+          "1000_or_more": 70
+        },
+        "sector": {
+          "automotive": 71,
+          "business_administration": 83,
+          "technology": 73,
+          "construction": 72,
+          "consumer_goods": 64,
+          "education": 69,
+          "energy_utilities": 75,
+          "financial_services": 59,
+          "government": 61,
+          "healthcare": 68,
+          "manufacturing_industrial": 69,
+          "marketing_services": 59,
+          "legal_in-house": 63,
+          "legal_agency": 64,
+          "life_sciences": 66,
+          "professional_services": 67,
+          "real_estate": 66,
+          "retail": 68,
+          "sales": 75,
+          "telecommunications": 65,
+          "transport_storage": 67,
+          "travel_hospitality_leisure": 59,
+          "wholesale_distribution": 62,
+          "other": 80
+        },
+        "job_level": {
+          "ceo": 83,
+          "senior_executive": 78,
+          "senior_leader": 69,
+          "mid_level_leader": 69,
+          "first_level_supervisor": 58,
+          "individual_contributor": 63
+        },
+        "relationship_status": {
+          "single": 63,
+          "cohabiting": 73,
+          "married": 58,
+          "divorced_separated": 64,
+          "widowed": 65
+        },
+        "education": {
+          "secondary": 58,
+          "tertiary": 63,
+          "professional_certifications": 69,
+          "undergraduate": 76,
+          "postgraduate": 77
+        },
+        "generation": {
+          "gen_z": 73,
+          "millennials": 62,
+          "gen_x": 58,
+          "baby_boomers": 67,
+          "65_plus": 73
+        },
+        "employment_status": {
+          "full_time": 63,
+          "part_time": 58,
+          "contract": 61,
+          "freelance": 68
+        }
+      }
+    }
+  ]
+}

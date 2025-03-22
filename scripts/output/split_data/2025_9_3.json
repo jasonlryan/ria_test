@@ -12,7 +12,7 @@
       "Employee_Wellbeing"
     ],
     "canonicalQuestion": "How supported do you feel in terms of wellbeing at work?",
-    "subQuestion": "If a problem in my personal life is affecting my work/performance, I feel comfortable telling my manager about it",
+    "subQuestion": "I feel that my ideas and opinions will be welcomed by company leaders",
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
@@ -42,32 +42,102 @@
   "question": "Q9 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "If a problem in my personal life is affecting my work/performance, I feel comfortable telling my manager about it",
+      "response": "I feel that my ideas and opinions will be welcomed by company leaders",
       "data": {
         "region": {
           "australia": 59,
-          "india": 57,
-          "brazil": 58,
-          "country_overall": 58
+          "india": 52,
+          "brazil": 76,
+          "united_kingdom": 81,
+          "united_states": 57,
+          "saudi_arabia": 59,
+          "united_arab_emirates": 73,
+          "france": 53,
+          "germany": 35,
+          "japan": 72,
+          "country_overall": 61.7
         },
         "age": {
-          "18-24": 63,
-          "25-34": 63,
-          "35-44": 57,
-          "45-54": 52,
-          "55-65": 50
+          "18-24": 67,
+          "25-34": 66,
+          "35-44": 56,
+          "45-54": 50,
+          "55-65": 52,
+          "65+": 62
         },
         "gender": {
-          "male": 50,
-          "female": 60
+          "male": 56,
+          "female": 63
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 58,
+          "10_to_49": 59,
+          "50_to_99": 63,
+          "100_to_499": 66,
+          "500_to_999": 58,
+          "1000_or_more": 63
+        },
+        "sector": {
+          "automotive": 66,
+          "business_administration": 80,
+          "technology": 68,
+          "construction": 63,
+          "consumer_goods": 62,
+          "education": 60,
+          "energy_utilities": 66,
+          "financial_services": 53,
+          "government": 53,
+          "healthcare": 61,
+          "manufacturing_industrial": 65,
+          "marketing_services": 55,
+          "legal_in-house": 58,
+          "legal_agency": 65,
+          "life_sciences": 59,
+          "professional_services": 61,
+          "real_estate": 52,
+          "retail": 64,
+          "sales": 66,
+          "telecommunications": 56,
+          "transport_storage": 52,
+          "travel_hospitality_leisure": 50,
+          "wholesale_distribution": 54,
+          "other": 75
+        },
+        "job_level": {
+          "ceo": 79,
+          "senior_executive": 74,
+          "senior_leader": 63,
+          "mid_level_leader": 63,
+          "first_level_supervisor": 46,
+          "individual_contributor": 54
+        },
+        "relationship_status": {
+          "single": 54,
+          "cohabiting": 68,
+          "married": 48,
+          "divorced_separated": 63,
+          "widowed": 54
+        },
+        "education": {
+          "secondary": 52,
+          "tertiary": 53,
+          "professional_certifications": 62,
+          "undergraduate": 72,
+          "postgraduate": 71
+        },
+        "generation": {
+          "gen_z": 67,
+          "millennials": 55,
+          "gen_x": 49,
+          "baby_boomers": 60,
+          "65_plus": 62
+        },
+        "employment_status": {
+          "full_time": 53,
+          "part_time": 55,
+          "contract": 55,
+          "freelance": 62
+        }
       }
     }
   ]

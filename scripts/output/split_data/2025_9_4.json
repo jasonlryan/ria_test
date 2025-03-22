@@ -12,7 +12,7 @@
       "Culture_and_Values"
     ],
     "canonicalQuestion": "How important are company culture and values to your work experience?",
-    "subQuestion": "My manager appears overwhelmed at work",
+    "subQuestion": "I have the resources I need to deliver what is expected of me.",
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
@@ -42,32 +42,102 @@
   "question": "Q9 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "My manager appears overwhelmed at work",
+      "response": "I have the resources I need to deliver what is expected of me.",
       "data": {
         "region": {
-          "australia": 53,
-          "india": 39,
-          "brazil": 37,
-          "country_overall": 43
+          "australia": 68,
+          "india": 62,
+          "brazil": 81,
+          "united_kingdom": 84,
+          "united_states": 71,
+          "saudi_arabia": 70,
+          "united_arab_emirates": 79,
+          "france": 65,
+          "germany": 38,
+          "japan": 76,
+          "country_overall": 69.4
         },
         "age": {
-          "18-24": 50,
-          "25-34": 48,
-          "35-44": 43,
-          "45-54": 32,
-          "55-65": 31
+          "18-24": 74,
+          "25-34": 72,
+          "35-44": 66,
+          "45-54": 64,
+          "55-65": 72,
+          "65+": 69
         },
         "gender": {
-          "male": 35,
-          "female": 47
+          "male": 64,
+          "female": 70
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 66,
+          "10_to_49": 68,
+          "50_to_99": 72,
+          "100_to_499": 72,
+          "500_to_999": 69,
+          "1000_or_more": 71
+        },
+        "sector": {
+          "automotive": 73,
+          "business_administration": 82,
+          "technology": 73,
+          "construction": 70,
+          "consumer_goods": 69,
+          "education": 73,
+          "energy_utilities": 73,
+          "financial_services": 66,
+          "government": 67,
+          "healthcare": 67,
+          "manufacturing_industrial": 71,
+          "marketing_services": 70,
+          "legal_in-house": 74,
+          "legal_agency": 69,
+          "life_sciences": 68,
+          "professional_services": 70,
+          "real_estate": 66,
+          "retail": 65,
+          "sales": 71,
+          "telecommunications": 64,
+          "transport_storage": 68,
+          "travel_hospitality_leisure": 67,
+          "wholesale_distribution": 65,
+          "other": 78
+        },
+        "job_level": {
+          "ceo": 82,
+          "senior_executive": 77,
+          "senior_leader": 70,
+          "mid_level_leader": 71,
+          "first_level_supervisor": 62,
+          "individual_contributor": 63
+        },
+        "relationship_status": {
+          "single": 65,
+          "cohabiting": 75,
+          "married": 66,
+          "divorced_separated": 71,
+          "widowed": 67
+        },
+        "education": {
+          "secondary": 62,
+          "tertiary": 64,
+          "professional_certifications": 71,
+          "undergraduate": 77,
+          "postgraduate": 76
+        },
+        "generation": {
+          "gen_z": 74,
+          "millennials": 66,
+          "gen_x": 66,
+          "baby_boomers": 70,
+          "65_plus": 69
+        },
+        "employment_status": {
+          "full_time": 66,
+          "part_time": 59,
+          "contract": 66,
+          "freelance": 69
+        }
       }
     }
   ]

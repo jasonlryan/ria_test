@@ -17,7 +17,7 @@
       "artificial intelligence"
     ],
     "canonicalQuestion": "What are your attitudes toward AI in the workplace?",
-    "subQuestion": "When I've been asked to use AI to help with my job, I found it produced better results and/or improved efficiency.",
+    "subQuestion": "I would stay at a job if it granted me opportunities to progress and upskill quickly, even if I hated the current role",
     "comparable": true,
     "userMessage": "Data based on comparable markets only.",
     "availableMarkets": [
@@ -53,32 +53,102 @@
   "question": "Q5 - To what extent do you agree with the following statements about AI in the workplace and skills.",
   "responses": [
     {
-      "response": "When I've been asked to use AI to help with my job, I found it produced better results and/or improved efficiency.",
+      "response": "I would stay at a job if it granted me opportunities to progress and upskill quickly, even if I hated the current role",
       "data": {
         "region": {
-          "australia": 61,
-          "india": 45,
-          "brazil": 75,
-          "country_overall": 60.33
+          "australia": 68,
+          "india": 52,
+          "brazil": 82,
+          "united_kingdom": 82,
+          "united_states": 59,
+          "saudi_arabia": 59,
+          "united_arab_emirates": 75,
+          "france": 54,
+          "germany": 45,
+          "japan": 78,
+          "country_overall": 65.4
         },
         "age": {
-          "18-24": 66,
-          "25-34": 62,
-          "35-44": 50,
-          "45-54": 37,
-          "55-65": 41
+          "18-24": 70,
+          "25-34": 68,
+          "35-44": 59,
+          "45-54": 44,
+          "55-65": 44,
+          "65+": 69
         },
         "gender": {
-          "male": 45,
-          "female": 61
+          "male": 54,
+          "female": 65
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 55,
+          "10_to_49": 63,
+          "50_to_99": 66,
+          "100_to_499": 68,
+          "500_to_999": 60,
+          "1000_or_more": 64
+        },
+        "sector": {
+          "automotive": 66,
+          "business_administration": 78,
+          "technology": 67,
+          "construction": 74,
+          "consumer_goods": 58,
+          "education": 59,
+          "energy_utilities": 71,
+          "financial_services": 55,
+          "government": 58,
+          "healthcare": 62,
+          "manufacturing_industrial": 69,
+          "marketing_services": 44,
+          "legal_in-house": 70,
+          "legal_agency": 54,
+          "life_sciences": 59,
+          "professional_services": 60,
+          "real_estate": 58,
+          "retail": 67,
+          "sales": 65,
+          "telecommunications": 54,
+          "transport_storage": 60,
+          "travel_hospitality_leisure": 53,
+          "wholesale_distribution": 55,
+          "other": 73
+        },
+        "job_level": {
+          "ceo": 77,
+          "senior_executive": 73,
+          "senior_leader": 65,
+          "mid_level_leader": 66,
+          "first_level_supervisor": 49,
+          "individual_contributor": 59
+        },
+        "relationship_status": {
+          "single": 57,
+          "cohabiting": 68,
+          "married": 49,
+          "divorced_separated": 47,
+          "widowed": 58
+        },
+        "education": {
+          "secondary": 55,
+          "tertiary": 53,
+          "professional_certifications": 65,
+          "undergraduate": 71,
+          "postgraduate": 68
+        },
+        "generation": {
+          "gen_z": 69,
+          "millennials": 56,
+          "gen_x": 42,
+          "baby_boomers": 60,
+          "65_plus": 69
+        },
+        "employment_status": {
+          "full_time": 55,
+          "part_time": 59,
+          "contract": 60,
+          "freelance": 64
+        }
       }
     }
   ]

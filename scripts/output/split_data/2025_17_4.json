@@ -12,7 +12,7 @@
       "Motivation_and_Fulfillment"
     ],
     "canonicalQuestion": "How motivated and fulfilled do you feel in your role?",
-    "subQuestion": "The organization shows care and concern for its employees.",
+    "subQuestion": "My job makes good use of my skills and abilities.",
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
@@ -42,32 +42,102 @@
   "question": "Q17 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "The organization shows care and concern for its employees.",
+      "response": "My job makes good use of my skills and abilities.",
       "data": {
         "region": {
-          "australia": 70,
-          "india": 55,
-          "brazil": 76,
-          "country_overall": 67
+          "australia": 74,
+          "india": 74,
+          "brazil": 88,
+          "united_kingdom": 86,
+          "united_states": 74,
+          "saudi_arabia": 75,
+          "united_arab_emirates": 82,
+          "france": 76,
+          "germany": 48,
+          "japan": 79,
+          "country_overall": 75.6
         },
         "age": {
-          "18-24": 72,
-          "25-34": 70,
-          "35-44": 63,
-          "45-54": 56,
-          "55-65": 63
+          "18-24": 79,
+          "25-34": 79,
+          "35-44": 73,
+          "45-54": 71,
+          "55-65": 74,
+          "65+": 75
         },
         "gender": {
-          "male": 62,
-          "female": 68
+          "male": 75,
+          "female": 75
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 75,
+          "10_to_49": 73,
+          "50_to_99": 75,
+          "100_to_499": 78,
+          "500_to_999": 75,
+          "1000_or_more": 77
+        },
+        "sector": {
+          "automotive": 76,
+          "business_administration": 86,
+          "technology": 78,
+          "construction": 72,
+          "consumer_goods": 80,
+          "education": 74,
+          "energy_utilities": 77,
+          "financial_services": 73,
+          "government": 78,
+          "healthcare": 75,
+          "manufacturing_industrial": 73,
+          "marketing_services": 76,
+          "legal_in-house": 74,
+          "legal_agency": 69,
+          "life_sciences": 73,
+          "professional_services": 75,
+          "real_estate": 70,
+          "retail": 77,
+          "sales": 78,
+          "telecommunications": 70,
+          "transport_storage": 73,
+          "travel_hospitality_leisure": 67,
+          "wholesale_distribution": 72,
+          "other": 84
+        },
+        "job_level": {
+          "ceo": 86,
+          "senior_executive": 82,
+          "senior_leader": 77,
+          "mid_level_leader": 76,
+          "first_level_supervisor": 69,
+          "individual_contributor": 70
+        },
+        "relationship_status": {
+          "single": 73,
+          "cohabiting": 81,
+          "married": 70,
+          "divorced_separated": 74,
+          "widowed": 73
+        },
+        "education": {
+          "secondary": 68,
+          "tertiary": 74,
+          "professional_certifications": 76,
+          "undergraduate": 82,
+          "postgraduate": 83
+        },
+        "generation": {
+          "gen_z": 80,
+          "millennials": 73,
+          "gen_x": 71,
+          "baby_boomers": 77,
+          "65_plus": 75
+        },
+        "employment_status": {
+          "full_time": 72,
+          "part_time": 67,
+          "contract": 72,
+          "freelance": 75
+        }
       }
     }
   ]

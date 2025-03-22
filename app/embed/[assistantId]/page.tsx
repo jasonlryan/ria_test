@@ -12,13 +12,16 @@ import { useState, useRef, useEffect, Suspense } from "react";
 // Open AI
 import { AssistantStream } from "openai/lib/AssistantStream";
 // Markdown
-import Markdown from "react-markdown";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 // Components
 import PromptInput from "../../../components/PromptInput";
 // Helpers
 import { parseResponse } from "../../../utils/helpers";
 import chatConfig from "../../../config/chat.config.json";
 import CollapsibleContent from "../../../components/CollapsibleContent";
+// Add the new AssistantSelector component
+import AssistantSelector from "../../../components/AssistantSelector";
 
 function Embed({ params: { assistantId } }) {
   const title = "WORKFORCE 2025";
@@ -242,10 +245,17 @@ function Embed({ params: { assistantId } }) {
   // Auto scroll to bottom of message list. Scroll as message is being streamed.
   const messageListRef = useRef<HTMLDivElement>(null);
   const scroll = () => {
-    // Grab the properties for the message list
-    const { scrollHeight } = messageListRef.current as HTMLDivElement;
-    console.log("Scrolling to:", scrollHeight);
-    messageListRef.current?.scrollTo({ top: scrollHeight, behavior: "smooth" });
+    // Check if messageListRef.current exists before accessing properties
+    if (messageListRef.current) {
+      const { scrollHeight } = messageListRef.current;
+      console.log("Scrolling to:", scrollHeight);
+      messageListRef.current.scrollTo({
+        top: scrollHeight,
+        behavior: "smooth",
+      });
+    } else {
+      console.log("Message list ref is not available yet");
+    }
   };
   useEffect(() => {
     console.log("Messages updated, triggering scroll.");
@@ -303,6 +313,9 @@ function Embed({ params: { assistantId } }) {
         <div className="flex flex-col lg:flex-row gap-4 flex-1 overflow-hidden">
           {/* Chat and Input Section */}
           <div className="flex-1 flex flex-col">
+            {/* Assistant Selector */}
+            <AssistantSelector currentAssistantId={assistantId} />
+
             {/* Chat Container */}
             <div className="chat-container flex-1 overflow-y-auto">
               <div
@@ -319,8 +332,9 @@ function Embed({ params: { assistantId } }) {
                         : "message-bubble-user"
                     }`}
                   >
-                    <Markdown
+                    <ReactMarkdown
                       className="prose max-w-none text-sm sm:text-base"
+                      remarkPlugins={[remarkGfm]}
                       components={{
                         table: ({ node, ...props }) => (
                           <div className="overflow-x-auto">
@@ -349,14 +363,15 @@ function Embed({ params: { assistantId } }) {
                       }}
                     >
                       {msg.content}
-                    </Markdown>
+                    </ReactMarkdown>
                   </div>
                 ))}
 
                 {loading && streamingMessage && (
                   <div className="message-bubble message-bubble-assistant">
-                    <Markdown
+                    <ReactMarkdown
                       className="prose max-w-none text-sm sm:text-base"
+                      remarkPlugins={[remarkGfm]}
                       components={{
                         table: ({ node, ...props }) => (
                           <div className="overflow-x-auto">
@@ -385,7 +400,7 @@ function Embed({ params: { assistantId } }) {
                       }}
                     >
                       {streamingMessage.content}
-                    </Markdown>
+                    </ReactMarkdown>
                     <div className="flex h-4 items-end gap-2 mt-2">
                       <div className="bounce bounce1 rounded bg-primary h-1.5 w-1.5 sm:h-2 sm:w-2" />
                       <div className="bounce bounce2 rounded bg-primary h-1.5 w-1.5 sm:h-2 sm:w-2" />

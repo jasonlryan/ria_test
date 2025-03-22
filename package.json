@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:test": "cross-env OPENAI_ASSISTANT_ID=asst_T8WLaYpjA8l8JGApPGx6oyKq next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:css": "stylelint \"**/*.css\"",
     "scripts:dev": "node scripts/index.js",
     "scripts:country-txt": "node scripts/index-country-txt.js",
     "scripts:country-json": "node scripts/index-country-json.js",
@@ -25,18 +27,22 @@
     "dotenv": "^16.4.7",
     "glob": "^11.0.1",
     "next": "^14.2.7",
-    "openai": "^4.87.4",
+    "openai": "^4.89.0",
     "react": "^18",
     "react-dom": "^18",
-    "react-markdown": "^9.0.1"
+    "react-markdown": "^9.1.0",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.16",
     "@types/react": "18.3.3",
     "autoprefixer": "^10.0.1",
+    "cross-env": "^7.0.3",
     "eslint": "^8",
     "eslint-config-next": "14.0.3",
     "postcss": "^8",
+    "stylelint": "^16.16.0",
+    "stylelint-config-standard": "^37.0.0",
     "tailwindcss": "^3.3.0"
   }
 }

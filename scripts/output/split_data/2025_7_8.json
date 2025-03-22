@@ -12,7 +12,7 @@
       "Work_Life_Flexibility"
     ],
     "canonicalQuestion": "How important is flexibility in your work arrangements?",
-    "subQuestion": "The organization handles decisions about people with sensitivity and care",
+    "subQuestion": "I feel confident I could easily find a new role if I left my current company in the next few months",
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
@@ -42,32 +42,102 @@
   "question": "Q7 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "The organization handles decisions about people with sensitivity and care",
+      "response": "I feel confident I could easily find a new role if I left my current company in the next few months",
       "data": {
         "region": {
-          "australia": 61,
-          "india": 42,
-          "brazil": 73,
-          "country_overall": 58.67
+          "australia": 66,
+          "india": 49,
+          "brazil": 66,
+          "united_kingdom": 81,
+          "united_states": 61,
+          "saudi_arabia": 65,
+          "united_arab_emirates": 67,
+          "france": 61,
+          "germany": 25,
+          "japan": 70,
+          "country_overall": 61.1
         },
         "age": {
-          "18-24": 66,
-          "25-34": 63,
-          "35-44": 52,
-          "45-54": 46,
-          "55-65": 51
+          "18-24": 69,
+          "25-34": 67,
+          "35-44": 56,
+          "45-54": 44,
+          "55-65": 46,
+          "65+": 67
         },
         "gender": {
-          "male": 54,
-          "female": 62
+          "male": 50,
+          "female": 64
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 54,
+          "10_to_49": 63,
+          "50_to_99": 63,
+          "100_to_499": 68,
+          "500_to_999": 60,
+          "1000_or_more": 64
+        },
+        "sector": {
+          "automotive": 62,
+          "business_administration": 77,
+          "technology": 69,
+          "construction": 66,
+          "consumer_goods": 58,
+          "education": 61,
+          "energy_utilities": 67,
+          "financial_services": 49,
+          "government": 64,
+          "healthcare": 59,
+          "manufacturing_industrial": 67,
+          "marketing_services": 52,
+          "legal_in-house": 65,
+          "legal_agency": 58,
+          "life_sciences": 62,
+          "professional_services": 58,
+          "real_estate": 57,
+          "retail": 62,
+          "sales": 65,
+          "telecommunications": 57,
+          "transport_storage": 57,
+          "travel_hospitality_leisure": 54,
+          "wholesale_distribution": 52,
+          "other": 69
+        },
+        "job_level": {
+          "ceo": 77,
+          "senior_executive": 73,
+          "senior_leader": 63,
+          "mid_level_leader": 63,
+          "first_level_supervisor": 50,
+          "individual_contributor": 57
+        },
+        "relationship_status": {
+          "single": 59,
+          "cohabiting": 67,
+          "married": 48,
+          "divorced_separated": 53,
+          "widowed": 54
+        },
+        "education": {
+          "secondary": 52,
+          "tertiary": 59,
+          "professional_certifications": 63,
+          "undergraduate": 69,
+          "postgraduate": 69
+        },
+        "generation": {
+          "gen_z": 69,
+          "millennials": 54,
+          "gen_x": 43,
+          "baby_boomers": 59,
+          "65_plus": 67
+        },
+        "employment_status": {
+          "full_time": 54,
+          "part_time": 52,
+          "contract": 51,
+          "freelance": 61
+        }
       }
     }
   ]

@@ -17,7 +17,7 @@
       "senior leadership"
     ],
     "canonicalQuestion": "How confident are you in your organization's leadership?",
-    "subQuestion": "I feel my company is using Return to Office policies and other rules to push me out",
+    "subQuestion": "I am worried about how to make my resume/ CV stand out in the competitive job market",
     "comparable": true,
     "userMessage": "Data based on comparable markets only.",
     "availableMarkets": [
@@ -53,32 +53,102 @@
   "question": "Q7 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "I feel my company is using Return to Office policies and other rules to push me out",
+      "response": "I am worried about how to make my resume/ CV stand out in the competitive job market",
       "data": {
         "region": {
-          "australia": 46,
-          "india": 34,
-          "brazil": 48,
-          "country_overall": 42.67
+          "australia": 62,
+          "india": 43,
+          "brazil": 63,
+          "united_kingdom": 65,
+          "united_states": 50,
+          "saudi_arabia": 56,
+          "united_arab_emirates": 75,
+          "france": 42,
+          "germany": 38,
+          "japan": 67,
+          "country_overall": 56.1
         },
         "age": {
-          "18-24": 44,
-          "25-34": 41,
-          "35-44": 34,
-          "45-54": 21,
-          "55-65": 19
+          "18-24": 60,
+          "25-34": 55,
+          "35-44": 49,
+          "45-54": 38,
+          "55-65": 32,
+          "65+": 62
         },
         "gender": {
-          "male": 27,
-          "female": 42
+          "male": 46,
+          "female": 53
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 50,
+          "10_to_49": 53,
+          "50_to_99": 56,
+          "100_to_499": 56,
+          "500_to_999": 51,
+          "1000_or_more": 53
+        },
+        "sector": {
+          "automotive": 60,
+          "business_administration": 63,
+          "technology": 53,
+          "construction": 61,
+          "consumer_goods": 52,
+          "education": 53,
+          "energy_utilities": 57,
+          "financial_services": 48,
+          "government": 47,
+          "healthcare": 52,
+          "manufacturing_industrial": 62,
+          "marketing_services": 53,
+          "legal_in-house": 53,
+          "legal_agency": 65,
+          "life_sciences": 47,
+          "professional_services": 49,
+          "real_estate": 53,
+          "retail": 59,
+          "sales": 56,
+          "telecommunications": 40,
+          "transport_storage": 52,
+          "travel_hospitality_leisure": 45,
+          "wholesale_distribution": 48,
+          "other": 56
+        },
+        "job_level": {
+          "ceo": 61,
+          "senior_executive": 58,
+          "senior_leader": 54,
+          "mid_level_leader": 55,
+          "first_level_supervisor": 46,
+          "individual_contributor": 53
+        },
+        "relationship_status": {
+          "single": 47,
+          "cohabiting": 55,
+          "married": 42,
+          "divorced_separated": 38,
+          "widowed": 52
+        },
+        "education": {
+          "secondary": 51,
+          "tertiary": 45,
+          "professional_certifications": 56,
+          "undergraduate": 56,
+          "postgraduate": 51
+        },
+        "generation": {
+          "gen_z": 57,
+          "millennials": 47,
+          "gen_x": 34,
+          "baby_boomers": 53,
+          "65_plus": 62
+        },
+        "employment_status": {
+          "full_time": 51,
+          "part_time": 53,
+          "contract": 51,
+          "freelance": 56
+        }
       }
     }
   ]

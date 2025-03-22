@@ -1,0 +1,150 @@
+{
+  "metadata": {
+    "topicId": "Organizational_Adaptation",
+    "theme": "Leadership & Management",
+    "questionId": "Q17_5",
+    "year": 2025,
+    "keywords": [
+      "change management",
+      "business agility",
+      "organizational flexibility",
+      "adaptive capability",
+      "Organizational_Adaptation"
+    ],
+    "canonicalQuestion": "How effectively does your organization adapt to change?",
+    "subQuestion": "My job provides opportunities to do challenging and interesting work.",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q17 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "My job provides opportunities to do challenging and interesting work.",
+      "data": {
+        "region": {
+          "australia": 73,
+          "india": 70,
+          "brazil": 74,
+          "united_kingdom": 86,
+          "united_states": 71,
+          "saudi_arabia": 73,
+          "united_arab_emirates": 80,
+          "france": 72,
+          "germany": 42,
+          "japan": 72,
+          "country_overall": 71.3
+        },
+        "age": {
+          "18-24": 76,
+          "25-34": 75,
+          "35-44": 69,
+          "45-54": 65,
+          "55-65": 71,
+          "65+": 74
+        },
+        "gender": {
+          "male": 71,
+          "female": 73
+        },
+        "org_size": {
+          "fewer_than_10": 69,
+          "10_to_49": 68,
+          "50_to_99": 76,
+          "100_to_499": 76,
+          "500_to_999": 71,
+          "1000_or_more": 74
+        },
+        "sector": {
+          "automotive": 74,
+          "business_administration": 85,
+          "technology": 73,
+          "construction": 70,
+          "consumer_goods": 76,
+          "education": 72,
+          "energy_utilities": 77,
+          "financial_services": 69,
+          "government": 73,
+          "healthcare": 70,
+          "manufacturing_industrial": 77,
+          "marketing_services": 73,
+          "legal_in-house": 65,
+          "legal_agency": 72,
+          "life_sciences": 72,
+          "professional_services": 73,
+          "real_estate": 63,
+          "retail": 72,
+          "sales": 75,
+          "telecommunications": 66,
+          "transport_storage": 66,
+          "travel_hospitality_leisure": 64,
+          "wholesale_distribution": 66,
+          "other": 83
+        },
+        "job_level": {
+          "ceo": 84,
+          "senior_executive": 80,
+          "senior_leader": 74,
+          "mid_level_leader": 74,
+          "first_level_supervisor": 63,
+          "individual_contributor": 67
+        },
+        "relationship_status": {
+          "single": 70,
+          "cohabiting": 77,
+          "married": 66,
+          "divorced_separated": 70,
+          "widowed": 68
+        },
+        "education": {
+          "secondary": 64,
+          "tertiary": 69,
+          "professional_certifications": 73,
+          "undergraduate": 80,
+          "postgraduate": 82
+        },
+        "generation": {
+          "gen_z": 77,
+          "millennials": 68,
+          "gen_x": 66,
+          "baby_boomers": 73,
+          "65_plus": 74
+        },
+        "employment_status": {
+          "full_time": 67,
+          "part_time": 63,
+          "contract": 69,
+          "freelance": 71
+        }
+      }
+    }
+  ]
+}

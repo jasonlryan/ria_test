@@ -17,7 +17,7 @@
       "experimentation with AI"
     ],
     "canonicalQuestion": "How ready are you to adopt and use AI in your role?",
-    "subQuestion": "My organization encourages experimentation with new technologies",
+    "subQuestion": "I feel my current skills will remain relevant in the next three years",
     "comparable": false,
     "userMessage": "Year‑on‑year comparisons not available due to new question additions in 2025.",
     "availableMarkets": [],
@@ -47,32 +47,102 @@
   "question": "Q5 - To what extent do you agree with the following statements about AI in the workplace and skills.",
   "responses": [
     {
-      "response": "My organization encourages experimentation with new technologies",
+      "response": "I feel my current skills will remain relevant in the next three years",
       "data": {
         "region": {
-          "australia": 64,
-          "india": 51,
-          "brazil": 78,
-          "country_overall": 64.33
+          "australia": 73,
+          "india": 65,
+          "brazil": 85,
+          "united_kingdom": 82,
+          "united_states": 75,
+          "saudi_arabia": 76,
+          "united_arab_emirates": 84,
+          "france": 72,
+          "germany": 49,
+          "japan": 81,
+          "country_overall": 74.2
         },
         "age": {
-          "18-24": 68,
-          "25-34": 66,
-          "35-44": 57,
-          "45-54": 45,
-          "55-65": 51
+          "18-24": 77,
+          "25-34": 77,
+          "35-44": 70,
+          "45-54": 68,
+          "55-65": 73,
+          "65+": 75
         },
         "gender": {
-          "male": 53,
-          "female": 65
+          "male": 66,
+          "female": 74
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 70,
+          "10_to_49": 71,
+          "50_to_99": 74,
+          "100_to_499": 76,
+          "500_to_999": 74,
+          "1000_or_more": 76
+        },
+        "sector": {
+          "automotive": 77,
+          "business_administration": 84,
+          "technology": 76,
+          "construction": 73,
+          "consumer_goods": 75,
+          "education": 72,
+          "energy_utilities": 77,
+          "financial_services": 72,
+          "government": 76,
+          "healthcare": 72,
+          "manufacturing_industrial": 74,
+          "marketing_services": 79,
+          "legal_in-house": 74,
+          "legal_agency": 73,
+          "life_sciences": 71,
+          "professional_services": 73,
+          "real_estate": 73,
+          "retail": 71,
+          "sales": 74,
+          "telecommunications": 70,
+          "transport_storage": 73,
+          "travel_hospitality_leisure": 64,
+          "wholesale_distribution": 67,
+          "other": 79
+        },
+        "job_level": {
+          "ceo": 84,
+          "senior_executive": 81,
+          "senior_leader": 75,
+          "mid_level_leader": 75,
+          "first_level_supervisor": 67,
+          "individual_contributor": 69
+        },
+        "relationship_status": {
+          "single": 70,
+          "cohabiting": 78,
+          "married": 69,
+          "divorced_separated": 70,
+          "widowed": 70
+        },
+        "education": {
+          "secondary": 67,
+          "tertiary": 71,
+          "professional_certifications": 75,
+          "undergraduate": 80,
+          "postgraduate": 80
+        },
+        "generation": {
+          "gen_z": 78,
+          "millennials": 70,
+          "gen_x": 70,
+          "baby_boomers": 75,
+          "65_plus": 75
+        },
+        "employment_status": {
+          "full_time": 70,
+          "part_time": 59,
+          "contract": 69,
+          "freelance": 70
+        }
       }
     }
   ]

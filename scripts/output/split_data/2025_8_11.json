@@ -12,7 +12,7 @@
       "Culture_and_Values"
     ],
     "canonicalQuestion": "How important are company culture and values to your work experience?",
-    "subQuestion": "Leaders at my organization are often not aligned",
+    "subQuestion": "In the last 12 months, I have joined with colleagues to influence workplace decisions",
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
@@ -42,32 +42,102 @@
   "question": "Q8 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "Leaders at my organization are often not aligned",
+      "response": "In the last 12 months, I have joined with colleagues to influence workplace decisions",
       "data": {
         "region": {
-          "australia": 48,
-          "india": 41,
-          "brazil": 37,
-          "country_overall": 42
+          "australia": 54,
+          "india": 45,
+          "brazil": 59,
+          "united_kingdom": 72,
+          "united_states": 49,
+          "saudi_arabia": 50,
+          "united_arab_emirates": 55,
+          "france": 43,
+          "germany": 31,
+          "japan": 61,
+          "country_overall": 51.9
         },
         "age": {
-          "18-24": 47,
-          "25-34": 46,
-          "35-44": 42,
+          "18-24": 61,
+          "25-34": 55,
+          "35-44": 45,
           "45-54": 33,
-          "55-65": 29
+          "55-65": 33,
+          "65+": 58
         },
         "gender": {
-          "male": 32,
-          "female": 45
+          "male": 39,
+          "female": 54
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 44,
+          "10_to_49": 51,
+          "50_to_99": 57,
+          "100_to_499": 58,
+          "500_to_999": 48,
+          "1000_or_more": 54
+        },
+        "sector": {
+          "automotive": 54,
+          "business_administration": 68,
+          "technology": 56,
+          "construction": 47,
+          "consumer_goods": 51,
+          "education": 51,
+          "energy_utilities": 55,
+          "financial_services": 47,
+          "government": 48,
+          "healthcare": 50,
+          "manufacturing_industrial": 60,
+          "marketing_services": 42,
+          "legal_in-house": 44,
+          "legal_agency": 51,
+          "life_sciences": 45,
+          "professional_services": 49,
+          "real_estate": 43,
+          "retail": 52,
+          "sales": 56,
+          "telecommunications": 42,
+          "transport_storage": 48,
+          "travel_hospitality_leisure": 46,
+          "wholesale_distribution": 40,
+          "other": 58
+        },
+        "job_level": {
+          "ceo": 68,
+          "senior_executive": 63,
+          "senior_leader": 55,
+          "mid_level_leader": 55,
+          "first_level_supervisor": 35,
+          "individual_contributor": 47
+        },
+        "relationship_status": {
+          "single": 47,
+          "cohabiting": 56,
+          "married": 37,
+          "divorced_separated": 33,
+          "widowed": 43
+        },
+        "education": {
+          "secondary": 42,
+          "tertiary": 43,
+          "professional_certifications": 52,
+          "undergraduate": 62,
+          "postgraduate": 66
+        },
+        "generation": {
+          "gen_z": 58,
+          "millennials": 43,
+          "gen_x": 32,
+          "baby_boomers": 48,
+          "65_plus": 58
+        },
+        "employment_status": {
+          "full_time": 41,
+          "part_time": 46,
+          "contract": 43,
+          "freelance": 54
+        }
       }
     }
   ]

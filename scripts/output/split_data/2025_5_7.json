@@ -17,7 +17,7 @@
       "experimentation with AI"
     ],
     "canonicalQuestion": "How ready are you to adopt and use AI in your role?",
-    "subQuestion": "My organization offers a broad enough range of learning approaches [e.g. self-directed video/e-learning/podcasts/short modules/practical workshops] to suit my needs",
+    "subQuestion": "I think using AI in my role will bolster my value in the next three years",
     "comparable": false,
     "userMessage": "Year‑on‑year comparisons not available due to new question additions in 2025.",
     "availableMarkets": [],
@@ -47,32 +47,102 @@
   "question": "Q5 - To what extent do you agree with the following statements about AI in the workplace and skills.",
   "responses": [
     {
-      "response": "My organization offers a broad enough range of learning approaches [e.g. self-directed video/e-learning/podcasts/short modules/practical workshops] to suit my needs",
+      "response": "I think using AI in my role will bolster my value in the next three years",
       "data": {
         "region": {
-          "australia": 67,
-          "india": 51,
+          "australia": 57,
+          "india": 47,
           "brazil": 77,
-          "country_overall": 65
+          "united_kingdom": 82,
+          "united_states": 49,
+          "saudi_arabia": 51,
+          "united_arab_emirates": 75,
+          "france": 52,
+          "germany": 43,
+          "japan": 76,
+          "country_overall": 60.9
         },
         "age": {
-          "18-24": 70,
-          "25-34": 66,
-          "35-44": 57,
-          "45-54": 48,
-          "55-65": 53
+          "18-24": 66,
+          "25-34": 64,
+          "35-44": 52,
+          "45-54": 40,
+          "55-65": 40,
+          "65+": 61
         },
         "gender": {
-          "male": 52,
-          "female": 64
+          "male": 50,
+          "female": 62
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 52,
+          "10_to_49": 61,
+          "50_to_99": 62,
+          "100_to_499": 63,
+          "500_to_999": 55,
+          "1000_or_more": 61
+        },
+        "sector": {
+          "automotive": 62,
+          "business_administration": 80,
+          "technology": 62,
+          "construction": 64,
+          "consumer_goods": 54,
+          "education": 60,
+          "energy_utilities": 66,
+          "financial_services": 47,
+          "government": 48,
+          "healthcare": 59,
+          "manufacturing_industrial": 66,
+          "marketing_services": 37,
+          "legal_in-house": 65,
+          "legal_agency": 64,
+          "life_sciences": 53,
+          "professional_services": 62,
+          "real_estate": 49,
+          "retail": 61,
+          "sales": 67,
+          "telecommunications": 48,
+          "transport_storage": 44,
+          "travel_hospitality_leisure": 49,
+          "wholesale_distribution": 49,
+          "other": 71
+        },
+        "job_level": {
+          "ceo": 78,
+          "senior_executive": 74,
+          "senior_leader": 62,
+          "mid_level_leader": 62,
+          "first_level_supervisor": 39,
+          "individual_contributor": 51
+        },
+        "relationship_status": {
+          "single": 47,
+          "cohabiting": 66,
+          "married": 42,
+          "divorced_separated": 42,
+          "widowed": 47
+        },
+        "education": {
+          "secondary": 49,
+          "tertiary": 46,
+          "professional_certifications": 62,
+          "undergraduate": 69,
+          "postgraduate": 67
+        },
+        "generation": {
+          "gen_z": 66,
+          "millennials": 50,
+          "gen_x": 38,
+          "baby_boomers": 53,
+          "65_plus": 61
+        },
+        "employment_status": {
+          "full_time": 43,
+          "part_time": 49,
+          "contract": 56,
+          "freelance": 63
+        }
       }
     }
   ]

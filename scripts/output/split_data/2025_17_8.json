@@ -1,0 +1,144 @@
+{
+  "metadata": {
+    "topicId": "Culture_and_Values",
+    "theme": "Employee Experience & Work‑Life",
+    "questionId": "Q17_8",
+    "year": 2025,
+    "keywords": [
+      "organizational culture",
+      "company values",
+      "workplace ethos",
+      "cultural fit",
+      "Culture_and_Values"
+    ],
+    "canonicalQuestion": "How important are company culture and values to your work experience?",
+    "subQuestion": "The organization shows care and concern for its employees.",
+    "comparable": false,
+    "userMessage": "Compare with caution due to differences in question framing between years.",
+    "availableMarkets": [],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q17 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "The organization shows care and concern for its employees.",
+      "data": {
+        "region": {
+          "australia": 70,
+          "india": 55,
+          "brazil": 76,
+          "united_kingdom": 83,
+          "united_states": 67,
+          "saudi_arabia": 67,
+          "united_arab_emirates": 73,
+          "france": 64,
+          "germany": 41,
+          "japan": 76,
+          "country_overall": 67.2
+        },
+        "age": {
+          "18-24": 72,
+          "25-34": 70,
+          "35-44": 63,
+          "45-54": 56,
+          "55-65": 63,
+          "65+": 72
+        },
+        "gender": {
+          "male": 62,
+          "female": 68
+        },
+        "org_size": {
+          "fewer_than_10": 67,
+          "10_to_49": 69,
+          "50_to_99": 70,
+          "100_to_499": 71,
+          "500_to_999": 65,
+          "1000_or_more": 68
+        },
+        "sector": {
+          "automotive": 70,
+          "business_administration": 82,
+          "technology": 75,
+          "construction": 68,
+          "consumer_goods": 67,
+          "education": 70,
+          "energy_utilities": 71,
+          "financial_services": 60,
+          "government": 61,
+          "healthcare": 67,
+          "manufacturing_industrial": 71,
+          "marketing_services": 62,
+          "legal_in-house": 60,
+          "legal_agency": 64,
+          "life_sciences": 63,
+          "professional_services": 73,
+          "real_estate": 64,
+          "retail": 67,
+          "sales": 69,
+          "telecommunications": 58,
+          "transport_storage": 61,
+          "travel_hospitality_leisure": 57,
+          "wholesale_distribution": 63,
+          "other": 80
+        },
+        "job_level": {
+          "ceo": 82,
+          "senior_executive": 76,
+          "senior_leader": 68,
+          "mid_level_leader": 69,
+          "first_level_supervisor": 56,
+          "individual_contributor": 63
+        },
+        "relationship_status": {
+          "single": 62,
+          "cohabiting": 72,
+          "married": 58,
+          "divorced_separated": 67,
+          "widowed": 65
+        },
+        "education": {
+          "secondary": 57,
+          "tertiary": 61,
+          "professional_certifications": 68,
+          "undergraduate": 75,
+          "postgraduate": 76
+        },
+        "generation": {
+          "gen_z": 71,
+          "millennials": 61,
+          "gen_x": 57,
+          "baby_boomers": 66,
+          "65_plus": 72
+        },
+        "employment_status": {
+          "full_time": 65,
+          "part_time": 63,
+          "contract": 60,
+          "freelance": 68
+        }
+      }
+    }
+  ]
+}

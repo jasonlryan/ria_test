@@ -19,7 +19,6 @@
      - Extract the question text from the root "question" field
      - For each item in the "responses" array:
        - Extract the response text from the "response" field
-       - Extract the global value from "data.region.country_overall"
        - Convert decimal values to percentages by multiplying by 100
        - Store the response with its percentage for ranking
      - Sort all responses by their percentage values in descending order

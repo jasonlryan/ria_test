@@ -12,7 +12,7 @@
       "Intergenerational_Collaboration"
     ],
     "canonicalQuestion": "How effectively do different generations collaborate in your workplace?",
-    "subQuestion": "My organization has taken steps to reduce cultural gaps between different generations of workers",
+    "subQuestion": "I would be motivated to work harder if I only worked a 4-day week on the same salary",
     "comparable": false,
     "userMessage": "New in 2025; no year‑on‑year comparison.",
     "availableMarkets": [],
@@ -42,32 +42,102 @@
   "question": "Q6 - To what extent do you agree with the following statements with regards to your workplace.",
   "responses": [
     {
-      "response": "My organization has taken steps to reduce cultural gaps between different generations of workers",
+      "response": "I would be motivated to work harder if I only worked a 4-day week on the same salary",
       "data": {
         "region": {
-          "australia": 63,
-          "india": 40,
-          "brazil": 74,
-          "country_overall": 59
+          "australia": 76,
+          "india": 70,
+          "brazil": 86,
+          "united_kingdom": 83,
+          "united_states": 72,
+          "saudi_arabia": 76,
+          "united_arab_emirates": 82,
+          "france": 70,
+          "germany": 61,
+          "japan": 81,
+          "country_overall": 75.7
         },
         "age": {
-          "18-24": 65,
-          "25-34": 63,
-          "35-44": 51,
-          "45-54": 42,
-          "55-65": 45
+          "18-24": 80,
+          "25-34": 78,
+          "35-44": 71,
+          "45-54": 61,
+          "55-65": 56,
+          "65+": 77
         },
         "gender": {
-          "male": 47,
-          "female": 61
+          "male": 65,
+          "female": 73
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 70,
+          "10_to_49": 72,
+          "50_to_99": 74,
+          "100_to_499": 77,
+          "500_to_999": 73,
+          "1000_or_more": 76
+        },
+        "sector": {
+          "automotive": 72,
+          "business_administration": 82,
+          "technology": 77,
+          "construction": 75,
+          "consumer_goods": 75,
+          "education": 76,
+          "energy_utilities": 77,
+          "financial_services": 74,
+          "government": 72,
+          "healthcare": 72,
+          "manufacturing_industrial": 73,
+          "marketing_services": 70,
+          "legal_in-house": 74,
+          "legal_agency": 68,
+          "life_sciences": 73,
+          "professional_services": 65,
+          "real_estate": 71,
+          "retail": 75,
+          "sales": 76,
+          "telecommunications": 73,
+          "transport_storage": 74,
+          "travel_hospitality_leisure": 66,
+          "wholesale_distribution": 69,
+          "other": 74
+        },
+        "job_level": {
+          "ceo": 80,
+          "senior_executive": 78,
+          "senior_leader": 75,
+          "mid_level_leader": 76,
+          "first_level_supervisor": 69,
+          "individual_contributor": 72
+        },
+        "relationship_status": {
+          "single": 75,
+          "cohabiting": 76,
+          "married": 64,
+          "divorced_separated": 65,
+          "widowed": 70
+        },
+        "education": {
+          "secondary": 69,
+          "tertiary": 71,
+          "professional_certifications": 76,
+          "undergraduate": 77,
+          "postgraduate": 76
+        },
+        "generation": {
+          "gen_z": 79,
+          "millennials": 69,
+          "gen_x": 57,
+          "baby_boomers": 75,
+          "65_plus": 77
+        },
+        "employment_status": {
+          "full_time": 68,
+          "part_time": 65,
+          "contract": 68,
+          "freelance": 73
+        }
       }
     }
   ]

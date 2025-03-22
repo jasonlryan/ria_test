@@ -170,6 +170,9 @@ async function processCSVToGlobal(csvFilePath) {
       .pipe(csv())
       .on("headers", (csvHeaders) => {
         headers.push(...csvHeaders);
+        console.log(`Found ${headers.length} headers in CSV`);
+        // Log the first few headers to help with debugging
+        console.log(`First 10 headers: ${headers.slice(0, 10).join(", ")}`);
       })
       .on("data", (row) => {
         // If first column has a value, it's a new question
@@ -189,6 +192,33 @@ async function processCSVToGlobal(csvFilePath) {
             }
           });
 
+          // Additional direct country mappings for 2025 data
+          const country2025Mappings = {
+            country_United_Kingdom: "united_kingdom",
+            country_US: "united_states",
+            country_United_States: "united_states",
+            country_Australia: "australia",
+            country_India: "india",
+            country_Brazil: "brazil",
+            country_Saudi_Arabia: "saudi_arabia",
+            country_United_Arab_Emirates: "united_arab_emirates",
+            country_France: "france",
+            country_Germany: "germany",
+            country_Japan: "japan",
+          };
+
+          // Process 2025 country mappings
+          Object.entries(country2025Mappings).forEach(
+            ([csvField, jsonField]) => {
+              if (row[csvField]) {
+                const value = parseFloat(row[csvField]);
+                if (!isNaN(value)) {
+                  dataObj.region[jsonField] = value;
+                }
+              }
+            }
+          );
+
           // Calculate country_overall
           const countryValues = Object.values(dataObj.region).filter(
             (v) => !isNaN(v)
@@ -204,13 +234,32 @@ async function processCSVToGlobal(csvFilePath) {
           // Age
           dataObj.age = {};
           ["18-24", "25-34", "35-44", "45-54", "55-65"].forEach((age) => {
-            const value = parseFloat(
-              row[`age_${age.replace("-", "_")}`] || row[`age_${age}`]
-            );
-            if (!isNaN(value)) {
-              dataObj.age[age] = value;
+            // Try different possible field formats for age
+            const possibleFields = [
+              `age_${age.replace("-", "_")}`,
+              `age_${age}`,
+              `age_${age.replace("-", "to")}`,
+            ];
+
+            let value = null;
+            for (const field of possibleFields) {
+              if (row[field]) {
+                value = parseFloat(row[field]);
+                if (!isNaN(value)) {
+                  dataObj.age[age] = value;
+                  break;
+                }
+              }
             }
           });
+
+          // Add age_65_plus separately (special case)
+          if (row["age_65_plus"]) {
+            const value = parseFloat(row["age_65_plus"]);
+            if (!isNaN(value)) {
+              dataObj.age["65+"] = value;
+            }
+          }
 
           // Gender
           dataObj.gender = {};
@@ -221,9 +270,11 @@ async function processCSVToGlobal(csvFilePath) {
             }
           });
 
-          // Organization size
+          // Organization size - handle both 2024 and 2025 formats
           dataObj.org_size = {};
-          const orgSizes = {
+
+          // 2024 format fields
+          const orgSizes2024 = {
             fewer_than_10: "fewer_than_10",
             "10_to_49": "10_to_49",
             "50_to_99": "50_to_99",
@@ -233,36 +284,63 @@ async function processCSVToGlobal(csvFilePath) {
             "1000_or_more": "1000_or_more",
           };
 
-          Object.entries(orgSizes).forEach(([csvField, jsonField]) => {
-            const value = parseFloat(row[`org_size_${csvField}`]);
-            if (!isNaN(value)) {
-              dataObj.org_size[jsonField] = value;
+          // 2025 format fields
+          const orgSizes2025 = {
+            "<10": "fewer_than_10",
+            "10-49": "10_to_49",
+            "50-99": "50_to_99",
+            "100-500": "100_to_499",
+            "501-1000": "500_to_999",
+            "1000+": "1000_or_more",
+          };
+
+          // Process 2024 format
+          Object.entries(orgSizes2024).forEach(([csvField, jsonField]) => {
+            if (row[`org_size_${csvField}`]) {
+              const value = parseFloat(row[`org_size_${csvField}`]);
+              if (!isNaN(value)) {
+                dataObj.org_size[jsonField] = value;
+              }
             }
           });
 
-          // Sector
+          // Process 2025 format
+          Object.entries(orgSizes2025).forEach(([csvField, jsonField]) => {
+            if (row[`org_size_${csvField}`]) {
+              const value = parseFloat(row[`org_size_${csvField}`]);
+              if (!isNaN(value)) {
+                dataObj.org_size[jsonField] = value;
+              }
+            }
+          });
+
+          // Sector - process both 2024 and 2025 formats
           dataObj.sector = {};
-          const sectors = [
+
+          // Common sectors that might be found in both years
+          const commonSectors = [
             "agriculture_forestry_fishing",
             "automotive",
-            "business_administration_support_services",
-            "clean_technology",
+            "business_administration",
             "technology",
             "construction",
+            "consumer_goods",
             "education",
             "energy_utilities",
             "financial_services",
             "food_drink",
             "government",
-            "healthcare_life_sciences",
-            "leisure_sport_entertainment_recreation",
+            "healthcare",
             "manufacturing_industrial",
             "marketing_services",
-            "media_entertainment",
             "not_for_profit",
-            "real_estate_property_services",
+            "legal_in-house",
+            "legal_agency",
+            "life_sciences",
+            "professional_services",
+            "real_estate",
             "retail",
-            "sports",
+            "sales",
             "telecommunications",
             "transport_storage",
             "travel_hospitality_leisure",
@@ -270,68 +348,168 @@ async function processCSVToGlobal(csvFilePath) {
             "other",
           ];
 
-          sectors.forEach((sector) => {
-            const value = parseFloat(row[`sector_${sector}`]);
-            if (!isNaN(value)) {
-              dataObj.sector[sector] = value;
+          // Check for sectors in CSV using different format patterns
+          commonSectors.forEach((sectorBase) => {
+            // Try different case formats and prefixes
+            const variations = [
+              `sector_${sectorBase}`,
+              `sector_${
+                sectorBase.charAt(0).toUpperCase() + sectorBase.slice(1)
+              }`,
+              `sector_${sectorBase
+                .replace(/_/g, " ")
+                .split(" ")
+                .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                .join("_")}`,
+            ];
+
+            let found = false;
+            for (const fieldName of variations) {
+              if (row[fieldName] !== undefined) {
+                const value = parseFloat(row[fieldName]);
+                if (!isNaN(value)) {
+                  // Standardize the key to lowercase with underscores
+                  const standardKey = sectorBase
+                    .toLowerCase()
+                    .replace(/\s/g, "_");
+                  dataObj.sector[standardKey] = value;
+                  found = true;
+                  break;
+                }
+              }
             }
           });
 
-          // Job level
+          // Job level - process both 2024 and 2025 formats
           dataObj.job_level = {};
+
+          // Map of possible job level fields and their standard keys
           const jobLevels = {
-            ceo: "ceo",
-            senior_executive: "senior_executive",
-            senior_leader: "senior_leader",
-            mid_level_leader: "mid_level_leader",
-            first_level_supervisor: "first_level_supervisor",
-            individual_contributor: "individual_contributor",
+            CEO: "ceo",
+            Senior_Executive: "senior_executive",
+            Senior_Leader: "senior_leader",
+            "Mid-Level_Leader": "mid_level_leader",
+            First_Level_Supervisor: "first_level_supervisor",
+            Individual_Contributor: "individual_contributor",
           };
 
+          // Process job levels
           Object.entries(jobLevels).forEach(([csvField, jsonField]) => {
-            const value = parseFloat(row[`job_level_${csvField}`]);
-            if (!isNaN(value)) {
-              dataObj.job_level[jsonField] = value;
+            // Try both lowercase and original case variations
+            const fieldOptions = [
+              `job_level_${csvField}`,
+              `job_level_${csvField.toLowerCase()}`,
+            ];
+
+            for (const field of fieldOptions) {
+              if (row[field] !== undefined) {
+                const value = parseFloat(row[field]);
+                if (!isNaN(value)) {
+                  dataObj.job_level[jsonField] = value;
+                  break;
+                }
+              }
             }
           });
 
-          // Relationship status
+          // Relationship/marital status
           dataObj.relationship_status = {};
-          const relationshipStatuses = [
-            "single",
-            "cohabiting",
-            "married",
-            "divorced_separated",
-            "widowed",
-          ];
 
-          relationshipStatuses.forEach((status) => {
-            const value = parseFloat(row[`relationship_status_${status}`]);
-            if (!isNaN(value)) {
-              dataObj.relationship_status[status] = value;
+          // Map of possible relationship status fields
+          const relationshipStatuses = {
+            Single: "single",
+            "Co-habiting": "cohabiting",
+            Married: "married",
+            Divorced_separated: "divorced_separated",
+            Widowed: "widowed",
+          };
+
+          // Process both formats (relationship_status_ and marital_status_ prefixes)
+          Object.entries(relationshipStatuses).forEach(
+            ([csvField, jsonField]) => {
+              // Try both prefixes
+              const prefixes = ["relationship_status_", "marital_status_"];
+
+              for (const prefix of prefixes) {
+                const field = `${prefix}${csvField}`;
+                if (row[field] !== undefined) {
+                  const value = parseFloat(row[field]);
+                  if (!isNaN(value)) {
+                    dataObj.relationship_status[jsonField] = value;
+                    break;
+                  }
+                }
+              }
             }
-          });
+          );
 
           // Education
           dataObj.education = {};
-          const educationLevels = [
-            "secondary",
-            "tertiary",
-            "undergraduate",
-            "postgraduate",
-            "doctorate",
-          ];
 
-          educationLevels.forEach((level) => {
-            const value = parseFloat(row[`education_${level}`]);
-            if (!isNaN(value)) {
-              dataObj.education[level] = value;
+          // Map of possible education fields
+          const educationLevels = {
+            Secondary: "secondary",
+            Tertiary: "tertiary",
+            Professional_Certifications: "professional_certifications",
+            "Under-graduate_degree": "undergraduate",
+            "Post-graduate_Masters_degree": "postgraduate",
+            Doctorate_Phd: "doctorate",
+          };
+
+          // Process education fields
+          Object.entries(educationLevels).forEach(([csvField, jsonField]) => {
+            const field = `education_${csvField}`;
+            if (row[field] !== undefined) {
+              const value = parseFloat(row[field]);
+              if (!isNaN(value)) {
+                dataObj.education[jsonField] = value;
+              }
             }
           });
 
-          // Add generation and employment_status as empty objects for now
+          // Generation
           dataObj.generation = {};
+
+          // Map of possible generation fields
+          const generations = {
+            Gen_Z: "gen_z",
+            Millennials: "millennials",
+            Gen_X: "gen_x",
+            Baby_Boomers: "baby_boomers",
+            age_65_plus: "65_plus", // Special case for 65+ as a generation
+          };
+
+          // Process generation fields
+          Object.entries(generations).forEach(([csvField, jsonField]) => {
+            if (row[csvField] !== undefined) {
+              const value = parseFloat(row[csvField]);
+              if (!isNaN(value)) {
+                dataObj.generation[jsonField] = value;
+              }
+            }
+          });
+
+          // Employment status
           dataObj.employment_status = {};
+
+          // Map of employment status fields
+          const employmentStatuses = {
+            "full-time": "full_time",
+            "part-time": "part_time",
+            contract: "contract",
+            freelance: "freelance",
+          };
+
+          // Process employment status fields
+          Object.entries(employmentStatuses).forEach(([csvKey, jsonField]) => {
+            const field = `employment_status_${csvKey}`;
+            if (row[field] !== undefined) {
+              const value = parseFloat(row[field]);
+              if (!isNaN(value)) {
+                dataObj.employment_status[jsonField] = value;
+              }
+            }
+          });
 
           results.push({
             question: currentQuestion,
@@ -1103,7 +1281,7 @@ async function splitGlobalDataToFiles(params) {
       // Add response to the main question
       questionsById.get(mainQuestionId).responses.push({
         response,
-        data,
+        data, // This preserves the complete data object with all demographic segments
       });
 
       // If it's a sub-question, also store it separately
@@ -1116,7 +1294,7 @@ async function splitGlobalDataToFiles(params) {
 
         mainQuestion.subQuestions.get(subQuestionId).push({
           response,
-          data,
+          data, // This preserves the complete data object with all demographic segments
         });
       }
     });
@@ -1256,7 +1434,7 @@ async function splitGlobalDataToFiles(params) {
         const fileData = {
           metadata,
           question: questionData,
-          responses: responseItems,
+          responses: responseItems, // This preserves the complete data for each response
         };
 
         // Output file path

@@ -1,0 +1,155 @@
+{
+  "metadata": {
+    "topicId": "Leadership_Confidence",
+    "theme": "Leadership & Management",
+    "questionId": "Q17_7",
+    "year": 2025,
+    "keywords": [
+      "trust in leadership",
+      "executive confidence",
+      "leadership effectiveness",
+      "management trust",
+      "Leadership_Confidence",
+      "leadership trust",
+      "confidence in management",
+      "executive effectiveness",
+      "leadership quality",
+      "senior leadership"
+    ],
+    "canonicalQuestion": "How confident are you in your organization's leadership?",
+    "subQuestion": "The organization motivates me to do my best work.",
+    "comparable": true,
+    "userMessage": "Data based on comparable markets only.",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q17 - To what extent do you agree with the following statements.",
+  "responses": [
+    {
+      "response": "The organization motivates me to do my best work.",
+      "data": {
+        "region": {
+          "australia": 71,
+          "india": 68,
+          "brazil": 78,
+          "united_kingdom": 85,
+          "united_states": 66,
+          "saudi_arabia": 69,
+          "united_arab_emirates": 76,
+          "france": 64,
+          "germany": 33,
+          "japan": 76,
+          "country_overall": 68.6
+        },
+        "age": {
+          "18-24": 74,
+          "25-34": 72,
+          "35-44": 64,
+          "45-54": 59,
+          "55-65": 68,
+          "65+": 73
+        },
+        "gender": {
+          "male": 67,
+          "female": 69
+        },
+        "org_size": {
+          "fewer_than_10": 66,
+          "10_to_49": 70,
+          "50_to_99": 72,
+          "100_to_499": 72,
+          "500_to_999": 67,
+          "1000_or_more": 70
+        },
+        "sector": {
+          "automotive": 74,
+          "business_administration": 84,
+          "technology": 76,
+          "construction": 64,
+          "consumer_goods": 71,
+          "education": 71,
+          "energy_utilities": 72,
+          "financial_services": 60,
+          "government": 66,
+          "healthcare": 64,
+          "manufacturing_industrial": 71,
+          "marketing_services": 67,
+          "legal_in-house": 68,
+          "legal_agency": 66,
+          "life_sciences": 66,
+          "professional_services": 73,
+          "real_estate": 63,
+          "retail": 71,
+          "sales": 73,
+          "telecommunications": 60,
+          "transport_storage": 64,
+          "travel_hospitality_leisure": 64,
+          "wholesale_distribution": 62,
+          "other": 83
+        },
+        "job_level": {
+          "ceo": 84,
+          "senior_executive": 77,
+          "senior_leader": 69,
+          "mid_level_leader": 71,
+          "first_level_supervisor": 59,
+          "individual_contributor": 64
+        },
+        "relationship_status": {
+          "single": 65,
+          "cohabiting": 74,
+          "married": 61,
+          "divorced_separated": 70,
+          "widowed": 68
+        },
+        "education": {
+          "secondary": 59,
+          "tertiary": 62,
+          "professional_certifications": 69,
+          "undergraduate": 77,
+          "postgraduate": 77
+        },
+        "generation": {
+          "gen_z": 73,
+          "millennials": 64,
+          "gen_x": 60,
+          "baby_boomers": 70,
+          "65_plus": 73
+        },
+        "employment_status": {
+          "full_time": 67,
+          "part_time": 59,
+          "contract": 66,
+          "freelance": 70
+        }
+      }
+    }
+  ]
+}

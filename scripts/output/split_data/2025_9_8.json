@@ -12,7 +12,7 @@
       "Manager_Capability"
     ],
     "canonicalQuestion": "How effective is your direct manager?",
-    "subQuestion": "The lack of managers at my organization leaves me feeling directionless",
+    "subQuestion": "My manager empowers me",
     "comparable": false,
     "userMessage": "New in 2025; no year‑on‑year comparison.",
     "availableMarkets": [],
@@ -42,32 +42,102 @@
   "question": "Q9 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "The lack of managers at my organization leaves me feeling directionless",
+      "response": "My manager empowers me",
       "data": {
         "region": {
-          "australia": 46,
-          "india": 35,
-          "brazil": 49,
-          "country_overall": 43.33
+          "australia": 62,
+          "india": 65,
+          "brazil": 75,
+          "united_kingdom": 79,
+          "united_states": 58,
+          "saudi_arabia": 60,
+          "united_arab_emirates": 74,
+          "france": 45,
+          "germany": 39,
+          "japan": 73,
+          "country_overall": 63
         },
         "age": {
-          "18-24": 44,
-          "25-34": 40,
-          "35-44": 34,
-          "45-54": 22,
-          "55-65": 20
+          "18-24": 68,
+          "25-34": 65,
+          "35-44": 58,
+          "45-54": 52,
+          "55-65": 54,
+          "65+": 64
         },
         "gender": {
-          "male": 28,
-          "female": 41
+          "male": 52,
+          "female": 63
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 55,
+          "10_to_49": 59,
+          "50_to_99": 63,
+          "100_to_499": 66,
+          "500_to_999": 61,
+          "1000_or_more": 64
+        },
+        "sector": {
+          "automotive": 68,
+          "business_administration": 77,
+          "technology": 66,
+          "construction": 66,
+          "consumer_goods": 60,
+          "education": 65,
+          "energy_utilities": 67,
+          "financial_services": 61,
+          "government": 55,
+          "healthcare": 60,
+          "manufacturing_industrial": 63,
+          "marketing_services": 52,
+          "legal_in-house": 63,
+          "legal_agency": 70,
+          "life_sciences": 60,
+          "professional_services": 62,
+          "real_estate": 54,
+          "retail": 62,
+          "sales": 68,
+          "telecommunications": 53,
+          "transport_storage": 58,
+          "travel_hospitality_leisure": 55,
+          "wholesale_distribution": 55,
+          "other": 68
+        },
+        "job_level": {
+          "ceo": 78,
+          "senior_executive": 74,
+          "senior_leader": 63,
+          "mid_level_leader": 64,
+          "first_level_supervisor": 50,
+          "individual_contributor": 56
+        },
+        "relationship_status": {
+          "single": 57,
+          "cohabiting": 68,
+          "married": 52,
+          "divorced_separated": 54,
+          "widowed": 57
+        },
+        "education": {
+          "secondary": 58,
+          "tertiary": 49,
+          "professional_certifications": 64,
+          "undergraduate": 71,
+          "postgraduate": 70
+        },
+        "generation": {
+          "gen_z": 67,
+          "millennials": 57,
+          "gen_x": 52,
+          "baby_boomers": 61,
+          "65_plus": 64
+        },
+        "employment_status": {
+          "full_time": 53,
+          "part_time": 50,
+          "contract": 53,
+          "freelance": 59
+        }
       }
     }
   ]

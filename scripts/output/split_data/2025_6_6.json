@@ -12,7 +12,7 @@
       "Work_Life_Flexibility"
     ],
     "canonicalQuestion": "How important is flexibility in your work arrangements?",
-    "subQuestion": "I would stay at a job if it allowed me flexibility, even if I hated the role.",
+    "subQuestion": "I feel that the job I do reflects my values",
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
@@ -42,32 +42,102 @@
   "question": "Q6 - To what extent do you agree with the following statements with regards to your workplace.",
   "responses": [
     {
-      "response": "I would stay at a job if it allowed me flexibility, even if I hated the role.",
+      "response": "I feel that the job I do reflects my values",
       "data": {
         "region": {
-          "australia": 62,
-          "india": 50,
-          "brazil": 70,
-          "country_overall": 60.67
+          "australia": 70,
+          "india": 67,
+          "brazil": 76,
+          "united_kingdom": 87,
+          "united_states": 69,
+          "saudi_arabia": 71,
+          "united_arab_emirates": 82,
+          "france": 63,
+          "germany": 45,
+          "japan": 76,
+          "country_overall": 70.6
         },
         "age": {
-          "18-24": 64,
-          "25-34": 62,
-          "35-44": 53,
-          "45-54": 42,
-          "55-65": 40
+          "18-24": 75,
+          "25-34": 74,
+          "35-44": 69,
+          "45-54": 63,
+          "55-65": 70,
+          "65+": 73
         },
         "gender": {
-          "male": 49,
-          "female": 61
+          "male": 70,
+          "female": 72
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 67,
+          "10_to_49": 69,
+          "50_to_99": 73,
+          "100_to_499": 74,
+          "500_to_999": 70,
+          "1000_or_more": 73
+        },
+        "sector": {
+          "automotive": 69,
+          "business_administration": 83,
+          "technology": 73,
+          "construction": 70,
+          "consumer_goods": 77,
+          "education": 69,
+          "energy_utilities": 73,
+          "financial_services": 67,
+          "government": 78,
+          "healthcare": 66,
+          "manufacturing_industrial": 70,
+          "marketing_services": 77,
+          "legal_in-house": 68,
+          "legal_agency": 74,
+          "life_sciences": 69,
+          "professional_services": 72,
+          "real_estate": 62,
+          "retail": 71,
+          "sales": 72,
+          "telecommunications": 62,
+          "transport_storage": 64,
+          "travel_hospitality_leisure": 56,
+          "wholesale_distribution": 66,
+          "other": 83
+        },
+        "job_level": {
+          "ceo": 84,
+          "senior_executive": 80,
+          "senior_leader": 72,
+          "mid_level_leader": 71,
+          "first_level_supervisor": 62,
+          "individual_contributor": 66
+        },
+        "relationship_status": {
+          "single": 67,
+          "cohabiting": 76,
+          "married": 63,
+          "divorced_separated": 66,
+          "widowed": 65
+        },
+        "education": {
+          "secondary": 62,
+          "tertiary": 66,
+          "professional_certifications": 72,
+          "undergraduate": 79,
+          "postgraduate": 81
+        },
+        "generation": {
+          "gen_z": 75,
+          "millennials": 68,
+          "gen_x": 64,
+          "baby_boomers": 71,
+          "65_plus": 73
+        },
+        "employment_status": {
+          "full_time": 66,
+          "part_time": 64,
+          "contract": 71,
+          "freelance": 69
+        }
       }
     }
   ]

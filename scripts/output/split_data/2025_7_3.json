@@ -12,7 +12,7 @@
       "Culture_and_Values"
     ],
     "canonicalQuestion": "How important are company culture and values to your work experience?",
-    "subQuestion": "I am open to relocating to another country to secure a job",
+    "subQuestion": "I am concerned that protectionism policies around immigration are affecting my ability to find work",
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
@@ -42,32 +42,102 @@
   "question": "Q7 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "I am open to relocating to another country to secure a job",
+      "response": "I am concerned that protectionism policies around immigration are affecting my ability to find work",
       "data": {
         "region": {
-          "australia": 57,
+          "australia": 49,
           "india": 35,
-          "brazil": 65,
-          "country_overall": 52.33
+          "brazil": 51,
+          "united_kingdom": 68,
+          "united_states": 33,
+          "saudi_arabia": 35,
+          "united_arab_emirates": 42,
+          "france": 36,
+          "germany": 25,
+          "japan": 55,
+          "country_overall": 42.9
         },
         "age": {
-          "18-24": 57,
-          "25-34": 52,
-          "35-44": 42,
+          "18-24": 48,
+          "25-34": 45,
+          "35-44": 36,
           "45-54": 25,
-          "55-65": 22
+          "55-65": 25,
+          "65+": 50
         },
         "gender": {
-          "male": 40,
-          "female": 53
+          "male": 35,
+          "female": 46
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 39,
+          "10_to_49": 47,
+          "50_to_99": 47,
+          "100_to_499": 48,
+          "500_to_999": 36,
+          "1000_or_more": 43
+        },
+        "sector": {
+          "automotive": 44,
+          "business_administration": 59,
+          "technology": 44,
+          "construction": 44,
+          "consumer_goods": 36,
+          "education": 39,
+          "energy_utilities": 49,
+          "financial_services": 27,
+          "government": 33,
+          "healthcare": 41,
+          "manufacturing_industrial": 56,
+          "marketing_services": 21,
+          "legal_in-house": 21,
+          "legal_agency": 49,
+          "life_sciences": 36,
+          "professional_services": 41,
+          "real_estate": 35,
+          "retail": 46,
+          "sales": 48,
+          "telecommunications": 34,
+          "transport_storage": 36,
+          "travel_hospitality_leisure": 38,
+          "wholesale_distribution": 35,
+          "other": 53
+        },
+        "job_level": {
+          "ceo": 59,
+          "senior_executive": 52,
+          "senior_leader": 44,
+          "mid_level_leader": 43,
+          "first_level_supervisor": 27,
+          "individual_contributor": 40
+        },
+        "relationship_status": {
+          "single": 31,
+          "cohabiting": 46,
+          "married": 25,
+          "divorced_separated": 26,
+          "widowed": 35
+        },
+        "education": {
+          "secondary": 34,
+          "tertiary": 34,
+          "professional_certifications": 42,
+          "undergraduate": 50,
+          "postgraduate": 45
+        },
+        "generation": {
+          "gen_z": 46,
+          "millennials": 34,
+          "gen_x": 23,
+          "baby_boomers": 36,
+          "65_plus": 50
+        },
+        "employment_status": {
+          "full_time": 34,
+          "part_time": 39,
+          "contract": 37,
+          "freelance": 50
+        }
       }
     }
   ]

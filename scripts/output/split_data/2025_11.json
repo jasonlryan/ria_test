@@ -1,0 +1,249 @@
+{
+  "metadata": {
+    "topicId": "Pay_and_Reward",
+    "theme": "Compensation & Benefits",
+    "questionId": "Q11",
+    "year": 2025,
+    "keywords": [
+      "compensation fairness",
+      "salary satisfaction",
+      "pay equity",
+      "reward adequacy",
+      "Pay_and_Reward"
+    ],
+    "canonicalQuestion": "How fair do you consider your compensation relative to your contribution?",
+    "subQuestion": "My company gives me a salary and benefits that exceed the value of my skills",
+    "comparable": true,
+    "userMessage": "Note: Wording differs between Q8 (2024) and Q11 (2025).",
+    "availableMarkets": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "India",
+      "Brazil"
+    ],
+    "relatedTopics": [],
+    "dataStructure": {
+      "questionField": "question",
+      "responsesArray": "responses",
+      "responseTextField": "response",
+      "dataField": "data",
+      "segments": [
+        "region",
+        "age",
+        "gender",
+        "org_size",
+        "sector",
+        "job_level",
+        "relationship_status",
+        "education",
+        "generation",
+        "employment_status"
+      ],
+      "primaryMetric": "country_overall",
+      "valueFormat": "decimal",
+      "sortOrder": "descending"
+    }
+  },
+  "question": "Q11 - How well do you think you are compensated for your skillset?",
+  "responses": [
+    {
+      "response": "My company gives me a salary and benefits that exceed the value of my skills",
+      "data": {
+        "region": {
+          "australia": 7,
+          "india": 3,
+          "brazil": 6,
+          "united_kingdom": 11,
+          "united_states": 6,
+          "saudi_arabia": 7,
+          "united_arab_emirates": 6,
+          "france": 4,
+          "germany": 7,
+          "japan": 5,
+          "country_overall": 6.2
+        },
+        "age": {
+          "18-24": 7,
+          "25-34": 7,
+          "35-44": 6,
+          "45-54": 4,
+          "55-65": 5,
+          "65+": 6
+        },
+        "gender": {
+          "male": 6,
+          "female": 7
+        },
+        "org_size": {
+          "fewer_than_10": 6,
+          "10_to_49": 5,
+          "50_to_99": 5,
+          "100_to_499": 7,
+          "500_to_999": 6,
+          "1000_or_more": 7
+        },
+        "sector": {
+          "automotive": 7,
+          "business_administration": 13,
+          "technology": 9,
+          "construction": 6,
+          "consumer_goods": 4,
+          "education": 7,
+          "energy_utilities": 7,
+          "financial_services": 5,
+          "government": 4,
+          "healthcare": 5,
+          "manufacturing_industrial": 11,
+          "marketing_services": 3,
+          "legal_in-house": 5,
+          "legal_agency": 4,
+          "life_sciences": 6,
+          "professional_services": 4,
+          "real_estate": 4,
+          "retail": 5,
+          "sales": 11,
+          "telecommunications": 5,
+          "transport_storage": 3,
+          "travel_hospitality_leisure": 3,
+          "wholesale_distribution": 6,
+          "other": 14
+        },
+        "job_level": {
+          "ceo": 11,
+          "senior_executive": 8,
+          "senior_leader": 5,
+          "mid_level_leader": 7,
+          "first_level_supervisor": 4,
+          "individual_contributor": 6
+        },
+        "relationship_status": {
+          "single": 4,
+          "cohabiting": 7,
+          "married": 4,
+          "divorced_separated": 4,
+          "widowed": 5
+        },
+        "education": {
+          "secondary": 5,
+          "tertiary": 4,
+          "professional_certifications": 6,
+          "undergraduate": 9,
+          "postgraduate": 14
+        },
+        "generation": {
+          "gen_z": 8,
+          "millennials": 5,
+          "gen_x": 4,
+          "baby_boomers": 6,
+          "65_plus": 6
+        },
+        "employment_status": {
+          "full_time": 5,
+          "part_time": 6,
+          "contract": 7,
+          "freelance": 5
+        }
+      }
+    },
+    {
+      "response": "My company gives me a salary and benefits that match the value of my skills",
+      "data": {
+        "region": {
+          "australia": 59,
+          "india": 52,
+          "brazil": 60,
+          "united_kingdom": 59,
+          "united_states": 56,
+          "saudi_arabia": 60,
+          "united_arab_emirates": 63,
+          "france": 62,
+          "germany": 60,
+          "japan": 60,
+          "country_overall": 59.1
+        },
+        "age": {
+          "18-24": 60,
+          "25-34": 60,
+          "35-44": 55,
+          "45-54": 57,
+          "55-65": 64,
+          "65+": 59
+        },
+        "gender": {
+          "male": 58,
+          "female": 60
+        },
+        "org_size": {
+          "fewer_than_10": 59,
+          "10_to_49": 59,
+          "50_to_99": 61,
+          "100_to_499": 60,
+          "500_to_999": 57,
+          "1000_or_more": 58
+        },
+        "sector": {
+          "automotive": 57,
+          "business_administration": 63,
+          "technology": 61,
+          "construction": 61,
+          "consumer_goods": 53,
+          "education": 60,
+          "energy_utilities": 60,
+          "financial_services": 54,
+          "government": 53,
+          "healthcare": 62,
+          "manufacturing_industrial": 59,
+          "marketing_services": 57,
+          "legal_in-house": 74,
+          "legal_agency": 55,
+          "life_sciences": 59,
+          "professional_services": 69,
+          "real_estate": 58,
+          "retail": 57,
+          "sales": 58,
+          "telecommunications": 56,
+          "transport_storage": 54,
+          "travel_hospitality_leisure": 59,
+          "wholesale_distribution": 60,
+          "other": 56
+        },
+        "job_level": {
+          "ceo": 65,
+          "senior_executive": 63,
+          "senior_leader": 61,
+          "mid_level_leader": 57,
+          "first_level_supervisor": 54,
+          "individual_contributor": 56
+        },
+        "relationship_status": {
+          "single": 55,
+          "cohabiting": 61,
+          "married": 53,
+          "divorced_separated": 60,
+          "widowed": 57
+        },
+        "education": {
+          "secondary": 54,
+          "tertiary": 57,
+          "professional_certifications": 61,
+          "undergraduate": 59,
+          "postgraduate": 56
+        },
+        "generation": {
+          "gen_z": 60,
+          "millennials": 55,
+          "gen_x": 61,
+          "baby_boomers": 56,
+          "65_plus": 59
+        },
+        "employment_status": {
+          "full_time": 58,
+          "part_time": 58,
+          "contract": 57,
+          "freelance": 56
+        }
+      }
+    }
+  ]
+}

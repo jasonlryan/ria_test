@@ -2,15 +2,27 @@
     "welcomeMessage": "👋 Hi! I'm RIA, your AI research assistant for the Workforce 2025 Survey. I can help you explore insights about what people really want from work, from flexible hours to career growth. What would you like to know about the future of work?",
     "starterQuestions": [
         {
-            "text": "How do I use this?",
+            "text": "What factors related to job choice, staying with a company, and leaving an organization are most important to employees amid market turbulence?",
             "action": "ask"
         },
         {
-            "text": "What regions are covered?",
+            "text": "What are the primary reasons employees may be resistant to returning to the office full-time?",
             "action": "ask"
         },
         {
-            "text": "What are the key findings from 2025?",
+            "text": "What level of confidence do employees have in their current skills remaining relevant in an AI-driven work environment?",
+            "action": "ask"
+        },
+        {
+            "text": "To what extent do employees feel they are currently paid fairly for their skills and the value they bring to the organization?",
+            "action": "ask"
+        },
+        {
+            "text": "What is the level of trust employees have in their direct managers compared to their trust in senior leadership?",
+            "action": "ask"
+        },
+        {
+            "text": "Are there significant differences in how younger and older employees perceive the existence and impact of generational challenges in the workplace?",
             "action": "ask"
         }
     ],

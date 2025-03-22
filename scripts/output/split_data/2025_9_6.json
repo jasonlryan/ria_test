@@ -12,7 +12,7 @@
       "Manager_Capability"
     ],
     "canonicalQuestion": "How effective is your direct manager?",
-    "subQuestion": "My organization has cut back on the number of managers",
+    "subQuestion": "If a problem in my personal life is affecting my work/performance, I feel comfortable telling my manager about it",
     "comparable": false,
     "userMessage": "New in 2025; no year‑on‑year comparison.",
     "availableMarkets": [],
@@ -42,32 +42,102 @@
   "question": "Q9 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "My organization has cut back on the number of managers",
+      "response": "If a problem in my personal life is affecting my work/performance, I feel comfortable telling my manager about it",
       "data": {
         "region": {
-          "australia": 49,
-          "india": 38,
-          "brazil": 46,
-          "country_overall": 44.33
+          "australia": 59,
+          "india": 57,
+          "brazil": 58,
+          "united_kingdom": 73,
+          "united_states": 61,
+          "saudi_arabia": 62,
+          "united_arab_emirates": 63,
+          "france": 53,
+          "germany": 36,
+          "japan": 56,
+          "country_overall": 57.8
         },
         "age": {
-          "18-24": 46,
-          "25-34": 44,
-          "35-44": 39,
-          "45-54": 28,
-          "55-65": 26
+          "18-24": 63,
+          "25-34": 63,
+          "35-44": 57,
+          "45-54": 52,
+          "55-65": 50,
+          "65+": 60
         },
         "gender": {
-          "male": 30,
-          "female": 45
+          "male": 50,
+          "female": 60
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 56,
+          "10_to_49": 59,
+          "50_to_99": 60,
+          "100_to_499": 63,
+          "500_to_999": 59,
+          "1000_or_more": 61
+        },
+        "sector": {
+          "automotive": 63,
+          "business_administration": 71,
+          "technology": 61,
+          "construction": 60,
+          "consumer_goods": 60,
+          "education": 58,
+          "energy_utilities": 63,
+          "financial_services": 58,
+          "government": 56,
+          "healthcare": 56,
+          "manufacturing_industrial": 66,
+          "marketing_services": 58,
+          "legal_in-house": 49,
+          "legal_agency": 53,
+          "life_sciences": 54,
+          "professional_services": 62,
+          "real_estate": 56,
+          "retail": 62,
+          "sales": 63,
+          "telecommunications": 57,
+          "transport_storage": 55,
+          "travel_hospitality_leisure": 53,
+          "wholesale_distribution": 53,
+          "other": 65
+        },
+        "job_level": {
+          "ceo": 71,
+          "senior_executive": 67,
+          "senior_leader": 59,
+          "mid_level_leader": 60,
+          "first_level_supervisor": 52,
+          "individual_contributor": 54
+        },
+        "relationship_status": {
+          "single": 57,
+          "cohabiting": 64,
+          "married": 52,
+          "divorced_separated": 61,
+          "widowed": 56
+        },
+        "education": {
+          "secondary": 52,
+          "tertiary": 54,
+          "professional_certifications": 60,
+          "undergraduate": 66,
+          "postgraduate": 67
+        },
+        "generation": {
+          "gen_z": 63,
+          "millennials": 56,
+          "gen_x": 51,
+          "baby_boomers": 59,
+          "65_plus": 60
+        },
+        "employment_status": {
+          "full_time": 55,
+          "part_time": 56,
+          "contract": 47,
+          "freelance": 60
+        }
       }
     }
   ]

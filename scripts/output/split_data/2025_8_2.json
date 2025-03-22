@@ -59,26 +59,96 @@
           "australia": 48,
           "india": 39,
           "brazil": 45,
-          "country_overall": 44
+          "united_kingdom": 56,
+          "united_states": 35,
+          "saudi_arabia": 41,
+          "united_arab_emirates": 37,
+          "france": 37,
+          "germany": 22,
+          "japan": 46,
+          "country_overall": 40.6
         },
         "age": {
           "18-24": 45,
           "25-34": 43,
           "35-44": 38,
           "45-54": 28,
-          "55-65": 24
+          "55-65": 24,
+          "65+": 47
         },
         "gender": {
           "male": 27,
           "female": 43
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 34,
+          "10_to_49": 45,
+          "50_to_99": 44,
+          "100_to_499": 47,
+          "500_to_999": 39,
+          "1000_or_more": 42
+        },
+        "sector": {
+          "automotive": 44,
+          "business_administration": 51,
+          "technology": 36,
+          "construction": 40,
+          "consumer_goods": 39,
+          "education": 36,
+          "energy_utilities": 45,
+          "financial_services": 37,
+          "government": 38,
+          "healthcare": 39,
+          "manufacturing_industrial": 52,
+          "marketing_services": 31,
+          "legal_in-house": 23,
+          "legal_agency": 42,
+          "life_sciences": 35,
+          "professional_services": 34,
+          "real_estate": 36,
+          "retail": 46,
+          "sales": 47,
+          "telecommunications": 37,
+          "transport_storage": 37,
+          "travel_hospitality_leisure": 37,
+          "wholesale_distribution": 33,
+          "other": 47
+        },
+        "job_level": {
+          "ceo": 50,
+          "senior_executive": 47,
+          "senior_leader": 42,
+          "mid_level_leader": 42,
+          "first_level_supervisor": 31,
+          "individual_contributor": 39
+        },
+        "relationship_status": {
+          "single": 36,
+          "cohabiting": 44,
+          "married": 31,
+          "divorced_separated": 27,
+          "widowed": 37
+        },
+        "education": {
+          "secondary": 37,
+          "tertiary": 36,
+          "professional_certifications": 40,
+          "undergraduate": 47,
+          "postgraduate": 42
+        },
+        "generation": {
+          "gen_z": 44,
+          "millennials": 37,
+          "gen_x": 25,
+          "baby_boomers": 38,
+          "65_plus": 47
+        },
+        "employment_status": {
+          "full_time": 36,
+          "part_time": 34,
+          "contract": 32,
+          "freelance": 51
+        }
       }
     }
   ]

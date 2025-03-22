@@ -12,7 +12,7 @@
       "Communication_and_Connection"
     ],
     "canonicalQuestion": "How comfortable are you communicating and connecting with colleagues?",
-    "subQuestion": "I feel I work better with people my own age",
+    "subQuestion": "Connection with my colleagues is one of the most important things about my job",
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
@@ -42,32 +42,102 @@
   "question": "Q6 - To what extent do you agree with the following statements with regards to your workplace.",
   "responses": [
     {
-      "response": "I feel I work better with people my own age",
+      "response": "Connection with my colleagues is one of the most important things about my job",
       "data": {
         "region": {
-          "australia": 66,
-          "india": 42,
-          "brazil": 76,
-          "country_overall": 61.33
+          "australia": 72,
+          "india": 69,
+          "brazil": 81,
+          "united_kingdom": 85,
+          "united_states": 70,
+          "saudi_arabia": 70,
+          "united_arab_emirates": 72,
+          "france": 62,
+          "germany": 58,
+          "japan": 77,
+          "country_overall": 71.6
         },
         "age": {
-          "18-24": 64,
-          "25-34": 56,
-          "35-44": 47,
-          "45-54": 36,
-          "55-65": 39
+          "18-24": 74,
+          "25-34": 72,
+          "35-44": 69,
+          "45-54": 64,
+          "55-65": 67,
+          "65+": 73
         },
         "gender": {
-          "male": 41,
-          "female": 59
+          "male": 58,
+          "female": 72
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 69,
+          "10_to_49": 69,
+          "50_to_99": 73,
+          "100_to_499": 74,
+          "500_to_999": 70,
+          "1000_or_more": 72
+        },
+        "sector": {
+          "automotive": 74,
+          "business_administration": 81,
+          "technology": 72,
+          "construction": 76,
+          "consumer_goods": 71,
+          "education": 70,
+          "energy_utilities": 74,
+          "financial_services": 69,
+          "government": 70,
+          "healthcare": 69,
+          "manufacturing_industrial": 68,
+          "marketing_services": 67,
+          "legal_in-house": 68,
+          "legal_agency": 70,
+          "life_sciences": 66,
+          "professional_services": 67,
+          "real_estate": 68,
+          "retail": 70,
+          "sales": 73,
+          "telecommunications": 65,
+          "transport_storage": 67,
+          "travel_hospitality_leisure": 63,
+          "wholesale_distribution": 64,
+          "other": 76
+        },
+        "job_level": {
+          "ceo": 82,
+          "senior_executive": 77,
+          "senior_leader": 73,
+          "mid_level_leader": 72,
+          "first_level_supervisor": 62,
+          "individual_contributor": 66
+        },
+        "relationship_status": {
+          "single": 66,
+          "cohabiting": 75,
+          "married": 64,
+          "divorced_separated": 68,
+          "widowed": 67
+        },
+        "education": {
+          "secondary": 66,
+          "tertiary": 64,
+          "professional_certifications": 73,
+          "undergraduate": 77,
+          "postgraduate": 70
+        },
+        "generation": {
+          "gen_z": 73,
+          "millennials": 68,
+          "gen_x": 64,
+          "baby_boomers": 70,
+          "65_plus": 73
+        },
+        "employment_status": {
+          "full_time": 67,
+          "part_time": 60,
+          "contract": 58,
+          "freelance": 73
+        }
       }
     }
   ]

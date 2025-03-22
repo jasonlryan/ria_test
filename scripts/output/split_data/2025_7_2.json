@@ -12,7 +12,7 @@
       "Intention_to_Leave"
     ],
     "canonicalQuestion": "Are you planning on leaving your current role in the next three months?",
-    "subQuestion": "I am concerned that protectionism policies around immigration are affecting my ability to find work",
+    "subQuestion": "I am concerned about the cost of living outpacing my current salary",
     "comparable": true,
     "userMessage": "Data based on comparable markets only.",
     "availableMarkets": [
@@ -48,32 +48,102 @@
   "question": "Q7 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "I am concerned that protectionism policies around immigration are affecting my ability to find work",
+      "response": "I am concerned about the cost of living outpacing my current salary",
       "data": {
         "region": {
-          "australia": 49,
-          "india": 35,
-          "brazil": 51,
-          "country_overall": 45
+          "australia": 72,
+          "india": 68,
+          "brazil": 66,
+          "united_kingdom": 77,
+          "united_states": 67,
+          "saudi_arabia": 75,
+          "united_arab_emirates": 77,
+          "france": 67,
+          "germany": 62,
+          "japan": 67,
+          "country_overall": 69.8
         },
         "age": {
-          "18-24": 48,
-          "25-34": 45,
-          "35-44": 36,
-          "45-54": 25,
-          "55-65": 25
+          "18-24": 71,
+          "25-34": 72,
+          "35-44": 71,
+          "45-54": 65,
+          "55-65": 64,
+          "65+": 72
         },
         "gender": {
-          "male": 35,
-          "female": 46
+          "male": 69,
+          "female": 67
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 67,
+          "10_to_49": 65,
+          "50_to_99": 71,
+          "100_to_499": 71,
+          "500_to_999": 71,
+          "1000_or_more": 70
+        },
+        "sector": {
+          "automotive": 70,
+          "business_administration": 72,
+          "technology": 63,
+          "construction": 71,
+          "consumer_goods": 71,
+          "education": 68,
+          "energy_utilities": 70,
+          "financial_services": 72,
+          "government": 74,
+          "healthcare": 71,
+          "manufacturing_industrial": 71,
+          "marketing_services": 71,
+          "legal_in-house": 81,
+          "legal_agency": 66,
+          "life_sciences": 70,
+          "professional_services": 59,
+          "real_estate": 74,
+          "retail": 76,
+          "sales": 70,
+          "telecommunications": 69,
+          "transport_storage": 73,
+          "travel_hospitality_leisure": 67,
+          "wholesale_distribution": 67,
+          "other": 67
+        },
+        "job_level": {
+          "ceo": 69,
+          "senior_executive": 68,
+          "senior_leader": 69,
+          "mid_level_leader": 71,
+          "first_level_supervisor": 72,
+          "individual_contributor": 70
+        },
+        "relationship_status": {
+          "single": 71,
+          "cohabiting": 71,
+          "married": 72,
+          "divorced_separated": 66,
+          "widowed": 70
+        },
+        "education": {
+          "secondary": 70,
+          "tertiary": 71,
+          "professional_certifications": 71,
+          "undergraduate": 70,
+          "postgraduate": 63
+        },
+        "generation": {
+          "gen_z": 72,
+          "millennials": 70,
+          "gen_x": 64,
+          "baby_boomers": 74,
+          "65_plus": 72
+        },
+        "employment_status": {
+          "full_time": 73,
+          "part_time": 59,
+          "contract": 72,
+          "freelance": 65
+        }
       }
     }
   ]

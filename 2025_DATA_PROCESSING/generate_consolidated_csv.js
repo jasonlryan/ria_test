@@ -324,14 +324,30 @@ function processStandardCSVFile(inputFile) {
     // Prepare a list to hold mapped rows
     const mappedRows = [];
 
-    // Process data rows (starting from row 16)
-    const dataStartIndex = 16;
+    // We need to find actual data rows by looking for non-empty rows with percentage values
+    // We'll look through all rows from index 12 onward (based on typical CSV structure)
+    const dataRows = rows.filter((row, index) => {
+      // Skip the first 11 rows (headers, etc)
+      if (index < 12) return false;
 
-    for (let i = dataStartIndex; i < rows.length; i++) {
-      // Skip empty rows or rows with no data
-      if (rows[i].length === 0 || !rows[i][0] || rows[i][0].trim() === "")
-        continue;
+      // Skip empty rows
+      if (!row || row.length === 0 || !row[0] || row[0].trim() === "")
+        return false;
 
+      // Skip the Sigma row (summary/total row)
+      if (row[0].trim() === "Sigma") return false;
+
+      // Skip the "Base: Total Respondents" row
+      if (row[0].trim().startsWith("Base:")) return false;
+
+      // Skip any row that doesn't have a non-empty first column and percentage in second column
+      // Ensure it's an actual data row by checking if we have a value in column 1 that contains a percentage
+      if (!row[1] || !row[1].includes("%")) return false;
+
+      return true;
+    });
+
+    for (const row of dataRows) {
       // Create a new row with keys from TARGET_HEADER
       const newRow = {};
       TARGET_HEADER.forEach((field) => {
@@ -342,15 +358,15 @@ function processStandardCSVFile(inputFile) {
       newRow["Question"] = questionText;
 
       // Set the response (from the first column)
-      newRow["Response"] = rows[i][0] ? rows[i][0].trim() : "";
+      newRow["Response"] = row[0] ? row[0].trim() : "";
 
       // Map data from the row to the target fields using the column mappings
       Object.keys(columnMappings).forEach((columnName) => {
         const columnIndex = columnMappings[columnName];
         const targetField = targetMappings[columnName];
 
-        if (targetField && rows[i][columnIndex]) {
-          newRow[targetField] = rows[i][columnIndex].trim();
+        if (targetField && row[columnIndex]) {
+          newRow[targetField] = row[columnIndex].trim();
         }
       });
 
@@ -560,21 +576,24 @@ function processQ4Files(q4aFile, q4bFile) {
     // Prepare a list to hold mapped rows
     const mappedRows = [];
 
-    // Process data rows (starting from row 16)
-    const dataStartIndex = 16;
+    // Process data rows
+    // Based on inspection of the files, the actual data rows start at
+    // rows 13-16 (Full-time in office, Full-time remote, etc.)
 
-    // Process Q4a data
-    for (let i = dataStartIndex; i < q4aRows.length; i++) {
-      // Skip empty rows or rows with no data
-      if (
-        !q4aRows[i] ||
-        q4aRows[i].length === 0 ||
-        !q4aRows[i][0] ||
-        q4aRows[i][0].trim() === ""
-      ) {
-        continue;
-      }
+    // Process Q4a data - find the rows with actual data
+    const q4aDataRows = q4aRows.filter((row) => {
+      if (!row || row.length === 0 || !row[0]) return false;
+      const rowText = row[0].trim();
+      return (
+        rowText === "Full-time in office" ||
+        rowText === "Full-time remote" ||
+        rowText === "Hybrid work (blend of working from home and office)" ||
+        rowText === "Unsure"
+      );
+    });
 
+    // Process each actual data row
+    for (const row of q4aDataRows) {
       // Create a new row with keys from TARGET_HEADER
       const newRow = {};
       TARGET_HEADER.forEach((field) => {
@@ -586,33 +605,35 @@ function processQ4Files(q4aFile, q4bFile) {
 
       // Set the response (from the first column with sub-question prefix)
       const responsePrefix = q4aSubQuestion ? `${q4aSubQuestion} - ` : "";
-      newRow["Response"] = `${responsePrefix}${q4aRows[i][0].trim()}`;
+      newRow["Response"] = `${responsePrefix}${row[0].trim()}`;
 
       // Map data from the row to the target fields using the column mappings
       Object.keys(columnMappings).forEach((columnName) => {
         const columnIndex = columnMappings[columnName];
         const targetField = targetMappings[columnName];
 
-        if (targetField && q4aRows[i][columnIndex]) {
-          newRow[targetField] = q4aRows[i][columnIndex].trim();
+        if (targetField && row[columnIndex]) {
+          newRow[targetField] = row[columnIndex].trim();
         }
       });
 
       mappedRows.push(newRow);
     }
 
-    // Process Q4b data
-    for (let i = dataStartIndex; i < q4bRows.length; i++) {
-      // Skip empty rows or rows with no data
-      if (
-        !q4bRows[i] ||
-        q4bRows[i].length === 0 ||
-        !q4bRows[i][0] ||
-        q4bRows[i][0].trim() === ""
-      ) {
-        continue;
-      }
+    // Process Q4b data - find the rows with actual data
+    const q4bDataRows = q4bRows.filter((row) => {
+      if (!row || row.length === 0 || !row[0]) return false;
+      const rowText = row[0].trim();
+      return (
+        rowText === "Full-time in office" ||
+        rowText === "Full-time remote" ||
+        rowText === "Hybrid work (blend of working from home and office)" ||
+        rowText === "Unsure"
+      );
+    });
 
+    // Process each actual data row
+    for (const row of q4bDataRows) {
       // Create a new row with keys from TARGET_HEADER
       const newRow = {};
       TARGET_HEADER.forEach((field) => {
@@ -624,15 +645,15 @@ function processQ4Files(q4aFile, q4bFile) {
 
       // Set the response (from the first column with sub-question prefix)
       const responsePrefix = q4bSubQuestion ? `${q4bSubQuestion} - ` : "";
-      newRow["Response"] = `${responsePrefix}${q4bRows[i][0].trim()}`;
+      newRow["Response"] = `${responsePrefix}${row[0].trim()}`;
 
       // Map data from the row to the target fields using the column mappings
       Object.keys(columnMappings).forEach((columnName) => {
         const columnIndex = columnMappings[columnName];
         const targetField = targetMappings[columnName];
 
-        if (targetField && q4bRows[i][columnIndex]) {
-          newRow[targetField] = q4bRows[i][columnIndex].trim();
+        if (targetField && row[columnIndex]) {
+          newRow[targetField] = row[columnIndex].trim();
         }
       });
 

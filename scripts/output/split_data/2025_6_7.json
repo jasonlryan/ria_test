@@ -12,7 +12,7 @@
       "Intergenerational_Collaboration"
     ],
     "canonicalQuestion": "How effectively do different generations collaborate in your workplace?",
-    "subQuestion": "I would stay at a job if it paid me the salary I want, even if I hated the role",
+    "subQuestion": "I have strong connections with my remote colleagues",
     "comparable": false,
     "userMessage": "New in 2025; no year‑on‑year comparison.",
     "availableMarkets": [],
@@ -42,32 +42,102 @@
   "question": "Q6 - To what extent do you agree with the following statements with regards to your workplace.",
   "responses": [
     {
-      "response": "I would stay at a job if it paid me the salary I want, even if I hated the role",
+      "response": "I have strong connections with my remote colleagues",
       "data": {
         "region": {
-          "australia": 66,
-          "india": 51,
-          "brazil": 70,
-          "country_overall": 62.33
+          "australia": 60,
+          "india": 53,
+          "brazil": 80,
+          "united_kingdom": 82,
+          "united_states": 56,
+          "saudi_arabia": 57,
+          "united_arab_emirates": 66,
+          "france": 50,
+          "germany": 26,
+          "japan": 78,
+          "country_overall": 60.8
         },
         "age": {
-          "18-24": 66,
-          "25-34": 62,
+          "18-24": 67,
+          "25-34": 64,
           "35-44": 54,
           "45-54": 45,
-          "55-65": 43
+          "55-65": 42,
+          "65+": 63
         },
         "gender": {
-          "male": 49,
+          "male": 51,
           "female": 62
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 51,
+          "10_to_49": 61,
+          "50_to_99": 62,
+          "100_to_499": 64,
+          "500_to_999": 56,
+          "1000_or_more": 62
+        },
+        "sector": {
+          "automotive": 65,
+          "business_administration": 78,
+          "technology": 64,
+          "construction": 61,
+          "consumer_goods": 55,
+          "education": 62,
+          "energy_utilities": 67,
+          "financial_services": 52,
+          "government": 52,
+          "healthcare": 55,
+          "manufacturing_industrial": 70,
+          "marketing_services": 53,
+          "legal_in-house": 58,
+          "legal_agency": 53,
+          "life_sciences": 57,
+          "professional_services": 55,
+          "real_estate": 48,
+          "retail": 64,
+          "sales": 69,
+          "telecommunications": 53,
+          "transport_storage": 50,
+          "travel_hospitality_leisure": 50,
+          "wholesale_distribution": 52,
+          "other": 72
+        },
+        "job_level": {
+          "ceo": 77,
+          "senior_executive": 73,
+          "senior_leader": 62,
+          "mid_level_leader": 62,
+          "first_level_supervisor": 43,
+          "individual_contributor": 53
+        },
+        "relationship_status": {
+          "single": 51,
+          "cohabiting": 66,
+          "married": 46,
+          "divorced_separated": 50,
+          "widowed": 53
+        },
+        "education": {
+          "secondary": 49,
+          "tertiary": 50,
+          "professional_certifications": 61,
+          "undergraduate": 70,
+          "postgraduate": 68
+        },
+        "generation": {
+          "gen_z": 66,
+          "millennials": 52,
+          "gen_x": 43,
+          "baby_boomers": 57,
+          "65_plus": 63
+        },
+        "employment_status": {
+          "full_time": 48,
+          "part_time": 48,
+          "contract": 53,
+          "freelance": 60
+        }
       }
     }
   ]

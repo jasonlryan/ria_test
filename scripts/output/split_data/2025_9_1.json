@@ -12,7 +12,7 @@
       "Manager_Capability"
     ],
     "canonicalQuestion": "How effective is your direct manager?",
-    "subQuestion": "I feel that my ideas and opinions will be welcomed by company leaders",
+    "subQuestion": "I am comfortable talking to my manager about needs related to my health and wellbeing",
     "comparable": false,
     "userMessage": "New in 2025; no year‑on‑year comparison.",
     "availableMarkets": [],
@@ -42,32 +42,102 @@
   "question": "Q9 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "I feel that my ideas and opinions will be welcomed by company leaders",
+      "response": "I am comfortable talking to my manager about needs related to my health and wellbeing",
       "data": {
         "region": {
-          "australia": 59,
-          "india": 52,
-          "brazil": 76,
-          "country_overall": 62.33
+          "australia": 62,
+          "india": 61,
+          "brazil": 67,
+          "united_kingdom": 81,
+          "united_states": 64,
+          "saudi_arabia": 64,
+          "united_arab_emirates": 66,
+          "france": 56,
+          "germany": 35,
+          "japan": 66,
+          "country_overall": 62.2
         },
         "age": {
-          "18-24": 67,
-          "25-34": 66,
-          "35-44": 56,
-          "45-54": 50,
-          "55-65": 52
+          "18-24": 68,
+          "25-34": 67,
+          "35-44": 60,
+          "45-54": 57,
+          "55-65": 58,
+          "65+": 64
         },
         "gender": {
-          "male": 56,
-          "female": 63
+          "male": 58,
+          "female": 65
         },
-        "org_size": {},
-        "sector": {},
-        "job_level": {},
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
-        "employment_status": {}
+        "org_size": {
+          "fewer_than_10": 58,
+          "10_to_49": 60,
+          "50_to_99": 66,
+          "100_to_499": 67,
+          "500_to_999": 63,
+          "1000_or_more": 65
+        },
+        "sector": {
+          "automotive": 66,
+          "business_administration": 78,
+          "technology": 67,
+          "construction": 66,
+          "consumer_goods": 63,
+          "education": 64,
+          "energy_utilities": 66,
+          "financial_services": 61,
+          "government": 60,
+          "healthcare": 61,
+          "manufacturing_industrial": 66,
+          "marketing_services": 61,
+          "legal_in-house": 56,
+          "legal_agency": 65,
+          "life_sciences": 62,
+          "professional_services": 55,
+          "real_estate": 60,
+          "retail": 66,
+          "sales": 67,
+          "telecommunications": 57,
+          "transport_storage": 61,
+          "travel_hospitality_leisure": 53,
+          "wholesale_distribution": 57,
+          "other": 72
+        },
+        "job_level": {
+          "ceo": 78,
+          "senior_executive": 72,
+          "senior_leader": 63,
+          "mid_level_leader": 64,
+          "first_level_supervisor": 55,
+          "individual_contributor": 57
+        },
+        "relationship_status": {
+          "single": 58,
+          "cohabiting": 69,
+          "married": 58,
+          "divorced_separated": 65,
+          "widowed": 61
+        },
+        "education": {
+          "secondary": 55,
+          "tertiary": 57,
+          "professional_certifications": 63,
+          "undergraduate": 72,
+          "postgraduate": 72
+        },
+        "generation": {
+          "gen_z": 68,
+          "millennials": 60,
+          "gen_x": 55,
+          "baby_boomers": 63,
+          "65_plus": 64
+        },
+        "employment_status": {
+          "full_time": 60,
+          "part_time": 57,
+          "contract": 50,
+          "freelance": 64
+        }
       }
     }
   ]
