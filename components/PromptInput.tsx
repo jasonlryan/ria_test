@@ -38,7 +38,7 @@ export default function PromptInput({
       setPrompt(question);
       setPromptClicked(true);
     }
-  }, []);
+  }, [question, setPrompt]);
 
   useEffect(() => {
     // Only send prompt if explicitly clicked or from URL parameter
@@ -47,7 +47,7 @@ export default function PromptInput({
       sendPrompt(threadId);
       setPromptClicked(false);
     }
-  }, [prompt, threadId, promptClicked, hasMounted]);
+  }, [prompt, threadId, promptClicked, hasMounted, sendPrompt]);
 
   // Handle keyboard events to support SHIFT+RETURN for new line
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {

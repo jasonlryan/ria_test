@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <MainComponent children={children} />
+        <MainComponent>{children}</MainComponent>
         <Analytics />
       </body>
     </html>
