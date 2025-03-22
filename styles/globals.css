@@ -71,7 +71,9 @@
   }
   
   .message-bubble .overflow-x-auto {
-    @apply block w-full overflow-x-auto;
+    display: block;
+    width: 100%;
+    overflow-x: auto;
   }
   
   /* Starter question button */
