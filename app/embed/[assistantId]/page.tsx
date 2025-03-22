@@ -57,7 +57,10 @@ function Embed({ params: { assistantId } }) {
 
   // Reset chat
   const refreshChat = () => {
-    setMessages(() => [
+    console.log("Refreshing chat, clearing messages and thread ID");
+
+    // Reset messages to just the welcome message
+    setMessages([
       {
         id: "welcome",
         role: "assistant",
@@ -65,7 +68,22 @@ function Embed({ params: { assistantId } }) {
         createdAt: new Date(),
       },
     ]);
-    setThreadId(() => null);
+
+    // Reset thread ID
+    setThreadId(null);
+
+    // Reset any in-progress messages
+    setStreamingMessage(null);
+
+    // Reset loading state
+    setLoading(false);
+
+    // Reset the prompt if there's any text in it
+    if (prompt) {
+      setPrompt("");
+    }
+
+    console.log("Chat reset complete");
   };
 
   // TODO: Move this into a helper function.
@@ -291,7 +309,7 @@ function Embed({ params: { assistantId } }) {
             </div>
             <button
               onClick={refreshChat}
-              className="inline-flex items-center bg-white hover:bg-gray-100 text-primary py-1.5 px-3 rounded-lg transition-colors shadow-md"
+              className="inline-flex items-center bg-white hover:bg-gray-100 hover:text-secondary hover:border-secondary border border-transparent text-primary py-1.5 px-3 rounded-lg transition-all duration-200 shadow-md"
               aria-label="New chat"
             >
               <svg
