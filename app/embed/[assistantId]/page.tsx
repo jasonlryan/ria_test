@@ -358,15 +358,8 @@ function Embed({ params: { assistantId } }) {
       <div className="w-full max-w-7xl mx-auto px-4 pt-1 flex-1 flex flex-col">
         <div className="flex flex-col lg:flex-row gap-4 flex-1 overflow-hidden">
           {/* Chat and Input Section */}
-          <div
-            className="flex-1 flex flex-col"
-            style={{
-              height: "calc(100vh - 90px)",
-              minHeight: "400px",
-              maxHeight: "100%",
-            }}
-          >
-            {/* Chat Container */}
+          <div className="flex-1 flex flex-col relative pb-[220px]">
+            {/* Chat Container - with proper height constraints */}
             <div className="chat-container flex-1 overflow-hidden flex flex-col">
               <div
                 className="chat-messages flex-1"
@@ -374,9 +367,10 @@ function Embed({ params: { assistantId } }) {
                 style={{
                   scrollBehavior: "smooth",
                   overflowY: "auto",
-                  paddingBottom: "0.5rem",
-                  minHeight: "100px",
-                  maxHeight: "calc(100vh - 260px)",
+                  paddingBottom: "1rem",
+                  minHeight: "50px",
+                  border: "1px solid #f0f0f0", // Makes the border visible for debugging
+                  borderRadius: "8px",
                 }}
               >
                 {messages.map((msg, index) => {
@@ -475,19 +469,44 @@ function Embed({ params: { assistantId } }) {
               </div>
             </div>
 
-            {/* Input Container */}
-            <div className="w-full sticky bottom-0 z-10 bg-white py-3 flex-shrink-0">
-              <PromptInput
-                prompt={prompt}
-                setPrompt={setPrompt}
-                sendPrompt={sendPrompt}
-                threadId={threadId}
-                loading={loading}
-              />
+            {/* Fixed input container with legal text below */}
+            <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-10">
+              <div className="max-w-7xl mx-auto w-full">
+                {/* Input component */}
+                <PromptInput
+                  prompt={prompt}
+                  setPrompt={setPrompt}
+                  sendPrompt={sendPrompt}
+                  threadId={threadId}
+                  loading={loading}
+                />
 
-              {/* Assistant Selector - placed underneath input box */}
-              <div className="flex justify-start mt-2 ml-1">
-                <AssistantSelector currentAssistantId={assistantId} />
+                {/* Assistant selector */}
+                <div className="flex items-center mt-2 mb-2">
+                  <AssistantSelector currentAssistantId={assistantId} />
+                </div>
+
+                {/* Legal Text - now inside the fixed container */}
+                <div className="text-center text-xs text-gray-500 mt-3 mb-2">
+                  By chatting, you agree to the{" "}
+                  <a
+                    href="https://www.kornferry.com/terms"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-900 font-medium hover:underline"
+                  >
+                    Terms of Use
+                  </a>{" "}
+                  and{" "}
+                  <a
+                    href="https://www.kornferry.com/privacy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-900 font-medium hover:underline"
+                  >
+                    Global Privacy Policy
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -497,28 +516,6 @@ function Embed({ params: { assistantId } }) {
             handleStarterQuestion={handleStarterQuestion}
             loading={loading}
           />
-        </div>
-
-        {/* Legal Text */}
-        <div className="text-center text-xs text-gray-500 mt-4 mb-8 pb-6">
-          By chatting, you agree to the{" "}
-          <a
-            href="https://www.kornferry.com/terms"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-900 font-medium hover:underline"
-          >
-            Terms of Use
-          </a>{" "}
-          and{" "}
-          <a
-            href="https://www.kornferry.com/privacy"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-900 font-medium hover:underline"
-          >
-            Global Privacy Policy
-          </a>
         </div>
       </div>
     </div>
