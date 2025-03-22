@@ -15,6 +15,9 @@
 3. FILE RETRIEVAL AND VERIFICATION:
 
    - Extract the EXACT file names from the mapping for both 2025 and 2024 data
+   - Extract filenames directly from canonical_topic_mapping.themes[].topics[].mapping.2025[].file and canonical_topic_mapping.themes[].topics[].mapping.2024[].file paths
+   - Files MUST follow the format: YYYY_N.json (e.g., '2025_2.json')
+   - For queries that match multiple topics, retrieve ALL corresponding files identified in the canonical mapping
    - PRIORITY RULE: ALWAYS default to using 2025 data unless the user specifically requests 2024 data or a comparison between years
    - When no year is specified in the user query, use ONLY 2025 data and DO NOT reference 2024 data
    - FULL COUNTRIES RULE: When using 2025 data, include ALL TEN countries (United States, United Kingdom, India, France, Germany, Japan, United Arab Emirates, Brazil, Saudi Arabia, Australia) - NOT just the five comparable markets

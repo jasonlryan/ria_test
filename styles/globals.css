@@ -30,10 +30,13 @@
   /* Chat container styles */
   .chat-container {
     @apply flex-1 bg-white rounded-lg shadow-sm border border-tertiary mb-4 flex flex-col;
+    overflow: hidden; /* Ensure the container itself doesn't scroll */
   }
   
   .chat-messages {
-    @apply flex flex-col gap-3 sm:gap-4 p-3 sm:p-4 overflow-y-auto scroll-smooth flex-1;
+    @apply flex flex-col gap-3 sm:gap-4 p-3 sm:p-4 flex-1;
+    overflow-y: auto; /* ONLY this element should scroll vertically */
+    overflow-x: hidden; /* No horizontal scrolling */
   }
   
   /* Message bubble styles */
@@ -101,11 +104,22 @@
 }
 
 .scroll {
-  scrollbar-width: none;
+  /* Enable scrollbars instead of hiding them */
+  scrollbar-width: thin;
+  overflow-y: auto;
 }
 
 .scroll::-webkit-scrollbar {
-  width: 0;
+  width: 6px; /* Narrow scrollbar for minimal intrusion */
+}
+
+.scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.scroll::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .bounce {

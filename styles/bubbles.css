@@ -1,3 +1,7 @@
+/* eslint-disable */
+/* stylelint-disable */
+/* CSS Linter: Ignore Tailwind directives */
+
 .chat-bubble {
   @apply rounded px-3 py-2;
 }
@@ -22,8 +26,13 @@
   @apply text-lg font-bold my-2;
 }
 
-.chatbot p {
+.chatbot p,
+.user p {
   @apply mb-2;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .chatbot ul,
