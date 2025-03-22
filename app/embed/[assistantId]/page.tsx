@@ -319,7 +319,35 @@ function Embed({ params: { assistantId } }) {
                         : "message-bubble-user"
                     }`}
                   >
-                    <Markdown className="prose max-w-none text-sm sm:text-base">
+                    <Markdown
+                      className="prose max-w-none text-sm sm:text-base"
+                      components={{
+                        table: ({ node, ...props }) => (
+                          <div className="overflow-x-auto">
+                            <table {...props} />
+                          </div>
+                        ),
+                        // Ensure proper heading styles
+                        h1: ({ node, ...props }) => (
+                          <h1 {...props} className="font-bold text-primary" />
+                        ),
+                        h2: ({ node, ...props }) => (
+                          <h2 {...props} className="font-bold text-primary" />
+                        ),
+                        h3: ({ node, ...props }) => (
+                          <h3
+                            {...props}
+                            className="font-semibold text-primary"
+                          />
+                        ),
+                        h4: ({ node, ...props }) => (
+                          <h4
+                            {...props}
+                            className="font-semibold text-primary"
+                          />
+                        ),
+                      }}
+                    >
                       {msg.content}
                     </Markdown>
                   </div>
@@ -327,7 +355,35 @@ function Embed({ params: { assistantId } }) {
 
                 {loading && streamingMessage && (
                   <div className="message-bubble message-bubble-assistant">
-                    <Markdown className="prose max-w-none text-sm sm:text-base">
+                    <Markdown
+                      className="prose max-w-none text-sm sm:text-base"
+                      components={{
+                        table: ({ node, ...props }) => (
+                          <div className="overflow-x-auto">
+                            <table {...props} />
+                          </div>
+                        ),
+                        // Ensure proper heading styles
+                        h1: ({ node, ...props }) => (
+                          <h1 {...props} className="font-bold text-primary" />
+                        ),
+                        h2: ({ node, ...props }) => (
+                          <h2 {...props} className="font-bold text-primary" />
+                        ),
+                        h3: ({ node, ...props }) => (
+                          <h3
+                            {...props}
+                            className="font-semibold text-primary"
+                          />
+                        ),
+                        h4: ({ node, ...props }) => (
+                          <h4
+                            {...props}
+                            className="font-semibold text-primary"
+                          />
+                        ),
+                      }}
+                    >
                       {streamingMessage.content}
                     </Markdown>
                     <div className="flex h-4 items-end gap-2 mt-2">

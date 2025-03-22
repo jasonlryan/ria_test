@@ -1,5 +1,6 @@
 import "../styles/globals.css";
 import "../styles/bubbles.css";
+import "../styles/markdown.css";
 import MainComponent from "../components/MainComponent";
 import { Analytics } from "@vercel/analytics/react";
 
