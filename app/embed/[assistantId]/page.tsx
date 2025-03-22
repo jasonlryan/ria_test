@@ -246,67 +246,27 @@ function Embed({ params: { assistantId } }) {
   const messageListRef = useRef<HTMLDivElement>(null);
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
-  // Simple, direct scrolling function - no conditions to block scrolling
+  // Scroll function that ONLY affects the chat messages panel
   const scrollToBottom = useCallback(() => {
     if (!messageListRef.current) return;
 
-    // Log for debugging
+    // Directly scroll the chat messages container ONLY
+    messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
     console.log(
-      "Scrolling to bottom, height:",
+      "Scrolling chat panel to:",
       messageListRef.current.scrollHeight
     );
-
-    // Method 1: Direct property assignment - most reliable
-    messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
-
-    // Method 2: Also try smooth scrolling as backup
-    messageListRef.current.scrollTo({
-      top: messageListRef.current.scrollHeight,
-      behavior: "auto", // Changed from smooth to ensure it happens immediately
-    });
   }, []);
 
-  // Aggressive approach: Use both immediate and delayed scrolling
-  const forceScrollToBottom = useCallback(() => {
+  // Auto-scroll when messages change or during streaming
+  useEffect(() => {
     // Immediate scroll
     scrollToBottom();
 
-    // Delayed scrolls at increasing intervals to catch any late content renders
-    setTimeout(scrollToBottom, 50);
-    setTimeout(scrollToBottom, 150);
-    setTimeout(scrollToBottom, 300);
-  }, [scrollToBottom]);
-
-  // Scroll when messages change or during streaming
-  useEffect(() => {
-    forceScrollToBottom();
-  }, [messages, streamingMessage, forceScrollToBottom]);
-
-  // Also set up a mutation observer to catch content changes
-  useEffect(() => {
-    if (!messageListRef.current) return;
-
-    // Create mutation observer to watch for content changes during streaming
-    const observer = new MutationObserver(() => {
-      // When streaming is active, always scroll to keep up with new content
-      if (loading && streamingMessage) {
-        scrollToBottom();
-      }
-    });
-
-    // Start observing the message container with more detailed options
-    observer.observe(messageListRef.current, {
-      childList: true,
-      subtree: true,
-      characterData: true,
-      attributes: false,
-      attributeOldValue: false,
-    });
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [scrollToBottom, loading, streamingMessage]);
+    // Delayed scroll to catch rendering
+    setTimeout(scrollToBottom, 100);
+    setTimeout(scrollToBottom, 300); // Additional delayed scroll to catch late renders
+  }, [messages, streamingMessage, scrollToBottom]);
 
   const handleStarterQuestion = (question: string) => {
     if (loading) return;
@@ -355,22 +315,27 @@ function Embed({ params: { assistantId } }) {
       </div>
 
       {/* Main Content */}
-      <div className="w-full max-w-7xl mx-auto px-4 pt-1 flex-1 flex flex-col">
+      <div
+        className="w-full max-w-7xl mx-auto px-4 pt-1 flex-1 flex flex-col overflow-hidden"
+        style={{ height: "calc(100vh - 90px)" }}
+      >
         <div className="flex flex-col lg:flex-row gap-4 flex-1 overflow-hidden">
-          {/* Chat and Input Section */}
-          <div className="flex-1 flex flex-col relative pb-[220px]">
-            {/* Chat Container - with proper height constraints */}
-            <div className="chat-container flex-1 overflow-hidden flex flex-col">
+          {/* Chat and Input Section - NOT FIXED, CONTAINED WITHIN PARENT */}
+          <div
+            className="flex-1 flex flex-col overflow-hidden"
+            style={{ maxHeight: "calc(100vh - 90px)" }}
+          >
+            {/* Chat Container - THE ONLY SCROLLABLE ELEMENT */}
+            <div className="chat-container flex-1 overflow-hidden flex flex-col bg-gray-50">
               <div
                 className="chat-messages flex-1"
                 ref={messageListRef}
                 style={{
                   scrollBehavior: "smooth",
-                  overflowY: "auto",
+                  overflowY: "auto" /* ONLY THIS ELEMENT SCROLLS */,
+                  overflowX: "hidden",
                   paddingBottom: "1rem",
-                  minHeight: "50px",
-                  border: "1px solid #f0f0f0", // Makes the border visible for debugging
-                  borderRadius: "8px",
+                  maxHeight: "calc(100vh - 300px)",
                 }}
               >
                 {messages.map((msg, index) => {
@@ -469,25 +434,22 @@ function Embed({ params: { assistantId } }) {
               </div>
             </div>
 
-            {/* Fixed input container with legal text below */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-10">
-              <div className="max-w-7xl mx-auto w-full">
-                {/* Input component */}
-                <PromptInput
-                  prompt={prompt}
-                  setPrompt={setPrompt}
-                  sendPrompt={sendPrompt}
-                  threadId={threadId}
-                  loading={loading}
-                />
+            {/* Input Container - STICKY BOTTOM */}
+            <div className="bg-white py-3 sticky bottom-0 z-10 border-t border-gray-200 mt-auto">
+              <PromptInput
+                prompt={prompt}
+                setPrompt={setPrompt}
+                sendPrompt={sendPrompt}
+                threadId={threadId}
+                loading={loading}
+              />
 
-                {/* Assistant selector */}
-                <div className="flex items-center mt-2 mb-2">
-                  <AssistantSelector currentAssistantId={assistantId} />
-                </div>
+              {/* Assistant selector directly below input with privacy message aligned */}
+              <div className="flex items-center justify-between mt-2">
+                <AssistantSelector currentAssistantId={assistantId} />
 
-                {/* Legal Text - now inside the fixed container */}
-                <div className="text-center text-xs text-gray-500 mt-3 mb-2">
+                {/* Legal Text - aligned with selector */}
+                <div className="text-xs text-gray-500">
                   By chatting, you agree to the{" "}
                   <a
                     href="https://www.kornferry.com/terms"
@@ -512,10 +474,12 @@ function Embed({ params: { assistantId } }) {
           </div>
 
           {/* Collapsible Content Section */}
-          <CollapsibleContent
-            handleStarterQuestion={handleStarterQuestion}
-            loading={loading}
-          />
+          <div className="w-full lg:w-auto lg:min-w-[300px]">
+            <CollapsibleContent
+              handleStarterQuestion={handleStarterQuestion}
+              loading={loading}
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -82,8 +82,8 @@ export default function PromptInput({
           onChange={(e) => setPrompt(e.target.value)}
           onKeyDown={handleKeyDown}
           disabled={loading}
-          rows={3}
-          style={{ minHeight: "80px", maxHeight: "200px" }}
+          rows={2}
+          style={{ minHeight: "80px", maxHeight: "300px" }}
         />
         <button
           type="submit"
