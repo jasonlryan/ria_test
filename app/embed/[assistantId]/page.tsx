@@ -8,7 +8,7 @@ import { track } from "@vercel/analytics";
 // api/chat-assistant/route.ts is where we call the OpenAI API to get the response, there we can stream the response.
 
 // React
-import { useState, useRef, useEffect, Suspense } from "react";
+import { useState, useRef, useEffect, Suspense, useCallback } from "react";
 // Open AI
 import { AssistantStream } from "openai/lib/AssistantStream";
 // Markdown
@@ -193,7 +193,7 @@ function Embed({ params: { assistantId } }) {
         setStreamingMessage(null);
 
         // Scroll to bottom
-        setTimeout(scroll, 100);
+        setTimeout(scrollToBottom, 100);
       });
 
       runner.on("error", (error) => {
@@ -216,7 +216,7 @@ function Embed({ params: { assistantId } }) {
         setStreamingMessage(null);
 
         // Scroll to bottom
-        setTimeout(scroll, 100);
+        setTimeout(scrollToBottom, 100);
       });
     } catch (error) {
       console.error("Request error:", error);
@@ -238,29 +238,75 @@ function Embed({ params: { assistantId } }) {
       setStreamingMessage(null);
 
       // Scroll to bottom
-      setTimeout(scroll, 100);
+      setTimeout(scrollToBottom, 100);
     }
   };
 
   // Auto scroll to bottom of message list. Scroll as message is being streamed.
   const messageListRef = useRef<HTMLDivElement>(null);
-  const scroll = () => {
-    // Check if messageListRef.current exists before accessing properties
-    if (messageListRef.current) {
-      const { scrollHeight } = messageListRef.current;
-      console.log("Scrolling to:", scrollHeight);
-      messageListRef.current.scrollTo({
-        top: scrollHeight,
-        behavior: "smooth",
-      });
-    } else {
-      console.log("Message list ref is not available yet");
-    }
-  };
+  const lastMessageRef = useRef<HTMLDivElement>(null);
+
+  // Simple, direct scrolling function - no conditions to block scrolling
+  const scrollToBottom = useCallback(() => {
+    if (!messageListRef.current) return;
+
+    // Log for debugging
+    console.log(
+      "Scrolling to bottom, height:",
+      messageListRef.current.scrollHeight
+    );
+
+    // Method 1: Direct property assignment - most reliable
+    messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+
+    // Method 2: Also try smooth scrolling as backup
+    messageListRef.current.scrollTo({
+      top: messageListRef.current.scrollHeight,
+      behavior: "auto", // Changed from smooth to ensure it happens immediately
+    });
+  }, []);
+
+  // Aggressive approach: Use both immediate and delayed scrolling
+  const forceScrollToBottom = useCallback(() => {
+    // Immediate scroll
+    scrollToBottom();
+
+    // Delayed scrolls at increasing intervals to catch any late content renders
+    setTimeout(scrollToBottom, 50);
+    setTimeout(scrollToBottom, 150);
+    setTimeout(scrollToBottom, 300);
+  }, [scrollToBottom]);
+
+  // Scroll when messages change or during streaming
   useEffect(() => {
-    console.log("Messages updated, triggering scroll.");
-    scroll();
-  }, [messages, streamingMessage]);
+    forceScrollToBottom();
+  }, [messages, streamingMessage, forceScrollToBottom]);
+
+  // Also set up a mutation observer to catch content changes
+  useEffect(() => {
+    if (!messageListRef.current) return;
+
+    // Create mutation observer to watch for content changes during streaming
+    const observer = new MutationObserver(() => {
+      // When streaming is active, always scroll to keep up with new content
+      if (loading && streamingMessage) {
+        scrollToBottom();
+      }
+    });
+
+    // Start observing the message container with more detailed options
+    observer.observe(messageListRef.current, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+      attributes: false,
+      attributeOldValue: false,
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [scrollToBottom, loading, streamingMessage]);
 
   const handleStarterQuestion = (question: string) => {
     if (loading) return;
@@ -312,63 +358,81 @@ function Embed({ params: { assistantId } }) {
       <div className="w-full max-w-7xl mx-auto px-4 pt-1 flex-1 flex flex-col">
         <div className="flex flex-col lg:flex-row gap-4 flex-1 overflow-hidden">
           {/* Chat and Input Section */}
-          <div className="flex-1 flex flex-col">
-            {/* Assistant Selector */}
-            <AssistantSelector currentAssistantId={assistantId} />
-
+          <div
+            className="flex-1 flex flex-col"
+            style={{
+              height: "calc(100vh - 90px)",
+              minHeight: "400px",
+              maxHeight: "100%",
+            }}
+          >
             {/* Chat Container */}
-            <div className="chat-container flex-1 overflow-y-auto">
+            <div className="chat-container flex-1 overflow-hidden flex flex-col">
               <div
-                className="chat-messages scroll"
+                className="chat-messages flex-1"
                 ref={messageListRef}
-                style={{ scrollBehavior: "smooth" }}
+                style={{
+                  scrollBehavior: "smooth",
+                  overflowY: "auto",
+                  paddingBottom: "0.5rem",
+                  minHeight: "100px",
+                  maxHeight: "calc(100vh - 260px)",
+                }}
               >
-                {messages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    className={`message-bubble ${
-                      msg.role === "assistant"
-                        ? "message-bubble-assistant"
-                        : "message-bubble-user"
-                    }`}
-                  >
-                    <ReactMarkdown
-                      className="prose max-w-none text-sm sm:text-base"
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        table: ({ node, ...props }) => (
-                          <div className="overflow-x-auto">
-                            <table {...props} />
-                          </div>
-                        ),
-                        // Ensure proper heading styles
-                        h1: ({ node, ...props }) => (
-                          <h1 {...props} className="font-bold text-primary" />
-                        ),
-                        h2: ({ node, ...props }) => (
-                          <h2 {...props} className="font-bold text-primary" />
-                        ),
-                        h3: ({ node, ...props }) => (
-                          <h3
-                            {...props}
-                            className="font-semibold text-primary"
-                          />
-                        ),
-                        h4: ({ node, ...props }) => (
-                          <h4
-                            {...props}
-                            className="font-semibold text-primary"
-                          />
-                        ),
-                      }}
+                {messages.map((msg, index) => {
+                  const isLastMessage = index === messages.length - 1;
+                  return (
+                    <div
+                      key={msg.id}
+                      className={`message-bubble ${
+                        msg.role === "assistant"
+                          ? "message-bubble-assistant"
+                          : "message-bubble-user"
+                      }`}
+                      ref={isLastMessage ? lastMessageRef : null}
                     >
-                      {msg.content}
-                    </ReactMarkdown>
-                  </div>
-                ))}
+                      <ReactMarkdown
+                        className="prose max-w-none text-sm sm:text-base"
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          table: ({ node, ...props }) => (
+                            <div className="overflow-x-auto">
+                              <table {...props} />
+                            </div>
+                          ),
+                          // Ensure proper heading styles
+                          h1: ({ node, ...props }) => (
+                            <h1 {...props} className="font-bold text-primary" />
+                          ),
+                          h2: ({ node, ...props }) => (
+                            <h2 {...props} className="font-bold text-primary" />
+                          ),
+                          h3: ({ node, ...props }) => (
+                            <h3
+                              {...props}
+                              className="font-semibold text-primary"
+                            />
+                          ),
+                          h4: ({ node, ...props }) => (
+                            <h4
+                              {...props}
+                              className="font-semibold text-primary"
+                            />
+                          ),
+                        }}
+                      >
+                        {msg.content}
+                      </ReactMarkdown>
+                    </div>
+                  );
+                })}
 
                 {loading && streamingMessage && (
-                  <div className="message-bubble message-bubble-assistant">
+                  <div
+                    className="message-bubble message-bubble-assistant"
+                    ref={lastMessageRef}
+                    id="streaming-message"
+                  >
                     <ReactMarkdown
                       className="prose max-w-none text-sm sm:text-base"
                       remarkPlugins={[remarkGfm]}
@@ -412,7 +476,7 @@ function Embed({ params: { assistantId } }) {
             </div>
 
             {/* Input Container */}
-            <div className="w-full sticky bottom-0 z-10 bg-white">
+            <div className="w-full sticky bottom-0 z-10 bg-white py-3 flex-shrink-0">
               <PromptInput
                 prompt={prompt}
                 setPrompt={setPrompt}
@@ -420,6 +484,11 @@ function Embed({ params: { assistantId } }) {
                 threadId={threadId}
                 loading={loading}
               />
+
+              {/* Assistant Selector - placed underneath input box */}
+              <div className="flex justify-start mt-2 ml-1">
+                <AssistantSelector currentAssistantId={assistantId} />
+              </div>
             </div>
           </div>
 
