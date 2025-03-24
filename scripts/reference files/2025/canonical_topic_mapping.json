@@ -611,10 +611,6 @@
                             {
                                 "id": "Q4_17",
                                 "file": "2024_4_17.json"
-                            },
-                            {
-                                "id": "Q4_18",
-                                "file": "2024_4_18.json"
                             }
                         ],
                         "2025": [
@@ -623,16 +619,8 @@
                                 "file": "2025_17_2.json"
                             },
                             {
-                                "id": "Q8_3",
-                                "file": "2025_8_3.json"
-                            },
-                            {
                                 "id": "Q8_5",
                                 "file": "2025_8_5.json"
-                            },
-                            {
-                                "id": "Q8_10",
-                                "file": "2025_8_10.json"
                             }
                         ]
                     },
@@ -934,20 +922,12 @@
                             {
                                 "id": "Q6_1",
                                 "file": "2024_6_1.json"
-                            },
-                            {
-                                "id": "Q6_2",
-                                "file": "2024_6_2.json"
                             }
                         ],
                         "2025": [
                             {
                                 "id": "Q10_1",
                                 "file": "2025_10_1.json"
-                            },
-                            {
-                                "id": "Q10_2",
-                                "file": "2025_10_2.json"
                             },
                             {
                                 "id": "Q7_7",
@@ -981,7 +961,37 @@
                         "equity programs",
                         "inclusion efforts",
                         "workplace diversity",
-                        "DEI commitment",
+                        "DEI commitment"
+                    ]
+                },
+                {
+                    "id": "Sustainability",
+                    "canonicalQuestion": "How committed is your organization to corporate social responsibility and sustainability?",
+                    "rationale": "Evaluate the organization's commitment to sustainability and corporate social responsibility initiatives.",
+                    "mapping": {
+                        "2024": [
+                            {
+                                "id": "Q6_2",
+                                "file": "2024_6_2.json"
+                            }
+                        ],
+                        "2025": [
+                            {
+                                "id": "Q10_2",
+                                "file": "2025_10_2.json"
+                            }
+                        ]
+                    },
+                    "comparable": true,
+                    "availableMarkets": [
+                        "United Kingdom",
+                        "United States",
+                        "Australia",
+                        "India",
+                        "Brazil"
+                    ],
+                    "userMessage": "Data based on comparable markets only.",
+                    "alternatePhrasings": [
                         "corporate social responsibility",
                         "sustainability goals"
                     ]
@@ -1058,6 +1068,46 @@
                         "office preferences",
                         "remote vs in-office",
                         "workplace location"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Perceived Barriers",
+            "topics": [
+                {
+                    "id": "Imposter_Syndrome",
+                    "canonicalQuestion": "How prevalent is imposter syndrome among employees?",
+                    "rationale": "Understand the extent to which employees experience imposter syndrome and capability doubts.",
+                    "mapping": {
+                        "2024": [
+                            {
+                                "id": "Q4_18",
+                                "file": "2024_4_18.json"
+                            }
+                        ],
+                        "2025": [
+                            {
+                                "id": "Q8_3",
+                                "file": "2025_8_3.json"
+                            },
+                            {
+                                "id": "Q8_10",
+                                "file": "2025_8_10.json"
+                            }
+                        ]
+                    },
+                    "comparable": true,
+                    "availableMarkets": [
+                        "United Kingdom",
+                        "United States",
+                        "Australia",
+                        "India",
+                        "Brazil"
+                    ],
+                    "userMessage": "Data based on comparable markets only.",
+                    "alternatePhrasings": [
+                        "imposter syndrome"
                     ]
                 }
             ]
