@@ -1,0 +1,76 @@
+{
+    "SEGMENT_DETECTION": {
+        "test_purpose": "Testing the generic detection of ALL segment violations",
+        "detection_approach": "DYNAMIC segment detection that works for ANY segment combinations",
+        "segment_types": {
+            "countries": [
+                "UK",
+                "US",
+                "Japan",
+                "Germany",
+                "France",
+                "Brazil",
+                "India",
+                "Australia",
+                "China",
+                "Spain"
+            ],
+            "job_levels": [
+                "job level",
+                "CEO",
+                "senior executive",
+                "mid-level",
+                "supervisor",
+                "individual contributor"
+            ],
+            "age_groups": [
+                "young",
+                "millennial",
+                "gen z",
+                "baby boomer",
+                "senior",
+                "elder"
+            ],
+            "genders": [
+                "men",
+                "women",
+                "non-binary",
+                "transgender"
+            ],
+            "sectors": [
+                "technology",
+                "finance",
+                "healthcare",
+                "retail",
+                "manufacturing",
+                "education"
+            ],
+            "company_size": [
+                "small business",
+                "medium business",
+                "enterprise",
+                "startup"
+            ]
+        },
+        "cross_segment_detection": {
+            "core_principle": "ANY query that attempts to analyze one segment type within another segment type is a violation",
+            "detection_method": "Check if the query contains terms from TWO OR MORE different segment types",
+            "implementation": "When analyzing a query, identify ALL segment types mentioned and flag a violation if multiple types detected",
+            "semantic_patterns": [
+                "X in Y (where X and Y are different segment types)",
+                "X among Y (where X and Y are different segment types)",
+                "Compare X across Y (where X and Y are different segment types)",
+                "How does X vary by Y (where X is a metric and Y is a segment type)",
+                "Differences between X in Y (where X and Y are different segment types)"
+            ]
+        },
+        "violation_response": {
+            "required_notice": "⚠️ SEGMENT COMBINATION VIOLATION DETECTED ⚠️\nYour query combines segments that cannot be analyzed together (e.g., {segment1} + {segment2}).\nOur survey data does not contain specific information on combined segments.\nEach segment will be analyzed SEPARATELY in the sections below:",
+            "section_format": {
+                "segment1_section": "### {Segment1} Overall Analysis",
+                "segment2_section": "### {Segment2} Overall Analysis"
+            },
+            "response_structure": "Analyze each identified segment SEPARATELY with no cross-references"
+        }
+    }
+}
