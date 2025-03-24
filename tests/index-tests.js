@@ -11,6 +11,18 @@ const fileInputName = global.selectedTestFile;
 // Assistant ID comes from .env or CLI args
 const assistantId = global.assistantId;
 
+// Parse CLI arguments for start and end question numbers
+const startQuestion = process.argv
+  .find((arg) => arg.startsWith("--start="))
+  ?.split("=")[1];
+const endQuestion = process.argv
+  .find((arg) => arg.startsWith("--end="))
+  ?.split("=")[1];
+
+// Convert to numbers if provided
+const startQuestionNo = startQuestion ? parseInt(startQuestion, 10) : null;
+const endQuestionNo = endQuestion ? parseInt(endQuestion, 10) : null;
+
 // Function to get current timestamp in YYYYMMDD_HHMMSS format
 function getTimestamp() {
   const now = new Date();
@@ -55,23 +67,144 @@ async function parseCSV(callback) {
   });
 }
 
-const getAnswer = async (openai, threadId, runId) => {
-  const getRun = await openai.beta.threads.runs.retrieve(threadId, runId);
+const getAnswer = async (
+  openai,
+  threadId,
+  runId,
+  retries = 3,
+  startTime = Date.now()
+) => {
+  try {
+    // Add a maximum timeout of 5 minutes per question
+    const MAX_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
+    if (Date.now() - startTime > MAX_TIMEOUT) {
+      throw new Error(
+        `Answer retrieval timed out after ${MAX_TIMEOUT / 1000} seconds`
+      );
+    }
 
-  if (getRun.status === "completed") {
-    console.log("Response ready");
-    const messages = await openai.beta.threads.messages.list(threadId);
-    return messages.data[0].content[0].text.value;
+    const getRun = await openai.beta.threads.runs.retrieve(threadId, runId);
+
+    if (getRun.status === "completed") {
+      console.log("Response ready");
+      const messages = await openai.beta.threads.messages.list(threadId);
+      return messages.data[0].content[0].text.value;
+    }
+
+    // Handle failed runs
+    if (getRun.status === "failed") {
+      const failureMessage = getRun.last_error
+        ? `${getRun.last_error.code}: ${getRun.last_error.message}`
+        : "Unknown failure reason";
+
+      console.log(`Run failed: ${failureMessage}`);
+
+      if (retries > 0) {
+        console.log(`Creating new run... (${retries} attempts left)`);
+        await new Promise((r) => setTimeout(r, 2000)); // Wait 2 seconds before retry
+
+        // Create a new run instead of checking the failed one
+        const newRun = await openai.beta.threads.runs.create(threadId, {
+          assistant_id: assistantId,
+        });
+
+        return await getAnswer(
+          openai,
+          threadId,
+          newRun.id,
+          retries - 1,
+          startTime
+        );
+      } else {
+        throw new Error(
+          `Assistant run failed after multiple attempts: ${failureMessage}`
+        );
+      }
+    }
+
+    // Handle runs requiring action (e.g., function calls)
+    if (getRun.status === "requires_action") {
+      console.log("Run requires action - not supported in test mode");
+      throw new Error(
+        "Run requires action which is not supported in test mode"
+      );
+    }
+
+    // Only log status if it's not "in_progress"
+    if (getRun.status !== "in_progress") {
+      console.log(`Waiting for response... (status: ${getRun.status})`);
+    }
+
+    await new Promise((r) => setTimeout(r, 1000));
+    return await getAnswer(openai, threadId, runId, retries, startTime);
+  } catch (error) {
+    if (retries > 0) {
+      console.log(
+        `API error encountered. Retrying... (${retries} attempts left)`
+      );
+      await new Promise((r) => setTimeout(r, 2000)); // Wait 2 seconds before retry
+      return await getAnswer(openai, threadId, runId, retries - 1, startTime);
+    } else {
+      throw error;
+    }
   }
-
-  // Only log status if it's not "in_progress"
-  if (getRun.status !== "in_progress") {
-    console.log(`Waiting for response... (status: ${getRun.status})`);
-  }
-
-  await new Promise((r) => setTimeout(r, 1000));
-  return await getAnswer(openai, threadId, runId);
 };
+
+// Function to properly escape CSV values
+function escapeCSV(value) {
+  if (value === null || value === undefined) return "";
+
+  // Convert to string if not already
+  const str = String(value);
+
+  // If the value contains quotes, commas, or newlines, it needs special handling
+  if (
+    str.includes('"') ||
+    str.includes(",") ||
+    str.includes("\n") ||
+    str.includes("\r")
+  ) {
+    // Double any existing quotes and wrap the whole thing in quotes
+    return `"${str.replace(/"/g, '""')}"`;
+  }
+  return str;
+}
+
+// Function to find the last processed question if resuming
+function findLastProcessedQuestion(outputPath, records) {
+  if (!fs.existsSync(outputPath)) {
+    return 0; // Start from the beginning if file doesn't exist
+  }
+
+  try {
+    const fileContent = fs.readFileSync(outputPath, "utf-8");
+    const lines = fileContent.split("\n").filter((line) => line.trim());
+
+    if (lines.length <= 1) {
+      return 0; // Only header or empty file
+    }
+
+    // Get the last line that's not empty
+    const lastLine = lines[lines.length - 1];
+
+    // Extract the question number from the first column
+    const match = lastLine.match(/^([^,]+),/);
+    if (!match) return 0;
+
+    let lastQuestionNumber = match[1].replace(/"/g, "").trim();
+
+    // Find the index of this question in our records
+    const index = records.findIndex(
+      (record) => String(record["Question No"]) === String(lastQuestionNumber)
+    );
+
+    // Return the next question index (or 0 if not found)
+    return index >= 0 ? index + 1 : 0;
+  } catch (error) {
+    console.error(`Error reading existing output file: ${error.message}`);
+    return 0; // Start from beginning on error
+  }
+}
 
 async function runQuestions(records) {
   // Create new file with timestamp in test-results directory
@@ -88,47 +221,112 @@ async function runQuestions(records) {
     fs.mkdirSync(resultsDir, { recursive: true });
   }
 
-  fs.openSync(outputPath, "w");
-
-  // Write CSV header
-  const headerCSV = "Question No,Category,Question,Answer\n";
-  fs.appendFileSync(outputPath, headerCSV);
-
-  // Loop over all rows in CSV and get answer for the question
-  for (const record of records) {
-    const question = record["Question"];
-    console.log(`Processing question: ${question}`);
-
-    // create OpenAI client with API key from environment
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
+  // Filter records based on question number if start/end parameters were provided
+  let filteredRecords = [...records];
+  if (startQuestionNo !== null || endQuestionNo !== null) {
+    filteredRecords = records.filter((record) => {
+      const questionNo = parseInt(record["Question No"], 10);
+      const passesStart =
+        startQuestionNo === null || questionNo >= startQuestionNo;
+      const passesEnd = endQuestionNo === null || questionNo <= endQuestionNo;
+      return passesStart && passesEnd;
     });
 
-    // Always start new thread
-    const thread = await openai.beta.threads.create();
+    if (filteredRecords.length === 0) {
+      console.error(
+        `No questions found between questions ${
+          startQuestionNo || "start"
+        } and ${endQuestionNo || "end"}`
+      );
+      process.exit(1);
+    }
 
-    // add new message to thread
-    await openai.beta.threads.messages.create(thread.id, {
-      role: "user",
-      content: question,
-    });
+    console.log(
+      `Processing ${filteredRecords.length} questions (from question ${
+        startQuestionNo || "start"
+      } to ${endQuestionNo || "end"})`
+    );
+  } else {
+    console.log(`Processing all ${records.length} questions`);
+  }
 
-    // run assistant
-    const run = await openai.beta.threads.runs.create(thread.id, {
-      assistant_id: assistantId,
-    });
+  // Check if we're resuming from a previous run
+  const startIndex = findLastProcessedQuestion(outputPath, filteredRecords);
 
-    const answer = await getAnswer(openai, thread.id, run.id);
-    console.log(`Got answer for question: ${question}`);
+  if (startIndex > 0) {
+    console.log(
+      `Resuming from question index ${startIndex} (Question ${filteredRecords[startIndex]["Question No"]})`
+    );
+  }
 
-    // Format the line for CSV
-    const number = record["Question No"];
-    const category = record["Category"];
-    const line = `${number},"${category}","${question}","${answer}"\n`;
+  if (!fs.existsSync(outputPath)) {
+    // Create new file if it doesn't exist
+    fs.openSync(outputPath, "w");
 
-    // Append to file
-    fs.appendFileSync(outputPath, line);
-    console.log(`Saved answer for question ${number}`);
+    // Write CSV header
+    const headerCSV = "Question No,Category,Question,Answer\n";
+    fs.appendFileSync(outputPath, headerCSV);
+  }
+
+  // Loop over filtered records instead of all records
+  for (let i = startIndex; i < filteredRecords.length; i++) {
+    const record = filteredRecords[i];
+    try {
+      const question = record["Question"];
+      console.log(`Processing question: ${question}`);
+
+      // create OpenAI client with API key from environment
+      const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+      });
+
+      // Always start new thread
+      const thread = await openai.beta.threads.create();
+
+      // add new message to thread
+      await openai.beta.threads.messages.create(thread.id, {
+        role: "user",
+        content: question,
+      });
+
+      // run assistant
+      const run = await openai.beta.threads.runs.create(thread.id, {
+        assistant_id: assistantId,
+      });
+
+      const answer = await getAnswer(openai, thread.id, run.id);
+      console.log(`Got answer for question: ${question}`);
+
+      // Format the line for CSV with proper escaping
+      const number = escapeCSV(record["Question No"]);
+      const category = escapeCSV(record["Category"]);
+      const escapedQuestion = escapeCSV(question);
+      const escapedAnswer = escapeCSV(answer);
+
+      const line = `${number},${category},${escapedQuestion},${escapedAnswer}\n`;
+
+      // Append to file
+      fs.appendFileSync(outputPath, line);
+      console.log(`Saved answer for question ${number}`);
+    } catch (error) {
+      console.error(
+        `Error processing question "${record["Question"]}": ${error.message}`
+      );
+
+      // Write error to output file so we don't lose progress
+      const number = escapeCSV(record["Question No"]);
+      const category = escapeCSV(record["Category"]);
+      const escapedQuestion = escapeCSV(record["Question"]);
+      const errorLine = `${number},${category},${escapedQuestion},"ERROR: Processing failed - ${escapeCSV(
+        error.message
+      )}"\n`;
+
+      fs.appendFileSync(outputPath, errorLine);
+      console.log(`Saved error for question ${number}`);
+
+      // Continue with next question rather than failing the entire process
+      continue;
+    }
   }
 }
 

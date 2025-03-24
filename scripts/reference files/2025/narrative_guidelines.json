@@ -1,0 +1,101 @@
+{
+    "metadata": {
+        "purpose": "Enforces neutral, data-bound, and non-editorial language across all responses, regardless of topic. Complements identity-specific enforcement by targeting tone, causality, and language precision system-wide.",
+        "enforcementScope": "Applies to all content areas including AI, flexibility, leadership, retention, job satisfaction, workplace dynamics, and employee experience."
+    },
+    "languageTone": {
+        "banSubjectiveAdverbs": true,
+        "bannedWords": [
+            "significantly",
+            "notably",
+            "especially",
+            "particularly",
+            "strongly",
+            "substantially",
+            "vastly",
+            "clearly",
+            "obviously",
+            "severely",
+            "extensively",
+            "dramatically"
+        ],
+        "onUse": "Remove or replace with a quantifiable comparison (e.g., 'X% higher than Y') or a neutral alternative such as 'the data shows...'."
+    },
+    "causalLanguage": {
+        "banAllCausalClaims": true,
+        "bannedCausalPhrases": [
+            "leads to",
+            "results in",
+            "causes",
+            "drives",
+            "is driven by",
+            "is due to",
+            "proves that",
+            "clearly shows that",
+            "is a result of",
+            "is explained by"
+        ],
+        "requiredHedges": [
+            "may contribute to",
+            "could be influenced by",
+            "some participants associate this with",
+            "this perception may reflect"
+        ],
+        "onViolation": "Rewrite to include approved hedging phrase or reframe as a perception or correlation."
+    },
+    "narrativeFraming": {
+        "banOverreachLanguage": true,
+        "bannedPhrases": [
+            "must be addressed",
+            "critical to success",
+            "essential for retention",
+            "vital to company culture",
+            "needs to improve",
+            "important to fix",
+            "companies should prioritize"
+        ],
+        "onViolation": "Reframe as business-aligned observation using conditional or exploratory phrasing."
+    },
+    "valuesFraming": {
+        "banValuesLanguageWithoutData": true,
+        "bannedPhrases": [
+            "values alignment",
+            "purpose-driven culture",
+            "organization that cares deeply",
+            "demonstrates strong values",
+            "shared values system"
+        ],
+        "onViolation": "Remove or reframe unless directly supported by survey responses or data quotes."
+    },
+    "equityLanguage": {
+        "banInNonIdentityContexts": true,
+        "bannedWords": [
+            "equity",
+            "inclusive",
+            "belonging",
+            "equitable",
+            "inclusive culture",
+            "diverse perspectives"
+        ],
+        "exceptions": [
+            "quoted from source data"
+        ],
+        "onViolation": "Replace with business-relevant phrasing such as 'broad participation', 'fair access', or 'employee support'."
+    },
+    "validationChecklist": {
+        "mustPass": [
+            "No banned adverbs or adjectives unless in quoted survey response.",
+            "No causal statements without approved hedge.",
+            "No overreach or imperative framing.",
+            "No 'equity' or values-based moral language in general context.",
+            "All interpretation tied back to reported data or participant sentiment."
+        ],
+        "violationTriggers": [
+            "Use of banned adverb or intensifier",
+            "Causal claim without hedging",
+            "Overstated recommendation or moral obligation",
+            "Unsubstantiated values framing",
+            "Equity terminology used outside identity-specific segments"
+        ]
+    }
+}

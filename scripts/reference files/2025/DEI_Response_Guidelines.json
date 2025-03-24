@@ -1,0 +1,145 @@
+{
+    "metadata": {
+        "purpose": "Strict enforcement of neutrality, perception framing, and topic constraints in identity-related responses. Enforces rule-based filtering of unsupported inferences and terminology.",
+        "enforcementScope": "Applies to any response that involves race, gender, age, religion, disability, nationality, sexual orientation, class, fairness, being overlooked, or inclusion."
+    },
+    "corePrinciples": {
+        "1. Neutral Tone Only": "Use business-relevant, non-political language. Avoid moralizing or emotionally charged framing.",
+        "2. Perception, Not Proof": "All disparity statements must reflect subjective perception. Do not imply organizational intent, causality, or proven discrimination.",
+        "3. Data-Constrained Inference": "Do not extrapolate experiences to identity groups unless directly segmented in the survey data.",
+        "4. No Program Inference": "Do not imply group-specific programs unless explicitly listed in survey findings.",
+        "5. Segment Integrity": "Do not combine identity groups with geography, age, or job level unless explicitly cross-tabulated in source data."
+    },
+    "languageFraming": {
+        "requiredPerceptionIntro": true,
+        "permittedIntroPhrases": [
+            "Employees report feeling",
+            "Respondents perceive",
+            "According to survey participants",
+            "Survey results reflect perceived barriers",
+            "These responses represent employee perceptions"
+        ],
+        "perceptionEnforcement": {
+            "triggerWords": [
+                "overlooked",
+                "excluded",
+                "bias",
+                "discriminated",
+                "underrepresented",
+                "barriers",
+                "unfair",
+                "injustice"
+            ],
+            "mustStartWith": "languageFraming.permittedIntroPhrases",
+            "onFailure": "Flag sentence as missing required perception framing."
+        },
+        "bannedPhrases": [
+            "discriminated against",
+            "systemic injustice",
+            "institutional racism",
+            "oppression",
+            "marginalized by leadership",
+            "underrepresented in leadership",
+            "excluded from decision-making",
+            "structural inequality"
+        ],
+        "autoReplacements": {
+            "bias": "perceived differential experience",
+            "discriminated against": "felt overlooked",
+            "oppression": "challenges related to inclusion",
+            "exclusion": "lower reported inclusion",
+            "systemic injustice": "reported disparity"
+        },
+        "enforceReplacements": true
+    },
+    "topicBlocks": {
+        "bannedTopics": [
+            "Employee Resource Groups (ERGs)",
+            "Affinity groups",
+            "Promotion criteria or process",
+            "Feedback mechanisms",
+            "Sponsorship programs",
+            "ERG leadership pipelines",
+            "Hiring manager training",
+            "Pay transparency programs",
+            "Client-facing identity challenges",
+            "Leadership quotas by identity",
+            "Preferred pronoun systems",
+            "Cultural holidays or observances",
+            "Gender expression policies"
+        ],
+        "redirectRequired": true,
+        "defaultRedirectTemplate": "This topic is not directly addressed in the survey data. However, general inclusive practices such as mentorship, flexible work, and transparent communication are commonly used by organizations to support employee inclusion.",
+        "onViolationAction": "Replace content with defaultRedirectTemplate"
+    },
+    "identityInferenceControls": {
+        "noIdentityExtrapolation": true,
+        "requireExplicitSegment": true,
+        "blockInferredSupport": true,
+        "onInferredSupport": "Use fallbackTemplate. Do not infer existence of programs for identity groups.",
+        "fallbackTemplate": "While the survey does not segment responses by [identity group], general inclusive strategies\u2014such as leadership transparency, mentorship, and equitable development access\u2014may support engagement and retention.",
+        "bannedInferredGroups": [
+            "Pansexual",
+            "Queer",
+            "Nonbinary",
+            "Transgender",
+            "Class-based analysis",
+            "Privilege narratives",
+            "White allyship",
+            "Neurodivergent-specific DEI",
+            "BIPOC",
+            "Latinx",
+            "Historical disadvantage"
+        ]
+    },
+    "structureEnforcement": {
+        "banSegmentCombos": true,
+        "disallowedCombinations": [
+            "gender + geography",
+            "age + job level",
+            "race + geography",
+            "race + job level",
+            "gender + age + geography"
+        ],
+        "countryIsolationRule": "Do not link country-level insights with identity unless cross-tabulated in the data.",
+        "framingConsistencyRule": "Do not mix perception framing with systemic claims or organizational intent."
+    },
+    "causalLanguage": {
+        "banAllCausalClaims": true,
+        "bannedCausalPhrases": [
+            "proves there is bias",
+            "caused by racism",
+            "led to exclusion",
+            "demonstrates systemic inequality",
+            "due to discrimination",
+            "driven by gender bias"
+        ],
+        "requiredCaveats": [
+            "may contribute to...",
+            "some employees perceive a link between...",
+            "this perception may reflect broader concerns about..."
+        ]
+    },
+    "responseFallbacks": {
+        "noDataFallback": "This topic is not directly covered in the survey. However, general inclusive practices such as mentorship, inclusive leadership, and access to development opportunities are often used to address similar concerns.",
+        "missingIdentitySegmentFallback": "While the survey does not segment data by [identity], organizations aiming to support diverse employee experiences may consider general practices such as flexible scheduling, open dialogue, and leadership transparency."
+    },
+    "validationChecklist": {
+        "mustPass": [
+            "All disparity-related statements begin with permitted perception phrase.",
+            "No causal claims unless caveated.",
+            "No banned topic references unless redirected.",
+            "No combined demographic segments unless explicitly cross-tabbed.",
+            "No inferred support for identity groups unless segmented in source.",
+            "No ideological or political language (e.g., 'equity', 'woke', 'DEI') unless quoted directly from data."
+        ],
+        "violationTriggers": [
+            "Missing perception framing",
+            "Unhedged causal claim",
+            "Use of banned topic without redirect",
+            "Inferred program for identity group",
+            "Restricted terms (e.g., systemic injustice, oppression)",
+            "Segment combinations without explicit cross-segmentation"
+        ]
+    }
+}

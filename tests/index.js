@@ -42,6 +42,23 @@ if (!global.assistantId) {
   console.log(`Using assistant ID: ${global.assistantId}`);
 }
 
+// Check if help was requested
+if (process.argv.includes("--help") || process.argv.includes("-h")) {
+  console.log("\nUsage: npm test [options]");
+  console.log("\nOptions:");
+  console.log(
+    "  --assistant=<id>  Use specified assistant ID instead of .env value"
+  );
+  console.log("  --start=<num>     Start processing from question number");
+  console.log("  --end=<num>       Stop processing at question number");
+  console.log("  --help, -h        Show this help message");
+  console.log("\nExamples:");
+  console.log("  npm test");
+  console.log("  npm test -- --assistant=asst_abc123");
+  console.log("  npm test -- --start=100 --end=150");
+  process.exit(0);
+}
+
 // Ensure data directory exists
 const dataDir = path.join(__dirname, "data");
 if (!fs.existsSync(dataDir)) {
