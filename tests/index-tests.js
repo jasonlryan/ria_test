@@ -88,7 +88,14 @@ const getAnswer = async (
     if (getRun.status === "completed") {
       console.log("Response ready");
       const messages = await openai.beta.threads.messages.list(threadId);
-      return messages.data[0].content[0].text.value;
+      const responseText = messages.data[0].content[0].text.value;
+
+      // Strip citation patterns from response
+      const cleanedResponse = responseText.replace(
+        /„Äê\d+:\d+‚Ä†source„Äë/g,
+        ""
+      );
+      return cleanedResponse;
     }
 
     // Handle failed runs
