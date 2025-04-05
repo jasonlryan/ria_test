@@ -4,45 +4,58 @@
 import { NextResponse } from "next/server";
 import { processQueryWithData } from "../../../utils/openai/retrieval";
 
-export async function POST(request) {
+export async function POST(req) {
   try {
-    const body = await request.json();
+    const body = await req.json();
     const { query } = body;
 
-    if (!query || typeof query !== "string") {
+    if (!query) {
       return NextResponse.json(
-        { error: "Invalid query parameter" },
-        { status: 400 }
-      );
-    }
-
-    // Check query length to prevent excessive token usage
-    if (query.length > 500) {
-      return NextResponse.json(
-        { error: "Query exceeds maximum length of 500 characters" },
+        { error: "Missing query parameter" },
         { status: 400 }
       );
     }
 
     console.log(`Processing query: ${query}`);
 
-    // Process query using the two-step retrieval approach
-    const result = await processQueryWithData(query);
+    // Process the query using the retrieval.js file
+    const dataResult = await processQueryWithData(query);
 
-    // Ensure consistent response structure
-    return NextResponse.json({
-      success: true,
-      analysis: result.analysis || "",
-      validation: result.validation || { valid: true },
-      files_used: result.files_used || [],
-      matched_topics: result.matched_topics || [],
-      metadata: {
-        data_points: result.data_points || 0,
-      },
-    });
+    // Log the raw data status
+    console.log(`DATA RESULT STATUS: ${dataResult ? "exists" : "null"}`);
+    if (dataResult) {
+      console.log(`HAS RAW DATA: ${!!dataResult.raw_data}`);
+      console.log(`RAW DATA TYPE: ${typeof dataResult.raw_data}`);
+      if (dataResult.raw_data) {
+        console.log(
+          `RAW DATA LENGTH: ${
+            Array.isArray(dataResult.raw_data)
+              ? dataResult.raw_data.length
+              : "not array"
+          }`
+        );
+        if (
+          Array.isArray(dataResult.raw_data) &&
+          dataResult.raw_data.length > 0
+        ) {
+          console.log(
+            `FIRST ITEM: ${JSON.stringify(dataResult.raw_data[0]).substring(
+              0,
+              100
+            )}...`
+          );
+        }
+      }
+    }
+
+    // Return the result to the client for use in assistant prompting
+    return NextResponse.json(dataResult);
   } catch (error) {
-    console.error("Error processing query:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error(`Error processing query:`, error);
+    return NextResponse.json(
+      { error: error.message, stack: error.stack },
+      { status: 500 }
+    );
   }
 }
 

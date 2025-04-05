@@ -4,74 +4,160 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
-export async function POST(request) {
+export async function POST(req) {
+  console.log("RETRIEVE-DATA API CALLED");
+  const startTime = performance.now();
+
   try {
-    const body = await request.json();
+    const body = await req.json();
     const { file_ids } = body;
 
+    console.log(`Retrieving ${file_ids.length} files:`, file_ids);
+
     if (!file_ids || !Array.isArray(file_ids)) {
-      return NextResponse.json(
-        { error: "Invalid file_ids parameter" },
-        { status: 400 }
-      );
+      return NextResponse.json({
+        error: "Invalid file_ids parameter - must be an array",
+        status: 400,
+      });
     }
 
-    // Use local files (in production this would typically use GitHub)
-    const files = await Promise.all(
-      file_ids.map(async (id) => {
-        try {
-          // Sanitize file ID to prevent any path traversal
-          const safeId = id.replace(/[^a-zA-Z0-9_\.-]/g, "");
+    // Debug check for the split_data directory
+    const dataDir = path.join(process.cwd(), "scripts", "output", "split_data");
+    console.log(`Checking data directory: ${dataDir}`);
+    console.log(`Directory exists: ${fs.existsSync(dataDir)}`);
+    if (fs.existsSync(dataDir)) {
+      console.log(`Files in directory: ${fs.readdirSync(dataDir).length}`);
+    }
 
-          // Use the correct local path to the split data files
-          const dataDir = path.join(
+    // Array to collect the topics associated with files
+    const topics = new Set();
+
+    // Process each file ID and retrieve the corresponding data file
+    const files = await Promise.all(
+      file_ids.map(async (file_id) => {
+        try {
+          // Normalize file ID to include .json extension if missing
+          const normalizedId = file_id.endsWith(".json")
+            ? file_id
+            : `${file_id}.json`;
+
+          // Construct absolute path to the data file
+          const filePath = path.join(
             process.cwd(),
             "scripts",
             "output",
-            "split_data"
+            "split_data",
+            normalizedId
           );
-          const filePath = path.join(dataDir, `${safeId}.json`);
 
-          console.log(`Retrieving file: ${filePath}`);
+          // Log file retrieval for debugging
+          console.log(`Attempting to retrieve file: ${filePath}`);
+          console.log(`File exists: ${fs.existsSync(filePath)}`);
 
-          // Check if file exists
+          // Ensure file exists
           if (!fs.existsSync(filePath)) {
-            throw new Error(`File does not exist: ${filePath}`);
+            console.error(`File not found: ${filePath}`);
+            return {
+              id: file_id,
+              error: `File not found: ${filePath}`,
+            };
           }
 
-          // Read the file
-          const fileData = fs.readFileSync(filePath, "utf8");
-          const data = JSON.parse(fileData);
+          // Read the file content
+          const fileContent = fs.readFileSync(filePath, "utf8");
+          console.log(
+            `File read successfully, size: ${fileContent.length} bytes`
+          );
 
-          return { id, data, error: null };
-        } catch (err) {
-          console.error(`Error retrieving ${id}:`, err);
-          return { id, data: null, error: err.message };
+          // Parse the file content as JSON
+          const jsonData = JSON.parse(fileContent);
+          console.log(
+            `Parsed JSON data, length: ${
+              Array.isArray(jsonData) ? jsonData.length : "not an array"
+            }`
+          );
+
+          // Extract topic from file_id (simple extraction logic)
+          let topic = "Unknown";
+          if (file_id.includes("_1")) topic = "Attraction_Factors";
+          else if (file_id.includes("_2")) topic = "Retention_Factors";
+          else if (file_id.includes("_3")) topic = "Attrition_Factors";
+          else if (file_id.includes("_7")) topic = "Intention_to_Leave";
+          else if (file_id.includes("_12")) topic = "Work_Preferences";
+
+          // Add topic to set
+          topics.add(topic);
+
+          // Return file data
+          return {
+            id: file_id,
+            topic: topic,
+            data: jsonData, // This is the full raw data from the file
+          };
+        } catch (error) {
+          console.error(`Error retrieving file ${file_id}:`, error);
+          return {
+            id: file_id,
+            error: error.message,
+          };
         }
       })
     );
 
-    // Count total data points for validation
+    // Calculate total data points
     let totalDataPoints = 0;
-    for (const file of files) {
-      if (file.data) {
-        totalDataPoints += countDataPoints(file.data);
+    files.forEach((file) => {
+      if (file.data && Array.isArray(file.data)) {
+        totalDataPoints += file.data.length;
+        console.log(`File ${file.id} contains ${file.data.length} data points`);
+      } else if (file.data && typeof file.data === "object") {
+        // Handle case where data might not be an array
+        totalDataPoints += 1;
+        console.log(`File ${file.id} contains 1 data object (not an array)`);
       }
-    }
+    });
 
-    return NextResponse.json({
-      success: true,
+    console.log(`Total data points: ${totalDataPoints}`);
+    console.log(`Successful files: ${files.filter((f) => !f.error).length}`);
+    console.log(`Failed files: ${files.filter((f) => f.error).length}`);
+
+    // Return the combined result
+    const endTime = performance.now();
+    const result = {
       files,
+      topics: Array.from(topics),
+      totalDataPoints,
       metadata: {
-        requested: file_ids.length,
         succeeded: files.filter((f) => !f.error).length,
         failed: files.filter((f) => f.error).length,
         total_data_points: totalDataPoints,
+        processing_time_ms: endTime - startTime,
+        retrieved_at: new Date().toISOString(),
       },
-    });
+    };
+
+    // Log a sample of the response
+    if (files.length > 0 && files[0].data) {
+      console.log(
+        "Sample of first file data:",
+        JSON.stringify(
+          Array.isArray(files[0].data)
+            ? files[0].data.slice(0, 1)
+            : files[0].data
+        ).slice(0, 500)
+      );
+    }
+
+    return NextResponse.json(result);
   } catch (error) {
-    console.error("Error processing request:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Error in retrieve-data API:", error);
+    return NextResponse.json(
+      {
+        error: error.message,
+        stack: error.stack,
+      },
+      { status: 500 }
+    );
   }
 }
 
