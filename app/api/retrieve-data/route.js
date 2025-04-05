@@ -1,6 +1,8 @@
 // API Endpoint for Data Retrieval
 // This file implements the serverless function for retrieving complete data files
 import { NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
 
 export async function POST(request) {
   try {
@@ -14,36 +16,36 @@ export async function POST(request) {
       );
     }
 
-    // GitHub implementation (simplest)
+    // Use local files (in production this would typically use GitHub)
     const files = await Promise.all(
       file_ids.map(async (id) => {
         try {
           // Sanitize file ID to prevent any path traversal
           const safeId = id.replace(/[^a-zA-Z0-9_\.-]/g, "");
 
-          // Get the correct path based on year in the file ID
-          let year = "2025"; // Default to 2025
-          if (safeId.startsWith("2024_")) {
-            year = "2024";
+          // Use the correct local path to the split data files
+          const dataDir = path.join(
+            process.cwd(),
+            "scripts",
+            "output",
+            "split_data"
+          );
+          const filePath = path.join(dataDir, `${safeId}.json`);
+
+          console.log(`Retrieving file: ${filePath}`);
+
+          // Check if file exists
+          if (!fs.existsSync(filePath)) {
+            throw new Error(`File does not exist: ${filePath}`);
           }
 
-          // Use environment variable for GitHub URL or fallback to default
-          const baseUrl =
-            process.env.GITHUB_DATA_URL ||
-            "https://raw.githubusercontent.com/jasonlmagnus/ria25/main/data/survey";
-          const url = `${baseUrl}/${year}/${safeId}`;
+          // Read the file
+          const fileData = fs.readFileSync(filePath, "utf8");
+          const data = JSON.parse(fileData);
 
-          console.log(`Fetching file: ${url}`);
-
-          const response = await fetch(url);
-          if (!response.ok) {
-            throw new Error(`Failed to fetch file: ${response.status}`);
-          }
-
-          const data = await response.json();
           return { id, data, error: null };
         } catch (err) {
-          console.error(`Error fetching ${id}:`, err);
+          console.error(`Error retrieving ${id}:`, err);
           return { id, data: null, error: err.message };
         }
       })

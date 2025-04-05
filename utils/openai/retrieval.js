@@ -22,22 +22,31 @@ export async function identifyRelevantFiles(query) {
           role: "system",
           content: `You are an expert data analyst specialized in workforce survey data. 
 Your task is to identify which data files are needed to answer the user's query.
-The data files follow these naming patterns:
-- 2025_[topic]_[subtopic].json for 2025 data
-- 2024_[topic]_[subtopic].json for 2024 data
 
-Available topics include:
-- workforce_trends
-- ai_impact
-- leadership
-- remote_work
-- organizational_agility
-- innovation
-- future_skills
-- employee_engagement
-- global_competitiveness
+The data files follow this pattern: [YEAR]_[SECTION_NUMBER] or [YEAR]_[SECTION_NUMBER]_[SUBSECTION]
+Example: 2025_1.json, 2025_5_7.json
 
-ONLY return the file IDs needed - do not attempt to answer the question.`,
+Available data categories include:
+- Leadership and confidence
+- AI impact and future of work
+- Remote/hybrid work
+- Organizational agility
+- Innovation capability
+- Skills and career development
+- Employee engagement and satisfaction
+- Workplace culture
+- Global competitiveness
+
+ONLY return the file IDs needed (without .json extension) - do not attempt to answer the question.
+Choose files that are MOST likely to contain relevant data for the query.
+When in doubt, include more files rather than fewer.
+
+Example response:
+For query "Leadership confidence in UK vs US":
+{
+  "file_ids": ["2025_1", "2025_2", "2025_3"],
+  "explanation": "These files contain leadership confidence data across countries which would include UK and US comparisons."
+}`,
         },
         { role: "user", content: query },
       ],
@@ -51,7 +60,8 @@ ONLY return the file IDs needed - do not attempt to answer the question.`,
               file_ids: {
                 type: "array",
                 items: { type: "string" },
-                description: "Array of file IDs needed to answer the query",
+                description:
+                  "Array of file IDs needed to answer the query (without .json extension)",
               },
               explanation: {
                 type: "string",
@@ -94,10 +104,12 @@ export async function generateAnalysis(query, dataFiles) {
 CRITICAL REQUIREMENTS:
 1. ONLY use percentage values that ACTUALLY APPEAR in the provided data files.
 2. NEVER fabricate data or use rounded estimates.
-3. For strategic questions, analyze ALL 10 countries with data from each.
+3. For strategic questions, analyze ALL available countries with data.
 4. Format your response with clear sections and headers.
 5. Bold important percentages using **X%** format.
 6. Remember, users can verify if you're using real data, so be accurate.
+7. Follow the TWO SEGMENT RULE: Never combine demographic segments in analysis (e.g., don't analyze country+age together).
+8. Highlight significant findings and patterns in the data.
 
 The complete data files have been provided to you. Use ONLY this data.`,
         },
