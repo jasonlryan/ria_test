@@ -7,13 +7,16 @@ export default function DataRetrievalTester() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
-  const [step, setStep] = useState(1); // 1: Initial query, 2: Data retrieved
+  const [processingTime, setProcessingTime] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     setResult(null);
+    setProcessingTime(null);
+
+    const startTime = Date.now();
 
     try {
       console.log(`Processing query: ${query}`);
@@ -32,11 +35,18 @@ export default function DataRetrievalTester() {
 
       const data = await response.json();
       console.log("Response data:", data);
+
+      // Calculate client-side processing time
+      const clientTime = Date.now() - startTime;
+      // Use server-side processing time if available, otherwise client time
+      const totalTime = data.processing_time_ms || clientTime;
+
       setResult(data);
-      setStep(2);
+      setProcessingTime(totalTime);
     } catch (err) {
       console.error("Error processing query:", err);
       setError(err.message);
+      setProcessingTime(Date.now() - startTime);
     } finally {
       setLoading(false);
     }
@@ -74,6 +84,14 @@ export default function DataRetrievalTester() {
           {loading ? "Processing..." : "Submit Query"}
         </button>
       </form>
+
+      {processingTime && (
+        <div className="mt-2 mb-4">
+          <p className="text-sm text-gray-600">
+            Processing completed in {(processingTime / 1000).toFixed(2)} seconds
+          </p>
+        </div>
+      )}
 
       {error && (
         <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-md mb-4">
@@ -120,18 +138,24 @@ export default function DataRetrievalTester() {
             )}
             <p className="mt-2 text-sm text-gray-700">
               Total data points:{" "}
-              {result.metadata?.data_points || result.data_points || 0}
+              {(result.metadata && result.metadata.data_points) ||
+                result.data_points ||
+                0}
             </p>
           </div>
 
           <div className="mb-4">
             <h4 className="font-medium mb-2">Analysis:</h4>
             <div className="bg-white border border-gray-200 rounded-md p-4 prose max-w-none">
-              {result.analysis?.split("\n").map((paragraph, index) => (
-                <p key={index} className="mb-2">
-                  {paragraph}
-                </p>
-              )) || <p className="text-gray-600">No analysis available</p>}
+              {result.analysis ? (
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: formatMarkdown(result.analysis),
+                  }}
+                />
+              ) : (
+                <p className="text-gray-600">No analysis available</p>
+              )}
             </div>
           </div>
 
@@ -146,8 +170,12 @@ export default function DataRetrievalTester() {
                 }`}
               >
                 {result.validation.valid
-                  ? `✓ Valid analysis using ${result.validation.percentagesUsed} percentage values from the data.`
-                  : `⚠️ Invalid analysis: ${result.validation.fabricatedPercentages.length} fabricated percentages detected.`}
+                  ? `✓ Valid analysis using ${
+                      result.validation.percentagesUsed || 0
+                    } percentage values from the data.`
+                  : `⚠️ Invalid analysis: ${
+                      result.validation.fabricatedPercentages?.length || 0
+                    } fabricated percentages detected.`}
               </p>
 
               {result.validation.potentialIssues &&
@@ -169,4 +197,30 @@ export default function DataRetrievalTester() {
       )}
     </div>
   );
+}
+
+// Helper function to format markdown with basic HTML
+function formatMarkdown(text) {
+  if (!text) return "";
+
+  // Convert headers
+  text = text.replace(
+    /### (.*?)\n/g,
+    '<h3 class="text-lg font-semibold mt-4 mb-2">$1</h3>'
+  );
+  text = text.replace(
+    /#### (.*?)\n/g,
+    '<h4 class="text-md font-medium mt-3 mb-1">$1</h4>'
+  );
+
+  // Convert bold
+  text = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
+  // Convert line breaks
+  text = text.replace(/\n\n/g, "<br><br>");
+
+  // Convert lists
+  text = text.replace(/- (.*?)(\n|$)/g, "<li>$1</li>");
+
+  return text;
 }
