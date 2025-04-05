@@ -29,13 +29,15 @@ export async function POST(request) {
     // Process query using the two-step retrieval approach
     const result = await processQueryWithData(query);
 
+    // Ensure consistent response structure
     return NextResponse.json({
       success: true,
-      analysis: result.analysis,
-      validation: result.validation,
+      analysis: result.analysis || "",
+      validation: result.validation || { valid: true },
+      files_used: result.files_used || [],
+      matched_topics: result.matched_topics || [],
       metadata: {
-        files_used: result.files_used,
-        data_points: result.data_points,
+        data_points: result.data_points || 0,
       },
     });
   } catch (error) {

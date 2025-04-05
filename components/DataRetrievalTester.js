@@ -31,6 +31,7 @@ export default function DataRetrievalTester() {
       }
 
       const data = await response.json();
+      console.log("Response data:", data);
       setResult(data);
       setStep(2);
     } catch (err) {
@@ -85,26 +86,52 @@ export default function DataRetrievalTester() {
         <div className="mt-6">
           <h3 className="text-lg font-semibold mb-2">Results:</h3>
 
+          {result.matched_topics && result.matched_topics.length > 0 && (
+            <div className="bg-blue-50 p-4 rounded-md mb-4">
+              <h4 className="font-medium text-sm text-gray-700 mb-2">
+                Matched Topics:
+              </h4>
+              <ul className="list-disc pl-5 space-y-1 text-sm">
+                {result.matched_topics.map((topic, index) => (
+                  <li key={index}>{topic}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           <div className="bg-gray-50 p-4 rounded-md mb-4">
             <h4 className="font-medium text-sm text-gray-700 mb-2">
               Files Used:
             </h4>
-            <ul className="list-disc pl-5 space-y-1 text-sm">
-              {result.metadata.files_used.map((file, index) => (
-                <li key={index}>{file}</li>
-              ))}
-            </ul>
+            {result.files_used && result.files_used.length > 0 ? (
+              <ul className="list-disc pl-5 space-y-1 text-sm">
+                {result.files_used.map((file, index) => (
+                  <li key={index}>{file}</li>
+                ))}
+              </ul>
+            ) : result.metadata && result.metadata.files_used ? (
+              <ul className="list-disc pl-5 space-y-1 text-sm">
+                {result.metadata.files_used.map((file, index) => (
+                  <li key={index}>{file}</li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-gray-600">No files were used</p>
+            )}
             <p className="mt-2 text-sm text-gray-700">
-              Total data points: {result.metadata.data_points}
+              Total data points:{" "}
+              {result.metadata?.data_points || result.data_points || 0}
             </p>
           </div>
 
           <div className="mb-4">
             <h4 className="font-medium mb-2">Analysis:</h4>
             <div className="bg-white border border-gray-200 rounded-md p-4 prose max-w-none">
-              {result.analysis.split("\n").map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
-              ))}
+              {result.analysis?.split("\n").map((paragraph, index) => (
+                <p key={index} className="mb-2">
+                  {paragraph}
+                </p>
+              )) || <p className="text-gray-600">No analysis available</p>}
             </div>
           </div>
 
