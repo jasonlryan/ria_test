@@ -34,7 +34,6 @@
         "generation",
         "employment_status"
       ],
-      "primaryMetric": "country_overall",
       "valueFormat": "decimal",
       "sortOrder": "descending"
     }
@@ -45,98 +44,98 @@
       "response": "Not at all, my company expects me to always be available and responsive",
       "data": {
         "region": {
-          "australia": 12,
-          "india": 15,
-          "brazil": 17,
-          "united_kingdom": 16,
-          "united_states": 11,
-          "saudi_arabia": 10,
-          "united_arab_emirates": 12,
-          "france": 10,
-          "germany": 15,
-          "japan": 16,
-          "country_overall": 13.4
+          "united_states": 14,
+          "united_kingdom": 11,
+          "india": 16,
+          "france": 15,
+          "germany": 10,
+          "japan": 15,
+          "united_arab_emirates": 16,
+          "brazil": 12,
+          "saudi_arabia": 17,
+          "australia": 10
         },
         "age": {
           "18-24": 12,
-          "25-34": 14,
+          "25-34": 12,
           "35-44": 14,
           "45-54": 14,
-          "55-65": 12,
-          "65+": 11
+          "55-65": 14,
+          "65+": 12
         },
         "gender": {
-          "male": 14,
+          "male": 13,
           "female": 13
         },
         "org_size": {
           "fewer_than_10": 14,
-          "10_to_49": 12,
-          "50_to_99": 13,
+          "10_to_49": 14,
+          "50_to_99": 12,
           "100_to_499": 13,
           "500_to_999": 13,
           "1000_or_more": 13
         },
         "sector": {
-          "automotive": 14,
-          "business_administration": 12,
-          "technology": 13,
-          "construction": 12,
+          "automotive": 12,
+          "business_administration": 14,
+          "technology": 12,
+          "construction": 13,
           "consumer_goods": 12,
-          "education": 11,
+          "education": 12,
           "energy_utilities": 11,
           "financial_services": 11,
-          "government": 15,
-          "healthcare": 13,
-          "manufacturing_industrial": 18,
-          "marketing_services": 15,
-          "legal_in-house": 16,
+          "government": 11,
+          "healthcare": 15,
+          "manufacturing_industrial": 13,
+          "marketing_services": 18,
+          "legal_in-house": 8,
           "legal_agency": 16,
-          "life_sciences": 14,
-          "professional_services": 12,
-          "real_estate": 14,
-          "retail": 11,
-          "sales": 12,
-          "telecommunications": 14,
-          "transport_storage": 13,
+          "life_sciences": 16,
+          "professional_services": 14,
+          "real_estate": 12,
+          "retail": 14,
+          "sales": 11,
+          "telecommunications": 12,
+          "transport_storage": 14,
           "travel_hospitality_leisure": 13,
-          "wholesale_distribution": 15,
-          "other": 16
+          "wholesale_distribution": 13,
+          "other": 15
         },
         "job_level": {
-          "ceo": 11,
-          "senior_executive": 12,
-          "senior_leader": 13,
-          "mid_level_leader": 14,
-          "first_level_supervisor": 13,
+          "ceo": 16,
+          "senior_executive": 11,
+          "senior_leader": 12,
+          "mid_level_leader": 13,
+          "first_level_supervisor": 14,
           "individual_contributor": 13
         },
         "relationship_status": {
-          "single": 11,
-          "cohabiting": 13,
-          "married": 17,
-          "divorced_separated": 11,
-          "widowed": 14
+          "single": 13,
+          "cohabiting": 11,
+          "married": 13,
+          "divorced_separated": 17,
+          "widowed": 11
         },
         "education": {
-          "secondary": 10,
-          "tertiary": 13,
-          "professional_certifications": 12,
-          "undergraduate": 14,
-          "postgraduate": 15
+          "secondary": 14,
+          "tertiary": 10,
+          "professional_certifications": 13,
+          "undergraduate": 12,
+          "postgraduate": 14,
+          "doctorate": 15
         },
         "generation": {
-          "gen_z": 13,
-          "millennials": 14,
-          "gen_x": 13,
+          "gen_z": 11,
+          "millennials": 13,
+          "gen_x": 14,
           "baby_boomers": 13,
-          "65_plus": 11
+          "65_plus": 12
         },
         "employment_status": {
-          "full_time": 12,
-          "part_time": 10,
-          "contract": 17,
-          "freelance": 12
+          "full_time": 13,
+          "part_time": 12,
+          "contract": 10,
+          "freelance": 17
         }
       }
     },
@@ -144,98 +143,98 @@
       "response": "Somewhat, I still have to answer urgent emails or calls on a case-by-case basis",
       "data": {
         "region": {
-          "australia": 42,
-          "india": 34,
-          "brazil": 57,
-          "united_kingdom": 48,
-          "united_states": 37,
-          "saudi_arabia": 39,
-          "united_arab_emirates": 41,
+          "united_states": 36,
+          "united_kingdom": 37,
+          "india": 48,
           "france": 34,
-          "germany": 33,
-          "japan": 53,
-          "country_overall": 41.8
+          "germany": 34,
+          "japan": 33,
+          "united_arab_emirates": 53,
+          "brazil": 41,
+          "saudi_arabia": 57,
+          "australia": 39
         },
         "age": {
-          "18-24": 44,
-          "25-34": 41,
-          "35-44": 37,
-          "45-54": 30,
+          "18-24": 42,
+          "25-34": 44,
+          "35-44": 41,
+          "45-54": 37,
           "55-65": 30,
-          "65+": 44
+          "65+": 30
         },
         "gender": {
-          "male": 36,
-          "female": 41
+          "male": 41,
+          "female": 37
         },
         "org_size": {
-          "fewer_than_10": 39,
-          "10_to_49": 43,
-          "50_to_99": 42,
-          "100_to_499": 41,
-          "500_to_999": 37,
-          "1000_or_more": 40
+          "fewer_than_10": 36,
+          "10_to_49": 39,
+          "50_to_99": 43,
+          "100_to_499": 42,
+          "500_to_999": 41,
+          "1000_or_more": 37
         },
         "sector": {
-          "automotive": 39,
-          "business_administration": 48,
-          "technology": 44,
-          "construction": 41,
-          "consumer_goods": 40,
+          "automotive": 34,
+          "business_administration": 39,
+          "technology": 48,
+          "construction": 44,
+          "consumer_goods": 41,
           "education": 40,
-          "energy_utilities": 39,
-          "financial_services": 34,
-          "government": 35,
-          "healthcare": 39,
-          "manufacturing_industrial": 45,
-          "marketing_services": 33,
-          "legal_in-house": 39,
-          "legal_agency": 41,
-          "life_sciences": 43,
-          "professional_services": 52,
-          "real_estate": 36,
-          "retail": 40,
+          "energy_utilities": 40,
+          "financial_services": 39,
+          "government": 34,
+          "healthcare": 35,
+          "manufacturing_industrial": 39,
+          "marketing_services": 45,
+          "legal_in-house": 42,
+          "legal_agency": 39,
+          "life_sciences": 41,
+          "professional_services": 43,
+          "real_estate": 52,
+          "retail": 36,
           "sales": 40,
-          "telecommunications": 32,
-          "transport_storage": 41,
-          "travel_hospitality_leisure": 38,
-          "wholesale_distribution": 33,
-          "other": 39
+          "telecommunications": 40,
+          "transport_storage": 32,
+          "travel_hospitality_leisure": 41,
+          "wholesale_distribution": 38,
+          "other": 33
         },
         "job_level": {
-          "ceo": 45,
-          "senior_executive": 49,
-          "senior_leader": 44,
-          "mid_level_leader": 41,
-          "first_level_supervisor": 28,
-          "individual_contributor": 37
+          "ceo": 39,
+          "senior_executive": 45,
+          "senior_leader": 49,
+          "mid_level_leader": 44,
+          "first_level_supervisor": 41,
+          "individual_contributor": 28
         },
         "relationship_status": {
-          "single": 35,
-          "cohabiting": 42,
-          "married": 31,
-          "divorced_separated": 33,
-          "widowed": 32
+          "single": 37,
+          "cohabiting": 35,
+          "married": 42,
+          "divorced_separated": 31,
+          "widowed": 33
         },
         "education": {
-          "secondary": 36,
-          "tertiary": 33,
-          "professional_certifications": 43,
+          "secondary": 32,
+          "tertiary": 36,
+          "professional_certifications": 33,
           "undergraduate": 43,
-          "postgraduate": 42
+          "postgraduate": 43,
+          "doctorate": 42
         },
         "generation": {
-          "gen_z": 42,
-          "millennials": 35,
-          "gen_x": 30,
-          "baby_boomers": 37,
-          "65_plus": 44
+          "gen_z": 44,
+          "millennials": 42,
+          "gen_x": 35,
+          "baby_boomers": 30,
+          "65_plus": 30
         },
         "employment_status": {
-          "full_time": 33,
-          "part_time": 44,
+          "full_time": 40,
+          "part_time": 33,
           "contract": 44,
-          "freelance": 34
+          "freelance": 44
         }
       }
     }

@@ -238,9 +238,9 @@ function formatQuestionText(questionText) {
 }
 
 /**
- * Convert percentage strings to decimal values
+ * Convert percentage strings to integer values
  * @param {string} percentStr - Percentage string to convert (e.g., "75%")
- * @returns {number|null} - Converted decimal value or null if invalid
+ * @returns {number|null} - Converted integer value or null if invalid
  */
 function percentToDecimal(percentStr) {
   if (!percentStr || typeof percentStr !== "string") {
@@ -255,8 +255,8 @@ function percentToDecimal(percentStr) {
     return null;
   }
 
-  // Convert to decimal and return, handling potential precision issues
-  return Math.round((parseFloat(cleanPercentStr) / 100) * 1000) / 1000;
+  // Convert to integer without dividing by 100
+  return Math.round(parseFloat(cleanPercentStr));
 }
 
 /**
@@ -338,12 +338,78 @@ async function harmonize2025Data(options = {}) {
           const newRow = {};
 
           // Process the row data
+          const isQ10 = row["Question"] && row["Question"].includes("Q10");
+
           Object.entries(row).forEach(([key, value]) => {
             // Keep Question and Response columns as-is
             if (key === "Question") {
               newRow[key] = formatQuestionText(value);
             } else if (key === "Response") {
               newRow[key] = value;
+            }
+            // Special handler for Q10 country columns to ensure proper mapping
+            else if (
+              isQ10 &&
+              (key.startsWith("country_") ||
+                key === "United Kingdom" ||
+                key === "India" ||
+                key === "US" ||
+                key === "Brazil" ||
+                key === "France" ||
+                key === "Germany" ||
+                key === "Japan" ||
+                key === "United Arab Emirates" ||
+                key === "Saudi Arabia" ||
+                key === "Australia")
+            ) {
+              // Direct mapping for Q10 country columns to ensure correct order
+              let mappedKey = key;
+              let originalKey = key;
+
+              // Map country columns correctly for Q10
+              if (key === "US") mappedKey = "country_USA";
+              else if (key === "United Kingdom") mappedKey = "country_UK";
+              else if (key === "India") mappedKey = "country_India";
+              else if (key === "France") mappedKey = "country_France";
+              else if (key === "Germany") mappedKey = "country_Germany";
+              else if (key === "Japan") mappedKey = "country_Japan";
+              else if (key === "United Arab Emirates")
+                mappedKey = "country_UAE";
+              else if (key === "Brazil") mappedKey = "country_Brazil";
+              else if (key === "Saudi Arabia")
+                mappedKey = "country_Saudi_Arabia";
+              else if (key === "Australia") mappedKey = "country_Australia";
+              else if (key === "country_US") mappedKey = "country_USA";
+              else if (key === "country_United_Kingdom")
+                mappedKey = "country_UK";
+              else if (key === "country_United_Arab_Emirates")
+                mappedKey = "country_UAE";
+
+              // Convert percentage values to decimals
+              if (value && value.includes("%")) {
+                const decimal = percentToDecimal(value);
+                if (decimal !== null) {
+                  newRow[mappedKey] = decimal;
+
+                  // Add logging for Q10 special case processing when verbose is enabled
+                  if (verbose && recordCount < 10) {
+                    console.log(
+                      `Q10 Special Processing: ${originalKey} (${value}) → ${mappedKey} (${decimal})`
+                    );
+                  }
+                }
+              } else {
+                // Try to parse as float if numeric
+                const floatValue = parseFloat(value);
+                newRow[mappedKey] = isNaN(floatValue) ? value : floatValue;
+
+                // Add logging for Q10 special case processing when verbose is enabled
+                if (verbose && recordCount < 10) {
+                  console.log(
+                    `Q10 Special Processing: ${originalKey} → ${mappedKey}`
+                  );
+                }
+              }
             }
             // Convert percentage values to decimals
             else if (value && value.includes("%")) {

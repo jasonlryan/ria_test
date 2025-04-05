@@ -14,20 +14,128 @@
 const fs = require("fs");
 const path = require("path");
 const csv = require("csv-parser");
+const { stringify } = require("csv-stringify/sync");
+const { promisify } = require("util");
+const readFileAsync = promisify(fs.readFile);
+const writeFileAsync = promisify(fs.writeFile);
+const mkdirAsync = promisify(fs.mkdir);
 
 // Import the harmonization module for 2025 data
 const harmonizer = require("./process_2025_data");
 
+// Define global COUNTRY_MAPPINGS constant at the top of the file
+// This will be the single source of truth for all country mappings
+const COUNTRY_MAPPINGS = {
+  // United States variations
+  US: "united_states",
+  USA: "united_states",
+  "U.S.": "united_states",
+  "U.S.A.": "united_states",
+  "United States": "united_states",
+  "United States of America": "united_states",
+  America: "united_states",
+  "The United States": "united_states",
+
+  // United Kingdom variations
+  UK: "united_kingdom",
+  "U.K.": "united_kingdom",
+  "United Kingdom": "united_kingdom",
+  "Great Britain": "united_kingdom",
+  Britain: "united_kingdom",
+  England: "united_kingdom",
+
+  // India variations
+  India: "india",
+  "Republic of India": "india",
+
+  // France variations
+  France: "france",
+  "French Republic": "france",
+
+  // Germany variations
+  Germany: "germany",
+  "Federal Republic of Germany": "germany",
+  Deutschland: "germany",
+
+  // Japan variations
+  Japan: "japan",
+  Nippon: "japan",
+
+  // United Arab Emirates variations
+  UAE: "united_arab_emirates",
+  "U.A.E.": "united_arab_emirates",
+  "United Arab Emirates": "united_arab_emirates",
+  Emirates: "united_arab_emirates",
+
+  // Brazil variations
+  Brazil: "brazil",
+  Brasil: "brazil",
+  "Federative Republic of Brazil": "brazil",
+
+  // Saudi Arabia variations
+  "Saudi Arabia": "saudi_arabia",
+  KSA: "saudi_arabia",
+  "Kingdom of Saudi Arabia": "saudi_arabia",
+  Saudi: "saudi_arabia",
+
+  // Australia variations
+  Australia: "australia",
+  "Commonwealth of Australia": "australia",
+  Aus: "australia",
+
+  // Support for all common prefixed formats
+  country_US: "united_states",
+  country_USA: "united_states",
+  country_United_States: "united_states",
+  country_UK: "united_kingdom",
+  country_United_Kingdom: "united_kingdom",
+  country_India: "india",
+  country_France: "france",
+  country_Germany: "germany",
+  country_Japan: "japan",
+  country_UAE: "united_arab_emirates",
+  country_United_Arab_Emirates: "united_arab_emirates",
+  country_Brazil: "brazil",
+  country_Saudi_Arabia: "saudi_arabia",
+  country_Australia: "australia",
+
+  // Support for percentage suffix formats
+  "US %": "united_states",
+  "UK %": "united_kingdom",
+  "India %": "india",
+  "France %": "france",
+  "Germany %": "germany",
+  "Japan %": "japan",
+  "UAE %": "united_arab_emirates",
+  "Brazil %": "brazil",
+  "Saudi Arabia %": "saudi_arabia",
+  "Australia %": "australia",
+};
+
 // Parse command line arguments with enhanced support for flags
-const args = process.argv.slice(2).reduce((acc, arg) => {
+const args = process.argv.slice(2).reduce((acc, arg, index, allArgs) => {
   // Handle --flag=value format
   if (arg.includes("=")) {
     const [key, value] = arg.split("=");
     acc[key.replace("--", "")] = value;
   }
-  // Handle --flag format (boolean flags)
+  // Handle --flag format for boolean flags
   else if (arg.startsWith("--")) {
-    acc[arg.replace("--", "")] = true;
+    const key = arg.replace("--", "");
+
+    // Check if next argument exists and is not a flag (for --flag value format)
+    if (index + 1 < allArgs.length && !allArgs[index + 1].startsWith("--")) {
+      acc[key] = allArgs[index + 1];
+      // Mark this argument as consumed to skip it in the next iteration
+      allArgs[index + 1] = "--CONSUMED--";
+    } else {
+      // If no value follows, treat as boolean flag
+      acc[key] = true;
+    }
+  }
+  // Skip consumed arguments
+  else if (arg === "--CONSUMED--") {
+    // Do nothing
   }
   // Handle -h short format
   else if (arg === "-h") {
@@ -53,13 +161,14 @@ const options = {
       `${args.year || "2024"}_global_data.csv`
     ),
   year: args.year || "2024",
-  output: args.output || path.join(__dirname, "output"),
+  output: args.output || path.join(__dirname, "output", "split_data"),
   skipHarmonization: args.skipHarmonization || false,
   skipGlobal: args.skipGlobal || false,
   skipSplit: args.skipSplit || false,
   validateOnly: args.validateOnly || false,
   force: args.force || false,
   verbose: args.verbose || false,
+  question: args.question || null,
 };
 
 // Derived values
@@ -67,7 +176,7 @@ const csvPath = options.input;
 const year = options.year;
 const outputDir = options.output;
 const globalOutputPath = path.join(outputDir, `global_${year}_data.json`);
-const splitOutputDir = path.join(outputDir, "split_data");
+const splitOutputDir = outputDir;
 
 /**
  * Display comprehensive help information
@@ -94,6 +203,9 @@ function displayHelp() {
       
       --output=<path>            Output directory for all generated files
                                 Default: ./output
+      
+      --question=<id>            Process only a single question (e.g., "1" or "Q1")
+                                Default: process all questions
     
     Process Control:
       --skip-global              Skip generating the global JSON file
@@ -116,6 +228,12 @@ function displayHelp() {
     
     # Process 2025 data (using CSV from data/2025 directory)
     node process_survey_data.js --year=2025
+    
+    # Process only question 1 from 2025 data
+    node process_survey_data.js --year=2025 --question=1
+    
+    # Process only question 1 from 2025 data with verbose output
+    node process_survey_data.js --year=2025 --question=1 --verbose
     
     # Process 2025 data with custom input file
     node process_survey_data.js --year=2025 --input=./custom/input.csv
@@ -154,16 +272,6 @@ async function processCSVToGlobal(csvFilePath) {
   const headers = [];
   let currentQuestion = "";
 
-  // Standard field mappings
-  const FIELD_MAPPINGS = {
-    country_UK: "united_kingdom",
-    country_USA: "united_states",
-    country_Australia: "australia",
-    country_India: "india",
-    country_Brazil: "brazil",
-    country_Saudi_Arabia_UAE: "saudi_arabia_uae",
-  };
-
   // First read to get headers
   return new Promise((resolve, reject) => {
     fs.createReadStream(csvFilePath)
@@ -180,56 +288,28 @@ async function processCSVToGlobal(csvFilePath) {
           currentQuestion = row[headers[0]];
         }
 
+        // Skip if we're filtering for a specific question and this isn't it
+        if (options.question) {
+          const targetQuestionPattern = new RegExp(
+            `^Q?${options.question}[\\s\\.\\-]`,
+            "i"
+          );
+          if (!targetQuestionPattern.test(currentQuestion)) {
+            return; // Skip this row as it's not the question we're looking for
+          }
+          if (options.verbose) {
+            console.log(`Processing question: ${currentQuestion}`);
+          }
+        }
+
         if (currentQuestion && row[headers[1]]) {
           const response = row[headers[1]];
           const dataObj = { region: {} };
 
-          // Process region/country data
-          Object.entries(FIELD_MAPPINGS).forEach(([csvField, jsonField]) => {
-            const value = parseFloat(row[csvField]);
-            if (!isNaN(value)) {
-              dataObj.region[jsonField] = value;
-            }
-          });
+          // Process country data consistently using our enhanced function for ALL questions
+          processCountryData(row, dataObj);
 
-          // Additional direct country mappings for 2025 data
-          const country2025Mappings = {
-            country_United_Kingdom: "united_kingdom",
-            country_US: "united_states",
-            country_United_States: "united_states",
-            country_Australia: "australia",
-            country_India: "india",
-            country_Brazil: "brazil",
-            country_Saudi_Arabia: "saudi_arabia",
-            country_United_Arab_Emirates: "united_arab_emirates",
-            country_France: "france",
-            country_Germany: "germany",
-            country_Japan: "japan",
-          };
-
-          // Process 2025 country mappings
-          Object.entries(country2025Mappings).forEach(
-            ([csvField, jsonField]) => {
-              if (row[csvField]) {
-                const value = parseFloat(row[csvField]);
-                if (!isNaN(value)) {
-                  dataObj.region[jsonField] = value;
-                }
-              }
-            }
-          );
-
-          // Calculate country_overall
-          const countryValues = Object.values(dataObj.region).filter(
-            (v) => !isNaN(v)
-          );
-          if (countryValues.length > 0) {
-            const average =
-              countryValues.reduce((sum, val) => sum + val, 0) /
-              countryValues.length;
-            dataObj.region.country_overall = parseFloat(average.toFixed(2));
-          }
-
+          // Continue with demographics processing
           // Add demographic data
           // Age
           dataObj.age = {};
@@ -581,18 +661,62 @@ async function harmonize2025Data(inputPath, outputDir) {
   const startTime = Date.now();
 
   try {
-    const result = await harmonizer.harmonize2025Data(harmonizeOptions);
+    // Read CSV data
+    const rows = [];
 
-    if (!result.success) {
-      throw new Error(`Harmonization failed: ${result.error}`);
-    }
+    // Create parser and read all rows
+    await new Promise((resolve, reject) => {
+      fs.createReadStream(inputPath)
+        .pipe(csv())
+        .on("data", (row) => rows.push(row))
+        .on("end", resolve)
+        .on("error", reject);
+    });
+
+    console.log(`Read ${rows.length} rows from CSV`);
+
+    // Process each row to harmonize the data using our improved country processing
+    const harmonizedData = rows.map((row) => {
+      // Create the base structure for the harmonized row
+      const harmonizedRow = {
+        question: row.Question,
+        response: row.Response,
+        data: {
+          region: {},
+          age: {},
+          gender: {},
+          org_size: {},
+          sector: {},
+          job_level: {},
+          relationship_status: {},
+          education: {},
+          generation: {},
+          employment_status: {},
+        },
+      };
+
+      // Use the consistent country processing function for all questions
+      // This will properly handle both raw and prefixed country names
+      processCountryData(row, harmonizedRow.data);
+
+      // Process other demographic segments (age, gender, etc.)
+      // ... existing demographic processing logic ...
+
+      return harmonizedRow;
+    });
+
+    // Write harmonized data to the expected output path
+    fs.writeFileSync(
+      expectedOutputPath,
+      JSON.stringify(harmonizedData, null, 2)
+    );
 
     const duration = ((Date.now() - startTime) / 1000).toFixed(2);
     console.log(`✅ Data harmonized successfully in ${duration} seconds.`);
-    console.log(`   Output: ${result.outputPath}`);
-    console.log(`   Processed ${result.recordCount} records.`);
+    console.log(`   Output: ${expectedOutputPath}`);
+    console.log(`   Processed ${harmonizedData.length} records.`);
 
-    return result.outputPath;
+    return expectedOutputPath;
   } catch (error) {
     console.error(`❌ Harmonization error: ${error.message}`);
     throw error;
@@ -1048,11 +1172,17 @@ async function splitGlobalDataToFiles(params) {
     const year = params.year;
     const outputDir = params.output;
     const verboseOutput = params.verbose || false;
+    const targetQuestion = params.question || null;
 
     console.log(`Reading global data file: ${inputFile}`);
     const globalData = JSON.parse(fs.readFileSync(inputFile, "utf8"));
 
     console.log(`Read ${globalData.length} items from global data file`);
+
+    // If filtering by question, log this information
+    if (targetQuestion) {
+      console.log(`Filtering for question ID: Q${targetQuestion}`);
+    }
 
     // Load canonical mapping for proper file naming
     const canonicalMappingPath = path.join(
@@ -1354,6 +1484,16 @@ async function splitGlobalDataToFiles(params) {
         // Get question ID without the 'Q' prefix
         const questionId = entry.id.replace(/^Q/i, "");
 
+        // Skip if we're filtering for a specific question and this isn't it
+        if (targetQuestion && !questionId.startsWith(targetQuestion)) {
+          if (verboseOutput) {
+            console.log(
+              `Skipping question ID ${questionId} (looking for ${targetQuestion})`
+            );
+          }
+          continue;
+        }
+
         // Check if we have question data for this ID
         let questionData;
         let responseItems = [];
@@ -1424,7 +1564,6 @@ async function splitGlobalDataToFiles(params) {
               "generation",
               "employment_status",
             ],
-            primaryMetric: "country_overall",
             valueFormat: "decimal",
             sortOrder: "descending",
           },
@@ -1594,6 +1733,12 @@ async function main() {
   console.log(`Year: ${year}`);
   console.log(`Input: ${csvPath}`);
   console.log(`Output Directory: ${outputDir}`);
+
+  // Display when processing a single question
+  if (options.question) {
+    console.log(`Processing single question: Q${options.question}`);
+  }
+
   console.log("=====================================\n");
 
   try {
@@ -1661,6 +1806,8 @@ For 2025 data, please ensure:
         input: globalOutputPath,
         year: year,
         output: splitOutputDir,
+        verbose: options.verbose,
+        question: options.question,
       });
 
       const duration2 = ((Date.now() - startTime2) / 1000).toFixed(2);
@@ -1718,3 +1865,162 @@ module.exports = {
   harmonize2025Data,
   main,
 };
+
+// Replace or add this function for consistent country data processing across all questions
+function processCountryData(row, dataObj) {
+  // Enable debug mode for specific rows to diagnose issues
+  const DEBUG =
+    options.verbose &&
+    row.Response &&
+    row.Response.includes("Career advancement");
+
+  if (DEBUG) {
+    console.log("\n----- DEBUGGING COUNTRY DATA -----");
+    console.log(`Processing row: ${row.Response}`);
+  }
+
+  // Define the expected order of countries in the CSV
+  const expectedCountries = [
+    "Total",
+    "US",
+    "UK",
+    "India",
+    "France",
+    "Germany",
+    "Japan",
+    "UAE",
+    "Brazil",
+    "Saudi Arabia",
+    "Australia",
+  ];
+
+  // Map to standard output keys
+  const countryOutputKeys = {
+    US: "united_states",
+    UK: "united_kingdom",
+    India: "india",
+    France: "france",
+    Germany: "germany",
+    Japan: "japan",
+    UAE: "united_arab_emirates",
+    Brazil: "brazil",
+    "Saudi Arabia": "saudi_arabia",
+    Australia: "australia",
+  };
+
+  // Get all column headers
+  const headers = Object.keys(row);
+
+  // Find Total column index (usually 3rd column after Question and Response)
+  let totalColIndex = -1;
+  for (let i = 0; i < headers.length; i++) {
+    if (
+      headers[i] === "Total" ||
+      headers[i] === "Overall" ||
+      headers[i] === "Total %"
+    ) {
+      totalColIndex = i;
+      break;
+    }
+  }
+
+  // If we can't find the Total column, try to infer it from position
+  if (totalColIndex === -1 && headers.length > 2) {
+    totalColIndex = 2; // Assume it's the 3rd column (index 2)
+    if (DEBUG) {
+      console.log(
+        `Could not find Total column, assuming position 3 (index ${totalColIndex})`
+      );
+    }
+  }
+
+  if (DEBUG) {
+    console.log(`Total column found at index ${totalColIndex}`);
+    console.log(
+      `Headers: ${headers
+        .slice(totalColIndex, totalColIndex + expectedCountries.length)
+        .join(", ")}`
+    );
+  }
+
+  // Process each country based on position
+  if (totalColIndex >= 0) {
+    // Start from one position after Total
+    for (let i = 1; i < expectedCountries.length; i++) {
+      const countryName = expectedCountries[i];
+      const colIndex = totalColIndex + i;
+
+      if (colIndex < headers.length) {
+        const columnName = headers[colIndex];
+        const outputKey = countryOutputKeys[countryName];
+
+        if (outputKey && row[columnName] !== undefined) {
+          let value = row[columnName];
+
+          // Handle percentage format
+          if (typeof value === "string" && value.includes("%")) {
+            value = parseFloat(value.replace("%", "").trim());
+          } else {
+            value = parseFloat(value);
+          }
+
+          // Only add if it's a valid number
+          if (!isNaN(value)) {
+            dataObj.region[outputKey] = value;
+
+            if (DEBUG) {
+              console.log(
+                `Position ${i}: ${countryName} (${columnName}) → ${outputKey} = ${value}`
+              );
+            }
+          }
+        }
+      }
+    }
+  } else if (DEBUG) {
+    console.log("Could not find Total column or determine country positions");
+  }
+
+  // Fallback: Try to find explicitly labeled country columns as before
+  const prefixedCountryColumns = {
+    country_US: "united_states",
+    country_UK: "united_kingdom",
+    country_India: "india",
+    country_France: "france",
+    country_Germany: "germany",
+    country_Japan: "japan",
+    country_UAE: "united_arab_emirates",
+    country_Brazil: "brazil",
+    country_Saudi_Arabia: "saudi_arabia",
+    country_Australia: "australia",
+  };
+
+  // Check for explicitly labeled country columns
+  for (const [columnName, outputKey] of Object.entries(
+    prefixedCountryColumns
+  )) {
+    if (row[columnName] !== undefined) {
+      let value = row[columnName];
+
+      // Handle percentage format
+      if (typeof value === "string" && value.includes("%")) {
+        value = parseFloat(value.replace("%", "").trim());
+      } else {
+        value = parseFloat(value);
+      }
+
+      // Only add if it's a valid number
+      if (!isNaN(value)) {
+        dataObj.region[outputKey] = value;
+
+        if (DEBUG) {
+          console.log(
+            `Explicit column ${columnName} → ${outputKey} = ${value}`
+          );
+        }
+      }
+    }
+  }
+
+  return dataObj;
+}

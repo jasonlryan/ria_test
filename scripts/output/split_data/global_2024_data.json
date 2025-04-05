@@ -4,13 +4,9 @@
     "response": "Flexible working hours",
     "data": {
       "region": {
-        "united_kingdom": 0.42,
-        "united_states": 0.33,
-        "australia": 0.46,
         "india": 0.33,
         "brazil": 0.38,
-        "saudi_arabia_uae": 0.33,
-        "country_overall": 0.38
+        "australia": 0.46
       },
       "age": {
         "18-24": 0.3,
@@ -73,13 +69,9 @@
     "response": "Generous salary /bonus/ compensation",
     "data": {
       "region": {
-        "united_kingdom": 0.44,
-        "united_states": 0.31,
-        "australia": 0.45,
         "india": 0.28,
         "brazil": 0.46,
-        "saudi_arabia_uae": 0.28,
-        "country_overall": 0.37
+        "australia": 0.45
       },
       "age": {
         "18-24": 0.27,
@@ -142,13 +134,9 @@
     "response": "High job security (i.e., stable company/employer)",
     "data": {
       "region": {
-        "united_kingdom": 0.3,
-        "united_states": 0.26,
-        "australia": 0.33,
         "india": 0.33,
         "brazil": 0.21,
-        "saudi_arabia_uae": 0.32,
-        "country_overall": 0.29
+        "australia": 0.33
       },
       "age": {
         "18-24": 0.23,
@@ -211,13 +199,9 @@
     "response": "Excellent learning and development opportunities",
     "data": {
       "region": {
-        "united_kingdom": 0.22,
-        "united_states": 0.23,
-        "australia": 0.22,
         "india": 0.34,
         "brazil": 0.34,
-        "saudi_arabia_uae": 0.31,
-        "country_overall": 0.28
+        "australia": 0.22
       },
       "age": {
         "18-24": 0.24,
@@ -280,13 +264,9 @@
     "response": "Hybrid working options",
     "data": {
       "region": {
-        "united_kingdom": 0.28,
-        "united_states": 0.17,
-        "australia": 0.28,
         "india": 0.19,
         "brazil": 0.2,
-        "saudi_arabia_uae": 0.12,
-        "country_overall": 0.21
+        "australia": 0.28
       },
       "age": {
         "18-24": 0.18,
@@ -349,13 +329,9 @@
     "response": "Job is in field/industry that I like",
     "data": {
       "region": {
-        "united_kingdom": 0.21,
-        "united_states": 0.2,
-        "australia": 0.24,
         "india": 0.17,
         "brazil": 0.23,
-        "saudi_arabia_uae": 0.23,
-        "country_overall": 0.21
+        "australia": 0.24
       },
       "age": {
         "18-24": 0.2,
@@ -418,13 +394,9 @@
     "response": "Full-time remote working",
     "data": {
       "region": {
-        "united_kingdom": 0.21,
-        "united_states": 0.26,
-        "australia": 0.21,
         "india": 0.17,
         "brazil": 0.23,
-        "saudi_arabia_uae": 0.14,
-        "country_overall": 0.2
+        "australia": 0.21
       },
       "age": {
         "18-24": 0.19,
@@ -487,13 +459,9 @@
     "response": "Colleagues I enjoy working with",
     "data": {
       "region": {
-        "united_kingdom": 0.26,
-        "united_states": 0.17,
-        "australia": 0.26,
         "india": 0.16,
         "brazil": 0.12,
-        "saudi_arabia_uae": 0.22,
-        "country_overall": 0.2
+        "australia": 0.26
       },
       "age": {
         "18-24": 0.2,
@@ -556,13 +524,9 @@
     "response": "Generous non-salary/bonus/compensation benefits and rewards",
     "data": {
       "region": {
-        "united_kingdom": 0.21,
-        "united_states": 0.19,
-        "australia": 0.22,
         "india": 0.13,
         "brazil": 0.21,
-        "saudi_arabia_uae": 0.22,
-        "country_overall": 0.2
+        "australia": 0.22
       },
       "age": {
         "18-24": 0.15,
@@ -625,13 +589,9 @@
     "response": "Short commute to office",
     "data": {
       "region": {
-        "united_kingdom": 0.21,
-        "united_states": 0.17,
-        "australia": 0.26,
         "india": 0.09,
         "brazil": 0.14,
-        "saudi_arabia_uae": 0.16,
-        "country_overall": 0.17
+        "australia": 0.26
       },
       "age": {
         "18-24": 0.14,
@@ -694,13 +654,9 @@
     "response": "Full-time in the office",
     "data": {
       "region": {
-        "united_kingdom": 0.12,
-        "united_states": 0.26,
-        "australia": 0.13,
         "india": 0.23,
         "brazil": 0.09,
-        "saudi_arabia_uae": 0.18,
-        "country_overall": 0.17
+        "australia": 0.13
       },
       "age": {
         "18-24": 0.18,
@@ -763,13 +719,9 @@
     "response": "To be a part of a culture and value system that I respect",
     "data": {
       "region": {
-        "united_kingdom": 0.16,
-        "united_states": 0.16,
-        "australia": 0.2,
         "india": 0.13,
         "brazil": 0.17,
-        "saudi_arabia_uae": 0.17,
-        "country_overall": 0.17
+        "australia": 0.2
       },
       "age": {
         "18-24": 0.14,
@@ -832,13 +784,9 @@
     "response": "Excellent diversity and inclusion within the company",
     "data": {
       "region": {
-        "united_kingdom": 0.14,
-        "united_states": 0.19,
-        "australia": 0.12,
         "india": 0.19,
         "brazil": 0.13,
-        "saudi_arabia_uae": 0.14,
-        "country_overall": 0.15
+        "australia": 0.12
       },
       "age": {
         "18-24": 0.16,
@@ -901,13 +849,9 @@
     "response": "Status and respect for my position in the company",
     "data": {
       "region": {
-        "united_kingdom": 0.11,
-        "united_states": 0.16,
-        "australia": 0.11,
         "india": 0.23,
         "brazil": 0.11,
-        "saudi_arabia_uae": 0.23,
-        "country_overall": 0.16
+        "australia": 0.11
       },
       "age": {
         "18-24": 0.17,
@@ -970,13 +914,9 @@
     "response": "Excellent sustainability policies and practices within the company",
     "data": {
       "region": {
-        "united_kingdom": 0.11,
-        "united_states": 0.19,
-        "australia": 0.09,
         "india": 0.21,
         "brazil": 0.13,
-        "saudi_arabia_uae": 0.15,
-        "country_overall": 0.15
+        "australia": 0.09
       },
       "age": {
         "18-24": 0.15,
@@ -1039,13 +979,9 @@
     "response": "Brand is well-known and respected",
     "data": {
       "region": {
-        "united_kingdom": 0.11,
-        "united_states": 0.14,
-        "australia": 0.12,
         "india": 0.18,
         "brazil": 0.1,
-        "saudi_arabia_uae": 0.15,
-        "country_overall": 0.13
+        "australia": 0.12
       },
       "age": {
         "18-24": 0.15,
@@ -1108,13 +1044,9 @@
     "response": "Hiring manager I respect and trust",
     "data": {
       "region": {
-        "united_kingdom": 0.13,
-        "united_states": 0.16,
-        "australia": 0.14,
         "india": 0.13,
         "brazil": 0.09,
-        "saudi_arabia_uae": 0.15,
-        "country_overall": 0.13
+        "australia": 0.14
       },
       "age": {
         "18-24": 0.15,
@@ -1177,13 +1109,9 @@
     "response": "Plentiful opportunities for lateral moves and trying new things",
     "data": {
       "region": {
-        "united_kingdom": 0.1,
-        "united_states": 0.16,
-        "australia": 0.13,
         "india": 0.12,
         "brazil": 0.13,
-        "saudi_arabia_uae": 0.11,
-        "country_overall": 0.13
+        "australia": 0.13
       },
       "age": {
         "18-24": 0.13,
@@ -1246,13 +1174,9 @@
     "response": "Low number of recent layoffs",
     "data": {
       "region": {
-        "united_kingdom": 0.06,
-        "united_states": 0.08,
-        "australia": 0.07,
         "india": 0.06,
         "brazil": 0.09,
-        "saudi_arabia_uae": 0.09,
-        "country_overall": 0.07
+        "australia": 0.07
       },
       "age": {
         "18-24": 0.07,
@@ -1315,13 +1239,9 @@
     "response": "Generous salary / compensation",
     "data": {
       "region": {
-        "united_kingdom": 0.4,
-        "united_states": 0.32,
-        "australia": 0.45,
         "india": 0.28,
         "brazil": 0.43,
-        "saudi_arabia_uae": 0.33,
-        "country_overall": 0.37
+        "australia": 0.45
       },
       "age": {
         "18-24": 0.25,
@@ -1384,13 +1304,9 @@
     "response": "Total flexibility of working hours",
     "data": {
       "region": {
-        "united_kingdom": 0.31,
-        "united_states": 0.28,
-        "australia": 0.33,
         "india": 0.27,
         "brazil": 0.3,
-        "saudi_arabia_uae": 0.29,
-        "country_overall": 0.3
+        "australia": 0.33
       },
       "age": {
         "18-24": 0.24,
@@ -1453,13 +1369,9 @@
     "response": "High job security (of employment contract)",
     "data": {
       "region": {
-        "united_kingdom": 0.28,
-        "united_states": 0.24,
-        "australia": 0.28,
         "india": 0.31,
         "brazil": 0.25,
-        "saudi_arabia_uae": 0.29,
-        "country_overall": 0.28
+        "australia": 0.28
       },
       "age": {
         "18-24": 0.24,
@@ -1522,13 +1434,9 @@
     "response": "Colleagues I enjoy working with",
     "data": {
       "region": {
-        "united_kingdom": 0.34,
-        "united_states": 0.24,
-        "australia": 0.33,
         "india": 0.22,
         "brazil": 0.19,
-        "saudi_arabia_uae": 0.25,
-        "country_overall": 0.26
+        "australia": 0.33
       },
       "age": {
         "18-24": 0.25,
@@ -1591,13 +1499,9 @@
     "response": "Manager I respect and trust",
     "data": {
       "region": {
-        "united_kingdom": 0.28,
-        "united_states": 0.25,
-        "australia": 0.31,
         "india": 0.26,
         "brazil": 0.12,
-        "saudi_arabia_uae": 0.26,
-        "country_overall": 0.25
+        "australia": 0.31
       },
       "age": {
         "18-24": 0.24,
@@ -1660,13 +1564,9 @@
     "response": "Excellent learning and development opportunities",
     "data": {
       "region": {
-        "united_kingdom": 0.21,
-        "united_states": 0.24,
-        "australia": 0.19,
         "india": 0.32,
         "brazil": 0.29,
-        "saudi_arabia_uae": 0.27,
-        "country_overall": 0.25
+        "australia": 0.19
       },
       "age": {
         "18-24": 0.25,
@@ -1729,13 +1629,9 @@
     "response": "Clear career advancement opportunities and processes",
     "data": {
       "region": {
-        "united_kingdom": 0.17,
-        "united_states": 0.2,
-        "australia": 0.19,
         "india": 0.24,
         "brazil": 0.25,
-        "saudi_arabia_uae": 0.22,
-        "country_overall": 0.21
+        "australia": 0.19
       },
       "age": {
         "18-24": 0.22,
@@ -1798,13 +1694,9 @@
     "response": "Status and respect for my position in the company",
     "data": {
       "region": {
-        "united_kingdom": 0.17,
-        "united_states": 0.22,
-        "australia": 0.16,
         "india": 0.26,
         "brazil": 0.19,
-        "saudi_arabia_uae": 0.25,
-        "country_overall": 0.21
+        "australia": 0.16
       },
       "age": {
         "18-24": 0.21,
@@ -1867,13 +1759,9 @@
     "response": "Hybrid working options",
     "data": {
       "region": {
-        "united_kingdom": 0.22,
-        "united_states": 0.18,
-        "australia": 0.25,
         "india": 0.17,
         "brazil": 0.17,
-        "saudi_arabia_uae": 0.13,
-        "country_overall": 0.19
+        "australia": 0.25
       },
       "age": {
         "18-24": 0.17,
@@ -1936,13 +1824,9 @@
     "response": "Full-time remote working",
     "data": {
       "region": {
-        "united_kingdom": 0.19,
-        "united_states": 0.24,
-        "australia": 0.2,
         "india": 0.15,
         "brazil": 0.17,
-        "saudi_arabia_uae": 0.14,
-        "country_overall": 0.18
+        "australia": 0.2
       },
       "age": {
         "18-24": 0.17,
@@ -2005,13 +1889,9 @@
     "response": "Short commute to office",
     "data": {
       "region": {
-        "united_kingdom": 0.22,
-        "united_states": 0.17,
-        "australia": 0.24,
         "india": 0.13,
         "brazil": 0.15,
-        "saudi_arabia_uae": 0.19,
-        "country_overall": 0.18
+        "australia": 0.24
       },
       "age": {
         "18-24": 0.17,
@@ -2074,13 +1954,9 @@
     "response": "To be a part of a culture and value system that I respect",
     "data": {
       "region": {
-        "united_kingdom": 0.16,
-        "united_states": 0.19,
-        "australia": 0.2,
         "india": 0.18,
         "brazil": 0.17,
-        "saudi_arabia_uae": 0.18,
-        "country_overall": 0.18
+        "australia": 0.2
       },
       "age": {
         "18-24": 0.17,
@@ -2143,13 +2019,9 @@
     "response": "Full-time in the office",
     "data": {
       "region": {
-        "united_kingdom": 0.12,
-        "united_states": 0.23,
-        "australia": 0.12,
         "india": 0.22,
         "brazil": 0.1,
-        "saudi_arabia_uae": 0.19,
-        "country_overall": 0.16
+        "australia": 0.12
       },
       "age": {
         "18-24": 0.18,
@@ -2212,13 +2084,9 @@
     "response": "Excellent sustainability policies and practices within the company",
     "data": {
       "region": {
-        "united_kingdom": 0.12,
-        "united_states": 0.21,
-        "australia": 0.11,
         "india": 0.24,
         "brazil": 0.15,
-        "saudi_arabia_uae": 0.17,
-        "country_overall": 0.17
+        "australia": 0.11
       },
       "age": {
         "18-24": 0.15,
@@ -2281,13 +2149,9 @@
     "response": "Excellent diversity and inclusion within the company",
     "data": {
       "region": {
-        "united_kingdom": 0.14,
-        "united_states": 0.21,
-        "australia": 0.13,
         "india": 0.21,
         "brazil": 0.14,
-        "saudi_arabia_uae": 0.16,
-        "country_overall": 0.17
+        "australia": 0.13
       },
       "age": {
         "18-24": 0.18,
@@ -2350,13 +2214,9 @@
     "response": "Brand is well known and respected",
     "data": {
       "region": {
-        "united_kingdom": 0.13,
-        "united_states": 0.17,
-        "australia": 0.13,
         "india": 0.22,
         "brazil": 0.12,
-        "saudi_arabia_uae": 0.18,
-        "country_overall": 0.16
+        "australia": 0.13
       },
       "age": {
         "18-24": 0.16,
@@ -2419,13 +2279,9 @@
     "response": "Generous non-financial benefits",
     "data": {
       "region": {
-        "united_kingdom": 0.14,
-        "united_states": 0.15,
-        "australia": 0.16,
         "india": 0.12,
         "brazil": 0.15,
-        "saudi_arabia_uae": 0.12,
-        "country_overall": 0.14
+        "australia": 0.16
       },
       "age": {
         "18-24": 0.14,
@@ -2488,13 +2344,9 @@
     "response": "Low number of recent layoffs",
     "data": {
       "region": {
-        "united_kingdom": 0.1,
-        "united_states": 0.12,
-        "australia": 0.11,
         "india": 0.1,
         "brazil": 0.13,
-        "saudi_arabia_uae": 0.14,
-        "country_overall": 0.12
+        "australia": 0.11
       },
       "age": {
         "18-24": 0.12,
@@ -2557,13 +2409,9 @@
     "response": "Low salary / compensation",
     "data": {
       "region": {
-        "united_kingdom": 0.47,
-        "united_states": 0.37,
-        "australia": 0.52,
         "india": 0.3,
         "brazil": 0.44,
-        "saudi_arabia_uae": 0.41,
-        "country_overall": 0.42
+        "australia": 0.52
       },
       "age": {
         "18-24": 0.33,
@@ -2626,13 +2474,9 @@
     "response": "Lack of career advancement opportunities",
     "data": {
       "region": {
-        "united_kingdom": 0.24,
-        "united_states": 0.26,
-        "australia": 0.29,
         "india": 0.29,
         "brazil": 0.37,
-        "saudi_arabia_uae": 0.3,
-        "country_overall": 0.29
+        "australia": 0.29
       },
       "age": {
         "18-24": 0.25,
@@ -2695,13 +2539,9 @@
     "response": "Lack of job security (employment contract)",
     "data": {
       "region": {
-        "united_kingdom": 0.27,
-        "united_states": 0.26,
-        "australia": 0.27,
         "india": 0.26,
         "brazil": 0.25,
-        "saudi_arabia_uae": 0.31,
-        "country_overall": 0.27
+        "australia": 0.27
       },
       "age": {
         "18-24": 0.22,
@@ -2764,13 +2604,9 @@
     "response": "Inflexible working hours policy",
     "data": {
       "region": {
-        "united_kingdom": 0.28,
-        "united_states": 0.26,
-        "australia": 0.29,
         "india": 0.26,
         "brazil": 0.22,
-        "saudi_arabia_uae": 0.23,
-        "country_overall": 0.26
+        "australia": 0.29
       },
       "age": {
         "18-24": 0.23,
@@ -2833,13 +2669,9 @@
     "response": "Poor company culture or values",
     "data": {
       "region": {
-        "united_kingdom": 0.28,
-        "united_states": 0.24,
-        "australia": 0.32,
         "india": 0.21,
         "brazil": 0.21,
-        "saudi_arabia_uae": 0.28,
-        "country_overall": 0.26
+        "australia": 0.32
       },
       "age": {
         "18-24": 0.22,
@@ -2902,13 +2734,9 @@
     "response": "Personal challenges with colleagues or manager",
     "data": {
       "region": {
-        "united_kingdom": 0.27,
-        "united_states": 0.26,
-        "australia": 0.28,
         "india": 0.23,
         "brazil": 0.14,
-        "saudi_arabia_uae": 0.21,
-        "country_overall": 0.23
+        "australia": 0.28
       },
       "age": {
         "18-24": 0.23,
@@ -2971,13 +2799,9 @@
     "response": "Long or difficult commute to office",
     "data": {
       "region": {
-        "united_kingdom": 0.27,
-        "united_states": 0.24,
-        "australia": 0.28,
         "india": 0.23,
         "brazil": 0.22,
-        "saudi_arabia_uae": 0.2,
-        "country_overall": 0.24
+        "australia": 0.28
       },
       "age": {
         "18-24": 0.22,
@@ -3040,13 +2864,9 @@
     "response": "Full-time in-office attendance is being mandated",
     "data": {
       "region": {
-        "united_kingdom": 0.21,
-        "united_states": 0.24,
-        "australia": 0.23,
         "india": 0.26,
         "brazil": 0.16,
-        "saudi_arabia_uae": 0.16,
-        "country_overall": 0.21
+        "australia": 0.23
       },
       "age": {
         "18-24": 0.21,
@@ -3109,13 +2929,9 @@
     "response": "Inadequate learning and development opportunities",
     "data": {
       "region": {
-        "united_kingdom": 0.18,
-        "united_states": 0.22,
-        "australia": 0.2,
         "india": 0.22,
         "brazil": 0.2,
-        "saudi_arabia_uae": 0.24,
-        "country_overall": 0.21
+        "australia": 0.2
       },
       "age": {
         "18-24": 0.21,
@@ -3178,13 +2994,9 @@
     "response": "Inadequate non-financial benefits",
     "data": {
       "region": {
-        "united_kingdom": 0.16,
-        "united_states": 0.2,
-        "australia": 0.16,
         "india": 0.17,
         "brazil": 0.27,
-        "saudi_arabia_uae": 0.23,
-        "country_overall": 0.2
+        "australia": 0.16
       },
       "age": {
         "18-24": 0.18,
@@ -3247,13 +3059,9 @@
     "response": "High number of recent layoffs",
     "data": {
       "region": {
-        "united_kingdom": 0.15,
-        "united_states": 0.22,
-        "australia": 0.16,
         "india": 0.21,
         "brazil": 0.17,
-        "saudi_arabia_uae": 0.22,
-        "country_overall": 0.19
+        "australia": 0.16
       },
       "age": {
         "18-24": 0.2,
@@ -3316,13 +3124,9 @@
     "response": "Employer will relocate to a different area",
     "data": {
       "region": {
-        "united_kingdom": 0.18,
-        "united_states": 0.21,
-        "australia": 0.18,
         "india": 0.22,
         "brazil": 0.1,
-        "saudi_arabia_uae": 0.18,
-        "country_overall": 0.18
+        "australia": 0.18
       },
       "age": {
         "18-24": 0.19,
@@ -3385,13 +3189,9 @@
     "response": "Poor sustainability policies and practices within the company",
     "data": {
       "region": {
-        "united_kingdom": 0.15,
-        "united_states": 0.21,
-        "australia": 0.14,
         "india": 0.22,
         "brazil": 0.11,
-        "saudi_arabia_uae": 0.22,
-        "country_overall": 0.18
+        "australia": 0.14
       },
       "age": {
         "18-24": 0.2,
@@ -3454,13 +3254,9 @@
     "response": "Lack of diversity and inclusion within the company",
     "data": {
       "region": {
-        "united_kingdom": 0.14,
-        "united_states": 0.21,
-        "australia": 0.12,
         "india": 0.21,
         "brazil": 0.16,
-        "saudi_arabia_uae": 0.21,
-        "country_overall": 0.18
+        "australia": 0.12
       },
       "age": {
         "18-24": 0.2,
@@ -3523,13 +3319,9 @@
     "response": "No allowance for full-time remote working",
     "data": {
       "region": {
-        "united_kingdom": 0.17,
-        "united_states": 0.19,
-        "australia": 0.15,
         "india": 0.2,
         "brazil": 0.15,
-        "saudi_arabia_uae": 0.16,
-        "country_overall": 0.17
+        "australia": 0.15
       },
       "age": {
         "18-24": 0.21,
@@ -3592,13 +3384,9 @@
     "response": "Lack of affordable childcare during working hours",
     "data": {
       "region": {
-        "united_kingdom": 0.13,
-        "united_states": 0.16,
-        "australia": 0.09,
         "india": 0.17,
         "brazil": 0.08,
-        "saudi_arabia_uae": 0.13,
-        "country_overall": 0.13
+        "australia": 0.09
       },
       "age": {
         "18-24": 0.15,
@@ -3661,13 +3449,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.67,
-        "united_states": 0.77,
-        "australia": 0.7,
         "india": 0.85,
         "brazil": 0.82,
-        "saudi_arabia_uae": 0.83,
-        "country_overall": 0.77
+        "australia": 0.7
       },
       "age": {
         "18-24": 0.7,
@@ -3730,13 +3514,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.09,
-        "united_states": 0.06,
-        "australia": 0.07,
         "india": 0.04,
         "brazil": 0.05,
-        "saudi_arabia_uae": 0.04,
-        "country_overall": 0.06
+        "australia": 0.07
       },
       "age": {
         "18-24": 0.1,
@@ -3799,13 +3579,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.68,
-        "united_states": 0.75,
-        "australia": 0.69,
         "india": 0.81,
         "brazil": 0.81,
-        "saudi_arabia_uae": 0.83,
-        "country_overall": 0.76
+        "australia": 0.69
       },
       "age": {
         "18-24": 0.69,
@@ -3868,13 +3644,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.11,
-        "united_states": 0.08,
-        "australia": 0.08,
         "india": 0.07,
         "brazil": 0.06,
-        "saudi_arabia_uae": 0.05,
-        "country_overall": 0.07
+        "australia": 0.08
       },
       "age": {
         "18-24": 0.11,
@@ -3937,13 +3709,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.75,
-        "united_states": 0.81,
-        "australia": 0.78,
         "india": 0.85,
         "brazil": 0.87,
-        "saudi_arabia_uae": 0.85,
-        "country_overall": 0.82
+        "australia": 0.78
       },
       "age": {
         "18-24": 0.72,
@@ -4006,13 +3774,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.06,
-        "united_states": 0.06,
-        "australia": 0.04,
         "india": 0.04,
         "brazil": 0.03,
-        "saudi_arabia_uae": 0.04,
-        "country_overall": 0.05
+        "australia": 0.04
       },
       "age": {
         "18-24": 0.09,
@@ -4075,13 +3839,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.52,
-        "united_states": 0.66,
-        "australia": 0.52,
         "india": 0.68,
         "brazil": 0.55,
-        "saudi_arabia_uae": 0.71,
-        "country_overall": 0.61
+        "australia": 0.52
       },
       "age": {
         "18-24": 0.61,
@@ -4144,13 +3904,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.23,
-        "united_states": 0.14,
-        "australia": 0.22,
         "india": 0.16,
         "brazil": 0.27,
-        "saudi_arabia_uae": 0.12,
-        "country_overall": 0.19
+        "australia": 0.22
       },
       "age": {
         "18-24": 0.17,
@@ -4213,13 +3969,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.48,
-        "united_states": 0.68,
-        "australia": 0.51,
         "india": 0.71,
         "brazil": 0.55,
-        "saudi_arabia_uae": 0.68,
-        "country_overall": 0.6
+        "australia": 0.51
       },
       "age": {
         "18-24": 0.62,
@@ -4282,13 +4034,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.23,
-        "united_states": 0.13,
-        "australia": 0.22,
         "india": 0.13,
         "brazil": 0.26,
-        "saudi_arabia_uae": 0.12,
-        "country_overall": 0.18
+        "australia": 0.22
       },
       "age": {
         "18-24": 0.15,
@@ -4351,13 +4099,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.55,
-        "united_states": 0.71,
-        "australia": 0.55,
         "india": 0.8,
         "brazil": 0.69,
-        "saudi_arabia_uae": 0.78,
-        "country_overall": 0.68
+        "australia": 0.55
       },
       "age": {
         "18-24": 0.68,
@@ -4420,13 +4164,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.19,
-        "united_states": 0.12,
-        "australia": 0.18,
         "india": 0.08,
         "brazil": 0.16,
-        "saudi_arabia_uae": 0.08,
-        "country_overall": 0.13
+        "australia": 0.18
       },
       "age": {
         "18-24": 0.12,
@@ -4489,13 +4229,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.63,
-        "united_states": 0.76,
-        "australia": 0.64,
         "india": 0.86,
         "brazil": 0.76,
-        "saudi_arabia_uae": 0.8,
-        "country_overall": 0.74
+        "australia": 0.64
       },
       "age": {
         "18-24": 0.72,
@@ -4558,13 +4294,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.13,
-        "united_states": 0.07,
-        "australia": 0.12,
         "india": 0.04,
         "brazil": 0.08,
-        "saudi_arabia_uae": 0.05,
-        "country_overall": 0.08
+        "australia": 0.12
       },
       "age": {
         "18-24": 0.1,
@@ -4627,13 +4359,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.6,
-        "united_states": 0.75,
-        "australia": 0.64,
         "india": 0.79,
         "brazil": 0.67,
-        "saudi_arabia_uae": 0.74,
-        "country_overall": 0.7
+        "australia": 0.64
       },
       "age": {
         "18-24": 0.66,
@@ -4696,13 +4424,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.16,
-        "united_states": 0.09,
-        "australia": 0.14,
         "india": 0.06,
         "brazil": 0.12,
-        "saudi_arabia_uae": 0.1,
-        "country_overall": 0.11
+        "australia": 0.14
       },
       "age": {
         "18-24": 0.14,
@@ -4765,13 +4489,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.47,
-        "united_states": 0.66,
-        "australia": 0.5,
         "india": 0.81,
         "brazil": 0.71,
-        "saudi_arabia_uae": 0.78,
-        "country_overall": 0.65
+        "australia": 0.5
       },
       "age": {
         "18-24": 0.64,
@@ -4834,13 +4554,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.25,
-        "united_states": 0.15,
-        "australia": 0.2,
         "india": 0.05,
         "brazil": 0.09,
-        "saudi_arabia_uae": 0.05,
-        "country_overall": 0.13
+        "australia": 0.2
       },
       "age": {
         "18-24": 0.13,
@@ -4903,13 +4619,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.43,
-        "united_states": 0.62,
-        "australia": 0.45,
         "india": 0.74,
         "brazil": 0.62,
-        "saudi_arabia_uae": 0.72,
-        "country_overall": 0.6
+        "australia": 0.45
       },
       "age": {
         "18-24": 0.59,
@@ -4972,13 +4684,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.27,
-        "united_states": 0.17,
-        "australia": 0.24,
         "india": 0.09,
         "brazil": 0.13,
-        "saudi_arabia_uae": 0.09,
-        "country_overall": 0.17
+        "australia": 0.24
       },
       "age": {
         "18-24": 0.17,
@@ -5041,13 +4749,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.34,
-        "united_states": 0.55,
-        "australia": 0.36,
         "india": 0.66,
         "brazil": 0.39,
-        "saudi_arabia_uae": 0.52,
-        "country_overall": 0.47
+        "australia": 0.36
       },
       "age": {
         "18-24": 0.51,
@@ -5110,13 +4814,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.4,
-        "united_states": 0.25,
-        "australia": 0.38,
         "india": 0.16,
         "brazil": 0.39,
-        "saudi_arabia_uae": 0.25,
-        "country_overall": 0.3
+        "australia": 0.38
       },
       "age": {
         "18-24": 0.24,
@@ -5179,13 +4879,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.53,
-        "united_states": 0.7,
-        "australia": 0.58,
         "india": 0.79,
         "brazil": 0.53,
-        "saudi_arabia_uae": 0.75,
-        "country_overall": 0.65
+        "australia": 0.58
       },
       "age": {
         "18-24": 0.6,
@@ -5248,13 +4944,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.21,
-        "united_states": 0.11,
-        "australia": 0.16,
         "india": 0.07,
         "brazil": 0.25,
-        "saudi_arabia_uae": 0.1,
-        "country_overall": 0.15
+        "australia": 0.16
       },
       "age": {
         "18-24": 0.18,
@@ -5317,13 +5009,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.64,
-        "united_states": 0.73,
-        "australia": 0.66,
         "india": 0.83,
         "brazil": 0.72,
-        "saudi_arabia_uae": 0.8,
-        "country_overall": 0.73
+        "australia": 0.66
       },
       "age": {
         "18-24": 0.67,
@@ -5386,13 +5074,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.12,
-        "united_states": 0.1,
-        "australia": 0.1,
         "india": 0.05,
         "brazil": 0.1,
-        "saudi_arabia_uae": 0.06,
-        "country_overall": 0.09
+        "australia": 0.1
       },
       "age": {
         "18-24": 0.13,
@@ -5455,13 +5139,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.6,
-        "united_states": 0.73,
-        "australia": 0.63,
         "india": 0.83,
         "brazil": 0.76,
-        "saudi_arabia_uae": 0.76,
-        "country_overall": 0.72
+        "australia": 0.63
       },
       "age": {
         "18-24": 0.66,
@@ -5524,13 +5204,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.14,
-        "united_states": 0.08,
-        "australia": 0.1,
         "india": 0.05,
         "brazil": 0.06,
-        "saudi_arabia_uae": 0.07,
-        "country_overall": 0.08
+        "australia": 0.1
       },
       "age": {
         "18-24": 0.11,
@@ -5593,13 +5269,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.7,
-        "united_states": 0.8,
-        "australia": 0.73,
         "india": 0.82,
         "brazil": 0.76,
-        "saudi_arabia_uae": 0.81,
-        "country_overall": 0.77
+        "australia": 0.73
       },
       "age": {
         "18-24": 0.69,
@@ -5662,13 +5334,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.07,
-        "united_states": 0.06,
-        "australia": 0.06,
         "india": 0.04,
         "brazil": 0.06,
-        "saudi_arabia_uae": 0.04,
-        "country_overall": 0.06
+        "australia": 0.06
       },
       "age": {
         "18-24": 0.09,
@@ -5731,13 +5399,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.59,
-        "united_states": 0.73,
-        "australia": 0.59,
         "india": 0.77,
         "brazil": 0.72,
-        "saudi_arabia_uae": 0.76,
-        "country_overall": 0.69
+        "australia": 0.59
       },
       "age": {
         "18-24": 0.63,
@@ -5800,13 +5464,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.18,
-        "united_states": 0.1,
-        "australia": 0.16,
         "india": 0.08,
         "brazil": 0.11,
-        "saudi_arabia_uae": 0.07,
-        "country_overall": 0.12
+        "australia": 0.16
       },
       "age": {
         "18-24": 0.13,
@@ -5869,13 +5529,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.78,
-        "united_states": 0.82,
-        "australia": 0.79,
         "india": 0.85,
         "brazil": 0.86,
-        "saudi_arabia_uae": 0.86,
-        "country_overall": 0.83
+        "australia": 0.79
       },
       "age": {
         "18-24": 0.71,
@@ -5938,13 +5594,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.06,
-        "united_states": 0.05,
-        "australia": 0.05,
         "india": 0.04,
         "brazil": 0.03,
-        "saudi_arabia_uae": 0.03,
-        "country_overall": 0.04
+        "australia": 0.05
       },
       "age": {
         "18-24": 0.09,
@@ -6007,13 +5659,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.38,
-        "united_states": 0.54,
-        "australia": 0.38,
         "india": 0.61,
         "brazil": 0.38,
-        "saudi_arabia_uae": 0.46,
-        "country_overall": 0.46
+        "australia": 0.38
       },
       "age": {
         "18-24": 0.51,
@@ -6076,13 +5724,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.38,
-        "united_states": 0.27,
-        "australia": 0.35,
         "india": 0.19,
         "brazil": 0.4,
-        "saudi_arabia_uae": 0.33,
-        "country_overall": 0.32
+        "australia": 0.35
       },
       "age": {
         "18-24": 0.24,
@@ -6145,13 +5789,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.65,
-        "united_states": 0.74,
-        "australia": 0.66,
         "india": 0.84,
         "brazil": 0.73,
-        "saudi_arabia_uae": 0.81,
-        "country_overall": 0.74
+        "australia": 0.66
       },
       "age": {
         "18-24": 0.67,
@@ -6214,13 +5854,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.14,
-        "united_states": 0.09,
-        "australia": 0.14,
         "india": 0.05,
         "brazil": 0.12,
-        "saudi_arabia_uae": 0.06,
-        "country_overall": 0.1
+        "australia": 0.14
       },
       "age": {
         "18-24": 0.11,
@@ -6283,13 +5919,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.58,
-        "united_states": 0.69,
-        "australia": 0.6,
         "india": 0.77,
         "brazil": 0.52,
-        "saudi_arabia_uae": 0.56,
-        "country_overall": 0.62
+        "australia": 0.6
       },
       "age": {
         "18-24": 0.62,
@@ -6352,13 +5984,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.18,
-        "united_states": 0.14,
-        "australia": 0.17,
         "india": 0.1,
         "brazil": 0.29,
-        "saudi_arabia_uae": 0.26,
-        "country_overall": 0.19
+        "australia": 0.17
       },
       "age": {
         "18-24": 0.16,
@@ -6421,13 +6049,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.62,
-        "united_states": 0.73,
-        "australia": 0.64,
         "india": 0.8,
         "brazil": 0.64,
-        "saudi_arabia_uae": 0.67,
-        "country_overall": 0.68
+        "australia": 0.64
       },
       "age": {
         "18-24": 0.65,
@@ -6490,13 +6114,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.16,
-        "united_states": 0.12,
-        "australia": 0.15,
         "india": 0.09,
         "brazil": 0.18,
-        "saudi_arabia_uae": 0.16,
-        "country_overall": 0.14
+        "australia": 0.15
       },
       "age": {
         "18-24": 0.15,
@@ -6559,13 +6179,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.61,
-        "united_states": 0.76,
-        "australia": 0.63,
         "india": 0.85,
         "brazil": 0.73,
-        "saudi_arabia_uae": 0.8,
-        "country_overall": 0.73
+        "australia": 0.63
       },
       "age": {
         "18-24": 0.68,
@@ -6628,13 +6244,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.15,
-        "united_states": 0.09,
-        "australia": 0.15,
         "india": 0.04,
         "brazil": 0.1,
-        "saudi_arabia_uae": 0.05,
-        "country_overall": 0.1
+        "australia": 0.15
       },
       "age": {
         "18-24": 0.12,
@@ -6697,13 +6309,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.64,
-        "united_states": 0.75,
-        "australia": 0.67,
         "india": 0.84,
         "brazil": 0.69,
-        "saudi_arabia_uae": 0.73,
-        "country_overall": 0.72
+        "australia": 0.67
       },
       "age": {
         "18-24": 0.66,
@@ -6766,13 +6374,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.15,
-        "united_states": 0.1,
-        "australia": 0.14,
         "india": 0.05,
         "brazil": 0.15,
-        "saudi_arabia_uae": 0.1,
-        "country_overall": 0.11
+        "australia": 0.14
       },
       "age": {
         "18-24": 0.12,
@@ -6835,13 +6439,9 @@
     "response": "Not committed enough",
     "data": {
       "region": {
-        "united_kingdom": 0.24,
-        "united_states": 0.16,
-        "australia": 0.17,
         "india": 0.24,
         "brazil": 0.3,
-        "saudi_arabia_uae": 0.22,
-        "country_overall": 0.22
+        "australia": 0.17
       },
       "age": {
         "18-24": 0.32,
@@ -6904,13 +6504,9 @@
     "response": "Too committed",
     "data": {
       "region": {
-        "united_kingdom": 0.2,
-        "united_states": 0.34,
-        "australia": 0.25,
         "india": 0.39,
         "brazil": 0.27,
-        "saudi_arabia_uae": 0.37,
-        "country_overall": 0.3
+        "australia": 0.25
       },
       "age": {
         "18-24": 0.23,
@@ -6973,13 +6569,9 @@
     "response": "Not committed enough",
     "data": {
       "region": {
-        "united_kingdom": 0.26,
-        "united_states": 0.18,
-        "australia": 0.21,
         "india": 0.24,
         "brazil": 0.29,
-        "saudi_arabia_uae": 0.22,
-        "country_overall": 0.23
+        "australia": 0.21
       },
       "age": {
         "18-24": 0.34,
@@ -7042,13 +6634,9 @@
     "response": "Too committed",
     "data": {
       "region": {
-        "united_kingdom": 0.19,
-        "united_states": 0.33,
-        "australia": 0.2,
         "india": 0.41,
         "brazil": 0.28,
-        "saudi_arabia_uae": 0.39,
-        "country_overall": 0.3
+        "australia": 0.2
       },
       "age": {
         "18-24": 0.24,
@@ -7111,13 +6699,9 @@
     "response": "Confident",
     "data": {
       "region": {
-        "united_kingdom": 0.76,
-        "united_states": 0.87,
-        "australia": 0.77,
         "india": 0.95,
         "brazil": 0.87,
-        "saudi_arabia_uae": 0.87,
-        "country_overall": 0.85
+        "australia": 0.77
       },
       "age": {
         "18-24": 0.87,
@@ -7180,13 +6764,9 @@
     "response": "Unconfident",
     "data": {
       "region": {
-        "united_kingdom": 0.22,
-        "united_states": 0.11,
-        "australia": 0.21,
         "india": 0.04,
         "brazil": 0.12,
-        "saudi_arabia_uae": 0.12,
-        "country_overall": 0.14
+        "australia": 0.21
       },
       "age": {
         "18-24": 0.12,
@@ -7249,13 +6829,9 @@
     "response": "Below my contribution",
     "data": {
       "region": {
-        "united_kingdom": 0.38,
-        "united_states": 0.39,
-        "australia": 0.38,
         "india": 0.4,
         "brazil": 0.34,
-        "saudi_arabia_uae": 0.38,
-        "country_overall": 0.38
+        "australia": 0.38
       },
       "age": {
         "18-24": 0.39,
@@ -7318,13 +6894,9 @@
     "response": "Match my contribution",
     "data": {
       "region": {
-        "united_kingdom": 0.56,
-        "united_states": 0.5,
-        "australia": 0.57,
         "india": 0.49,
         "brazil": 0.6,
-        "saudi_arabia_uae": 0.58,
-        "country_overall": 0.55
+        "australia": 0.57
       },
       "age": {
         "18-24": 0.54,
@@ -7387,13 +6959,9 @@
     "response": "Exceed my contribution",
     "data": {
       "region": {
-        "united_kingdom": 0.06,
-        "united_states": 0.12,
-        "australia": 0.05,
         "india": 0.11,
         "brazil": 0.06,
-        "saudi_arabia_uae": 0.05,
-        "country_overall": 0.07
+        "australia": 0.05
       },
       "age": {
         "18-24": 0.07,
@@ -7456,13 +7024,9 @@
     "response": "No",
     "data": {
       "region": {
-        "united_kingdom": 0.42,
-        "united_states": 0.39,
-        "australia": 0.47,
         "india": 0.34,
         "brazil": 0.45,
-        "saudi_arabia_uae": 0.38,
-        "country_overall": 0.41
+        "australia": 0.47
       },
       "age": {
         "18-24": 0.37,
@@ -7525,13 +7089,9 @@
     "response": "Considering",
     "data": {
       "region": {
-        "united_kingdom": 0.46,
-        "united_states": 0.39,
-        "australia": 0.41,
         "india": 0.51,
         "brazil": 0.46,
-        "saudi_arabia_uae": 0.48,
-        "country_overall": 0.45
+        "australia": 0.41
       },
       "age": {
         "18-24": 0.51,
@@ -7594,13 +7154,9 @@
     "response": "Applying and interviewing",
     "data": {
       "region": {
-        "united_kingdom": 0.1,
-        "united_states": 0.21,
-        "australia": 0.11,
         "india": 0.14,
         "brazil": 0.09,
-        "saudi_arabia_uae": 0.13,
-        "country_overall": 0.13
+        "australia": 0.11
       },
       "age": {
         "18-24": 0.12,
@@ -7663,13 +7219,9 @@
     "response": "Preparing to retire",
     "data": {
       "region": {
-        "united_kingdom": 0.01,
-        "united_states": 0.01,
-        "australia": 0.01,
         "india": 0.01,
         "brazil": 0.01,
-        "saudi_arabia_uae": 0,
-        "country_overall": 0.01
+        "australia": 0.01
       },
       "age": {
         "45-54": 0.03,
@@ -7727,13 +7279,9 @@
     "response": "Permanent",
     "data": {
       "region": {
-        "united_kingdom": 0.8,
-        "united_states": 0.8,
-        "australia": 0.82,
         "india": 0.83,
         "brazil": 0.65,
-        "saudi_arabia_uae": 0.74,
-        "country_overall": 0.77
+        "australia": 0.82
       },
       "age": {
         "18-24": 0.67,
@@ -7796,13 +7344,9 @@
     "response": "Part time PAYE",
     "data": {
       "region": {
-        "united_kingdom": 0.12,
-        "united_states": 0.11,
-        "australia": 0.12,
         "india": 0.09,
         "brazil": 0.19,
-        "saudi_arabia_uae": 0.16,
-        "country_overall": 0.13
+        "australia": 0.12
       },
       "age": {
         "18-24": 0.19,
@@ -7865,13 +7409,9 @@
     "response": "Contract / Interim",
     "data": {
       "region": {
-        "united_kingdom": 0.04,
-        "united_states": 0.05,
-        "australia": 0.03,
         "india": 0.05,
         "brazil": 0.05,
-        "saudi_arabia_uae": 0.05,
-        "country_overall": 0.04
+        "australia": 0.03
       },
       "age": {
         "18-24": 0.09,
@@ -7934,13 +7474,9 @@
     "response": "Freelance",
     "data": {
       "region": {
-        "united_kingdom": 0.05,
-        "united_states": 0.05,
-        "australia": 0.04,
         "india": 0.03,
         "brazil": 0.11,
-        "saudi_arabia_uae": 0.05,
-        "country_overall": 0.06
+        "australia": 0.04
       },
       "age": {
         "18-24": 0.05,
@@ -8003,13 +7539,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.6,
-        "united_states": 0.75,
-        "australia": 0.62,
         "india": 0.83,
         "brazil": 0.72,
-        "saudi_arabia_uae": 0.78,
-        "country_overall": 0.72
+        "australia": 0.62
       },
       "age": {
         "18-24": 0.65,
@@ -8072,13 +7604,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.16,
-        "united_states": 0.09,
-        "australia": 0.14,
         "india": 0.05,
         "brazil": 0.12,
-        "saudi_arabia_uae": 0.06,
-        "country_overall": 0.1
+        "australia": 0.14
       },
       "age": {
         "18-24": 0.12,
@@ -8141,13 +7669,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.55,
-        "united_states": 0.72,
-        "australia": 0.57,
         "india": 0.84,
         "brazil": 0.68,
-        "saudi_arabia_uae": 0.75,
-        "country_overall": 0.68
+        "australia": 0.57
       },
       "age": {
         "18-24": 0.64,
@@ -8210,13 +7734,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.18,
-        "united_states": 0.1,
-        "australia": 0.16,
         "india": 0.04,
         "brazil": 0.13,
-        "saudi_arabia_uae": 0.08,
-        "country_overall": 0.12
+        "australia": 0.16
       },
       "age": {
         "18-24": 0.12,
@@ -8279,13 +7799,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.63,
-        "united_states": 0.76,
-        "australia": 0.66,
         "india": 0.85,
         "brazil": 0.71,
-        "saudi_arabia_uae": 0.77,
-        "country_overall": 0.73
+        "australia": 0.66
       },
       "age": {
         "18-24": 0.65,
@@ -8348,13 +7864,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.13,
-        "united_states": 0.07,
-        "australia": 0.12,
         "india": 0.04,
         "brazil": 0.1,
-        "saudi_arabia_uae": 0.06,
-        "country_overall": 0.09
+        "australia": 0.12
       },
       "age": {
         "18-24": 0.14,
@@ -8417,13 +7929,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.66,
-        "united_states": 0.79,
-        "australia": 0.69,
         "india": 0.86,
         "brazil": 0.78,
-        "saudi_arabia_uae": 0.82,
-        "country_overall": 0.77
+        "australia": 0.69
       },
       "age": {
         "18-24": 0.68,
@@ -8486,13 +7994,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.13,
-        "united_states": 0.07,
-        "australia": 0.11,
         "india": 0.04,
         "brazil": 0.08,
-        "saudi_arabia_uae": 0.04,
-        "country_overall": 0.08
+        "australia": 0.11
       },
       "age": {
         "18-24": 0.1,
@@ -8555,13 +8059,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.59,
-        "united_states": 0.76,
-        "australia": 0.62,
         "india": 0.85,
         "brazil": 0.72,
-        "saudi_arabia_uae": 0.78,
-        "country_overall": 0.72
+        "australia": 0.62
       },
       "age": {
         "18-24": 0.69,
@@ -8624,13 +8124,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.17,
-        "united_states": 0.08,
-        "australia": 0.14,
         "india": 0.04,
         "brazil": 0.12,
-        "saudi_arabia_uae": 0.07,
-        "country_overall": 0.1
+        "australia": 0.14
       },
       "age": {
         "18-24": 0.11,
@@ -8693,13 +8189,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.59,
-        "united_states": 0.74,
-        "australia": 0.63,
         "india": 0.85,
         "brazil": 0.73,
-        "saudi_arabia_uae": 0.77,
-        "country_overall": 0.72
+        "australia": 0.63
       },
       "age": {
         "18-24": 0.69,
@@ -8762,13 +8254,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.18,
-        "united_states": 0.09,
-        "australia": 0.15,
         "india": 0.04,
         "brazil": 0.1,
-        "saudi_arabia_uae": 0.08,
-        "country_overall": 0.11
+        "australia": 0.15
       },
       "age": {
         "18-24": 0.12,
@@ -8831,13 +8319,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.58,
-        "united_states": 0.74,
-        "australia": 0.62,
         "india": 0.83,
         "brazil": 0.7,
-        "saudi_arabia_uae": 0.79,
-        "country_overall": 0.71
+        "australia": 0.62
       },
       "age": {
         "18-24": 0.67,
@@ -8900,13 +8384,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.14,
-        "united_states": 0.08,
-        "australia": 0.12,
         "india": 0.04,
         "brazil": 0.11,
-        "saudi_arabia_uae": 0.06,
-        "country_overall": 0.09
+        "australia": 0.12
       },
       "age": {
         "18-24": 0.11,
@@ -8969,13 +8449,9 @@
     "response": "Agree",
     "data": {
       "region": {
-        "united_kingdom": 0.61,
-        "united_states": 0.74,
-        "australia": 0.63,
         "india": 0.83,
         "brazil": 0.7,
-        "saudi_arabia_uae": 0.79,
-        "country_overall": 0.72
+        "australia": 0.63
       },
       "age": {
         "18-24": 0.67,
@@ -9038,13 +8514,9 @@
     "response": "Disagree",
     "data": {
       "region": {
-        "united_kingdom": 0.16,
-        "united_states": 0.08,
-        "australia": 0.14,
         "india": 0.06,
         "brazil": 0.13,
-        "saudi_arabia_uae": 0.07,
-        "country_overall": 0.11
+        "australia": 0.14
       },
       "age": {
         "18-24": 0.13,

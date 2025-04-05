@@ -72,7 +72,7 @@
   {
     "file": "2024_6_2.json",
     "question": "6_1. To what extent is your company committed to Diversity, Equity & Inclusion (DE&I) in the workpla...",
-    "topicId": "DEI"
+    "topicId": "Sustainability"
   },
   {
     "file": "2024_18_8.json",
@@ -150,11 +150,6 @@
     "topicId": "Skills_Utilization"
   },
   {
-    "file": "2024_4_18.json",
-    "question": "4_1. The values a company promotes are extremely important to me",
-    "topicId": "Skills_Utilization"
-  },
-  {
     "file": "2024_4_9.json",
     "question": "4_1. The values a company promotes are extremely important to me",
     "topicId": "AI_Attitudes"
@@ -198,5 +193,10 @@
     "file": "2024_4_4.json",
     "question": "4_1. The values a company promotes are extremely important to me",
     "topicId": "Pay_and_Reward"
+  },
+  {
+    "file": "2024_4_18.json",
+    "question": "4_1. The values a company promotes are extremely important to me",
+    "topicId": "Imposter_Syndrome"
   }
 ]

@@ -34,7 +34,6 @@
         "generation",
         "employment_status"
       ],
-      "primaryMetric": "country_overall",
       "valueFormat": "decimal",
       "sortOrder": "descending"
     }
@@ -45,13 +44,9 @@
       "response": "Agree",
       "data": {
         "region": {
-          "united_kingdom": 0.7,
-          "united_states": 0.8,
-          "australia": 0.73,
           "india": 0.82,
           "brazil": 0.76,
-          "saudi_arabia_uae": 0.81,
-          "country_overall": 0.77
+          "australia": 0.73
         },
         "age": {
           "18-24": 0.69,
@@ -76,8 +71,6 @@
         "sector": {
           "agriculture_forestry_fishing": 0.69,
           "automotive": 0.72,
-          "business_administration_support_services": 0.75,
-          "clean_technology": 0.77,
           "technology": 0.81,
           "construction": 0.79,
           "education": 0.77,
@@ -85,15 +78,10 @@
           "financial_services": 0.77,
           "food_drink": 0.62,
           "government": 0.74,
-          "healthcare_life_sciences": 0.79,
-          "leisure_sport_entertainment_recreation": 0.82,
           "manufacturing_industrial": 0.77,
           "marketing_services": 0.73,
-          "media_entertainment": 0.82,
           "not_for_profit": 0.83,
-          "real_estate_property_services": 0.78,
           "retail": 0.77,
-          "sports": 0.61,
           "telecommunications": 0.78,
           "transport_storage": 0.71,
           "travel_hospitality_leisure": 0.77,
@@ -101,41 +89,28 @@
           "other": 0.73
         },
         "job_level": {
+          "ceo": 0.79,
           "senior_executive": 0.83,
           "senior_leader": 0.77,
-          "mid_level_leader": 0.72,
           "first_level_supervisor": 0.78,
           "individual_contributor": 0.74
         },
-        "relationship_status": {
-          "single": 0.71,
-          "cohabiting": 0.72,
-          "married": 0.8,
-          "divorced_separated": 0.74,
-          "widowed": 0.69
-        },
-        "education": {
-          "secondary": 0.71,
-          "tertiary": 0.69,
-          "undergraduate": 0.76,
-          "postgraduate": 0.81,
-          "doctorate": 0.78
-        },
+        "relationship_status": {},
+        "education": {},
         "generation": {},
-        "employment_status": {}
+        "employment_status": {
+          "full_time": 0.78,
+          "part_time": 0.72
+        }
       }
     },
     {
       "response": "Disagree",
       "data": {
         "region": {
-          "united_kingdom": 0.07,
-          "united_states": 0.06,
-          "australia": 0.06,
           "india": 0.04,
           "brazil": 0.06,
-          "saudi_arabia_uae": 0.04,
-          "country_overall": 0.06
+          "australia": 0.06
         },
         "age": {
           "18-24": 0.09,
@@ -160,8 +135,6 @@
         "sector": {
           "agriculture_forestry_fishing": 0.11,
           "automotive": 0.1,
-          "business_administration_support_services": 0.06,
-          "clean_technology": 0.06,
           "technology": 0.05,
           "construction": 0.07,
           "education": 0.04,
@@ -169,15 +142,10 @@
           "financial_services": 0.04,
           "food_drink": 0.08,
           "government": 0.06,
-          "healthcare_life_sciences": 0.05,
-          "leisure_sport_entertainment_recreation": 0.05,
           "manufacturing_industrial": 0.04,
           "marketing_services": 0.09,
-          "media_entertainment": 0.05,
           "not_for_profit": 0.07,
-          "real_estate_property_services": 0.04,
           "retail": 0.06,
-          "sports": 0.05,
           "telecommunications": 0.04,
           "transport_storage": 0.1,
           "travel_hospitality_leisure": 0.08,
@@ -185,28 +153,19 @@
           "other": 0.05
         },
         "job_level": {
+          "ceo": 0.06,
           "senior_executive": 0.05,
           "senior_leader": 0.06,
-          "mid_level_leader": 0.07,
           "first_level_supervisor": 0.04,
           "individual_contributor": 0.06
         },
-        "relationship_status": {
-          "single": 0.07,
-          "cohabiting": 0.06,
-          "married": 0.04,
-          "divorced_separated": 0.05,
-          "widowed": 0.15
-        },
-        "education": {
-          "secondary": 0.06,
-          "tertiary": 0.08,
-          "undergraduate": 0.05,
-          "postgraduate": 0.04,
-          "doctorate": 0.06
-        },
+        "relationship_status": {},
+        "education": {},
         "generation": {},
-        "employment_status": {}
+        "employment_status": {
+          "full_time": 0.05,
+          "part_time": 0.08
+        }
       }
     }
   ]

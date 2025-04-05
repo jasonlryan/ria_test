@@ -40,7 +40,6 @@ const TARGET_HEADER = [
   "Question",
   "Response",
   "Total",
-  "Overall",
   "country_US",
   "country_United_Kingdom",
   "country_India",
@@ -121,87 +120,85 @@ const TARGET_HEADER = [
 // The indices are based on the actual positions in the CSV file
 const columnMappings = {
   Total: 1,
-  Overall: 2,
-  US: 3,
-  "United Kingdom": 4,
-  India: 5,
-  France: 6,
-  Germany: 7,
-  Japan: 8,
-  "United Arab Emirates": 9,
-  Brazil: 10,
-  "Saudi Arabia": 11,
-  Australia: 12,
-  "18-24": 13,
-  "25-34": 14,
-  "35-44": 15,
-  "45-54": 16,
-  "55-65": 17,
-  "65+": 18,
-  "Gen Z": 19,
-  Millennials: 20,
-  "Gen X": 21,
-  "Baby Boomers": 22,
-  Female: 23,
-  Male: 24,
-  "<10": 25,
-  "10-49": 26,
-  "50-99": 27,
-  "100-500": 28,
-  "501-1000": 29,
-  "1000+": 30,
-  "Full Time": 31,
-  "Part Time": 32,
-  Contract: 33,
-  Freelance: 34,
-  Automotive: 35,
-  "Business administration/support services": 36,
-  Technology: 37,
-  Construction: 38,
-  "Consumer Goods": 39,
-  Education: 40,
-  "Energy & Utilities e.g. oil, electricity, gas": 41,
-  "Financial Services": 42,
-  Government: 43,
-  Healthcare: 44,
-  "Manufacturing/ industrial": 45,
-  "Marketing services e.g. advertising, PR, design": 46,
-  "Not-for-profit": 47,
-  "Legal (in-house)": 48,
-  "Legal (agency)": 49,
-  "Life sciences": 50,
-  "Professional Services": 51,
-  "Real Estate & Property Services": 52,
-  Retail: 53,
-  Sales: 54,
-  Telecommunications: 55,
-  "Transport & storage (inc. postal)": 56,
-  "Travel, Hospitality and Leisure": 57,
-  "Wholesale & Distribution": 58,
-  Other: 59,
-  CEO: 60,
-  "Senior Executive": 61,
-  "Senior Leader": 62,
-  "Mid-Level Leader": 63,
-  "First Level Supervisor / Manager": 64,
-  "Individual Contributor": 65,
-  Single: 66,
-  "Co-habiting": 67,
-  Married: 68,
-  "Divorced / separated": 69,
-  Widowed: 70,
-  Secondary: 71,
-  Tertiary: 72,
-  "Professional Certifications": 73,
-  "Under-graduate degree": 74,
-  "Post-graduate / Master's degree": 75,
-  "Doctorate / Phd": 76,
+  US: 2,
+  "United Kingdom": 3,
+  India: 4,
+  France: 5,
+  Germany: 6,
+  Japan: 7,
+  "United Arab Emirates": 8,
+  Brazil: 9,
+  "Saudi Arabia": 10,
+  Australia: 11,
+  "18-24": 12,
+  "25-34": 13,
+  "35-44": 14,
+  "45-54": 15,
+  "55-65": 16,
+  "65+": 17,
+  "Gen Z": 18,
+  Millennials: 19,
+  "Gen X": 20,
+  "Baby Boomers": 21,
+  Female: 22,
+  Male: 23,
+  "<10": 24,
+  "10-49": 25,
+  "50-99": 26,
+  "100-500": 27,
+  "501-1000": 28,
+  "1000+": 29,
+  "Full Time": 30,
+  "Part Time": 31,
+  Contract: 32,
+  Freelance: 33,
+  Automotive: 34,
+  "Business administration/support services": 35,
+  Technology: 36,
+  Construction: 37,
+  "Consumer Goods": 38,
+  Education: 39,
+  "Energy & Utilities e.g. oil, electricity, gas": 40,
+  "Financial Services": 41,
+  Government: 42,
+  Healthcare: 43,
+  "Manufacturing/ industrial": 44,
+  "Marketing services e.g. advertising, PR, design": 45,
+  "Not-for-profit": 46,
+  "Legal (in-house)": 47,
+  "Legal (agency)": 48,
+  "Life sciences": 49,
+  "Professional Services": 50,
+  "Real Estate & Property Services": 51,
+  Retail: 52,
+  Sales: 53,
+  Telecommunications: 54,
+  "Transport & storage (inc. postal)": 55,
+  "Travel, Hospitality and Leisure": 56,
+  "Wholesale & Distribution": 57,
+  Other: 58,
+  CEO: 59,
+  "Senior Executive": 60,
+  "Senior Leader": 61,
+  "Mid-Level Leader": 62,
+  "First Level Supervisor / Manager": 63,
+  "Individual Contributor": 64,
+  Single: 65,
+  "Co-habiting": 66,
+  Married: 67,
+  "Divorced / separated": 68,
+  Widowed: 69,
+  Secondary: 70,
+  Tertiary: 71,
+  "Professional Certifications": 72,
+  "Under-graduate degree": 73,
+  "Post-graduate / Master's degree": 74,
+  "Doctorate / Phd": 75,
 };
 
 // Define the target mappings
 const targetMappings = {
   Total: "Total",
-  Overall: "Overall",
   US: "country_US",
   "United Kingdom": "country_United_Kingdom",
   India: "country_India",
@@ -300,6 +297,107 @@ function processStandardCSVFile(inputFile) {
   try {
     console.log(`Processing standard file: ${inputFile}`);
 
+    // Special case for Q11 - hardcoded approach
+    if (inputFile.includes("q11_global.csv")) {
+      console.log("Using hardcoded approach for Q11...");
+      let fileContent = fs.readFileSync(inputFile, { encoding: "utf-8" });
+
+      // Remove BOM if present
+      if (fileContent.charCodeAt(0) === 0xfeff) {
+        fileContent = fileContent.slice(1);
+      }
+
+      const rows = parse(fileContent, {
+        skip_empty_lines: false,
+        relax_column_count: true,
+        relax_quotes: true,
+        skip_records_with_error: true,
+        trim: true,
+      });
+
+      // Extract the question text
+      const questionText = cleanQuestionText(rows[0][0] || "");
+      console.log("Q11 Question text:", questionText);
+
+      // Get exactly the three response rows
+      const belowValueRow = rows[11];
+      const matchValueRow = rows[12];
+      const exceedValueRow = rows[13];
+
+      // Create the mapped rows manually
+      const mappedRows = [];
+
+      // Add the rows one by one to ensure all three are included
+      if (belowValueRow && belowValueRow[0]) {
+        const newRow = {};
+        TARGET_HEADER.forEach((field) => {
+          newRow[field] = "";
+        });
+
+        newRow["Question"] = questionText;
+        newRow["Response"] = belowValueRow[0].trim();
+
+        Object.keys(columnMappings).forEach((columnName) => {
+          const columnIndex = columnMappings[columnName];
+          const targetField = targetMappings[columnName];
+
+          if (targetField && belowValueRow[columnIndex]) {
+            newRow[targetField] = belowValueRow[columnIndex].trim();
+          }
+        });
+
+        mappedRows.push(newRow);
+      }
+
+      if (matchValueRow && matchValueRow[0]) {
+        const newRow = {};
+        TARGET_HEADER.forEach((field) => {
+          newRow[field] = "";
+        });
+
+        newRow["Question"] = questionText;
+        newRow["Response"] = matchValueRow[0].trim();
+
+        Object.keys(columnMappings).forEach((columnName) => {
+          const columnIndex = columnMappings[columnName];
+          const targetField = targetMappings[columnName];
+
+          if (targetField && matchValueRow[columnIndex]) {
+            newRow[targetField] = matchValueRow[columnIndex].trim();
+          }
+        });
+
+        mappedRows.push(newRow);
+      }
+
+      if (exceedValueRow && exceedValueRow[0]) {
+        const newRow = {};
+        TARGET_HEADER.forEach((field) => {
+          newRow[field] = "";
+        });
+
+        newRow["Question"] = questionText;
+        newRow["Response"] = exceedValueRow[0].trim();
+
+        Object.keys(columnMappings).forEach((columnName) => {
+          const columnIndex = columnMappings[columnName];
+          const targetField = targetMappings[columnName];
+
+          if (targetField && exceedValueRow[columnIndex]) {
+            newRow[targetField] = exceedValueRow[columnIndex].trim();
+          }
+        });
+
+        mappedRows.push(newRow);
+      }
+
+      console.log(
+        `Processed ${mappedRows.length} rows from Q11 (hardcoded approach)`
+      );
+      return mappedRows;
+    }
+
+    // Regular processing for other files
     // Read the input file
     let fileContent = fs.readFileSync(inputFile, { encoding: "utf-8" });
 
@@ -340,11 +438,19 @@ function processStandardCSVFile(inputFile) {
       // Skip the "Base: Total Respondents" row
       if (row[0].trim().startsWith("Base:")) return false;
 
-      // Skip any row that doesn't have a non-empty first column and percentage in second column
-      // Ensure it's an actual data row by checking if we have a value in column 1 that contains a percentage
-      if (!row[1] || !row[1].includes("%")) return false;
+      // Ensure first column has meaningful content (a response option)
+      // and the row contains data
+      if (!row[0].trim()) return false;
 
-      return true;
+      // Accept the row if it has any data in the demographic columns
+      // This is less restrictive than requiring percentage signs
+      for (let i = 1; i < Math.min(15, row.length); i++) {
+        if (row[i] && row[i].trim()) {
+          return true;
+        }
+      }
+
+      return false;
     });
 
     for (const row of dataRows) {
@@ -577,10 +683,30 @@ function processQ4Files(q4aFile, q4bFile) {
     const mappedRows = [];
 
     // Process data rows
-    // Based on inspection of the files, the actual data rows start at
-    // rows 13-16 (Full-time in office, Full-time remote, etc.)
+    // Find the Q4a data rows by examining the structure directly
+    // Start at row 13 which typically has the first response option
+    const headerRow = q4aRows[9]; // Get header row with column names
+    let columnIndicesQ4 = {};
 
-    // Process Q4a data - find the rows with actual data
+    // Validate headers and create a validated mapping to ensure correct data alignment
+    if (headerRow) {
+      // Build accurate column mapping for this specific file
+      headerRow.forEach((header, index) => {
+        if (header) {
+          const trimmedHeader = header.trim();
+          // Map each column header to its correct index
+          if (trimmedHeader === "US") columnIndicesQ4["US"] = index;
+          if (trimmedHeader === "United Kingdom")
+            columnIndicesQ4["United Kingdom"] = index;
+          if (trimmedHeader === "Brazil") columnIndicesQ4["Brazil"] = index;
+          // Map other countries similarly
+        }
+      });
+
+      console.log("Validated column indices for Q4:", columnIndicesQ4);
+    }
+
+    // Process Q4a data rows with validated column indices
     const q4aDataRows = q4aRows.filter((row) => {
       if (!row || row.length === 0 || !row[0]) return false;
       const rowText = row[0].trim();
@@ -592,7 +718,7 @@ function processQ4Files(q4aFile, q4bFile) {
       );
     });
 
-    // Process each actual data row
+    // Process each actual data row with validated column indices
     for (const row of q4aDataRows) {
       // Create a new row with keys from TARGET_HEADER
       const newRow = {};
@@ -607,20 +733,46 @@ function processQ4Files(q4aFile, q4bFile) {
       const responsePrefix = q4aSubQuestion ? `${q4aSubQuestion} - ` : "";
       newRow["Response"] = `${responsePrefix}${row[0].trim()}`;
 
-      // Map data from the row to the target fields using the column mappings
-      Object.keys(columnMappings).forEach((columnName) => {
-        const columnIndex = columnMappings[columnName];
-        const targetField = targetMappings[columnName];
+      // Use validated column indices if available, otherwise fall back to standard mapping
+      if (Object.keys(columnIndicesQ4).length > 0) {
+        // Map country data using validated indices
+        Object.keys(columnIndicesQ4).forEach((columnName) => {
+          const columnIndex = columnIndicesQ4[columnName];
+          const targetField = targetMappings[columnName];
 
-        if (targetField && row[columnIndex]) {
-          newRow[targetField] = row[columnIndex].trim();
-        }
-      });
+          if (targetField && row[columnIndex]) {
+            newRow[targetField] = row[columnIndex].trim();
+          }
+        });
+
+        // Map other demographic data using standard mapping
+        Object.keys(columnMappings).forEach((columnName) => {
+          // Skip country columns already handled
+          if (!columnIndicesQ4[columnName]) {
+            const columnIndex = columnMappings[columnName];
+            const targetField = targetMappings[columnName];
+
+            if (targetField && row[columnIndex]) {
+              newRow[targetField] = row[columnIndex].trim();
+            }
+          }
+        });
+      } else {
+        // Fall back to standard mapping if validation failed
+        Object.keys(columnMappings).forEach((columnName) => {
+          const columnIndex = columnMappings[columnName];
+          const targetField = targetMappings[columnName];
+
+          if (targetField && row[columnIndex]) {
+            newRow[targetField] = row[columnIndex].trim();
+          }
+        });
+      }
 
       mappedRows.push(newRow);
     }
 
-    // Process Q4b data - find the rows with actual data
+    // Similarly for Q4b with validated column indices
     const q4bDataRows = q4bRows.filter((row) => {
       if (!row || row.length === 0 || !row[0]) return false;
       const rowText = row[0].trim();
@@ -632,7 +784,24 @@ function processQ4Files(q4aFile, q4bFile) {
       );
     });
 
-    // Process each actual data row
+    // Similar column validation for Q4b
+    const headerRowQ4b = q4bRows[9];
+    let columnIndicesQ4b = {};
+
+    if (headerRowQ4b) {
+      headerRowQ4b.forEach((header, index) => {
+        if (header) {
+          const trimmedHeader = header.trim();
+          if (trimmedHeader === "US") columnIndicesQ4b["US"] = index;
+          if (trimmedHeader === "United Kingdom")
+            columnIndicesQ4b["United Kingdom"] = index;
+          if (trimmedHeader === "Brazil") columnIndicesQ4b["Brazil"] = index;
+          // Map other countries similarly
+        }
+      });
+    }
+
+    // Process each Q4b data row with validated column indices
     for (const row of q4bDataRows) {
       // Create a new row with keys from TARGET_HEADER
       const newRow = {};
@@ -647,15 +816,41 @@ function processQ4Files(q4aFile, q4bFile) {
       const responsePrefix = q4bSubQuestion ? `${q4bSubQuestion} - ` : "";
       newRow["Response"] = `${responsePrefix}${row[0].trim()}`;
 
-      // Map data from the row to the target fields using the column mappings
-      Object.keys(columnMappings).forEach((columnName) => {
-        const columnIndex = columnMappings[columnName];
-        const targetField = targetMappings[columnName];
+      // Use validated column indices if available
+      if (Object.keys(columnIndicesQ4b).length > 0) {
+        // Map country data using validated indices
+        Object.keys(columnIndicesQ4b).forEach((columnName) => {
+          const columnIndex = columnIndicesQ4b[columnName];
+          const targetField = targetMappings[columnName];
 
-        if (targetField && row[columnIndex]) {
-          newRow[targetField] = row[columnIndex].trim();
-        }
-      });
+          if (targetField && row[columnIndex]) {
+            newRow[targetField] = row[columnIndex].trim();
+          }
+        });
+
+        // Map other demographic data using standard mapping
+        Object.keys(columnMappings).forEach((columnName) => {
+          // Skip country columns already handled
+          if (!columnIndicesQ4b[columnName]) {
+            const columnIndex = columnMappings[columnName];
+            const targetField = targetMappings[columnName];
+
+            if (targetField && row[columnIndex]) {
+              newRow[targetField] = row[columnIndex].trim();
+            }
+          }
+        });
+      } else {
+        // Fall back to standard mapping
+        Object.keys(columnMappings).forEach((columnName) => {
+          const columnIndex = columnMappings[columnName];
+          const targetField = targetMappings[columnName];
+
+          if (targetField && row[columnIndex]) {
+            newRow[targetField] = row[columnIndex].trim();
+          }
+        });
+      }
 
       mappedRows.push(newRow);
     }

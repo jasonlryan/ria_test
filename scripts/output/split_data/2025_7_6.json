@@ -45,7 +45,6 @@
         "generation",
         "employment_status"
       ],
-      "primaryMetric": "country_overall",
       "valueFormat": "decimal",
       "sortOrder": "descending"
     }
@@ -56,98 +55,98 @@
       "response": "I am worried about how to make my resume/ CV stand out in the competitive job market",
       "data": {
         "region": {
-          "australia": 62,
-          "india": 43,
-          "brazil": 63,
-          "united_kingdom": 65,
-          "united_states": 50,
-          "saudi_arabia": 56,
-          "united_arab_emirates": 75,
-          "france": 42,
-          "germany": 38,
-          "japan": 67,
-          "country_overall": 56.1
+          "united_states": 53,
+          "united_kingdom": 50,
+          "india": 65,
+          "france": 43,
+          "germany": 42,
+          "japan": 38,
+          "united_arab_emirates": 67,
+          "brazil": 75,
+          "saudi_arabia": 63,
+          "australia": 56
         },
         "age": {
-          "18-24": 60,
-          "25-34": 55,
-          "35-44": 49,
-          "45-54": 38,
-          "55-65": 32,
-          "65+": 62
+          "18-24": 62,
+          "25-34": 60,
+          "35-44": 55,
+          "45-54": 49,
+          "55-65": 38,
+          "65+": 32
         },
         "gender": {
-          "male": 46,
+          "male": 53,
           "female": 53
         },
         "org_size": {
-          "fewer_than_10": 50,
-          "10_to_49": 53,
-          "50_to_99": 56,
+          "fewer_than_10": 46,
+          "10_to_49": 50,
+          "50_to_99": 53,
           "100_to_499": 56,
-          "500_to_999": 51,
-          "1000_or_more": 53
+          "500_to_999": 56,
+          "1000_or_more": 51
         },
         "sector": {
-          "automotive": 60,
-          "business_administration": 63,
-          "technology": 53,
-          "construction": 61,
-          "consumer_goods": 52,
-          "education": 53,
-          "energy_utilities": 57,
-          "financial_services": 48,
-          "government": 47,
-          "healthcare": 52,
-          "manufacturing_industrial": 62,
-          "marketing_services": 53,
-          "legal_in-house": 53,
-          "legal_agency": 65,
-          "life_sciences": 47,
-          "professional_services": 49,
-          "real_estate": 53,
-          "retail": 59,
-          "sales": 56,
-          "telecommunications": 40,
-          "transport_storage": 52,
-          "travel_hospitality_leisure": 45,
-          "wholesale_distribution": 48,
-          "other": 56
+          "automotive": 56,
+          "business_administration": 60,
+          "technology": 63,
+          "construction": 53,
+          "consumer_goods": 61,
+          "education": 52,
+          "energy_utilities": 53,
+          "financial_services": 57,
+          "government": 48,
+          "healthcare": 47,
+          "manufacturing_industrial": 52,
+          "marketing_services": 62,
+          "legal_in-house": 29,
+          "legal_agency": 53,
+          "life_sciences": 65,
+          "professional_services": 47,
+          "real_estate": 49,
+          "retail": 53,
+          "sales": 59,
+          "telecommunications": 56,
+          "transport_storage": 40,
+          "travel_hospitality_leisure": 52,
+          "wholesale_distribution": 45,
+          "other": 48
         },
         "job_level": {
-          "ceo": 61,
-          "senior_executive": 58,
-          "senior_leader": 54,
-          "mid_level_leader": 55,
-          "first_level_supervisor": 46,
-          "individual_contributor": 53
+          "ceo": 56,
+          "senior_executive": 61,
+          "senior_leader": 58,
+          "mid_level_leader": 54,
+          "first_level_supervisor": 55,
+          "individual_contributor": 46
         },
         "relationship_status": {
-          "single": 47,
-          "cohabiting": 55,
-          "married": 42,
-          "divorced_separated": 38,
-          "widowed": 52
+          "single": 53,
+          "cohabiting": 47,
+          "married": 55,
+          "divorced_separated": 42,
+          "widowed": 38
         },
         "education": {
-          "secondary": 51,
-          "tertiary": 45,
-          "professional_certifications": 56,
+          "secondary": 52,
+          "tertiary": 51,
+          "professional_certifications": 45,
           "undergraduate": 56,
-          "postgraduate": 51
+          "postgraduate": 56,
+          "doctorate": 51
         },
         "generation": {
-          "gen_z": 57,
-          "millennials": 47,
-          "gen_x": 34,
-          "baby_boomers": 53,
-          "65_plus": 62
+          "gen_z": 62,
+          "millennials": 57,
+          "gen_x": 47,
+          "baby_boomers": 34,
+          "65_plus": 32
         },
         "employment_status": {
-          "full_time": 51,
-          "part_time": 53,
-          "contract": 51,
-          "freelance": 56
+          "full_time": 53,
+          "part_time": 51,
+          "contract": 53,
+          "freelance": 51
         }
       }
     }

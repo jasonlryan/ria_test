@@ -24,4 +24,7 @@ node_modules
 *.backup
 *.csv
 
+# Explicitly include important JS files
+!2025_DATA_PROCESSING/generate_consolidated_csv.js
+
 .DS_Store

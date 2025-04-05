@@ -1,17 +1,14 @@
 {
   "metadata": {
-    "topicId": "Skills_Utilization",
-    "theme": "Skills & Development",
+    "topicId": "Imposter_Syndrome",
+    "theme": "Perceived Barriers",
     "questionId": "Q8_10",
     "year": 2025,
     "keywords": [
-      "skills usage",
-      "talent utilization",
-      "capability application",
-      "competency use",
-      "Skills_Utilization"
+      "imposter syndrome",
+      "Imposter_Syndrome"
     ],
-    "canonicalQuestion": "How well are your skills utilized in your current role?",
+    "canonicalQuestion": "How prevalent is imposter syndrome among employees?",
     "subQuestion": "I struggle with imposter syndrome",
     "comparable": true,
     "userMessage": "Data based on comparable markets only.",
@@ -40,7 +37,6 @@
         "generation",
         "employment_status"
       ],
-      "primaryMetric": "country_overall",
       "valueFormat": "decimal",
       "sortOrder": "descending"
     }
@@ -51,98 +47,98 @@
       "response": "I struggle with imposter syndrome",
       "data": {
         "region": {
-          "australia": 43,
-          "india": 32,
-          "brazil": 26,
-          "united_kingdom": 46,
-          "united_states": 31,
-          "saudi_arabia": 39,
-          "united_arab_emirates": 30,
-          "france": 25,
-          "germany": 14,
-          "japan": 29,
-          "country_overall": 31.5
+          "united_states": 35,
+          "united_kingdom": 31,
+          "india": 46,
+          "france": 32,
+          "germany": 25,
+          "japan": 14,
+          "united_arab_emirates": 29,
+          "brazil": 30,
+          "saudi_arabia": 26,
+          "australia": 39
         },
         "age": {
-          "18-24": 39,
-          "25-34": 34,
-          "35-44": 30,
-          "45-54": 17,
-          "55-65": 13,
-          "65+": 42
+          "18-24": 43,
+          "25-34": 39,
+          "35-44": 34,
+          "45-54": 30,
+          "55-65": 17,
+          "65+": 13
         },
         "gender": {
-          "male": 27,
-          "female": 33
+          "male": 33,
+          "female": 31
         },
         "org_size": {
           "fewer_than_10": 27,
-          "10_to_49": 39,
-          "50_to_99": 38,
-          "100_to_499": 37,
-          "500_to_999": 30,
-          "1000_or_more": 33
+          "10_to_49": 27,
+          "50_to_99": 39,
+          "100_to_499": 38,
+          "500_to_999": 37,
+          "1000_or_more": 30
         },
         "sector": {
-          "automotive": 31,
-          "business_administration": 44,
-          "technology": 31,
-          "construction": 36,
-          "consumer_goods": 32,
-          "education": 28,
-          "energy_utilities": 36,
-          "financial_services": 28,
-          "government": 30,
-          "healthcare": 26,
-          "manufacturing_industrial": 47,
-          "marketing_services": 31,
-          "legal_in-house": 37,
-          "legal_agency": 39,
-          "life_sciences": 31,
-          "professional_services": 22,
-          "real_estate": 28,
-          "retail": 32,
-          "sales": 37,
-          "telecommunications": 21,
-          "transport_storage": 31,
-          "travel_hospitality_leisure": 27,
-          "wholesale_distribution": 26,
-          "other": 40
+          "automotive": 40,
+          "business_administration": 31,
+          "technology": 44,
+          "construction": 31,
+          "consumer_goods": 36,
+          "education": 32,
+          "energy_utilities": 28,
+          "financial_services": 36,
+          "government": 28,
+          "healthcare": 30,
+          "manufacturing_industrial": 26,
+          "marketing_services": 47,
+          "legal_in-house": 32,
+          "legal_agency": 37,
+          "life_sciences": 39,
+          "professional_services": 31,
+          "real_estate": 22,
+          "retail": 28,
+          "sales": 32,
+          "telecommunications": 37,
+          "transport_storage": 21,
+          "travel_hospitality_leisure": 31,
+          "wholesale_distribution": 27,
+          "other": 26
         },
         "job_level": {
-          "ceo": 43,
-          "senior_executive": 38,
-          "senior_leader": 34,
-          "mid_level_leader": 33,
-          "first_level_supervisor": 24,
-          "individual_contributor": 33
+          "ceo": 40,
+          "senior_executive": 43,
+          "senior_leader": 38,
+          "mid_level_leader": 34,
+          "first_level_supervisor": 33,
+          "individual_contributor": 24
         },
         "relationship_status": {
-          "single": 30,
-          "cohabiting": 34,
-          "married": 19,
-          "divorced_separated": 18,
-          "widowed": 28
+          "single": 33,
+          "cohabiting": 30,
+          "married": 34,
+          "divorced_separated": 19,
+          "widowed": 18
         },
         "education": {
           "secondary": 28,
-          "tertiary": 25,
-          "professional_certifications": 32,
-          "undergraduate": 40,
-          "postgraduate": 38
+          "tertiary": 28,
+          "professional_certifications": 25,
+          "undergraduate": 32,
+          "postgraduate": 40,
+          "doctorate": 38
         },
         "generation": {
-          "gen_z": 36,
-          "millennials": 27,
-          "gen_x": 14,
-          "baby_boomers": 31,
-          "65_plus": 42
+          "gen_z": 42,
+          "millennials": 36,
+          "gen_x": 27,
+          "baby_boomers": 14,
+          "65_plus": 13
         },
         "employment_status": {
-          "full_time": 28,
-          "part_time": 35,
-          "contract": 32,
-          "freelance": 40
+          "full_time": 33,
+          "part_time": 28,
+          "contract": 35,
+          "freelance": 32
         }
       }
     }

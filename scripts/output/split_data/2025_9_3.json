@@ -34,7 +34,6 @@
         "generation",
         "employment_status"
       ],
-      "primaryMetric": "country_overall",
       "valueFormat": "decimal",
       "sortOrder": "descending"
     }
@@ -45,98 +44,98 @@
       "response": "I feel that my ideas and opinions will be welcomed by company leaders",
       "data": {
         "region": {
-          "australia": 59,
-          "india": 52,
-          "brazil": 76,
-          "united_kingdom": 81,
-          "united_states": 57,
-          "saudi_arabia": 59,
-          "united_arab_emirates": 73,
-          "france": 53,
-          "germany": 35,
-          "japan": 72,
-          "country_overall": 61.7
+          "united_states": 67,
+          "united_kingdom": 57,
+          "india": 81,
+          "france": 52,
+          "germany": 53,
+          "japan": 35,
+          "united_arab_emirates": 72,
+          "brazil": 73,
+          "saudi_arabia": 76,
+          "australia": 59
         },
         "age": {
-          "18-24": 67,
-          "25-34": 66,
-          "35-44": 56,
-          "45-54": 50,
-          "55-65": 52,
-          "65+": 62
+          "18-24": 59,
+          "25-34": 67,
+          "35-44": 66,
+          "45-54": 56,
+          "55-65": 50,
+          "65+": 52
         },
         "gender": {
-          "male": 56,
-          "female": 63
+          "male": 63,
+          "female": 60
         },
         "org_size": {
-          "fewer_than_10": 58,
-          "10_to_49": 59,
-          "50_to_99": 63,
-          "100_to_499": 66,
-          "500_to_999": 58,
-          "1000_or_more": 63
+          "fewer_than_10": 56,
+          "10_to_49": 58,
+          "50_to_99": 59,
+          "100_to_499": 63,
+          "500_to_999": 66,
+          "1000_or_more": 58
         },
         "sector": {
-          "automotive": 66,
-          "business_administration": 80,
-          "technology": 68,
-          "construction": 63,
-          "consumer_goods": 62,
-          "education": 60,
-          "energy_utilities": 66,
-          "financial_services": 53,
+          "automotive": 62,
+          "business_administration": 66,
+          "technology": 80,
+          "construction": 68,
+          "consumer_goods": 63,
+          "education": 62,
+          "energy_utilities": 60,
+          "financial_services": 66,
           "government": 53,
-          "healthcare": 61,
-          "manufacturing_industrial": 65,
-          "marketing_services": 55,
-          "legal_in-house": 58,
-          "legal_agency": 65,
-          "life_sciences": 59,
-          "professional_services": 61,
-          "real_estate": 52,
-          "retail": 64,
-          "sales": 66,
-          "telecommunications": 56,
-          "transport_storage": 52,
-          "travel_hospitality_leisure": 50,
-          "wholesale_distribution": 54,
-          "other": 75
+          "healthcare": 53,
+          "manufacturing_industrial": 61,
+          "marketing_services": 65,
+          "legal_in-house": 55,
+          "legal_agency": 58,
+          "life_sciences": 65,
+          "professional_services": 59,
+          "real_estate": 61,
+          "retail": 52,
+          "sales": 64,
+          "telecommunications": 66,
+          "transport_storage": 56,
+          "travel_hospitality_leisure": 52,
+          "wholesale_distribution": 50,
+          "other": 54
         },
         "job_level": {
-          "ceo": 79,
-          "senior_executive": 74,
-          "senior_leader": 63,
+          "ceo": 75,
+          "senior_executive": 79,
+          "senior_leader": 74,
           "mid_level_leader": 63,
-          "first_level_supervisor": 46,
-          "individual_contributor": 54
+          "first_level_supervisor": 63,
+          "individual_contributor": 46
         },
         "relationship_status": {
           "single": 54,
-          "cohabiting": 68,
-          "married": 48,
-          "divorced_separated": 63,
-          "widowed": 54
+          "cohabiting": 54,
+          "married": 68,
+          "divorced_separated": 48,
+          "widowed": 63
         },
         "education": {
-          "secondary": 52,
-          "tertiary": 53,
-          "professional_certifications": 62,
-          "undergraduate": 72,
-          "postgraduate": 71
+          "secondary": 54,
+          "tertiary": 52,
+          "professional_certifications": 53,
+          "undergraduate": 62,
+          "postgraduate": 72,
+          "doctorate": 71
         },
         "generation": {
-          "gen_z": 67,
-          "millennials": 55,
-          "gen_x": 49,
-          "baby_boomers": 60,
-          "65_plus": 62
+          "gen_z": 62,
+          "millennials": 67,
+          "gen_x": 55,
+          "baby_boomers": 49,
+          "65_plus": 52
         },
         "employment_status": {
-          "full_time": 53,
-          "part_time": 55,
+          "full_time": 63,
+          "part_time": 53,
           "contract": 55,
-          "freelance": 62
+          "freelance": 55
         }
       }
     }

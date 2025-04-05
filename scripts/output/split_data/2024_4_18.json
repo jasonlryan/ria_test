@@ -1,17 +1,14 @@
 {
   "metadata": {
-    "topicId": "Skills_Utilization",
-    "theme": "Skills & Development",
+    "topicId": "Imposter_Syndrome",
+    "theme": "Perceived Barriers",
     "questionId": "Q4_18",
     "year": 2024,
     "keywords": [
-      "skills usage",
-      "talent utilization",
-      "capability application",
-      "competency use",
-      "Skills_Utilization"
+      "imposter syndrome",
+      "Imposter_Syndrome"
     ],
-    "canonicalQuestion": "How well are your skills utilized in your current role?",
+    "canonicalQuestion": "How prevalent is imposter syndrome among employees?",
     "subQuestion": "Agree",
     "comparable": true,
     "userMessage": "Data based on comparable markets only.",
@@ -40,7 +37,6 @@
         "generation",
         "employment_status"
       ],
-      "primaryMetric": "country_overall",
       "valueFormat": "decimal",
       "sortOrder": "descending"
     }
@@ -51,13 +47,9 @@
       "response": "Agree",
       "data": {
         "region": {
-          "united_kingdom": 0.38,
-          "united_states": 0.54,
-          "australia": 0.38,
           "india": 0.61,
           "brazil": 0.38,
-          "saudi_arabia_uae": 0.46,
-          "country_overall": 0.46
+          "australia": 0.38
         },
         "age": {
           "18-24": 0.51,
@@ -82,8 +74,6 @@
         "sector": {
           "agriculture_forestry_fishing": 0.66,
           "automotive": 0.52,
-          "business_administration_support_services": 0.47,
-          "clean_technology": 0.62,
           "technology": 0.57,
           "construction": 0.55,
           "education": 0.45,
@@ -91,15 +81,10 @@
           "financial_services": 0.49,
           "food_drink": 0.49,
           "government": 0.36,
-          "healthcare_life_sciences": 0.41,
-          "leisure_sport_entertainment_recreation": 0.37,
           "manufacturing_industrial": 0.45,
           "marketing_services": 0.49,
-          "media_entertainment": 0.42,
           "not_for_profit": 0.5,
-          "real_estate_property_services": 0.33,
           "retail": 0.41,
-          "sports": 0.53,
           "telecommunications": 0.47,
           "transport_storage": 0.41,
           "travel_hospitality_leisure": 0.31,
@@ -107,41 +92,28 @@
           "other": 0.39
         },
         "job_level": {
+          "ceo": 0.58,
           "senior_executive": 0.58,
           "senior_leader": 0.49,
-          "mid_level_leader": 0.45,
           "first_level_supervisor": 0.46,
           "individual_contributor": 0.32
         },
-        "relationship_status": {
-          "single": 0.45,
-          "cohabiting": 0.36,
-          "married": 0.5,
-          "divorced_separated": 0.31,
-          "widowed": 0.38
-        },
-        "education": {
-          "secondary": 0.42,
-          "tertiary": 0.37,
-          "undergraduate": 0.42,
-          "postgraduate": 0.54,
-          "doctorate": 0.56
-        },
+        "relationship_status": {},
+        "education": {},
         "generation": {},
-        "employment_status": {}
+        "employment_status": {
+          "full_time": 0.49,
+          "part_time": 0.39
+        }
       }
     },
     {
       "response": "Disagree",
       "data": {
         "region": {
-          "united_kingdom": 0.38,
-          "united_states": 0.27,
-          "australia": 0.35,
           "india": 0.19,
           "brazil": 0.4,
-          "saudi_arabia_uae": 0.33,
-          "country_overall": 0.32
+          "australia": 0.35
         },
         "age": {
           "18-24": 0.24,
@@ -166,8 +138,6 @@
         "sector": {
           "agriculture_forestry_fishing": 0.16,
           "automotive": 0.28,
-          "business_administration_support_services": 0.32,
-          "clean_technology": 0.17,
           "technology": 0.23,
           "construction": 0.27,
           "education": 0.33,
@@ -175,15 +145,10 @@
           "financial_services": 0.31,
           "food_drink": 0.26,
           "government": 0.39,
-          "healthcare_life_sciences": 0.38,
-          "leisure_sport_entertainment_recreation": 0.39,
           "manufacturing_industrial": 0.34,
           "marketing_services": 0.24,
-          "media_entertainment": 0.4,
           "not_for_profit": 0.33,
-          "real_estate_property_services": 0.4,
           "retail": 0.33,
-          "sports": 0.18,
           "telecommunications": 0.31,
           "transport_storage": 0.34,
           "travel_hospitality_leisure": 0.47,
@@ -191,28 +156,19 @@
           "other": 0.35
         },
         "job_level": {
+          "ceo": 0.24,
           "senior_executive": 0.25,
           "senior_leader": 0.29,
-          "mid_level_leader": 0.31,
           "first_level_supervisor": 0.31,
           "individual_contributor": 0.4
         },
-        "relationship_status": {
-          "single": 0.29,
-          "cohabiting": 0.37,
-          "married": 0.3,
-          "divorced_separated": 0.44,
-          "widowed": 0.42
-        },
-        "education": {
-          "secondary": 0.33,
-          "tertiary": 0.38,
-          "undergraduate": 0.35,
-          "postgraduate": 0.26,
-          "doctorate": 0.24
-        },
+        "relationship_status": {},
+        "education": {},
         "generation": {},
-        "employment_status": {}
+        "employment_status": {
+          "full_time": 0.31,
+          "part_time": 0.33
+        }
       }
     }
   ]

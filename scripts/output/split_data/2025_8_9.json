@@ -10,11 +10,11 @@
       "inclusion efforts",
       "workplace diversity",
       "DEI commitment",
-      "corporate social responsibility",
-      "sustainability goals",
       "DEI",
       "diversity",
-      "equity"
+      "equity",
+      "inclusion",
+      "inclusive culture"
     ],
     "canonicalQuestion": "How committed is your organization to diversity, equity, and inclusion?",
     "subQuestion": "I share negative reviews about my employer on social media or review sites (such as Glassdoor)",
@@ -45,7 +45,6 @@
         "generation",
         "employment_status"
       ],
-      "primaryMetric": "country_overall",
       "valueFormat": "decimal",
       "sortOrder": "descending"
     }
@@ -56,98 +55,98 @@
       "response": "I share negative reviews about my employer on social media or review sites (such as Glassdoor)",
       "data": {
         "region": {
-          "australia": 36,
-          "india": 23,
-          "brazil": 38,
-          "united_kingdom": 46,
-          "united_states": 20,
-          "saudi_arabia": 25,
-          "united_arab_emirates": 27,
-          "france": 27,
-          "germany": 18,
-          "japan": 34,
-          "country_overall": 29.4
+          "united_states": 32,
+          "united_kingdom": 20,
+          "india": 46,
+          "france": 23,
+          "germany": 27,
+          "japan": 18,
+          "united_arab_emirates": 34,
+          "brazil": 27,
+          "saudi_arabia": 38,
+          "australia": 25
         },
         "age": {
-          "18-24": 35,
-          "25-34": 31,
-          "35-44": 24,
-          "45-54": 15,
-          "55-65": 13,
-          "65+": 37
+          "18-24": 36,
+          "25-34": 35,
+          "35-44": 31,
+          "45-54": 24,
+          "55-65": 15,
+          "65+": 13
         },
         "gender": {
-          "male": 25,
-          "female": 33
+          "male": 33,
+          "female": 23
         },
         "org_size": {
-          "fewer_than_10": 26,
-          "10_to_49": 36,
-          "50_to_99": 33,
-          "100_to_499": 35,
-          "500_to_999": 24,
-          "1000_or_more": 30
+          "fewer_than_10": 25,
+          "10_to_49": 26,
+          "50_to_99": 36,
+          "100_to_499": 33,
+          "500_to_999": 35,
+          "1000_or_more": 24
         },
         "sector": {
-          "automotive": 32,
-          "business_administration": 43,
-          "technology": 31,
-          "construction": 29,
-          "consumer_goods": 23,
+          "automotive": 37,
+          "business_administration": 32,
+          "technology": 43,
+          "construction": 31,
+          "consumer_goods": 29,
           "education": 23,
-          "energy_utilities": 34,
-          "financial_services": 19,
-          "government": 20,
-          "healthcare": 29,
-          "manufacturing_industrial": 48,
-          "marketing_services": 15,
+          "energy_utilities": 23,
+          "financial_services": 34,
+          "government": 19,
+          "healthcare": 20,
+          "manufacturing_industrial": 29,
+          "marketing_services": 48,
           "legal_in-house": 19,
-          "legal_agency": 22,
-          "life_sciences": 26,
-          "professional_services": 27,
-          "real_estate": 23,
-          "retail": 35,
-          "sales": 36,
-          "telecommunications": 22,
+          "legal_agency": 19,
+          "life_sciences": 22,
+          "professional_services": 26,
+          "real_estate": 27,
+          "retail": 23,
+          "sales": 35,
+          "telecommunications": 36,
           "transport_storage": 22,
-          "travel_hospitality_leisure": 20,
-          "wholesale_distribution": 23,
-          "other": 39
+          "travel_hospitality_leisure": 22,
+          "wholesale_distribution": 20,
+          "other": 23
         },
         "job_level": {
-          "ceo": 44,
-          "senior_executive": 39,
-          "senior_leader": 30,
+          "ceo": 39,
+          "senior_executive": 44,
+          "senior_leader": 39,
           "mid_level_leader": 30,
-          "first_level_supervisor": 16,
-          "individual_contributor": 28
+          "first_level_supervisor": 30,
+          "individual_contributor": 16
         },
         "relationship_status": {
-          "single": 21,
-          "cohabiting": 32,
-          "married": 15,
-          "divorced_separated": 17,
-          "widowed": 24
+          "single": 28,
+          "cohabiting": 21,
+          "married": 32,
+          "divorced_separated": 15,
+          "widowed": 17
         },
         "education": {
-          "secondary": 23,
+          "secondary": 24,
           "tertiary": 23,
-          "professional_certifications": 28,
-          "undergraduate": 36,
-          "postgraduate": 31
+          "professional_certifications": 23,
+          "undergraduate": 28,
+          "postgraduate": 36,
+          "doctorate": 31
         },
         "generation": {
-          "gen_z": 32,
-          "millennials": 23,
-          "gen_x": 12,
-          "baby_boomers": 23,
-          "65_plus": 37
+          "gen_z": 37,
+          "millennials": 32,
+          "gen_x": 23,
+          "baby_boomers": 12,
+          "65_plus": 13
         },
         "employment_status": {
-          "full_time": 22,
-          "part_time": 33,
-          "contract": 24,
-          "freelance": 37
+          "full_time": 30,
+          "part_time": 22,
+          "contract": 33,
+          "freelance": 24
         }
       }
     }

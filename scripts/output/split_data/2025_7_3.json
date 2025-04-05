@@ -34,7 +34,6 @@
         "generation",
         "employment_status"
       ],
-      "primaryMetric": "country_overall",
       "valueFormat": "decimal",
       "sortOrder": "descending"
     }
@@ -45,98 +44,98 @@
       "response": "I am concerned that protectionism policies around immigration are affecting my ability to find work",
       "data": {
         "region": {
-          "australia": 49,
-          "india": 35,
-          "brazil": 51,
-          "united_kingdom": 68,
-          "united_states": 33,
-          "saudi_arabia": 35,
-          "united_arab_emirates": 42,
-          "france": 36,
-          "germany": 25,
-          "japan": 55,
-          "country_overall": 42.9
+          "united_states": 42,
+          "united_kingdom": 33,
+          "india": 68,
+          "france": 35,
+          "germany": 36,
+          "japan": 25,
+          "united_arab_emirates": 55,
+          "brazil": 42,
+          "saudi_arabia": 51,
+          "australia": 35
         },
         "age": {
-          "18-24": 48,
-          "25-34": 45,
-          "35-44": 36,
-          "45-54": 25,
+          "18-24": 49,
+          "25-34": 48,
+          "35-44": 45,
+          "45-54": 36,
           "55-65": 25,
-          "65+": 50
+          "65+": 25
         },
         "gender": {
-          "male": 35,
-          "female": 46
+          "male": 46,
+          "female": 36
         },
         "org_size": {
-          "fewer_than_10": 39,
-          "10_to_49": 47,
+          "fewer_than_10": 35,
+          "10_to_49": 39,
           "50_to_99": 47,
-          "100_to_499": 48,
-          "500_to_999": 36,
-          "1000_or_more": 43
+          "100_to_499": 47,
+          "500_to_999": 48,
+          "1000_or_more": 36
         },
         "sector": {
-          "automotive": 44,
-          "business_administration": 59,
-          "technology": 44,
+          "automotive": 50,
+          "business_administration": 44,
+          "technology": 59,
           "construction": 44,
-          "consumer_goods": 36,
-          "education": 39,
-          "energy_utilities": 49,
-          "financial_services": 27,
-          "government": 33,
-          "healthcare": 41,
-          "manufacturing_industrial": 56,
-          "marketing_services": 21,
-          "legal_in-house": 21,
-          "legal_agency": 49,
-          "life_sciences": 36,
-          "professional_services": 41,
-          "real_estate": 35,
-          "retail": 46,
-          "sales": 48,
-          "telecommunications": 34,
-          "transport_storage": 36,
-          "travel_hospitality_leisure": 38,
-          "wholesale_distribution": 35,
-          "other": 53
+          "consumer_goods": 44,
+          "education": 36,
+          "energy_utilities": 39,
+          "financial_services": 49,
+          "government": 27,
+          "healthcare": 33,
+          "manufacturing_industrial": 41,
+          "marketing_services": 56,
+          "legal_in-house": 26,
+          "legal_agency": 21,
+          "life_sciences": 49,
+          "professional_services": 36,
+          "real_estate": 41,
+          "retail": 35,
+          "sales": 46,
+          "telecommunications": 48,
+          "transport_storage": 34,
+          "travel_hospitality_leisure": 36,
+          "wholesale_distribution": 38,
+          "other": 35
         },
         "job_level": {
-          "ceo": 59,
-          "senior_executive": 52,
-          "senior_leader": 44,
-          "mid_level_leader": 43,
-          "first_level_supervisor": 27,
-          "individual_contributor": 40
+          "ceo": 53,
+          "senior_executive": 59,
+          "senior_leader": 52,
+          "mid_level_leader": 44,
+          "first_level_supervisor": 43,
+          "individual_contributor": 27
         },
         "relationship_status": {
-          "single": 31,
-          "cohabiting": 46,
-          "married": 25,
-          "divorced_separated": 26,
-          "widowed": 35
+          "single": 40,
+          "cohabiting": 31,
+          "married": 46,
+          "divorced_separated": 25,
+          "widowed": 26
         },
         "education": {
-          "secondary": 34,
+          "secondary": 35,
           "tertiary": 34,
-          "professional_certifications": 42,
-          "undergraduate": 50,
-          "postgraduate": 45
+          "professional_certifications": 34,
+          "undergraduate": 42,
+          "postgraduate": 50,
+          "doctorate": 45
         },
         "generation": {
-          "gen_z": 46,
-          "millennials": 34,
-          "gen_x": 23,
-          "baby_boomers": 36,
-          "65_plus": 50
+          "gen_z": 50,
+          "millennials": 46,
+          "gen_x": 34,
+          "baby_boomers": 23,
+          "65_plus": 25
         },
         "employment_status": {
-          "full_time": 34,
-          "part_time": 39,
-          "contract": 37,
-          "freelance": 50
+          "full_time": 43,
+          "part_time": 34,
+          "contract": 39,
+          "freelance": 37
         }
       }
     }
