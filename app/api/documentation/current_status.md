@@ -77,7 +77,22 @@
 - No dedicated handling for topic shift queries
 - Missing machine learning classification model
 
-## 6. Overall Assessment
+## 6. API Implementation
+
+| Specification Requirement | Current Implementation Status | Notes                                                                   |
+| ------------------------- | ----------------------------- | ----------------------------------------------------------------------- |
+| Consistent API Structure  | ⚠️ Partially Implemented      | Core endpoints exist but with code duplication                          |
+| Modular API Functions     | ⚠️ Partially Implemented      | Some shared utilities but duplicated logic across routes                |
+| Clear API Documentation   | ✅ Fully Implemented          | API documentation exists but needs updating for duplicate functionality |
+| API Error Handling        | ✅ Fully Implemented          | Consistent error format across endpoints                                |
+
+**Key Gaps:**
+
+- Code duplication between `chat-assistant/route.ts` and `openai/route.ts`
+- Lack of centralized utilities for OpenAI client operations
+- No clear designation of primary vs. deprecated endpoints
+
+## 7. Overall Assessment
 
 **Strengths:**
 
@@ -107,6 +122,10 @@
    - No size limits or LRU eviction
    - Missing cache invalidation strategies
    - Limited partial cache usage
+5. API implementation inefficiencies
+   - Significant code duplication between API routes
+   - Lack of shared utilities for common OpenAI operations
+   - No clear API consolidation strategy
 
 **Implementation Priority:**
 
@@ -115,5 +134,6 @@
 3. Add cache size management and invalidation
 4. Implement topic shift detection
 5. Add thread lifecycle management
+6. Refactor duplicated API logic between `chat-assistant/route.ts` and `openai/route.ts`
 
-The system has a strong foundation but requires additional work on the intelligence layer to fully meet the specification.
+The system has a strong foundation but requires additional work on the intelligence layer to fully meet the specification. API consolidation is also needed to reduce maintenance burden and improve code quality.

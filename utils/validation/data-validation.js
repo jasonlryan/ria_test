@@ -156,6 +156,31 @@ export function generateValidationSummary(validationResult) {
  * @returns {boolean} - Whether data coverage is sufficient
  */
 export function checkDataCoverage(dataFiles, query) {
+  // Handle content transformation requests as valid operations
+  // that should pass validation as long as there's any data
+  const contentTransformKeywords = [
+    "write an article",
+    "write a summary",
+    "create a report",
+    "generate a",
+    "summarize the",
+    "provide an overview",
+  ];
+
+  // If this is a content transformation request, only require some data
+  const isContentTransformation = contentTransformKeywords.some((keyword) =>
+    query.toLowerCase().includes(keyword)
+  );
+
+  if (isContentTransformation) {
+    // For content transformations, just ensure we have at least some data
+    const hasAnyData =
+      dataFiles && dataFiles.files && dataFiles.files.length > 0;
+    return hasAnyData;
+  }
+
+  // Standard query validation continues below
+
   // Count total countries covered in the data
   const countriesInData = new Set();
   for (const file of dataFiles.files) {

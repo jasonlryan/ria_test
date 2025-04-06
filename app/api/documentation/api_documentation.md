@@ -87,6 +87,27 @@ POST /api/query
 
 **Response**: Stream of response chunks.
 
+### 4. `/api/openai/route` - OpenAI API Access
+
+**Purpose**: Provides direct access to OpenAI API functionality.
+
+**Method**: POST
+
+**Request Body**:
+
+```json
+{
+  "action": "string", // The action to perform (createThread, createMessage, etc.)
+  "threadId": "string", // Optional: Thread ID for operations that require it
+  "content": "string" // Optional: Content for message creation
+  // Other parameters depending on the action
+}
+```
+
+**Response**: Varies based on the action.
+
+**Note**: This endpoint contains significant code duplication with `/api/chat-assistant/route` and is a candidate for refactoring.
+
 ## Data Retrieval Endpoints
 
 ### 1. `/api/retrieval` - File Content Retrieval
@@ -236,6 +257,29 @@ The client application (typically within the `app/embed/[assistantId]/page.tsx` 
 3. Local storage of thread ID and cached file IDs
 4. Cache utilization for follow-up queries
 5. Thread state management for conversation continuity
+
+## Code Duplication and Refactoring
+
+There is significant code duplication between `api/chat-assistant/route.ts` and `api/openai/route.ts`:
+
+1. **Duplicated Logic**:
+
+   - OpenAI client initialization
+   - Thread management
+   - Message creation and handling
+   - Error handling patterns
+
+2. **Current Differences**:
+
+   - `chat-assistant/route.ts` includes streaming support
+   - `chat-assistant/route.ts` integrates with thread data caching
+   - `openai/route.ts` uses a switch-case approach for different actions
+
+3. **Refactoring Plan**:
+   - Consolidate to a single implementation
+   - Extract common functionality into shared utility functions
+   - Keep `chat-assistant/route.ts` as the primary implementation
+   - Either deprecate `openai/route.ts` or refactor it to serve only non-assistant specific OpenAI API calls
 
 ## Error Handling
 

@@ -3,6 +3,21 @@ import path from "path";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
+/**
+ * DEPRECATION NOTICE
+ * 
+ * This route is scheduled for refactoring or removal.
+ * It contains significant code duplication with chat-assistant/route.ts.
+ * 
+ * For new development:
+ * - Use chat-assistant/route.ts for assistant-related functionality
+ * - This route will eventually be refactored to only handle non-assistant OpenAI operations
+ *   or be completely replaced by a more modular approach
+ * 
+ * See documentation in app/api/documentation/api_documentation.md for more details
+ * about the proposed refactoring plan.
+ */
+
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(req) {
@@ -17,6 +32,9 @@ export async function POST(req) {
   //     content,
   //     assistantId,
   //   });
+
+  // Log deprecation warning
+  console.warn("DEPRECATED: Using /api/openai route which is scheduled for refactoring or removal");
 
   switch (action) {
     case "GET_LIST":

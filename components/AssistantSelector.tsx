@@ -21,6 +21,7 @@ const AssistantSelector: React.FC<AssistantSelectorProps> = ({
   const assistants: Assistant[] = [
     { id: "asst_xOd6VeXqgta6bxY1LkatulKU", name: "Default Assistant" },
     { id: "asst_T8WLaYpjA8l8JGApPGx6oyKq", name: "Test Assistant" },
+    { id: "asst_D0BPAJjvg3UK6Lcb1lqIM1xS", name: "2-Step" },
   ];
 
   // Find the current assistant
