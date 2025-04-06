@@ -44,7 +44,22 @@ function Embed({ params: { assistantId } }) {
   // User prompt
   const [prompt, setPrompt] = useState("");
   // Get the thread id from the response, and then can pass it back to the next request to continue the conversation.
-  const [threadId, setThreadId] = useState(null);
+  const [threadId, setThreadId] = useState(() => {
+    // Initialize from localStorage if available, but only in client side
+    if (typeof window !== "undefined") {
+      const savedThreadId = localStorage.getItem("chatThreadId");
+      return savedThreadId || null;
+    }
+    return null;
+  });
+
+  // Save threadId to localStorage whenever it changes
+  useEffect(() => {
+    if (threadId) {
+      localStorage.setItem("chatThreadId", threadId);
+      console.log("🧵 THREAD ID SAVED TO LOCALSTORAGE:", threadId);
+    }
+  }, [threadId]);
 
   // Add version and params logging
   useEffect(() => {
@@ -69,8 +84,9 @@ function Embed({ params: { assistantId } }) {
       },
     ]);
 
-    // Reset thread ID
+    // Reset thread ID and remove from localStorage
     setThreadId(null);
+    localStorage.removeItem("chatThreadId");
 
     // Reset any in-progress messages
     setStreamingMessage(null);
@@ -197,7 +213,10 @@ function Embed({ params: { assistantId } }) {
           const dataRetrievalResponse = await fetch("/api/query", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ query: questionText }),
+            body: JSON.stringify({
+              query: questionText,
+              context: "all-sector",
+            }),
           });
 
           if (!dataRetrievalResponse.ok) {
@@ -447,7 +466,22 @@ ${
             filename: `assistant-prompt-${rawDataTimestamp}.txt`,
             data: assistantPrompt,
           }),
-        });
+        })
+          .then((response) => {
+            if (response.ok) {
+              console.log(
+                `✅ ASSISTANT PROMPT SAVED: assistant-prompt-${rawDataTimestamp}.txt`
+              );
+              console.log("=== ASSISTANT PROMPT ===");
+              console.log(assistantPrompt);
+              console.log("========================");
+            } else {
+              console.error("❌ Failed to save assistant prompt");
+            }
+          })
+          .catch((err) => {
+            console.error("❌ Error saving assistant prompt:", err);
+          });
 
         // Then save just the raw data
         if (dataResult.raw_data) {
@@ -489,7 +523,7 @@ ${
 
       console.log("Sending to assistant:", {
         assistantId,
-        threadId,
+        threadId: threadId || "NEW_THREAD",
         contentLength: assistantPrompt.length,
       });
 
@@ -591,6 +625,19 @@ ${
               case "messageDone":
                 // Handle completed message
                 messageId.current++;
+
+                // Save the thread ID if available
+                if (
+                  eventData.threadId &&
+                  (!threadId || threadId !== eventData.threadId)
+                ) {
+                  console.log(
+                    `🧵 THREAD ID RECEIVED FROM API: ${eventData.threadId}`
+                  );
+                  console.log(`🧵 Previous threadId: ${threadId || "NONE"}`);
+                  setThreadId(eventData.threadId);
+                }
+
                 setMessages((prevMessages) => [
                   ...prevMessages,
                   {
