@@ -69,10 +69,13 @@ function generateCacheKey(query) {
 /**
  * Identify relevant data files based on a user query
  * @param {string} query - The user's query
+ * @param {string} context - The context for filtering data
  * @returns {Promise<{file_ids: string[], matched_topics: string[], explanation: string}>} - The identified file IDs and explanation
  */
-export async function identifyRelevantFiles(query) {
+export async function identifyRelevantFiles(query, context) {
   try {
+    // No more keyword checks - rely purely on semantic analysis
+
     // Check cache first
     const cacheKey = generateCacheKey(query);
     if (queryCache.has(cacheKey)) {
@@ -587,15 +590,68 @@ async function retrieveDataFiles(fileIdsOrObject) {
 /**
  * Process a query using the two-step retrieval approach
  * @param {string} query - The user's query
+ * @param {string} context - The context for filtering data (e.g., 'sectors', 'all')
+ * @param {Array} cachedFileIds - Optional array of file IDs that are already cached
  * @returns {Promise<object>} - The processed result
  */
-export async function processQueryWithData(query) {
-  console.log(`Starting query processing at ${new Date().toISOString()}`);
+export async function processQueryWithData(query, context, cachedFileIds = []) {
   const startTime = performance.now();
 
-  // Step 1: Identify relevant files
+  // Thread-based data continuity approach
+  // If we have cached files for this thread, we apply thread continuity principles
+  if (cachedFileIds && cachedFileIds.length > 0) {
+    console.log(`Thread has ${cachedFileIds.length} cached files`);
+
+    // PRINCIPLE 1: Topic-based cache validation
+    // Check if this query needs additional data files that aren't in the cache
+    // First, try to identify what files this query would typically need
+    const topicFileIds = await identifyRelevantFiles(query, context);
+    const potentiallyNeededFileIds = topicFileIds?.file_ids || [];
+
+    // PRINCIPLE 2: Additional data detection
+    // Check if we need any files that aren't in our cache
+    const missingFileIds = potentiallyNeededFileIds.filter(
+      (id) => !cachedFileIds.includes(id)
+    );
+
+    console.log(`Thread continuity analysis:
+      - Cached files: ${cachedFileIds.length}
+      - Potentially needed files: ${potentiallyNeededFileIds.length} 
+      - Missing files: ${missingFileIds.length}`);
+
+    // PRINCIPLE 3: If no files are needed or if the needed files are all in cache
+    // Use existing thread data
+    if (missingFileIds.length === 0 || potentiallyNeededFileIds.length === 0) {
+      // No new files needed - use cached data
+      // Note: potentiallyNeededFileIds.length === 0 means the query doesn't map to specific files
+      // This happens with follow-ups, generic prompts, etc. - use thread continuity
+      console.log(`Using thread continuity - this query will use cached files`);
+
+      return {
+        analysis: "Using existing thread data",
+        matched_topics: [],
+        files_used: cachedFileIds,
+        file_ids: cachedFileIds,
+        raw_data: "Using cached thread data",
+        data_points: cachedFileIds.length,
+        status: "thread_continuity",
+        processing_time_ms: Math.round(performance.now() - startTime),
+      };
+    } else {
+      // We need to get additional data files
+      console.log(
+        `This query needs ${missingFileIds.length} additional data files beyond what's in the thread`
+      );
+
+      // Continue with retrieval below, but only for the missing files
+      // We'll merge with existing files later
+    }
+  }
+
+  // If we don't have cached files or need additional files, proceed with identification
   console.log("Step 1: Identifying relevant files...");
-  const fileIdsResult = await identifyRelevantFiles(query);
+  const fileIdsResult = await identifyRelevantFiles(query, context);
+
   // If result is an object with file_ids property, extract it; otherwise assume it's an array
   let fileIdArray = [];
   if (
@@ -610,15 +666,47 @@ export async function processQueryWithData(query) {
 
   console.log(`File IDs for retrieval: ${JSON.stringify(fileIdArray)}`);
 
-  if (!fileIdArray || fileIdArray.length === 0) {
-    console.log("No relevant files identified for query");
+  // If we have cached files, only retrieve the new ones
+  let newFileIds = [];
+  if (cachedFileIds.length > 0) {
+    newFileIds = fileIdArray.filter((id) => !cachedFileIds.includes(id));
+    console.log(`New file IDs to retrieve: ${JSON.stringify(newFileIds)}`);
+  } else {
+    newFileIds = fileIdArray;
+  }
+
+  if (
+    (!fileIdArray || fileIdArray.length === 0) &&
+    cachedFileIds.length === 0
+  ) {
+    // No files identified and no cached files - can't proceed
+    console.log("No relevant files identified for query and no cached context");
     return {
       analysis:
         "I couldn't find any relevant data to answer your question. Please try asking about workforce trends, employee preferences, or organizational challenges.",
       matched_topics: [],
       files_used: [],
+      file_ids: [],
       data_points: 0,
       status: "no_data",
+    };
+  } else if (
+    (!fileIdArray || fileIdArray.length === 0) &&
+    cachedFileIds.length > 0
+  ) {
+    // No new files identified but we have cached files - use thread continuity
+    console.log(
+      "No new files identified - using thread continuity with existing cached files"
+    );
+    return {
+      analysis: "Using existing thread data for your question",
+      matched_topics: [],
+      files_used: cachedFileIds,
+      file_ids: cachedFileIds,
+      raw_data: "Using cached thread data",
+      data_points: cachedFileIds.length,
+      status: "thread_continuity",
+      processing_time_ms: Math.round(performance.now() - startTime),
     };
   }
 
@@ -628,8 +716,27 @@ export async function processQueryWithData(query) {
 
   let retrievedData;
   try {
-    // Pass the fileIdArray to retrieveDataFiles
-    retrievedData = await retrieveDataFiles(fileIdArray);
+    // Only retrieve new files if we have cached files, otherwise retrieve all
+    if (cachedFileIds.length > 0 && newFileIds.length > 0) {
+      console.log(
+        `📥 RETRIEVING ${newFileIds.length} NEW FILES (already have ${cachedFileIds.length} cached)`
+      );
+      retrievedData = await retrieveDataFiles(newFileIds);
+    } else if (newFileIds.length > 0) {
+      console.log(
+        `📥 RETRIEVING ALL ${newFileIds.length} FILES (no cache available)`
+      );
+      retrievedData = await retrieveDataFiles(newFileIds);
+    } else {
+      console.log("⚠️ NO FILES TO RETRIEVE - this shouldn't normally happen");
+      // Create a placeholder for retrievedData since we're using only cached files
+      retrievedData = {
+        topics: [],
+        totalDataPoints: cachedFileIds.length,
+        data: {},
+        files: [],
+      };
+    }
   } catch (error) {
     console.error("Error retrieving data files:", error);
     return {
@@ -684,6 +791,14 @@ export async function processQueryWithData(query) {
 
       // Extract response data directly
       if (file.data.responses && Array.isArray(file.data.responses)) {
+        // Create a more formatted representation with the question prominently displayed
+        extractedData.question_text = `SURVEY QUESTION: ${
+          file.data.question || "No question available"
+        }`;
+
+        // Add an array to store summarized top responses
+        extractedData.top_responses = [];
+
         file.data.responses.forEach((response) => {
           if (response) {
             const simplifiedResponse = {
@@ -691,27 +806,72 @@ export async function processQueryWithData(query) {
               data: {},
             };
 
+            // Track highest value for this response to determine if it's a top response
+            let highestValue = 0;
+
             // Directly extract percentage values without nesting
             if (response.data) {
               Object.entries(response.data).forEach(([category, values]) => {
-                if (values && typeof values === "object") {
+                // Filter based on context
+                const shouldIncludeCategory =
+                  context === "all" ||
+                  (context === "sectors" && category === "sector") ||
+                  (context === "all-sector" && category !== "sector") ||
+                  (context !== "sectors" &&
+                    context !== "all" &&
+                    context !== "all-sector" &&
+                    category !== "sector");
+
+                if (
+                  shouldIncludeCategory &&
+                  values &&
+                  typeof values === "object"
+                ) {
                   Object.entries(values).forEach(([key, value]) => {
                     // Store as flat key-value pair for simplicity
                     simplifiedResponse.data[`${category}_${key}`] = value;
+
+                    // Track highest value
+                    if (typeof value === "number" && value > highestValue) {
+                      highestValue = value;
+                    }
                   });
                 }
               });
             }
 
-            extractedData.responses.push(simplifiedResponse);
+            // Only add responses that have data after filtering
+            if (Object.keys(simplifiedResponse.data).length > 0) {
+              extractedData.responses.push(simplifiedResponse);
+
+              // Add to top responses if value is high (over 80%)
+              if (highestValue >= 80) {
+                extractedData.top_responses.push({
+                  text: response.response,
+                  highest_value: highestValue,
+                });
+              }
+            }
           }
         });
+
+        // Sort top responses by highest value
+        extractedData.top_responses.sort(
+          (a, b) => b.highest_value - a.highest_value
+        );
       }
 
-      raw_data.push(extractedData);
-      console.log(
-        `Successfully extracted data from file ${file.id}: ${extractedData.responses.length} responses`
-      );
+      // Only add files that have responses after filtering
+      if (extractedData.responses.length > 0) {
+        raw_data.push(extractedData);
+        console.log(
+          `Successfully extracted data from file ${file.id}: ${extractedData.responses.length} responses`
+        );
+      } else {
+        console.log(
+          `File ${file.id} had no relevant responses for context: ${context}`
+        );
+      }
     } catch (error) {
       console.error(`Error processing data from file ${file.id}:`, error);
       // Still add file info even if processing fails
@@ -723,7 +883,9 @@ export async function processQueryWithData(query) {
     }
   });
 
-  console.log(`Extracted data from ${raw_data.length} files`);
+  console.log(
+    `Extracted data from ${raw_data.length} files for context: ${context}`
+  );
   if (raw_data.length > 0) {
     const sampleFile = raw_data[0];
     const responseCount = sampleFile.responses?.length || 0;
@@ -749,38 +911,45 @@ export async function processQueryWithData(query) {
   const path = require("path");
 
   try {
-    // Create a timestamp for unique filenames
-    const timestamp = Date.now();
+    // Only save debug files in development mode
+    if (process.env.NODE_ENV === "development") {
+      // Create a timestamp for unique filenames
+      const timestamp = Date.now();
 
-    // Create logs directory if it doesn't exist
-    const logsDir = path.join(process.cwd(), "logs");
-    if (!fs.existsSync(logsDir)) {
-      fs.mkdirSync(logsDir, { recursive: true });
+      // Create logs directory if it doesn't exist
+      const logsDir = path.join(process.cwd(), "logs");
+      if (!fs.existsSync(logsDir)) {
+        fs.mkdirSync(logsDir, { recursive: true });
+      }
+
+      // Save the raw data directly
+      const rawDataPath = path.join(logsDir, `raw-data-${timestamp}.json`);
+      fs.writeFileSync(rawDataPath, JSON.stringify(raw_data, null, 2), "utf8");
+      console.log(`DIRECTLY SAVED RAW DATA TO: ${rawDataPath}`);
+
+      // Save query metadata
+      const metadataPath = path.join(
+        logsDir,
+        `query-metadata-${timestamp}.json`
+      );
+      fs.writeFileSync(
+        metadataPath,
+        JSON.stringify(
+          {
+            query,
+            topics: retrievedData.topics,
+            files_used: fileIdArray,
+            total_data_points: retrievedData.totalDataPoints,
+            timestamp: new Date().toISOString(),
+            context: context,
+          },
+          null,
+          2
+        ),
+        "utf8"
+      );
+      console.log(`DIRECTLY SAVED QUERY METADATA TO: ${metadataPath}`);
     }
-
-    // Save the raw data directly
-    const rawDataPath = path.join(logsDir, `raw-data-${timestamp}.json`);
-    fs.writeFileSync(rawDataPath, JSON.stringify(raw_data, null, 2), "utf8");
-    console.log(`DIRECTLY SAVED RAW DATA TO: ${rawDataPath}`);
-
-    // Save query metadata
-    const metadataPath = path.join(logsDir, `query-metadata-${timestamp}.json`);
-    fs.writeFileSync(
-      metadataPath,
-      JSON.stringify(
-        {
-          query,
-          topics: retrievedData.topics,
-          files_used: fileIdArray,
-          total_data_points: retrievedData.totalDataPoints,
-          timestamp: new Date().toISOString(),
-        },
-        null,
-        2
-      ),
-      "utf8"
-    );
-    console.log(`DIRECTLY SAVED QUERY METADATA TO: ${metadataPath}`);
   } catch (error) {
     console.error("Error directly saving files:", error);
   }
@@ -791,6 +960,27 @@ export async function processQueryWithData(query) {
 Found data on topics: ${retrievedData.topics.join(", ")}.
 Files used: ${fileIdArray.join(", ")}.
 Total data points: ${retrievedData.totalDataPoints}.
+
+## Survey Questions Overview:
+${raw_data
+  .map((file) => {
+    let questionInfo = `### ${
+      file.question_text || file.question || "Unknown Question"
+    }
+From file: ${file.file_id} (${file.topic})
+Responses: ${file.responses ? file.responses.length : 0} options`;
+
+    // Add top responses if available
+    if (file.top_responses && file.top_responses.length > 0) {
+      questionInfo += `\n\nTop responses (highest % agreement):`;
+      file.top_responses.slice(0, 5).forEach((resp) => {
+        questionInfo += `\n- ${resp.text} (up to ${resp.highest_value}%)`;
+      });
+    }
+
+    return questionInfo;
+  })
+  .join("\n\n")}
 
 The raw data below contains all relevant information from our workforce survey database. Please use this to provide accurate insights about ${query}.`;
 

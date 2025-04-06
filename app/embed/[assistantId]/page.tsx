@@ -53,6 +53,68 @@ function Embed({ params: { assistantId } }) {
     return null;
   });
 
+  // Thread data cache to track files loaded per thread
+  const [threadDataCache, setThreadDataCache] = useState(() => {
+    if (typeof window !== "undefined") {
+      const savedCache = localStorage.getItem("threadDataCache");
+      return savedCache ? JSON.parse(savedCache) : {};
+    }
+    return {};
+  });
+
+  // Function to get cached files for a thread
+  const getCachedFilesForThread = useCallback(
+    (threadId) => {
+      return threadDataCache[threadId] || { fileIds: [], data: {} };
+    },
+    [threadDataCache]
+  );
+
+  // Function to update thread cache with new files
+  const updateThreadCache = useCallback((threadId, newFileIds, newData) => {
+    setThreadDataCache((prevCache) => {
+      try {
+        const updatedCache = { ...prevCache };
+
+        if (!updatedCache[threadId]) {
+          updatedCache[threadId] = { fileIds: [], data: {} };
+        }
+
+        // Add new file IDs without duplicates
+        const existingIds = updatedCache[threadId].fileIds || [];
+        const allFileIds = [...existingIds];
+
+        // Add any new file IDs that aren't already in the array
+        newFileIds.forEach((id) => {
+          if (!allFileIds.includes(id)) {
+            allFileIds.push(id);
+          }
+        });
+
+        updatedCache[threadId].fileIds = allFileIds;
+
+        // Update data
+        updatedCache[threadId].data = {
+          ...(updatedCache[threadId].data || {}),
+          ...newData,
+        };
+
+        // Save to localStorage
+        if (typeof window !== "undefined") {
+          localStorage.setItem("threadDataCache", JSON.stringify(updatedCache));
+          console.log(
+            `💾 Cache updated for thread ${threadId}: ${allFileIds.length} files`
+          );
+        }
+
+        return updatedCache;
+      } catch (error) {
+        console.error("Error updating thread cache:", error);
+        return prevCache; // Return unchanged state on error
+      }
+    });
+  }, []);
+
   // Save threadId to localStorage whenever it changes
   useEffect(() => {
     if (threadId) {
@@ -60,6 +122,17 @@ function Embed({ params: { assistantId } }) {
       console.log("🧵 THREAD ID SAVED TO LOCALSTORAGE:", threadId);
     }
   }, [threadId]);
+
+  // Log thread data on init
+  useEffect(() => {
+    console.log("🧵 THREAD DATA CACHE INITIALIZED:", threadDataCache);
+    if (threadId) {
+      console.log(
+        "🧵 CURRENT THREAD CACHED FILES:",
+        getCachedFilesForThread(threadId)
+      );
+    }
+  }, [threadId, threadDataCache, getCachedFilesForThread]);
 
   // Add version and params logging
   useEffect(() => {
@@ -87,6 +160,16 @@ function Embed({ params: { assistantId } }) {
     // Reset thread ID and remove from localStorage
     setThreadId(null);
     localStorage.removeItem("chatThreadId");
+
+    // Clear thread data cache for this session
+    if (threadId) {
+      setThreadDataCache((prevCache) => {
+        const updatedCache = { ...prevCache };
+        delete updatedCache[threadId];
+        localStorage.setItem("threadDataCache", JSON.stringify(updatedCache));
+        return updatedCache;
+      });
+    }
 
     // Reset any in-progress messages
     setStreamingMessage(null);
@@ -164,25 +247,23 @@ function Embed({ params: { assistantId } }) {
       if (currentStage < loadingStages.length && loadingStages[currentStage]) {
         setStreamingMessage((prev) => ({
           ...prev,
-          content: `<span class='loading-message'>${
-            loadingStages[currentStage]?.message || "Processing..."
-          }</span>`,
-          stage: loadingStages[currentStage]?.stage || "processing",
+          content: `<span class='loading-message'>${loadingStages[currentStage].message}</span>`,
+          stage: loadingStages[currentStage].stage,
         }));
-        currentStage++;
-      } else {
-        // Loop back to the beginning if we've gone through all stages
-        currentStage = 0;
-        // Don't clear the interval - we'll keep cycling through messages
+
+        currentStage = (currentStage + 1) % loadingStages.length;
       }
-    }, 3000); // Change message every 3 seconds
+    }, 4000);
+
+    // Record the ID of the message we're sending for user display
+    messageId.current += 1;
+    const msgId = messageId.current;
 
     // Add user message to chat
-    messageId.current++;
     setMessages((prevMessages) => [
       ...prevMessages,
       {
-        id: messageId.current.toString(),
+        id: msgId.toString(),
         role: "user",
         content: questionText,
         createdAt: new Date(),
@@ -192,321 +273,148 @@ function Embed({ params: { assistantId } }) {
     try {
       console.log("Processing query:", questionText);
 
-      // STAGE 1: Direct Data Retrieval - Do this BEFORE sending to assistant
+      // Get cached files for this thread
+      const cachedFiles = threadId
+        ? getCachedFilesForThread(threadId)
+        : { fileIds: [] };
+
+      // Log thread information
+      console.log("🧵 THREAD INFO:");
+      console.log(`- Thread ID: ${threadId || "none"}`);
+      console.log(
+        `- Query: "${questionText.substring(0, 30)}${
+          questionText.length > 30 ? "..." : ""
+        }"`
+      );
+      console.log(
+        `- Has cached data: ${
+          Boolean(threadId) && cachedFiles.fileIds.length > 0
+        }`
+      );
+      console.log(`- Cached files: ${cachedFiles.fileIds.length}`);
+
+      // STAGE 1: Data Retrieval
+      // Update streaming message to show retrieval status
       setStreamingMessage((prev) => ({
         ...prev,
-        content: `<span class='loading-message'>Stage 1: Retrieving workforce data...</span>`,
+        content: `<span class='loading-message'>Retrieving workforce data...</span>`,
         stage: "retrieving",
       }));
 
-      // Call our local API to retrieve data with retry logic
-      let dataResult;
-      let retryCount = 0;
-      const maxRetries = 2;
+      console.log(
+        `📊 Retrieving data for query with ${cachedFiles.fileIds.length} cached files`
+      );
 
-      while (retryCount <= maxRetries) {
-        try {
-          console.log(
-            `Data retrieval attempt ${retryCount + 1}/${maxRetries + 1}`
-          );
-
-          const dataRetrievalResponse = await fetch("/api/query", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              query: questionText,
-              context: "all-sector",
-            }),
-          });
-
-          if (!dataRetrievalResponse.ok) {
-            throw new Error(
-              `Data retrieval failed with status ${dataRetrievalResponse.status}`
-            );
-          }
-
-          dataResult = await dataRetrievalResponse.json();
-
-          // Check if the response contains an error
-          if (dataResult.error) {
-            console.error(
-              "Data retrieval returned an error:",
-              dataResult.error
-            );
-
-            if (retryCount < maxRetries) {
-              retryCount++;
-              // Wait before retrying (exponential backoff)
-              await new Promise((resolve) =>
-                setTimeout(resolve, 1000 * Math.pow(2, retryCount))
-              );
-              continue;
-            } else {
-              throw new Error(`Data retrieval error: ${dataResult.error}`);
-            }
-          }
-
-          // If we got here, the request was successful
-          break;
-        } catch (error) {
-          console.error(
-            `Data retrieval attempt ${retryCount + 1} failed:`,
-            error
-          );
-
-          if (retryCount < maxRetries) {
-            retryCount++;
-            // Wait before retrying (exponential backoff)
-            await new Promise((resolve) =>
-              setTimeout(resolve, 1000 * Math.pow(2, retryCount))
-            );
-          } else {
-            // All retries failed
-            throw new Error(
-              `Data retrieval failed after ${maxRetries + 1} attempts: ${
-                error.message
-              }`
-            );
-          }
-        }
-      }
-
-      // Ensure we have a dataResult even if something went wrong
-      if (!dataResult) {
-        dataResult = {
-          analysis:
-            "I couldn't retrieve data to answer your question due to a technical issue. Please try again with a different question.",
-          matched_topics: [],
-          files_used: [],
-          data_points: 0,
-          status: "error",
-        };
-      }
-
-      // Check for missing analysis when we should have one
-      if (!dataResult.analysis && dataResult.status !== "error") {
-        console.warn("Data retrieval did not return any analysis");
-      }
-
-      console.log("Data retrieval complete:", {
-        status: dataResult.status || "success",
-        topics: dataResult.matched_topics?.length || 0,
-        files: dataResult.files_used?.length || 0,
-        dataPoints: dataResult.data_points || 0,
+      // Send request to query API, including cached file IDs
+      const dataRetrievalResponse = await fetch("/api/query", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: questionText,
+          context: "all-sector",
+          cachedFileIds: cachedFiles.fileIds,
+        }),
       });
 
-      // Check if the query was identified as out of scope
-      if (dataResult.status === "out_of_scope") {
-        console.log(
-          "Query was out of scope, showing immediate response and skipping assistant call"
+      if (!dataRetrievalResponse.ok) {
+        setStreamingMessage((prev) => ({
+          ...prev,
+          content: `<span class='loading-message'>Data retrieval failed with status ${dataRetrievalResponse.status}</span>`,
+          stage: "error",
+        }));
+        console.error(
+          "Error in data retrieval:",
+          dataRetrievalResponse.statusText
         );
+        throw new Error(
+          `Data retrieval failed with status ${dataRetrievalResponse.status}`
+        );
+      }
 
-        // Add out-of-scope message to chat
-        messageId.current++;
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            id: messageId.current.toString(),
-            role: "assistant",
-            content: dataResult.analysis,
-            createdAt: new Date(),
-          },
-        ]);
+      const dataResult = await dataRetrievalResponse.json();
+      console.log("Data retrieval result:", {
+        status: dataResult.status,
+        files: dataResult.file_ids?.length || 0,
+        error: dataResult.error,
+      });
 
-        // Reset states
+      // Check for errors in the data retrieval response
+      if (dataResult.error) {
+        setStreamingMessage((prev) => ({
+          ...prev,
+          content: `I'm sorry, I encountered an error retrieving the relevant data: ${dataResult.error}`,
+          stage: "error",
+        }));
         setLoading(false);
-        setStreamingMessage(null);
-
-        // Clear loading interval if it's still running
-        if (intervalRef.current) clearInterval(intervalRef.current);
-
-        // Scroll to bottom
-        setTimeout(scrollToBottom, 100);
-
-        // Exit early
+        clearInterval(intervalRef.current);
         return;
       }
 
-      // STAGE 2: Send to assistant with the retrieved data
-      setStreamingMessage((prev) => ({
-        ...prev,
-        content: `<span class='loading-message'>Stage 2: Generating insights...</span>`,
-        stage: "analyzing",
-      }));
+      // Check for special error cases
+      if (dataResult && dataResult.status === "error_no_context") {
+        console.log("Error - no context available");
 
-      // Handle errors during data retrieval
-      const hasDataRetrievalError =
-        dataResult.status === "error" || dataResult.error;
+        // Create a user-friendly error message
+        const errorMessage = {
+          role: "assistant",
+          content: `I need some context first. ${
+            dataResult.error ||
+            "Please ask me a question about workforce trends before requesting content transformations like articles or summaries."
+          }`,
+          id: `error-${Date.now()}`,
+          createdAt: new Date(),
+        };
 
-      // Log the actual raw data structure
-      console.log("RAW DATA CHECK:");
-      console.log(
-        `dataResult object keys: ${Object.keys(dataResult).join(", ")}`
-      );
-      console.log(`Has raw_data: ${!!dataResult.raw_data}`);
-      console.log(
-        `Raw data is being saved to logs/raw-data-${Date.now()}.json`
-      );
+        // Add the error message to the chat
+        setMessages((prevMessages) => [...prevMessages, errorMessage]);
+        setStreamingMessage(null);
+        setLoading(false);
+        clearInterval(intervalRef.current);
 
-      // Create logs directory if needed
-      fetch("/api/create-logs-dir", {
-        method: "POST",
-      });
+        // Log the error
+        console.error("Error:", dataResult.error);
 
-      // Save the raw data directly to a file for inspection
-      const rawDataSaver = async () => {
-        try {
-          // Save the raw data exactly as received from API
-          const filename = `raw-data-dump-${Date.now()}.json`;
-          const filepath = `/Users/jasonryan/Documents/RIA25/logs/${filename}`;
+        // End the function here
+        return;
+      }
 
-          // Log the raw data in detail
-          console.log(`DIRECT DATA CHECK:`);
-          console.log(`dataResult type: ${typeof dataResult}`);
-          console.log(`dataResult keys: ${Object.keys(dataResult).join(", ")}`);
-          console.log(`raw_data exists: ${!!dataResult.raw_data}`);
-          console.log(`raw_data type: ${typeof dataResult.raw_data}`);
-          console.log(
-            `raw_data is array: ${Array.isArray(dataResult.raw_data)}`
-          );
+      // Update thread cache with file IDs if new files were retrieved
+      if (threadId && dataResult?.file_ids && dataResult.file_ids.length > 0) {
+        const newFileIds = dataResult.file_ids;
+        const newData = { raw_data: dataResult.raw_data };
 
-          if (Array.isArray(dataResult.raw_data)) {
-            console.log(`raw_data length: ${dataResult.raw_data.length}`);
-            console.log(
-              `raw_data sample: ${JSON.stringify(
-                dataResult.raw_data.slice(0, 1)
-              ).substring(0, 200)}...`
-            );
-          }
-
-          // Save directly to file system
-          fetch("/api/save-to-logs", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              filename: `dataResult-full-object-${Date.now()}.json`,
-              data: JSON.stringify(dataResult, null, 2),
-            }),
-          });
-
-          // Also save just the raw_data
-          fetch("/api/save-to-logs", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              filename: `raw-data-direct-dump-${Date.now()}.json`,
-              data: JSON.stringify(dataResult.raw_data, null, 2),
-            }),
-          });
-
-          console.log(
-            `SAVED DATA DUMP TO logs/dataResult-full-object-${Date.now()}.json`
-          );
-          console.log(
-            `SAVED RAW DATA DUMP TO logs/raw-data-direct-dump-${Date.now()}.json`
-          );
-        } catch (error) {
-          console.error("Error saving raw data:", error);
-        }
-      };
-
-      // Run the data saver
-      rawDataSaver();
-
-      // Directly include raw data with no transformations or checks
-      const rawDataString = JSON.stringify(dataResult.raw_data);
-      console.log(`RAW DATA LENGTH: ${rawDataString.length}`);
-      console.log(`RAW DATA PREVIEW: ${rawDataString.substring(0, 300)}...`);
-
-      const rawDataSection = !hasDataRetrievalError
-        ? `Raw Survey Data:
-\`\`\`json
-${rawDataString}
-\`\`\`
-`
-        : "NO RAW DATA AVAILABLE";
+        // Update the cache
+        updateThreadCache(threadId, newFileIds, newData);
+      }
 
       // Prepare content for the assistant with safety checks
       const assistantPrompt = `
 Query: ${questionText}
 
+Analysis Summary: ${dataResult?.analysis || "No analysis available"}
+
 ${
-  hasDataRetrievalError
-    ? `There was an error retrieving the data: ${
-        dataResult.error || "Unknown error"
-      }.
-Please provide a general response about ${questionText} without specific data references.`
-    : dataResult.analysis
-    ? `Analysis summary:
-${dataResult.analysis}`
-    : "No relevant data was found. Please provide a general response."
+  dataResult?.files_used
+    ? `Files Used: ${dataResult.files_used.join(", ")}`
+    : ""
 }
-
-${rawDataSection}
+${dataResult?.data_points ? `Data Points: ${dataResult.data_points}` : ""}
+${dataResult?.status ? `Status: ${dataResult.status}` : ""}
 
 ${
-  hasDataRetrievalError
-    ? "Please provide a helpful general response about this topic based on your knowledge."
-    : "Please analyze the raw survey data and provide insights about the query. Focus on the percentage values in the data."
+  dataResult?.raw_data
+    ? `Raw Survey Data:
+\`\`\`json
+${
+  typeof dataResult.raw_data === "string"
+    ? dataResult.raw_data
+    : JSON.stringify(dataResult.raw_data, null, 2)
+}
+\`\`\`
+`
+    : "NO RAW DATA AVAILABLE"
 }
 `;
-
-      // Save the raw data for inspection (100% guaranteed method)
-      try {
-        // Write raw data directly to a file in the logs directory
-        const rawDataTimestamp = Date.now();
-
-        // Save the assistant prompt first
-        fetch("/api/save-to-logs", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            filename: `assistant-prompt-${rawDataTimestamp}.txt`,
-            data: assistantPrompt,
-          }),
-        })
-          .then((response) => {
-            if (response.ok) {
-              console.log(
-                `✅ ASSISTANT PROMPT SAVED: assistant-prompt-${rawDataTimestamp}.txt`
-              );
-              console.log("=== ASSISTANT PROMPT ===");
-              console.log(assistantPrompt);
-              console.log("========================");
-            } else {
-              console.error("❌ Failed to save assistant prompt");
-            }
-          })
-          .catch((err) => {
-            console.error("❌ Error saving assistant prompt:", err);
-          });
-
-        // Then save just the raw data
-        if (dataResult.raw_data) {
-          fetch("/api/save-to-logs", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              filename: `raw-data-only-${rawDataTimestamp}.json`,
-              data: JSON.stringify(dataResult.raw_data, null, 2),
-            }),
-          });
-
-          console.log("=============== CONFIRMATION ===============");
-          console.log(`Data saved in logs directory!`);
-          console.log(`assistant-prompt-${rawDataTimestamp}.txt`);
-          console.log(`raw-data-only-${rawDataTimestamp}.json`);
-          console.log("===========================================");
-        } else {
-          console.error("CRITICAL ERROR: No raw_data to save!");
-        }
-      } catch (error) {
-        console.error("Error saving data:", error);
-      }
 
       // TEMPORARY: Log the full data being sent to the assistant (USER REQUESTED)
       console.log("==== FULL DATA SENT TO ASSISTANT ====");
@@ -521,12 +429,6 @@ ${
       console.log("Data points:", dataResult.data_points);
       console.log("Raw data included:", !!dataResult.raw_data);
 
-      console.log("Sending to assistant:", {
-        assistantId,
-        threadId: threadId || "NEW_THREAD",
-        contentLength: assistantPrompt.length,
-      });
-
       // Add timeout handling for the API call
       const controller = new AbortController();
       const timeoutId = setTimeout(() => {
@@ -536,7 +438,7 @@ ${
 
       try {
         // Send request to API for assistant processing
-        const response = await fetch("/api/chat-assistant", {
+        const assistantResponse = await fetch("/api/chat-assistant", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -565,23 +467,54 @@ ${
         clearTimeout(timeoutId);
         clearTimeout(processingUpdateTimeout);
 
-        console.log("API response status:", response.status);
+        console.log("API response status:", assistantResponse.status);
 
-        if (!response.ok) {
-          const errorText = await response
-            .text()
-            .catch(() => "No error text available");
-          console.error("API error details:", {
-            status: response.status,
-            statusText: response.statusText,
-            errorText,
-          });
+        if (!assistantResponse.ok) {
+          console.error(
+            "Error response from OpenAI API:",
+            assistantResponse.status
+          );
+
+          try {
+            // Try to get the error message from the response
+            const errorData = await assistantResponse.json();
+            console.error("Error details:", errorData);
+
+            // Display out-of-scope errors differently
+            if (errorData.error_type === "out_of_scope") {
+              setStreamingMessage((prev) => ({
+                ...prev,
+                stage: "error",
+                content: `<span class='error-message'>${
+                  errorData.message ||
+                  "I'm sorry, but that appears to be outside the scope of what I can help with based on the available data."
+                }</span>`,
+              }));
+            } else {
+              setStreamingMessage((prev) => ({
+                ...prev,
+                stage: "error",
+                content: `<span class='error-message'>${
+                  errorData.message ||
+                  "Error contacting AI assistant. Please try again later."
+                }</span>`,
+              }));
+            }
+          } catch (e) {
+            // Fallback if we can't parse the error
+            setStreamingMessage((prev) => ({
+              ...prev,
+              stage: "error",
+              content: `<span class='error-message'>Error contacting AI assistant. Please try again later.</span>`,
+            }));
+          }
+
           throw new Error(
-            `API responded with status: ${response.status} - ${errorText}`
+            `API response not OK: ${assistantResponse.status} ${assistantResponse.statusText}`
           );
         }
 
-        if (!response.body) {
+        if (!assistantResponse.body) {
           throw new Error("No response body received");
         }
 
@@ -589,7 +522,7 @@ ${
         console.log("Got response body, starting stream processing");
 
         // Use a manual event source approach instead of AssistantStream
-        const reader = response.body.getReader();
+        const reader = assistantResponse.body.getReader();
         const decoder = new TextDecoder();
         let buffer = "";
 

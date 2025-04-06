@@ -9,6 +9,9 @@ import readline from "readline";
 // Add import for retrieval system
 import { processQueryWithData } from "../../../utils/openai/retrieval";
 
+// Add import for cache utilities
+import { getCachedFilesForThread, updateThreadCache } from "../../../utils/cache-utils";
+
 // Configure OpenAI with reasonable defaults
 const OPENAI_TIMEOUT_MS = 90000; // 90 seconds
 
@@ -170,7 +173,18 @@ export async function POST(request: NextRequest) {
                       
                       if (!query) throw new Error("Missing query parameter");
                       
-                      const result = await processQueryWithData(query);
+                      // Get cached files for this thread if available
+                      const cachedFileIds = await getCachedFilesForThread(finalThreadId);
+                      console.log(`Thread ${finalThreadId} has ${cachedFileIds.length} cached files`);
+                      
+                      // Pass cached files to processQueryWithData
+                      const result = await processQueryWithData(query, "all-sector", cachedFileIds);
+                      
+                      // If we got new files, update the thread cache
+                      if (result.file_ids && result.file_ids.length > 0 && !result.status?.includes("follow_up")) {
+                        console.log(`Updating thread cache with ${result.file_ids.length} files`);
+                        await updateThreadCache(finalThreadId, result.file_ids);
+                      }
                       
                       await openai.beta.threads.runs.submitToolOutputs(finalThreadId, run.id, {
                         tool_outputs: [{
@@ -362,8 +376,19 @@ export async function PUT(request: NextRequest) {
       console.log("Processing data retrieval for query:", query);
       
       try {
-        // Call our optimized data retrieval function
-        const result = await processQueryWithData(query);
+        // Get cached files for this thread if available
+        const cachedFileIds = await getCachedFilesForThread(threadId);
+        console.log(`Thread ${threadId} has ${cachedFileIds.length} cached files`);
+        
+        // Call our optimized data retrieval function with cached files
+        const result = await processQueryWithData(query, "all-sector", cachedFileIds);
+        
+        // If we got new files, update the thread cache
+        if (result.file_ids && result.file_ids.length > 0 && !result.status?.includes("follow_up")) {
+          console.log(`Updating thread cache with ${result.file_ids.length} files`);
+          await updateThreadCache(threadId, result.file_ids);
+        }
+        
         console.log("Data retrieval completed with", result.data_points, "data points");
         
         // Submit the tool outputs back to the assistant

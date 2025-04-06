@@ -129,133 +129,190 @@ API Request: {
 
 ## Proposed Solutions
 
-### 1. Robust Error Handling for Missing Data
+### Revised Approach: Thread-Based Data Caching
+
+The current implementation's main flaw is that it treats every query as isolated and tries to retrieve fresh data each time. Instead, we should implement a thread-based data caching approach that:
+
+1. **Assumes continuity** in a persistent thread
+2. **Tracks data files** that have already been loaded for a thread
+3. **Only loads new data** when explicitly required
+
+This approach follows this principle: In a persistent thread, the code should ASSUME the query is a follow-up UNLESS:
+
+1. The request is beyond scope
+2. The request requires additional data than what's already tracked
+
+#### Example Scenario:
+
+- **Query 1**: Retrieves files a, b, and c (stored with thread as available data)
+- **Query 2**: Doesn't require additional data files, is a continuation query (uses data in thread memory)
+- **Query 3**: Requires file a and new file d (updates file tracking and retrieves additional data)
+
+### Implementation: Thread Data Cache
 
 ```javascript
-// Add proper null/undefined checking before processing raw data
-if (dataResult.status === "out_of_scope" || !dataResult.raw_data) {
-  console.log(
-    "No specific data found for follow-up query. Using conversation context only."
+// Define a cache to track data files per thread
+const threadDataCache = {};
+
+// Function to get cached files for a thread
+const getCachedFilesForThread = (threadId) => {
+  return threadDataCache[threadId] || { fileIds: [], data: {} };
+};
+
+// Function to update thread cache with new files
+const updateThreadCache = (threadId, newFileIds, newData) => {
+  if (!threadDataCache[threadId]) {
+    threadDataCache[threadId] = { fileIds: [], data: {} };
+  }
+
+  // Add new file IDs
+  threadDataCache[threadId].fileIds = [
+    ...new Set([...threadDataCache[threadId].fileIds, ...newFileIds]),
+  ];
+
+  // Update data
+  threadDataCache[threadId].data = {
+    ...threadDataCache[threadId].data,
+    ...newData,
+  };
+
+  return threadDataCache[threadId];
+};
+
+// Modified query processing function
+const processQueryWithThreadCache = async (threadId, queryText) => {
+  // Step 1: Determine required files for the query
+  const requiredFiles = await identifyRelevantFiles(queryText);
+
+  // If this is a follow-up that doesn't match specific topics
+  if (requiredFiles.file_ids.length === 0 && threadId) {
+    console.log("Follow-up query detected, using cached thread data");
+    // Use the existing thread without new data retrieval
+    return {
+      status: "follow_up",
+      message: "Using existing thread context for follow-up query",
+    };
+  }
+
+  // Step 2: If we have a thread ID, check what files we already have cached
+  let cachedFiles = { fileIds: [], data: {} };
+  if (threadId) {
+    cachedFiles = getCachedFilesForThread(threadId);
+  }
+
+  // Step 3: Determine which files we need to newly retrieve
+  const missingFileIds = requiredFiles.file_ids.filter(
+    (id) => !cachedFiles.fileIds.includes(id)
   );
 
-  // Create a contextual prompt without raw data
-  const contextualPrompt = `
+  // Step 4: Fetch only the missing files
+  let newData = {};
+  if (missingFileIds.length > 0) {
+    console.log(`Fetching ${missingFileIds.length} new files for thread`);
+    newData = await retrieveDataFiles(missingFileIds);
+    // Update the thread cache
+    updateThreadCache(threadId, missingFileIds, newData);
+  }
+
+  // Step 5: Return all the data needed for this query
+  return {
+    status: "success",
+    data: {
+      ...cachedFiles.data,
+      ...newData,
+    },
+    files_used: threadDataCache[threadId].fileIds,
+  };
+};
+```
+
+### Fixing the Current Implementation
+
+To implement this approach with minimal changes to the current system:
+
+1. Store thread-associated file IDs in localStorage or in a server-side cache
+2. Before data retrieval, check if this is a follow-up query in an existing thread
+3. For follow-ups, skip data retrieval and use a simplified prompt that leverages thread context
+4. For queries requiring new data, load only what's needed and update the cache
+
+```javascript
+// Modify the sendPrompt function
+const sendPrompt = async (threadId, immediateQuestion) => {
+  const questionText = immediateQuestion || prompt || "";
+  if (!questionText.trim()) return;
+
+  // Set loading state and add user message to chat
+  setLoading(true);
+  // ... existing loading animation code ...
+
+  try {
+    // Check if this is likely a follow-up question
+    const isLikelyFollowUp =
+      questionText.length < 30 &&
+      (questionText.toLowerCase().includes("more") ||
+        questionText.toLowerCase().includes("detail") ||
+        questionText.toLowerCase().includes("why") ||
+        questionText.toLowerCase().includes("how"));
+
+    let assistantPrompt;
+
+    if (threadId && isLikelyFollowUp) {
+      // This is a follow-up in an existing thread - skip data retrieval
+      console.log("Follow-up query detected, using thread context");
+      assistantPrompt = `
 Query: ${questionText}
 
-This is a follow-up question to our previous conversation. 
-Please answer based on our conversation history and your knowledge of workforce trends.
+This is a follow-up question to our previous conversation.
+Please answer based on the workforce data and context from our previous messages.
 `;
+    } else {
+      // This needs new data or is a new thread
+      // ... existing data retrieval code ...
+    }
 
-  // Use this as the assistant prompt
-  assistantPrompt = contextualPrompt;
-}
-```
+    // Send to OpenAI as before
+    const response = await fetch("/api/chat-assistant", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        assistantId: assistantId,
+        threadId: threadId,
+        content: assistantPrompt,
+      }),
+    });
 
-### 2. Safe Raw Data Handling
-
-```javascript
-// Safe raw data section creation
-const rawDataSection = dataResult.raw_data
-  ? `Raw Survey Data:
-\`\`\`json
-${JSON.stringify(dataResult.raw_data)}
-\`\`\`
-`
-  : "NO RAW DATA AVAILABLE - USING CONVERSATION CONTEXT";
-
-// Safe raw data saving
-if (dataResult.raw_data) {
-  fetch("/api/save-to-logs", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      filename: `raw-data-only-${rawDataTimestamp}.json`,
-      data: JSON.stringify(dataResult.raw_data, null, 2),
-    }),
-  });
-} else {
-  console.log("No raw data to save - this is a contextual query");
-  // Log a placeholder file
-  fetch("/api/save-to-logs", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      filename: `contextual-query-${rawDataTimestamp}.txt`,
-      data: questionText,
-    }),
-  });
-}
-```
-
-### 3. Follow-up Question Detection
-
-```javascript
-// Detect likely follow-up questions
-const isLikelyFollowUp =
-  questionText.length < 30 &&
-  (questionText.toLowerCase().includes("more") ||
-    questionText.toLowerCase().includes("detail") ||
-    questionText.toLowerCase().includes("explain") ||
-    questionText.toLowerCase().includes("why") ||
-    questionText.toLowerCase().includes("how"));
-
-// Add special instructions for follow-ups
-if (isLikelyFollowUp) {
-  assistantPrompt += `
-IMPORTANT: This appears to be a follow-up question. Use the conversation history in the thread 
-to provide context and give a more detailed response based on our previous exchange.
-`;
-}
-```
-
-### 4. Enhanced Thread ID Logging
-
-```javascript
-// More visible thread ID logging
-useEffect(() => {
-  if (threadId) {
-    localStorage.setItem("chatThreadId", threadId);
-    console.log(
-      `%c🧵 THREAD ID SAVED: ${threadId}`,
-      "background: #4B0082; color: white; padding: 2px 5px; border-radius: 3px;"
-    );
+    // ... rest of the function processing the response ...
+  } catch (error) {
+    // ... error handling ...
   }
-}, [threadId]);
-
-// Log on component mount
-useEffect(() => {
-  const savedThreadId = localStorage.getItem("chatThreadId");
-  console.log(
-    `%c🧵 INITIAL THREAD ID FROM STORAGE: ${savedThreadId || "NONE"}`,
-    "background: #4B0082; color: white; padding: 2px 5px; border-radius: 3px;"
-  );
-}, []);
+};
 ```
 
 ## Implementation Strategy
 
-1. First, add proper error handling for missing data to prevent crashes
-2. Implement safe handling of raw data sections with null/undefined checks
-3. Add follow-up question detection to better handle contextual queries
-4. Enhance thread ID logging for clearer debugging
-5. Test with both initial and follow-up queries to verify fixes
+1. Add a thread-based data cache to track what files are associated with each thread
+2. Implement "follow-up detection" to recognize questions that don't need new data
+3. Skip data retrieval for follow-up queries in existing threads
+4. For new threads or queries needing additional data, load only what's required
+5. Update the thread cache as new data files are added
 
 ## Expected Outcomes
 
-After implementation:
+The revised approach will:
 
-1. Initial queries will continue to work as before
-2. Follow-up questions like "give me more detail" will no longer crash
-3. The application will gracefully fall back to using thread context for follow-ups
-4. Thread ID persistence will be visibly logged for debugging
-5. The user experience will be seamless for all types of queries
+1. Dramatically reduce unnecessary data retrievals
+2. Allow proper handling of contextual follow-up questions
+3. Leverage OpenAI's thread context for continuity
+4. Prevent errors during data processing for follow-up queries
+5. Maintain a seamless user experience across all query types
 
 ## Alternative Approaches
 
-If the above solutions don't work, an alternative approach is to:
+If implementing a full caching system is too complex, a simpler approach could:
 
-1. Skip the data retrieval step entirely for short follow-up queries
-2. Simply pass the query directly to the OpenAI API with the existing thread ID
-3. Let OpenAI handle the context management completely
-
-This would be a more significant architectural change but would better leverage OpenAI's built-in context handling capabilities.
+1. Simply skip data retrieval entirely for likely follow-up queries
+2. Pass the query directly to OpenAI with the existing thread ID
+3. Let OpenAI handle context management
+4. Only engage data retrieval for specific topic-focused queries

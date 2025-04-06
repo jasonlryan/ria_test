@@ -4,56 +4,86 @@
 import { NextResponse } from "next/server";
 import { processQueryWithData } from "../../../utils/openai/retrieval";
 
-export async function POST(req) {
+// This handles requests to analyze datasets
+export async function POST(request) {
   try {
-    const body = await req.json();
-    const { query } = body;
+    // Parse the request body
+    const body = await request.json();
+    const { query, context, cachedFileIds = [] } = body;
 
     if (!query) {
       return NextResponse.json(
-        { error: "Missing query parameter" },
+        { error: "Missing required field: query" },
         { status: 400 }
       );
     }
 
-    console.log(`Processing query: ${query}`);
+    // Make sure cachedFileIds is always an array
+    const validCachedFileIds = Array.isArray(cachedFileIds)
+      ? cachedFileIds
+      : [];
 
-    // Process the query using the retrieval.js file
-    const dataResult = await processQueryWithData(query);
+    console.log(
+      `[QUERY API] 🔍 Query: "${query.substring(0, 50)}${
+        query.length > 50 ? "..." : ""
+      }"`
+    );
+    console.log(`[QUERY API] 💾 Cached files: ${validCachedFileIds.length}`);
 
-    // Log the raw data status
-    console.log(`DATA RESULT STATUS: ${dataResult ? "exists" : "null"}`);
-    if (dataResult) {
-      console.log(`HAS RAW DATA: ${!!dataResult.raw_data}`);
-      console.log(`RAW DATA TYPE: ${typeof dataResult.raw_data}`);
-      if (dataResult.raw_data) {
-        console.log(
-          `RAW DATA LENGTH: ${
-            Array.isArray(dataResult.raw_data)
-              ? dataResult.raw_data.length
-              : "not array"
-          }`
-        );
-        if (
-          Array.isArray(dataResult.raw_data) &&
-          dataResult.raw_data.length > 0
-        ) {
-          console.log(
-            `FIRST ITEM: ${JSON.stringify(dataResult.raw_data[0]).substring(
-              0,
-              100
-            )}...`
-          );
-        }
-      }
+    // Process the query using our retrieval system
+    const result = await processQueryWithData(
+      query,
+      context || "all-sector",
+      validCachedFileIds
+    );
+
+    // Mark if this is a follow-up and using cached files
+    if (result.status === "follow_up") {
+      console.log(
+        `[QUERY API] ✅ Follow-up detected, using ${validCachedFileIds.length} cached files`
+      );
+    } else if (result.file_ids) {
+      // Calculate which files are new vs cached
+      const newFiles = result.file_ids.filter(
+        (id) => !validCachedFileIds.includes(id)
+      );
+      result.new_file_ids = newFiles;
+
+      console.log(
+        `[QUERY API] 📊 Files: ${result.file_ids.length} total, ${newFiles.length} new`
+      );
     }
 
-    // Return the result to the client for use in assistant prompting
-    return NextResponse.json(dataResult);
+    // Check for special error status
+    if (result.status === "error_no_context") {
+      console.log(
+        "[QUERY API] ⚠️ Content transformation without context error"
+      );
+
+      // Pass the error along to the client
+      return NextResponse.json({
+        ...result,
+        query_info: {
+          error_type: "content_transformation_no_context",
+          message:
+            result.error || "Cannot process this request without prior context",
+        },
+      });
+    }
+
+    // Add query type information to help with debugging
+    result.query_info = {
+      is_follow_up: result.status === "follow_up",
+      cached_files_count: validCachedFileIds.length,
+      new_files_count: result.new_file_ids ? result.new_file_ids.length : 0,
+      total_files_count: result.file_ids ? result.file_ids.length : 0,
+    };
+
+    return NextResponse.json(result);
   } catch (error) {
-    console.error(`Error processing query:`, error);
+    console.error(`[QUERY API] ❌ Error processing query:`, error);
     return NextResponse.json(
-      { error: error.message, stack: error.stack },
+      { error: "Error processing query", details: error.message },
       { status: 500 }
     );
   }
