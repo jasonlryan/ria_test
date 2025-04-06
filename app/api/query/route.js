@@ -4,6 +4,9 @@
 import { NextResponse } from "next/server";
 import { processQueryWithData } from "../../../utils/openai/retrieval";
 
+// New route segment config format for Next.js 14+
+export const runtime = "nodejs";
+
 // This handles requests to analyze datasets
 export async function POST(request) {
   try {
@@ -88,10 +91,3 @@ export async function POST(request) {
     );
   }
 }
-
-// For older Next.js versions that might use the API Routes format
-export const config = {
-  api: {
-    bodyParser: true,
-  },
-};

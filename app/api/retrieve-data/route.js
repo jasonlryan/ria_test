@@ -4,6 +4,9 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
+// New route segment config format for Next.js 14+
+export const runtime = "nodejs";
+
 export async function POST(req) {
   console.log("RETRIEVE-DATA API CALLED");
   const startTime = performance.now();
@@ -178,10 +181,3 @@ function countDataPoints(data) {
   traverse(data);
   return count;
 }
-
-// For older Next.js versions that might use the API Routes format
-export const config = {
-  api: {
-    bodyParser: true,
-  },
-};
