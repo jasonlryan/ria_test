@@ -35,6 +35,14 @@
             "memory": 1024,
             "maxDuration": 60
         },
+        "app/api/query/route.ts": {
+            "memory": 1024,
+            "maxDuration": 60
+        },
+        "app/api/retrieve-data/route.ts": {
+            "memory": 1024,
+            "maxDuration": 60
+        },
         "app/api/test-openai/route.ts": {
             "memory": 1024,
             "maxDuration": 30
@@ -47,5 +55,9 @@
             "memory": 1024,
             "maxDuration": 30
         }
-    }
+    },
+    "includeFiles": [
+        "utils/openai/*.md",
+        "scripts/output/split_data/*.json"
+    ]
 }
