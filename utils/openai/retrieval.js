@@ -20,6 +20,7 @@ const CANONICAL_MAPPING_PATH = path.join(
 );
 const DEFAULT_OPENAI_MODEL = "gpt-4o-mini";
 const PROMPTS_DIR = path.join(process.cwd(), "utils", "openai");
+const DATA_DIR = path.join(process.cwd(), "scripts", "output", "split_data");
 
 // Cache for the canonical topic mapping to avoid repeated file reads
 let canonicalTopicMapping = null;
@@ -1022,34 +1023,53 @@ export async function handleQueryAPI(req, res) {
   }
 }
 
+/**
+ * Load a prompt from a markdown file
+ * @param {string} promptName - The name of the prompt file without extension
+ * @returns {string} - The prompt content
+ */
 function loadPromptFromFile(promptName) {
   try {
-    const promptPath = path.join(
-      process.cwd(),
-      "utils",
-      "openai",
-      `${promptName}.md`
-    );
-
-    if (!fs.existsSync(promptPath)) {
-      throw new Error(
-        `Prompt file ${promptPath} not found. Please create this file before running the application.`
-      );
-    }
-
-    const promptContent = fs.readFileSync(promptPath, "utf8");
-    console.log(`Loaded prompt from ${promptPath}`);
-
-    // Log the first 500 characters of the prompt content for debugging
-    console.log(`PROMPT '${promptName}' PREVIEW:`);
-    console.log(promptContent.substring(0, 500) + "...");
-    console.log("PROMPT LENGTH:", promptContent.length);
-
-    return promptContent;
+    // Try the original location first
+    const originalPromptPath = path.join(PROMPTS_DIR, `${promptName}.md`);
+    console.log(`Loaded prompt from ${originalPromptPath}`);
+    return fs.readFileSync(originalPromptPath, "utf8");
   } catch (error) {
-    console.error(`Error loading prompt file ${promptName}:`, error);
-    throw new Error(
-      `Failed to load prompt file ${promptName}: ${error.message}`
+    console.log(
+      `Error loading original prompt: ${error.message}, trying fallback locations...`
     );
+    // Try public folder as fallback
+    try {
+      const publicPromptPath = path.join(
+        process.cwd(),
+        "public",
+        "prompts",
+        `${promptName}.md`
+      );
+      console.log(`Trying fallback prompt from ${publicPromptPath}`);
+      return fs.readFileSync(publicPromptPath, "utf8");
+    } catch (fallbackError) {
+      // Try public/prompt_files as another fallback
+      try {
+        const altPublicPromptPath = path.join(
+          process.cwd(),
+          "public",
+          "prompt_files",
+          `${promptName}.md`
+        );
+        console.log(
+          `Trying alternative fallback prompt from ${altPublicPromptPath}`
+        );
+        return fs.readFileSync(altPublicPromptPath, "utf8");
+      } catch (altFallbackError) {
+        console.error(
+          `Failed to load prompt ${promptName} from any location:`,
+          error.message
+        );
+        throw new Error(
+          `Failed to load prompt file ${promptName}: ${error.message}`
+        );
+      }
+    }
   }
 }
