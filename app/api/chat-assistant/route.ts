@@ -227,12 +227,25 @@ export async function POST(request: NextRequest) {
                   // Clean the text
                   const cleanText = sanitizeOutput(fullText);
                   
-                  // Send the text delta first
-                  controller.enqueue(encoder.encode(`event: textDelta\ndata: ${JSON.stringify({
-                    value: cleanText,
-                  })}\n\n`));
+                  // Add debug log for text content
+                  console.log(`Sending text content (${cleanText.length} chars)`);
+                  
+                  // MODIFICATION: Stream text in smaller chunks for better streaming effect
+                  const chunkSize = 50; // Characters per chunk
+                  for (let i = 0; i < cleanText.length; i += chunkSize) {
+                    const chunk = cleanText.substring(i, i + chunkSize);
+                    console.log(`Sending text delta chunk ${i/chunkSize + 1}/${Math.ceil(cleanText.length/chunkSize)}`);
+                    
+                    controller.enqueue(encoder.encode(`event: textDelta\ndata: ${JSON.stringify({
+                      value: chunk,
+                    })}\n\n`));
+                    
+                    // Moderate delay between chunks for visible streaming
+                    await new Promise(resolve => setTimeout(resolve, 30));
+                  }
                   
                   // Then send the full message
+                  console.log("Sending messageDone event with content length:", cleanText.length);
                   controller.enqueue(encoder.encode(`event: messageDone\ndata: ${JSON.stringify({
                     id: message.id,
                     threadId: finalThreadId,

@@ -41,6 +41,8 @@ function Embed({ params: { assistantId } }) {
     },
   ]);
   const messageId = useRef(0);
+  // Add a ref to store accumulated streaming text
+  const accumulatedText = useRef("");
   // User prompt
   const [prompt, setPrompt] = useState("");
   // Get the thread id from the response, and then can pass it back to the next request to continue the conversation.
@@ -537,104 +539,142 @@ ${
         const decoder = new TextDecoder();
         let buffer = "";
 
+        // Reset accumulated text at the start of streaming
+        accumulatedText.current = "";
+
         // Function to process SSE events
-        const processEvents = (chunk) => {
+        const processEvents = async (chunk) => {
           // Add the new chunk to our buffer
           buffer += chunk;
 
-          // Process all complete events in the buffer
-          const eventRegex = /event: ([^\n]+)\ndata: ({[^\n]+})\n\n/g;
+          // Log raw buffer for debugging
+          console.log(`Raw chunk received (${chunk.length} chars)`);
+
+          // First look for text delta events and accumulate them
+          const textDeltaRegex = /event: textDelta\ndata: ({.*?})\n\n/g;
           let match;
 
-          while ((match = eventRegex.exec(buffer)) !== null) {
-            const eventType = match[1];
-            const eventData = JSON.parse(match[2]);
+          while ((match = textDeltaRegex.exec(buffer)) !== null) {
+            try {
+              const eventData = JSON.parse(match[1]);
 
-            console.log(`Received event: ${eventType}`, eventData);
+              if (eventData.value) {
+                console.log(
+                  `📝 Accumulating text delta: ${eventData.value.substring(
+                    0,
+                    20
+                  )}...`
+                );
 
-            switch (eventType) {
-              case "run":
-                console.log("Run status update:", eventData.status);
-                break;
+                // CRITICAL: Accumulate text in the ref first
+                accumulatedText.current += eventData.value;
 
-              case "textDelta":
-                if (eventData.value) {
-                  setStreamingMessage((prev) => ({
-                    ...prev,
-                    content: parseResponse(eventData.value),
-                  }));
-                }
-                break;
-
-              case "messageDone":
-                // Handle completed message
-                messageId.current++;
-
-                // Save the thread ID if available
-                if (
-                  eventData.threadId &&
-                  (!threadId || threadId !== eventData.threadId)
-                ) {
-                  console.log(
-                    `🧵 THREAD ID RECEIVED FROM API: ${eventData.threadId}`
-                  );
-                  console.log(`🧵 Previous threadId: ${threadId || "NONE"}`);
-                  setThreadId(eventData.threadId);
-                }
-
-                setMessages((prevMessages) => [
-                  ...prevMessages,
-                  {
-                    id: messageId.current.toString(),
-                    role: "assistant",
-                    content: parseResponse(eventData.content),
-                    createdAt: new Date(eventData.createdAt),
-                  },
-                ]);
-
-                // Reset states
-                setLoading(false);
-                setStreamingMessage(null);
-
-                // Clear loading interval if it's still running
-                if (intervalRef.current) clearInterval(intervalRef.current);
-
-                // Scroll to bottom
-                setTimeout(scrollToBottom, 100);
-                break;
-
-              case "error":
-                console.error("Stream error:", eventData.message);
-
-                // Add friendly error message to chat
-                messageId.current++;
-                setMessages((prevMessages) => [
-                  ...prevMessages,
-                  {
-                    id: messageId.current.toString(),
-                    role: "assistant",
-                    content: `I apologize, but I encountered an error: ${eventData.message}`,
-                    createdAt: new Date(),
-                  },
-                ]);
-
-                // Reset states
-                setLoading(false);
-                setStreamingMessage(null);
-
-                // Clear loading interval if it's still running
-                if (intervalRef.current) clearInterval(intervalRef.current);
-
-                // Scroll to bottom
-                setTimeout(scrollToBottom, 100);
-                break;
+                // Then update React state once with the complete accumulated text
+                setStreamingMessage({
+                  id: "streaming",
+                  role: "assistant",
+                  content: accumulatedText.current,
+                  createdAt: new Date(),
+                });
+              }
+            } catch (e) {
+              console.error("Error processing text delta:", e);
             }
           }
 
-          // Keep any incomplete event data in the buffer
-          const lastEventIndex = buffer.lastIndexOf("\n\n");
-          if (lastEventIndex > 0) {
-            buffer = buffer.substring(lastEventIndex + 2);
+          // Look for message done events
+          const messageDoneRegex = /event: messageDone\ndata: ({.*?})\n\n/g;
+          let doneMatch;
+
+          while ((doneMatch = messageDoneRegex.exec(buffer)) !== null) {
+            try {
+              const eventData = JSON.parse(doneMatch[1]);
+              console.log("✅ Message completed, adding to chat");
+
+              // Set the thread ID if available
+              if (eventData.threadId) {
+                setThreadId(eventData.threadId);
+              }
+
+              // Use the accumulated text for the final message
+              const finalContent =
+                eventData.content || accumulatedText.current || "";
+
+              // Add the final message
+              messageId.current++;
+              setMessages((prevMessages) => [
+                ...prevMessages,
+                {
+                  id: messageId.current.toString(),
+                  role: "assistant",
+                  content: finalContent,
+                  createdAt: new Date(eventData.createdAt || Date.now()),
+                },
+              ]);
+
+              // Reset states
+              setLoading(false);
+              setStreamingMessage(null);
+              accumulatedText.current = "";
+
+              // Clear loading interval
+              if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+              }
+
+              // Scroll to bottom
+              setTimeout(scrollToBottom, 100);
+            } catch (e) {
+              console.error("Error processing message done:", e);
+            }
+          }
+
+          // Check for error events
+          const errorRegex = /event: error\ndata: ({.*?})\n\n/g;
+          let errorMatch;
+
+          while ((errorMatch = errorRegex.exec(buffer)) !== null) {
+            try {
+              const eventData = JSON.parse(errorMatch[1]);
+              console.error(
+                "🛑 Error event:",
+                eventData.message || eventData.error
+              );
+
+              // Add error message
+              messageId.current++;
+              setMessages((prevMessages) => [
+                ...prevMessages,
+                {
+                  id: messageId.current.toString(),
+                  role: "assistant",
+                  content: `I apologize, but I encountered an error: ${
+                    eventData.message || eventData.error || "Unknown error"
+                  }`,
+                  createdAt: new Date(),
+                },
+              ]);
+
+              // Reset states
+              setLoading(false);
+              setStreamingMessage(null);
+
+              // Clear loading interval
+              if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+              }
+
+              // Scroll to bottom
+              setTimeout(scrollToBottom, 100);
+            } catch (e) {
+              console.error("Error processing error event:", e);
+            }
+          }
+
+          // Trim buffer to avoid memory issues
+          const lastCompleteEvent = buffer.lastIndexOf("\n\n");
+          if (lastCompleteEvent > 0) {
+            buffer = buffer.substring(lastCompleteEvent + 2);
           }
         };
 
@@ -649,7 +689,7 @@ ${
             }
 
             // Process this chunk
-            processEvents(decoder.decode(value, { stream: true }));
+            await processEvents(decoder.decode(value, { stream: true }));
           }
         } catch (streamError) {
           console.error("Error reading stream:", streamError);
@@ -915,6 +955,7 @@ ${
                     id="streaming-message"
                   >
                     {streamingMessage.content &&
+                    streamingMessage.stage &&
                     streamingMessage.content.includes(
                       "<span class='loading-message'>"
                     ) ? (
@@ -928,45 +969,9 @@ ${
                       <ReactMarkdown
                         className="prose max-w-none text-sm sm:text-base"
                         remarkPlugins={[remarkGfm]}
-                        components={{
-                          table: ({ node, ...props }) => (
-                            <div className="overflow-x-auto">
-                              <table {...props} />
-                            </div>
-                          ),
-                          // Ensure proper heading styles
-                          h1: ({ node, ...props }) => (
-                            <h1 {...props} className="font-bold text-primary" />
-                          ),
-                          h2: ({ node, ...props }) => (
-                            <h2 {...props} className="font-bold text-primary" />
-                          ),
-                          h3: ({ node, ...props }) => (
-                            <h3
-                              {...props}
-                              className="font-semibold text-primary"
-                            />
-                          ),
-                          h4: ({ node, ...props }) => (
-                            <h4
-                              {...props}
-                              className="font-semibold text-primary"
-                            />
-                          ),
-                        }}
                       >
                         {streamingMessage.content}
                       </ReactMarkdown>
-                    )}
-
-                    {!streamingMessage.content.includes(
-                      "<span class='loading-message'>"
-                    ) && (
-                      <div className="flex h-4 items-end gap-2 mt-2">
-                        <div className="bounce bounce1 rounded bg-primary h-1.5 w-1.5 sm:h-2 sm:w-2" />
-                        <div className="bounce bounce2 rounded bg-primary h-1.5 w-1.5 sm:h-2 sm:w-2" />
-                        <div className="bounce bounce3 rounded bg-primary h-1.5 w-1.5 sm:h-2 sm:w-2" />
-                      </div>
                     )}
                   </div>
                 )}
