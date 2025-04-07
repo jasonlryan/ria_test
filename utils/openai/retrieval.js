@@ -543,13 +543,101 @@ export async function generateAnalysis(query, dataFiles, matchedTopics) {
 export async function retrieveDataFiles(fileIds) {
   console.log(`Retrieving ${fileIds.length} data files...`);
 
+  // In production on Vercel, read files directly from the file system
+  // This avoids API cross-calling issues with authentication
+  if (process.env.NODE_ENV === "production") {
+    try {
+      console.log("Using direct file system access in production environment");
+
+      // Topics to collect
+      const topics = new Set();
+
+      // Process each file ID and read directly from file system
+      const files = await Promise.all(
+        fileIds.map(async (fileId) => {
+          try {
+            // Normalize file ID to include .json extension if missing
+            const normalizedId = fileId.endsWith(".json")
+              ? fileId
+              : `${fileId}.json`;
+
+            // Construct absolute path to the data file
+            const filePath = path.join(
+              process.cwd(),
+              "scripts",
+              "output",
+              "split_data",
+              normalizedId
+            );
+
+            console.log(`Attempting to read file: ${filePath}`);
+
+            // Ensure file exists
+            if (!fs.existsSync(filePath)) {
+              console.error(`File not found: ${filePath}`);
+              return {
+                id: fileId,
+                error: `File not found: ${filePath}`,
+              };
+            }
+
+            // Read the file content
+            const fileContent = fs.readFileSync(filePath, "utf8");
+
+            // Parse the file content as JSON
+            const jsonData = JSON.parse(fileContent);
+
+            // Extract topic from file_id
+            let topic = "Unknown";
+            if (fileId.includes("_1")) topic = "Attraction_Factors";
+            else if (fileId.includes("_2")) topic = "Retention_Factors";
+            else if (fileId.includes("_3")) topic = "Attrition_Factors";
+            else if (fileId.includes("_7")) topic = "Intention_to_Leave";
+            else if (fileId.includes("_12")) topic = "Work_Preferences";
+
+            // Add topic to set
+            topics.add(topic);
+
+            // Return file data
+            return {
+              id: fileId,
+              topic: topic,
+              data: jsonData,
+            };
+          } catch (error) {
+            console.error(`Error retrieving file ${fileId}:`, error);
+            return {
+              id: fileId,
+              error: error.message,
+            };
+          }
+        })
+      );
+
+      // Calculate total data points
+      let totalDataPoints = 0;
+      files.forEach((file) => {
+        if (file.data && Array.isArray(file.data)) {
+          totalDataPoints += file.data.length;
+        } else if (file.data && typeof file.data === "object") {
+          totalDataPoints += 1;
+        }
+      });
+
+      return {
+        files: files || [],
+        topics: Array.from(topics) || [],
+        totalDataPoints: totalDataPoints || 0,
+      };
+    } catch (error) {
+      console.error("Error with direct file access:", error);
+      throw error;
+    }
+  }
+
+  // For development, continue using the API
   // Determine API URL based on environment
-  const apiUrl =
-    process.env.NODE_ENV === "production"
-      ? `https://${
-          process.env.VERCEL_URL || "ria25.vercel.app"
-        }/api/retrieve-data`
-      : "http://localhost:3000/api/retrieve-data";
+  const apiUrl = "http://localhost:3000/api/retrieve-data";
 
   try {
     // Call the API to retrieve data files
