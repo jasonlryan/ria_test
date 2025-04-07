@@ -1,0 +1,3 @@
+*
+!utils/openai/*.md
+!scripts/output/split_data/*.json
