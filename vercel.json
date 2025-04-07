@@ -1,7 +1,6 @@
 {
     "version": 2,
     "name": "workforce-survey-2025",
-    "rootDirectory": "./",
     "buildCommand": "npm run build",
     "outputDirectory": ".next",
     "framework": "nextjs",
