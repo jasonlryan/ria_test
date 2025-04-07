@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "cross-env OPENAI_ASSISTANT_ID=asst_D0BPAJjvg3UK6Lcb1lqIM1xS next dev",
+    "dev:default": "next dev",
     "dev:test": "cross-env OPENAI_ASSISTANT_ID=asst_T8WLaYpjA8l8JGApPGx6oyKq next dev",
-    "dev:new": "cross-env OPENAI_ASSISTANT_ID=asst_D0BPAJjvg3UK6Lcb1lqIM1xS next dev",
+    "dev:original": "cross-env OPENAI_ASSISTANT_ID=asst_xOd6VeXqgta6bxY1LkatulKU next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
