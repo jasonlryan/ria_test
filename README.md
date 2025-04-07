@@ -136,3 +136,11 @@ node scripts/index-country-json.js
 ## Deployment Trigger
 
 Last updated: March 13, 2025 - 08:36
+
+# Workforce 2025 RIA Survey Tool
+
+Interactive assistant for exploring the 2025 Workforce Survey data.
+
+_Updated: April 7, 2024 - Latest deployment with streaming improvements_
+
+## Features
