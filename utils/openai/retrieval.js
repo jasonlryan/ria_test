@@ -536,23 +536,18 @@ export async function generateAnalysis(query, dataFiles, matchedTopics) {
 }
 
 /**
- * Retrieve data files from the API based on the file IDs
- * @param {Object|Array} fileIdsOrObject - Either an array of file IDs or an object containing file_ids
- * @returns {Promise<{files: Object[], topics: string[], totalDataPoints: number}>} Retrieved data
+ * Retrieve data files from the API
+ * @param {string[]} fileIds - Array of file IDs to retrieve
+ * @returns {Promise<object>} - The retrieved data
  */
-async function retrieveDataFiles(fileIdsOrObject) {
-  // Extract file IDs from parameter, which might be an array or an object with file_ids property
-  const fileIds = Array.isArray(fileIdsOrObject)
-    ? fileIdsOrObject
-    : (fileIdsOrObject && fileIdsOrObject.file_ids) || [];
-
-  console.log("Retrieving data files:", fileIds);
+export async function retrieveDataFiles(fileIds) {
+  console.log(`Retrieving ${fileIds.length} data files...`);
 
   // Determine API URL based on environment
   const apiUrl =
     process.env.NODE_ENV === "production"
-      ? `${
-          process.env.VERCEL_URL || "https://ria25.vercel.app"
+      ? `https://${
+          process.env.VERCEL_URL || "ria25.vercel.app"
         }/api/retrieve-data`
       : "http://localhost:3000/api/retrieve-data";
 
