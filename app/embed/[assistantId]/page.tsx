@@ -297,7 +297,7 @@ function Embed({ params: { assistantId } }) {
       // Update streaming message to show retrieval status
       setStreamingMessage((prev) => ({
         ...prev,
-        content: `<span class='loading-message'>Retrieving workforce data...</span>`,
+        content: `<span class='loading-message'>Retrieving data...</span>`,
         stage: "retrieving",
       }));
 
@@ -386,6 +386,17 @@ function Embed({ params: { assistantId } }) {
         // Update the cache
         updateThreadCache(threadId, newFileIds, newData);
       }
+
+      // STAGE 2: After data retrieval, before sending to assistant
+      // Update the streaming message to show we're generating insights
+      setStreamingMessage((prev) => ({
+        ...prev,
+        content: `<span class='loading-message'>Generating insights...</span>`,
+        stage: "analyzing",
+      }));
+
+      // Add more detailed logging
+      console.log("Starting stage 2: Generating insights from retrieved data");
 
       // Prepare content for the assistant with safety checks
       const assistantPrompt = `
