@@ -681,6 +681,35 @@ export async function retrieveDataFiles(fileIds) {
 export async function processQueryWithData(query, context, cachedFileIds = []) {
   const startTime = performance.now();
 
+  // Check if we're in direct mode - if so, we ONLY identify files, not extract data
+  const isDirectMode = process.env.FILE_ACCESS_MODE === "direct";
+  if (isDirectMode) {
+    console.log(
+      "⭐⭐⭐ DIRECT MODE: processQueryWithData is skipping data extraction"
+    );
+
+    // Only identify files but don't retrieve them
+    const fileIdsResult = await identifyRelevantFiles(query, context);
+    const fileIdArray = fileIdsResult?.file_ids || [];
+
+    // Merge with cached files (avoid duplicates)
+    const allRelevantFileIds = Array.from(
+      new Set([...(cachedFileIds || []), ...(fileIdArray || [])])
+    );
+
+    // Return only the file IDs without retrieving data
+    return {
+      file_ids: allRelevantFileIds,
+      matched_topics: fileIdsResult.matched_topics || [],
+      files_used: allRelevantFileIds,
+      data_points: allRelevantFileIds.length,
+      analysis:
+        "DIRECT MODE: Analysis will be performed by the assistant directly using the provided file IDs.",
+      processing_time_ms: Math.round(performance.now() - startTime),
+    };
+  }
+
+  // Standard mode - continue with full data retrieval and processing
   // Thread-based data continuity approach
   // If we have cached files for this thread, we apply thread continuity principles
   if (cachedFileIds && cachedFileIds.length > 0) {

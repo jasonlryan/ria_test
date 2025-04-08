@@ -7,10 +7,19 @@ import { Stream } from "openai/streaming";
 import readline from "readline";
 
 // Add import for retrieval system
-import { processQueryWithData } from "../../../utils/openai/retrieval";
+import { processQueryWithData, identifyRelevantFiles } from "../../../utils/openai/retrieval";
 
 // Add import for cache utilities
 import { getCachedFilesForThread, updateThreadCache } from "../../../utils/cache-utils";
+
+// Check if we're in direct mode (file IDs only) or standard mode (processed data)
+console.log(`[ENV] FILE_ACCESS_MODE is set to: '${process.env.FILE_ACCESS_MODE}'`);
+const isDirectMode = process.env.FILE_ACCESS_MODE === 'direct';
+console.log(`[MODE] Running in ${isDirectMode ? 'DIRECT (file IDs only)' : 'STANDARD (processed data)'} mode`);
+
+// Skip data extraction entirely in DIRECT mode
+// We skip file retrieval and data extraction in DIRECT mode - the assistant will do that itself
+// In STANDARD mode, we still retrieve and process data before sending to the assistant
 
 // Configure OpenAI with reasonable defaults
 const OPENAI_TIMEOUT_MS = 90000; // 90 seconds
@@ -34,8 +43,19 @@ export async function OPTIONS(request: NextRequest) {
  * Sanitizes the output from OpenAI to remove embedded citation markers
  */
 function sanitizeOutput(text: string): string {
-  // OpenAI has a tendency to add citation markers like [[1](#source_1)], we remove these
-  return text.replace(/\[\[(\d+)\]\(#.*?\)\]/g, "");
+  // Remove OpenAI citation markers like [[1](#source_1)]
+  text = text.replace(/\[\[(\d+)\]\(#.*?\)\]/g, "");
+  
+  // Remove file source citations like 【12:1†source】
+  text = text.replace(/【(\d+):(\d+)†source】/g, "");
+  
+  // Remove any other source-like patterns
+  text = text.replace(/\[\[source:\s*[^\]]+\]\]/g, "");
+  
+  // Clean up any double spaces that might result from removing citations
+  text = text.replace(/\s{2,}/g, " ");
+  
+  return text;
 }
 
 /**
@@ -49,6 +69,17 @@ function isJsonContent(content: string): boolean {
   } catch (e) {
     return false;
   }
+}
+
+/**
+ * Logs performance metrics in a consistent format for testing
+ */
+function logPerformanceMetrics(stage, metrics) {
+  console.log(`\n----- ${stage} -----`);
+  Object.entries(metrics).forEach(([key, value]) => {
+    console.log(`${key}: ${value}`);
+  });
+  console.log("---------------------");
 }
 
 // post a new message and stream OpenAI Assistant response
@@ -72,11 +103,7 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    console.log("API Request:", {
-      threadId: threadId || null,
-      assistantId,
-      contentLength: content.length,
-    });
+    console.log(`[REQUEST] New ${threadId ? "follow-up" : "initial"} request | Assistant: ${assistantId}`);
 
     // Initialize OpenAI client with API key
     const openai = new OpenAI({
@@ -96,10 +123,10 @@ export async function POST(request: NextRequest) {
     // Handle thread creation if needed
     let finalThreadId = threadId;
     if (!finalThreadId) {
-      console.log("Creating new thread...");
+      console.log("[THREAD] Creating new thread...");
       const thread = await openai.beta.threads.create();
       finalThreadId = thread.id;
-      console.log("Created new thread:", finalThreadId);
+      console.log(`[THREAD] Created new thread: ${finalThreadId}`);
     }
 
     // Add the user message to the thread
@@ -107,26 +134,22 @@ export async function POST(request: NextRequest) {
       role: "user",
       content: content,
     });
-    console.log("Added message to thread:", finalThreadId);
+    console.log(`[THREAD] Added message to thread: ${finalThreadId}`);
 
     // Create a run with the assistant
-    console.log(
-      `Creating run for thread ${finalThreadId} with assistant ${assistantId}...`
-    );
+    console.log(`[ASSISTANT] Creating run with assistant ${assistantId}`);
 
     const startTime = Date.now();
-    // Here we add specific instructions to help the assistant understand
-    // that it should treat the analysis data as reliable and use it directly
+    // Only pass the mode information to the assistant, not a full set of instructions
+    // The assistant already has comprehensive instructions in its configuration
     const run = await openai.beta.threads.runs.create(finalThreadId, {
       assistant_id: assistantId,
-      instructions: `You are a workforce insights specialist analyzing survey data. IMPORTANT: When you receive analysis data as part of the query, treat it as reliable and factual information derived from the survey data. Do NOT claim there are data formatting issues or that you can't access percentages. The analysis already contains valid information extracted from the actual files. Your job is to present this information in a clear, structured way, highlighting key insights while maintaining factual accuracy. If specific percentages appear in the analysis, include and bold them in your response. Always present the data as available and accurate unless explicitly told otherwise.`,
+      instructions: isDirectMode ? "OPERATING MODE: DIRECT" : "OPERATING MODE: STANDARD",
     });
 
     const assistantCreationTime = ((Date.now() - startTime) / 1000).toFixed(3);
-    console.log(`assistantRunCreation: ${assistantCreationTime}s`);
-    console.log(
-      `Run created and streaming started for assistant: ${assistantId}`
-    );
+    console.log(`[ASSISTANT] Run creation time: ${assistantCreationTime}s`);
+    console.log(`[ASSISTANT] Run ID: ${run.id} | Thread ID: ${finalThreadId}`);
 
     // Create a simpler manual streaming implementation
     // This implementation avoids issues with controller closing by keeping event handling simple
@@ -175,29 +198,93 @@ export async function POST(request: NextRequest) {
                       
                       // Get cached files for this thread if available
                       const cachedFileIds = await getCachedFilesForThread(finalThreadId);
-                      console.log(`Thread ${finalThreadId} has ${cachedFileIds.length} cached files`);
+                      console.log(`[CACHE] Thread ${finalThreadId} has ${cachedFileIds.length} cached file IDs`);
                       
-                      // Pass cached files to processQueryWithData
-                      const result = await processQueryWithData(query, "all-sector", cachedFileIds);
-                      
-                      // If we got new files, update the thread cache
-                      if (result.file_ids && result.file_ids.length > 0 && !result.status?.includes("follow_up")) {
-                        console.log(`Updating thread cache with ${result.file_ids.length} files`);
-                        await updateThreadCache(finalThreadId, result.file_ids);
+                      if (isDirectMode) {
+                        // DIRECT MODE: Only identify relevant files without retrieving data
+                        // We deliberately DO NOT retrieve/extract data - only identify files
+                        // The assistant has vector store access and will retrieve data itself
+                        const identificationStartTime = performance.now();
+                        
+                        console.log("⭐ DIRECT MODE: Only identifying files, SKIPPING DATA EXTRACTION");
+                        
+                        // Identify relevant files
+                        const relevantFilesResult = await identifyRelevantFiles(query, "all-sector");
+                        console.log(`Identified ${relevantFilesResult.file_ids?.length || 0} relevant files`);
+                        
+                        // Record identification time
+                        const identificationTime = performance.now() - identificationStartTime;
+                        
+                        // Merge with cached files (avoid duplicates)
+                        const allRelevantFileIds = Array.from(new Set([
+                          ...(cachedFileIds || []),
+                          ...(relevantFilesResult.file_ids || [])
+                        ]));
+                        
+                        // Update thread cache with ALL file IDs
+                        if (allRelevantFileIds.length > 0) {
+                          console.log(`[CACHE] Updating thread cache with ${allRelevantFileIds.length} file IDs`);
+                          await updateThreadCache(finalThreadId, allRelevantFileIds);
+                        }
+                        
+                        // Log direct mode summary
+                        console.log("\n=== DATA RETRIEVAL SUMMARY (DIRECT MODE) ===");
+                        console.log(`THREAD ID: ${finalThreadId}`);
+                        console.log(`PROMPT: "${query}"`);
+                        console.log(`FILE COUNT: ${allRelevantFileIds.length}`);
+                        console.log(`FILE IDS: ${JSON.stringify(allRelevantFileIds, null, 2)}`);
+                        console.log(`RESPONSE TIME: ${Math.round(identificationTime)}ms`);
+                        console.log(`IS FOLLOWUP: ${cachedFileIds.length > 0 ? "YES" : "NO"}`);
+                        console.log("================================\n");
+                        
+                        // Send just the file IDs to the assistant
+                        await openai.beta.threads.runs.submitToolOutputs(finalThreadId, run.id, {
+                          tool_outputs: [{
+                            tool_call_id: toolCall.id,
+                            output: JSON.stringify({
+                              prompt: query,
+                              file_ids: allRelevantFileIds,
+                              matched_topics: relevantFilesResult.matched_topics || [],
+                              is_followup_query: cachedFileIds.length > 0,
+                              explanation: relevantFilesResult.explanation || "No explanation provided"
+                            }),
+                          }],
+                        });
+                      } else {
+                        // STANDARD MODE: Process and retrieve data (existing approach)
+                        // Pass cached files to processQueryWithData
+                        const result = await processQueryWithData(query, "all-sector", cachedFileIds);
+                        
+                        // If we got new files, update the thread cache
+                        if (result.file_ids && result.file_ids.length > 0 && !result.status?.includes("follow_up")) {
+                          console.log(`[CACHE] Updating thread cache with ${result.file_ids.length} files`);
+                          await updateThreadCache(finalThreadId, result.file_ids);
+                        }
+                        
+                        // Log standard mode summary
+                        console.log("\n=== DATA RETRIEVAL SUMMARY (STANDARD MODE) ===");
+                        console.log(`THREAD ID: ${finalThreadId}`);
+                        console.log(`PROMPT: "${query}"`);
+                        console.log(`FILE COUNT: ${result.file_ids?.length || 0}`);
+                        console.log(`FILE IDS: ${JSON.stringify(result.file_ids || [])}`);
+                        console.log(`RESPONSE TIME: ${result.processing_time_ms}ms`);
+                        console.log(`IS FOLLOWUP: ${result.status?.includes("follow_up") ? "YES" : "NO"}`);
+                        console.log("================================\n");
+                        
+                        // Send processed data to the assistant
+                        await openai.beta.threads.runs.submitToolOutputs(finalThreadId, run.id, {
+                          tool_outputs: [{
+                            tool_call_id: toolCall.id,
+                            output: JSON.stringify({
+                              analysis: result.analysis,
+                              files_used: result.files_used,
+                              matched_topics: result.matched_topics,
+                              data_points: result.data_points,
+                              processing_time_ms: result.processing_time_ms,
+                            }),
+                          }],
+                        });
                       }
-                      
-                      await openai.beta.threads.runs.submitToolOutputs(finalThreadId, run.id, {
-                        tool_outputs: [{
-                          tool_call_id: toolCall.id,
-                          output: JSON.stringify({
-                            analysis: result.analysis,
-                            files_used: result.files_used,
-                            matched_topics: result.matched_topics,
-                            data_points: result.data_points,
-                            processing_time_ms: result.processing_time_ms,
-                          }),
-                        }],
-                      });
                     } catch (error) {
                       await openai.beta.threads.runs.submitToolOutputs(finalThreadId, run.id, {
                         tool_outputs: [{
@@ -234,7 +321,6 @@ export async function POST(request: NextRequest) {
                   const chunkSize = 50; // Characters per chunk
                   for (let i = 0; i < cleanText.length; i += chunkSize) {
                     const chunk = cleanText.substring(i, i + chunkSize);
-                    console.log(`Sending text delta chunk ${i/chunkSize + 1}/${Math.ceil(cleanText.length/chunkSize)}`);
                     
                     controller.enqueue(encoder.encode(`event: textDelta\ndata: ${JSON.stringify({
                       value: chunk,
@@ -379,62 +465,148 @@ export async function PUT(request: NextRequest) {
       let args;
       try {
         args = JSON.parse(toolCall.function.arguments);
-        console.log("Function arguments:", args);
+        console.log("[TOOL] Function arguments:", JSON.stringify(args));
       } catch (argError) {
-        console.error("Failed to parse function arguments:", argError, "Raw arguments:", toolCall.function.arguments);
+        console.error("[ERROR] Failed to parse function arguments:", argError);
         args = {}; // Default to empty object
       }
       
       const query = args.query || "workforce trends";
-      console.log("Processing data retrieval for query:", query);
+      console.log(`[TOOL] Processing retrieval for query: "${query}" | Thread: ${threadId}`);
       
       try {
         // Get cached files for this thread if available
         const cachedFileIds = await getCachedFilesForThread(threadId);
-        console.log(`Thread ${threadId} has ${cachedFileIds.length} cached files`);
+        console.log(`[CACHE] Thread ${threadId} has ${cachedFileIds.length} cached file IDs`);
         
-        // Call our optimized data retrieval function with cached files
-        const result = await processQueryWithData(query, "all-sector", cachedFileIds);
-        
-        // If we got new files, update the thread cache
-        if (result.file_ids && result.file_ids.length > 0 && !result.status?.includes("follow_up")) {
-          console.log(`Updating thread cache with ${result.file_ids.length} files`);
-          await updateThreadCache(threadId, result.file_ids);
+        if (isDirectMode) {
+          // DIRECT MODE: Only identify relevant files without retrieving data
+          // We deliberately DO NOT retrieve/extract data - only identify files
+          // The assistant has vector store access and will retrieve data itself
+          const identificationStartTime = performance.now();
+          
+          console.log("⭐ DIRECT MODE: Only identifying files, SKIPPING DATA EXTRACTION");
+          
+          // Identify relevant files
+          const relevantFilesResult = await identifyRelevantFiles(query, "all-sector");
+          console.log(`Identified ${relevantFilesResult.file_ids?.length || 0} relevant files`);
+          
+          // Record identification time
+          const identificationTime = performance.now() - identificationStartTime;
+          
+          // Merge with cached files (avoid duplicates)
+          const allRelevantFileIds = Array.from(new Set([
+            ...(cachedFileIds || []),
+            ...(relevantFilesResult.file_ids || [])
+          ]));
+          
+          // Update thread cache with ALL file IDs
+          if (allRelevantFileIds.length > 0) {
+            console.log(`[CACHE] Updating thread cache with ${allRelevantFileIds.length} file IDs`);
+            await updateThreadCache(threadId, allRelevantFileIds);
+          }
+          
+          console.log("File identification completed successfully");
+          
+          // Submit the tool outputs back to the assistant
+          try {
+            console.log("Submitting tool output to OpenAI run:", runId);
+            
+            // Log direct mode summary
+            console.log("\n=== DATA RETRIEVAL SUMMARY (DIRECT MODE) ===");
+            console.log(`THREAD ID: ${threadId}`);
+            console.log(`PROMPT: "${query}"`);
+            console.log(`FILE COUNT: ${allRelevantFileIds.length}`);
+            console.log(`FILE IDS: ${JSON.stringify(allRelevantFileIds, null, 2)}`);
+            console.log(`RESPONSE TIME: ${Math.round(identificationTime)}ms`);
+            console.log(`IS FOLLOWUP: ${cachedFileIds.length > 0 ? "YES" : "NO"}`);
+            console.log("================================\n");
+            
+            // Send just the file IDs to the assistant
+            await openai.beta.threads.runs.submitToolOutputs(threadId, runId, {
+              tool_outputs: [
+                {
+                  tool_call_id: toolCall.id,
+                  output: JSON.stringify({
+                    prompt: query,
+                    file_ids: allRelevantFileIds,
+                    matched_topics: relevantFilesResult.matched_topics || [],
+                    is_followup_query: cachedFileIds.length > 0,
+                    explanation: relevantFilesResult.explanation || "No explanation provided"
+                  })
+                }
+              ]
+            });
+            console.log("Tool output submitted successfully");
+            
+            return new Response(JSON.stringify({ 
+              status: "success",
+              file_ids: allRelevantFileIds.length,
+              identification_time_ms: Math.round(identificationTime)
+            }), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+            });
+          } catch (submitError) {
+            console.error("Error submitting tool output:", submitError);
+            throw submitError;
+          }
+        } else {
+          // STANDARD MODE: Process and retrieve data (existing approach)
+          // Call our optimized data retrieval function with cached files
+          const result = await processQueryWithData(query, "all-sector", cachedFileIds);
+          
+          // If we got new files, update the thread cache
+          if (result.file_ids && result.file_ids.length > 0 && !result.status?.includes("follow_up")) {
+            console.log(`[CACHE] Updating thread cache with ${result.file_ids.length} files`);
+            await updateThreadCache(threadId, result.file_ids);
+          }
+          
+          // Log clear summary of the critical data
+          console.log("\n=== DATA RETRIEVAL SUMMARY (STANDARD MODE) ===");
+          console.log(`THREAD ID: ${threadId}`);
+          console.log(`PROMPT: "${query}"`);
+          console.log(`FILE COUNT: ${result.file_ids?.length || 0}`);
+          console.log(`FILE IDS: ${JSON.stringify(result.file_ids || [])}`);
+          console.log(`RESPONSE TIME: ${result.processing_time_ms}ms`);
+          console.log(`IS FOLLOWUP: ${result.status?.includes("follow_up") ? "YES" : "NO"}`);
+          console.log("================================\n");
+          
+          console.log("Data retrieval completed with", result.data_points, "data points");
+          
+          // Submit the tool outputs back to the assistant
+          try {
+            console.log("Submitting tool output to OpenAI run:", runId);
+            
+            await openai.beta.threads.runs.submitToolOutputs(threadId, runId, {
+              tool_outputs: [
+                {
+                  tool_call_id: toolCall.id,
+                  output: JSON.stringify({
+                    analysis: result.analysis,
+                    files_used: result.files_used,
+                    matched_topics: result.matched_topics,
+                    data_points: result.data_points,
+                    processing_time_ms: result.processing_time_ms
+                  })
+                }
+              ]
+            });
+            console.log("Tool output submitted successfully");
+            
+            return new Response(JSON.stringify({ 
+              status: "success",
+              data_points: result.data_points,
+              processing_time_ms: result.processing_time_ms
+            }), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+            });
+          } catch (submitError) {
+            console.error("Error submitting tool output:", submitError);
+            throw submitError;
+          }
         }
-        
-        console.log("Data retrieval completed with", result.data_points, "data points");
-        
-        // Submit the tool outputs back to the assistant
-        try {
-          console.log("Submitting tool output to OpenAI run:", runId);
-          await openai.beta.threads.runs.submitToolOutputs(threadId, runId, {
-            tool_outputs: [
-              {
-                tool_call_id: toolCall.id,
-                output: JSON.stringify({
-                  analysis: result.analysis,
-                  files_used: result.files_used,
-                  matched_topics: result.matched_topics,
-                  data_points: result.data_points,
-                  processing_time_ms: result.processing_time_ms
-                })
-              }
-            ]
-          });
-          console.log("Tool output submitted successfully");
-        } catch (submitError) {
-          console.error("Error submitting tool output:", submitError);
-          throw submitError;
-        }
-        
-        return new Response(JSON.stringify({ 
-          status: "success",
-          data_points: result.data_points,
-          processing_time_ms: result.processing_time_ms
-        }), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-        });
       } catch (error) {
         console.error("Error processing data retrieval:", error);
         
