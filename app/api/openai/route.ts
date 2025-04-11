@@ -18,9 +18,10 @@ import OpenAI from "openai";
  * about the proposed refactoring plan.
  */
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
 export async function POST(req) {
+  // Initialize OpenAI client inside the request handler
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
   const { threadId, runId, method, action, role, content, assistantId } =
     await req.json();
   //   console.log("body", {

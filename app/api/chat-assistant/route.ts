@@ -43,19 +43,9 @@ export async function OPTIONS(request: NextRequest) {
  * Sanitizes the output from OpenAI to remove embedded citation markers
  */
 function sanitizeOutput(text: string): string {
-  // Remove OpenAI citation markers like [[1](#source_1)]
-  text = text.replace(/\[\[(\d+)\]\(#.*?\)\]/g, "");
-  
-  // Remove file source citations like 【12:1†source】
-  text = text.replace(/【(\d+):(\d+)†source】/g, "");
-  
-  // Remove any other source-like patterns
-  text = text.replace(/\[\[source:\s*[^\]]+\]\]/g, "");
-  
-  // Clean up any double spaces that might result from removing citations
-  text = text.replace(/\s{2,}/g, " ");
-  
-  return text;
+  // Use the simpler version from staging: only remove [[n](#source)] style citations
+  // This avoids collapsing whitespace which breaks markdown.
+  return String(text || '').replace(/\[\[(\d+)\]\(#.*?\)\]/g, "");
 }
 
 /**
