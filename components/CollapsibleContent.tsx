@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import CollapsibleBlock from "./CollapsibleBlock";
 import ConversationStarter from "./icons/ConversationStarter";
 import AboutProject from "./icons/AboutProject";
-import DemoScenario from "./icons/DemoScenario";
 import TechnicalDetails from "./icons/TechnicalDetails";
 import ImportantDisclaimer from "./icons/ImportantDisclaimer";
 import chatConfig from "../config/chat.config.json";
@@ -49,6 +48,15 @@ export default function CollapsibleContent({ handleStarterQuestion, loading }) {
       // Otherwise, close the current one and open the new one
       setOpenBlockId(blockId);
     }
+  };
+
+  // Helper function to render content paragraphs
+  const renderContentParagraphs = (contentArray) => {
+    return contentArray.map((paragraph, index) => (
+      <p key={index} className={index < contentArray.length - 1 ? "mb-2" : ""}>
+        {paragraph}
+      </p>
+    ));
   };
 
   return (
@@ -130,107 +138,55 @@ export default function CollapsibleContent({ handleStarterQuestion, loading }) {
 
         {/* About This Project */}
         <CollapsibleBlock
-          id="about-project"
-          title="About This Project"
+          id={chatConfig.contentCards.aboutProject.id}
+          title={chatConfig.contentCards.aboutProject.title}
           icon={<AboutProject />}
           defaultOpen={false}
-          isOpen={openBlockId === "about-project"}
-          onToggle={() => toggleBlock("about-project")}
+          isOpen={openBlockId === chatConfig.contentCards.aboutProject.id}
+          onToggle={() => toggleBlock(chatConfig.contentCards.aboutProject.id)}
         >
           <div className="text-sm text-tertiary">
-            <p className="mb-2">
-              Korn Ferry's Workforce 2025 survey provides insights from ten
-              global markets including the US, UK, India, France, Germany,
-              Japan, UAE, Brazil, Saudi Arabia, and Australia.
-            </p>
-            <p>
-              The RIA25 project provides access to this dataset via an AI
-              assistant that helps business leaders explore workplace trends
-              through natural conversation, enabling organisations to make
-              informed talent decisions based on what today's global workforce
-              truly values.
-            </p>
-          </div>
-        </CollapsibleBlock>
-
-        {/* Demo Scenario */}
-        <CollapsibleBlock
-          id="demo-scenario"
-          title="Demo Scenario"
-          icon={<DemoScenario />}
-          defaultOpen={false}
-          isOpen={openBlockId === "demo-scenario"}
-          onToggle={() => toggleBlock("demo-scenario")}
-        >
-          <div className="text-sm text-tertiary">
-            <p>
-              Try asking: "What are the top priorities for millennials in the
-              workplace?" or "How do attitudes toward AI differ across regions?"
-            </p>
-            <p className="text-sm text-secondary mt-1">
-              The assistant will provide insights based on the comprehensive
-              Workforce 2025 Survey data.
-            </p>
+            {renderContentParagraphs(
+              chatConfig.contentCards.aboutProject.content
+            )}
           </div>
         </CollapsibleBlock>
 
         {/* Technical Details */}
         <CollapsibleBlock
-          id="technical-details"
-          title="Technical Details"
+          id={chatConfig.contentCards.technicalDetails.id}
+          title={chatConfig.contentCards.technicalDetails.title}
           icon={<TechnicalDetails />}
           defaultOpen={false}
-          isOpen={openBlockId === "technical-details"}
-          onToggle={() => toggleBlock("technical-details")}
+          isOpen={openBlockId === chatConfig.contentCards.technicalDetails.id}
+          onToggle={() =>
+            toggleBlock(chatConfig.contentCards.technicalDetails.id)
+          }
         >
           <div className="text-sm text-tertiary">
-            <p className="mb-2">
-              RIA is a Next.js web application that delivers real-time insights
-              from the global Workforce 2025 Survey through an AI-powered
-              chatbot interface.
-            </p>
-            <p className="mb-2">
-              The system analyzes survey data from 10 international markets (US,
-              UK, India, France, Germany, Japan, UAE, Brazil, Saudi Arabia, and
-              Australia) to help business leaders understand workforce trends.
-            </p>
-            <p className="mb-2">
-              Behind the scenes, RIA processes structured data files containing
-              responses across various questions, from career preferences to
-              attitudes about AI adoption. The system includes robust testing
-              protocols to ensure accuracy, reliability, and compliance with
-              privacy standards before deployment on the Korn Ferry website.
-            </p>
-            <p>
-              The platform enables users to explore workforce insights through
-              natural conversation rather than complex data tables, making
-              powerful analytics accessible to business leaders without
-              technical expertise.
-            </p>
+            {renderContentParagraphs(
+              chatConfig.contentCards.technicalDetails.content
+            )}
           </div>
         </CollapsibleBlock>
 
         {/* Important Disclaimer */}
         <CollapsibleBlock
-          id="important-disclaimer"
-          title="Important Disclaimer"
+          id={chatConfig.contentCards.importantDisclaimer.id}
+          title={chatConfig.contentCards.importantDisclaimer.title}
           icon={<ImportantDisclaimer />}
           defaultOpen={false}
-          isOpen={openBlockId === "important-disclaimer"}
-          onToggle={() => toggleBlock("important-disclaimer")}
+          isOpen={
+            openBlockId === chatConfig.contentCards.importantDisclaimer.id
+          }
+          onToggle={() =>
+            toggleBlock(chatConfig.contentCards.importantDisclaimer.id)
+          }
         >
           <div className="text-sm text-tertiary">
-            <p>
-              While our AI assistant draws from carefully analyzed Workforce
-              2025 Survey data spanning 10 global markets, please note that
-              responses may occasionally contain inaccuracies. The system
-              interprets questions using natural language processing which, like
-              all AI technologies, isn't perfect. Data insights are provided for
-              informational purposes only and should be verified through
-              additional sources when making business decisions. If you receive
-              information that seems inaccurate, please rephrase your question
-              or ask for clarification.
-            </p>
+            {renderContentParagraphs(
+              chatConfig.contentCards.importantDisclaimer.content
+            )}
           </div>
         </CollapsibleBlock>
 

@@ -26,7 +26,7 @@ import AssistantSelector from "../../../components/AssistantSelector";
 function Embed({ params: { assistantId } }) {
   const title = "WORKFORCE 2025";
   const description =
-    "Explore insights from our comprehensive workforce survey with RIA,\nyour AI research assistant";
+    "Explore insights from our comprehensive workforce survey with RIA, your AI research assistant";
 
   const [loading, setLoading] = useState(false);
   // Message being streamed
@@ -840,7 +840,7 @@ ${
             </div>
             <button
               onClick={refreshChat}
-              className="inline-flex items-center bg-white hover:bg-gray-100 hover:text-secondary hover:border-secondary border border-transparent text-primary py-1.5 px-3 rounded-lg transition-all duration-200 shadow-md"
+              className="inline-flex items-center bg-white hover:bg-gray-100 hover:text-secondary hover:border-secondary border border-transparent text-primary py-1.5 px-3 rounded-lg transition-all duration-200 shadow-md whitespace-nowrap min-w-[100px]"
               aria-label="New chat"
             >
               <svg

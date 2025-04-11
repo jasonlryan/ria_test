@@ -10,7 +10,7 @@
             "action": "ask"
         },
         {
-            "text": "What level of confidence do employees have in their current skills remaining relevant in an AI-driven work environment?",
+            "text": "How confident are employees that their current skills will remain relevant in an AI-driven work environment?",
             "action": "ask"
         },
         {
@@ -26,6 +26,32 @@
             "action": "ask"
         }
     ],
+    "contentCards": {
+        "aboutProject": {
+            "id": "about-project",
+            "title": "About This Project",
+            "content": [
+                "Korn Ferry's Workforce 2025 survey provides insights from 15,000 respondents across ten global markets including the US, UK, India, France, Germany, Japan, UAE, Brazil, Saudi Arabia, and Australia.",
+                "The RIA25 project provides access to this dataset via an AI assistant that helps business leaders explore workplace trends through natural conversation, enabling organisations to make informed talent decisions based on what today's global workforce truly values."
+            ]
+        },
+        "technicalDetails": {
+            "id": "technical-details",
+            "title": "Technical Details",
+            "content": [
+                "RIA analyzes survey data from 15,000 respondents across 10 international markets (US, UK, India, France, Germany, Japan, UAE, Brazil, Saudi Arabia, and Australia) to help business leaders understand workforce trends.",
+                "Behind the scenes, RIA processes structured data files containing responses across various questions, from career preferences to attitudes about AI adoption. The system includes robust testing protocols to ensure accuracy, reliability, and compliance with privacy standards before deployment on the Korn Ferry website.",
+                "The platform enables users to explore workforce insights through natural conversation rather than complex data tables, making powerful analytics accessible to business leaders."
+            ]
+        },
+        "importantDisclaimer": {
+            "id": "important-disclaimer",
+            "title": "Important Disclaimer",
+            "content": [
+                "While our AI assistant draws from carefully analyzed Workforce 2025 Survey data spanning 10 global markets, please note that responses may occasionally contain inaccuracies. The system interprets questions using natural language processing which, like all AI technologies, isn't perfect. Data insights are provided for informational purposes only and should be verified through additional sources when making business decisions. If you receive information that seems inaccurate, please rephrase your question or ask for clarification."
+            ]
+        }
+    },
     "legal": {
         "termsOfUseUrl": "/terms-of-use",
         "privacyPolicyUrl": "/global-privacy-policy"
