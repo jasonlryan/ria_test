@@ -307,8 +307,8 @@ export async function POST(request: NextRequest) {
                   // Add debug log for text content
                   console.log(`Sending text content (${cleanText.length} chars)`);
                   
-                  // MODIFICATION: Stream text in smaller chunks for better streaming effect
-                  const chunkSize = 50; // Characters per chunk
+                  // MODIFICATION: Stream text in larger chunks for better performance while maintaining streaming
+                  const chunkSize = 200; // Characters per chunk (increased from 50)
                   for (let i = 0; i < cleanText.length; i += chunkSize) {
                     const chunk = cleanText.substring(i, i + chunkSize);
                     
@@ -316,8 +316,8 @@ export async function POST(request: NextRequest) {
                       value: chunk,
                     })}\n\n`));
                     
-                    // Moderate delay between chunks for visible streaming
-                    await new Promise(resolve => setTimeout(resolve, 30));
+                    // No delay between chunks for faster response times
+                    // Previous code had: await new Promise(resolve => setTimeout(resolve, 30));
                   }
                   
                   // Then send the full message
