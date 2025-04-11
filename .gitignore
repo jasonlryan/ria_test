@@ -12,8 +12,6 @@ node_modules
 # Data directories with intermediate and backup files
 /2025_DATA/
 /2025_DATA/**
-/scripts/data/
-/scripts/data/**
 /2025_DATA_PROCESSING/*.csv
 /tests/data/*.csv
 
@@ -31,14 +29,10 @@ archive/**
 *.json.backup
 *.json.bak
 
-# Backup files
-*.bak
-*.backup
-*~
-._*
-
-# Explicitly include important JS files
+# Explicitly include important files
 !2025_DATA_PROCESSING/generate_consolidated_csv.js
+!scripts/data/2024/2024_global_data.csv
+!scripts/data/2025/2025_global_data.csv
 
 # Logs
 logs/
