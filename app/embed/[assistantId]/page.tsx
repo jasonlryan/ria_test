@@ -1025,7 +1025,15 @@ ${
           </div>
 
           {/* Collapsible Content Section */}
-          <div className="w-full lg:w-auto lg:min-w-[300px]">
+          <div className="w-full lg:w-auto lg:min-w-[300px] hidden md:block">
+            <CollapsibleContent
+              handleStarterQuestion={handleStarterQuestion}
+              loading={loading}
+            />
+          </div>
+
+          {/* Mobile version - this empty div ensures the fixed panel doesn't affect layout */}
+          <div className="block md:hidden">
             <CollapsibleContent
               handleStarterQuestion={handleStarterQuestion}
               loading={loading}
