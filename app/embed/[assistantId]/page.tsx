@@ -600,6 +600,13 @@ ${
               const finalContent =
                 eventData.content || accumulatedText.current || "";
 
+              // *** ADDED FOR DEBUGGING ***
+              console.log(
+                "DEBUG: Final content being added to messages:",
+                JSON.stringify(finalContent)
+              );
+              // *** END DEBUGGING ***
+
               // Add the final message
               messageId.current++;
               setMessages((prevMessages) => [
