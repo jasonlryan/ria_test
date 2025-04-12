@@ -681,6 +681,37 @@ export async function retrieveDataFiles(fileIds) {
 export async function processQueryWithData(query, context, cachedFileIds = []) {
   const startTime = performance.now();
 
+  // Immediate early return for empty queries
+  if (!query || query.trim().length === 0) {
+    return {
+      analysis: "No query provided",
+      matched_topics: [],
+      files_used: [],
+      file_ids: [],
+      data_points: 0,
+      status: "no_query",
+      processing_time_ms: 0,
+    };
+  }
+
+  // Check cached files first - if we have them, prioritize fast response
+  if (cachedFileIds && cachedFileIds.length > 0) {
+    // Fast path for follow-up queries with cached files
+    console.log(
+      `Using thread continuity with ${cachedFileIds.length} cached files`
+    );
+
+    return {
+      analysis: "Using existing thread data for your follow-up question",
+      matched_topics: [],
+      files_used: cachedFileIds,
+      file_ids: cachedFileIds,
+      data_points: cachedFileIds.length,
+      status: "thread_continuity",
+      processing_time_ms: Math.round(performance.now() - startTime),
+    };
+  }
+
   // Check if we're in direct mode - if so, we ONLY identify files, not extract data
   const isDirectMode = process.env.FILE_ACCESS_MODE === "direct";
   if (isDirectMode) {
@@ -881,120 +912,121 @@ export async function processQueryWithData(query, context, cachedFileIds = []) {
   // Step 3: Prepare response for the assistant
   console.log("Step 3: Preparing response for assistant...");
 
-  // Extract the important data from each file for analysis
+  // Extract the important data from each file for analysis - OPTIMIZED to reduce payload size
   const raw_data = [];
 
-  retrievedData.files.forEach((file) => {
-    try {
-      if (!file.data) {
-        console.warn(`File ${file.id} has no data`);
-        return;
-      }
+  // Limit the number of files processed to reduce payload size
+  const maxFilesToProcess = 8; // Reduced to process only most relevant files
+  const filesToProcess = retrievedData.files.slice(0, maxFilesToProcess);
 
-      // Create a direct simplified representation of the data
-      // This avoids any nested extraction issues
-      const extractedData = {
-        file_id: file.id,
-        topic:
-          file.topic ||
-          (file.data.metadata ? file.data.metadata.topicId : "Unknown"),
-        question: file.data.question || "No question available",
-        responses: [],
-      };
+  // Process files in parallel for faster execution
+  await Promise.all(
+    filesToProcess.map(async (file) => {
+      try {
+        if (!file.data) {
+          console.warn(`File ${file.id} has no data`);
+          return;
+        }
 
-      // Extract response data directly
-      if (file.data.responses && Array.isArray(file.data.responses)) {
-        // Create a more formatted representation with the question prominently displayed
-        extractedData.question_text = `SURVEY QUESTION: ${
-          file.data.question || "No question available"
-        }`;
+        // Create a direct simplified representation of the data
+        // This avoids any nested extraction issues
+        const extractedData = {
+          file_id: file.id,
+          topic:
+            file.topic ||
+            (file.data.metadata ? file.data.metadata.topicId : "Unknown"),
+          question: file.data.question || "No question available",
+          responses: [],
+        };
 
-        // Add an array to store summarized top responses
-        extractedData.top_responses = [];
+        // Extract response data directly
+        if (file.data.responses && Array.isArray(file.data.responses)) {
+          // Create a more formatted representation with the question prominently displayed
+          extractedData.question_text = `SURVEY QUESTION: ${
+            file.data.question || "No question available"
+          }`;
 
-        file.data.responses.forEach((response) => {
-          if (response) {
-            const simplifiedResponse = {
-              text: response.response,
-              data: {},
-            };
+          // Add an array to store summarized top responses
+          extractedData.top_responses = [];
 
-            // Track highest value for this response to determine if it's a top response
-            let highestValue = 0;
+          file.data.responses.forEach((response) => {
+            if (response) {
+              const simplifiedResponse = {
+                text: response.response,
+                data: {},
+              };
 
-            // Directly extract percentage values without nesting
-            if (response.data) {
-              Object.entries(response.data).forEach(([category, values]) => {
-                // Filter based on context
-                const shouldIncludeCategory =
-                  context === "all" ||
-                  (context === "sectors" && category === "sector") ||
-                  (context === "all-sector" && category !== "sector") ||
-                  (context !== "sectors" &&
-                    context !== "all" &&
-                    context !== "all-sector" &&
-                    category !== "sector");
+              // Track highest value for this response to determine if it's a top response
+              let highestValue = 0;
 
-                if (
-                  shouldIncludeCategory &&
-                  values &&
-                  typeof values === "object"
-                ) {
-                  Object.entries(values).forEach(([key, value]) => {
-                    // Store as flat key-value pair for simplicity
-                    simplifiedResponse.data[`${category}_${key}`] = value;
+              // Directly extract percentage values without nesting
+              if (response.data) {
+                Object.entries(response.data).forEach(([category, values]) => {
+                  // Filter based on context
+                  const shouldIncludeCategory =
+                    context === "all" ||
+                    (context === "sectors" && category === "sector") ||
+                    (context === "all-sector" && category !== "sector") ||
+                    (context !== "sectors" &&
+                      context !== "all" &&
+                      context !== "all-sector" &&
+                      category !== "sector");
 
-                    // Track highest value
-                    if (typeof value === "number" && value > highestValue) {
-                      highestValue = value;
-                    }
-                  });
-                }
-              });
-            }
+                  if (
+                    shouldIncludeCategory &&
+                    values &&
+                    typeof values === "object"
+                  ) {
+                    Object.entries(values).forEach(([key, value]) => {
+                      // Store as flat key-value pair for simplicity
+                      simplifiedResponse.data[`${category}_${key}`] = value;
 
-            // Only add responses that have data after filtering
-            if (Object.keys(simplifiedResponse.data).length > 0) {
-              extractedData.responses.push(simplifiedResponse);
-
-              // Add to top responses if value is high (over 80%)
-              if (highestValue >= 80) {
-                extractedData.top_responses.push({
-                  text: response.response,
-                  highest_value: highestValue,
+                      // Track highest value
+                      if (typeof value === "number" && value > highestValue) {
+                        highestValue = value;
+                      }
+                    });
+                  }
                 });
               }
+
+              // Only add responses that have data after filtering
+              if (Object.keys(simplifiedResponse.data).length > 0) {
+                extractedData.responses.push(simplifiedResponse);
+
+                // Add to top responses if value is high (over 80%)
+                if (highestValue >= 80) {
+                  extractedData.top_responses.push({
+                    text: response.response,
+                    highest_value: highestValue,
+                  });
+                }
+              }
             }
-          }
-        });
+          });
 
-        // Sort top responses by highest value
-        extractedData.top_responses.sort(
-          (a, b) => b.highest_value - a.highest_value
-        );
-      }
+          // Sort top responses by highest value
+          extractedData.top_responses.sort(
+            (a, b) => b.highest_value - a.highest_value
+          );
+        }
 
-      // Only add files that have responses after filtering
-      if (extractedData.responses.length > 0) {
-        raw_data.push(extractedData);
-        console.log(
-          `Successfully extracted data from file ${file.id}: ${extractedData.responses.length} responses`
-        );
-      } else {
-        console.log(
-          `File ${file.id} had no relevant responses for context: ${context}`
-        );
+        // Only add files that have responses after filtering
+        if (extractedData.responses.length > 0) {
+          raw_data.push(extractedData);
+          console.log(
+            `Successfully extracted data from file ${file.id}: ${extractedData.responses.length} responses`
+          );
+        } else {
+          console.log(
+            `File ${file.id} had no relevant responses for context: ${context}`
+          );
+        }
+      } catch (error) {
+        console.error(`Error processing file data: ${error.message}`);
       }
-    } catch (error) {
-      console.error(`Error processing data from file ${file.id}:`, error);
-      // Still add file info even if processing fails
-      raw_data.push({
-        file_id: file.id,
-        error: error.message,
-        topic: file.topic || "Unknown",
-      });
-    }
-  });
+    })
+  );
 
   console.log(
     `Extracted data from ${raw_data.length} files for context: ${context}`
