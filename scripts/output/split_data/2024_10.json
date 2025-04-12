@@ -28,6 +28,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -41,6 +42,55 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "10. What would your ideal role be?",
@@ -49,9 +99,12 @@
       "response": "Permanent",
       "data": {
         "region": {
+          "united_kingdom": 0.8,
+          "united_states": 0.8,
+          "australia": 0.82,
           "india": 0.83,
           "brazil": 0.65,
-          "australia": 0.82
+          "saudi_arabia_uae": 0.74
         },
         "age": {
           "18-24": 0.67,
@@ -100,22 +153,37 @@
           "first_level_supervisor": 0.82,
           "individual_contributor": 0.75
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.74,
+          "married": 0.82,
+          "divorced_separated": 0.78,
+          "widowed": 0.58
+        },
+        "education": {
+          "secondary": 0.72,
+          "tertiary": 0.74,
+          "undergraduate": 0.78,
+          "postgraduate": 0.84,
+          "doctorate": 0.76
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.87,
           "part_time": 0.48
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "Part time PAYE",
       "data": {
         "region": {
+          "united_kingdom": 0.12,
+          "united_states": 0.11,
+          "australia": 0.12,
           "india": 0.09,
           "brazil": 0.19,
-          "australia": 0.12
+          "saudi_arabia_uae": 0.16
         },
         "age": {
           "18-24": 0.19,
@@ -164,22 +232,37 @@
           "first_level_supervisor": 0.1,
           "individual_contributor": 0.14
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.14,
+          "married": 0.11,
+          "divorced_separated": 0.13,
+          "widowed": 0.15
+        },
+        "education": {
+          "secondary": 0.16,
+          "tertiary": 0.15,
+          "undergraduate": 0.13,
+          "postgraduate": 0.09,
+          "doctorate": 0.13
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.07,
           "part_time": 0.42
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "Contract / Interim",
       "data": {
         "region": {
+          "united_kingdom": 0.04,
+          "united_states": 0.05,
+          "australia": 0.03,
           "india": 0.05,
           "brazil": 0.05,
-          "australia": 0.03
+          "saudi_arabia_uae": 0.05
         },
         "age": {
           "18-24": 0.09,
@@ -228,22 +311,37 @@
           "first_level_supervisor": 0.04,
           "individual_contributor": 0.04
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.05,
+          "married": 0.04,
+          "divorced_separated": 0.03,
+          "widowed": 0.19
+        },
+        "education": {
+          "secondary": 0.05,
+          "tertiary": 0.05,
+          "undergraduate": 0.04,
+          "postgraduate": 0.04,
+          "doctorate": 0.07
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.04,
           "part_time": 0.05
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "Freelance",
       "data": {
         "region": {
+          "united_kingdom": 0.05,
+          "united_states": 0.05,
+          "australia": 0.04,
           "india": 0.03,
           "brazil": 0.11,
-          "australia": 0.04
+          "saudi_arabia_uae": 0.05
         },
         "age": {
           "18-24": 0.05,
@@ -292,13 +390,25 @@
           "first_level_supervisor": 0.04,
           "individual_contributor": 0.07
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.07,
+          "married": 0.03,
+          "divorced_separated": 0.06,
+          "widowed": 0.09
+        },
+        "education": {
+          "secondary": 0.07,
+          "tertiary": 0.06,
+          "undergraduate": 0.05,
+          "postgraduate": 0.04,
+          "doctorate": 0.04
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.02,
           "part_time": 0.05
-        }
+        },
+        "overall": null
       }
     }
   ]

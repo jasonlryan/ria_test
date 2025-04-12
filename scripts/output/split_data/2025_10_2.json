@@ -27,6 +27,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -40,6 +41,55 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "Q10 - To what extent do you think your company is committed to greater inclusion and social responsibility?",
@@ -47,99 +97,99 @@
     {
       "response": "Is your company committed to corporate social responsibility and sustainability goals? - (4) Slightly too committed",
       "data": {
+        "overall": 0.14,
         "region": {
-          "united_states": 14,
-          "united_kingdom": 13,
-          "india": 24,
-          "france": 11,
-          "germany": 13,
-          "japan": 7,
-          "united_arab_emirates": 22,
-          "brazil": 12,
-          "saudi_arabia": 22,
-          "australia": 13
+          "united_states": 0.14,
+          "united_kingdom": 0.13,
+          "australia": 0.13,
+          "india": 0.24,
+          "brazil": 0.12,
+          "saudi_arabia": 0.22,
+          "france": 0.11,
+          "germany": 0.13,
+          "japan": 0.07,
+          "united_arab_emirates": 0.22
         },
         "age": {
-          "18-24": 14,
-          "25-34": 17,
-          "35-44": 17,
-          "45-54": 12,
-          "55-65": 8,
-          "65+": 8
+          "18-24": 0.14,
+          "25-34": 0.17,
+          "35-44": 0.17,
+          "45-54": 0.12,
+          "55-65": 0.08,
+          "65+": 0.08
         },
         "gender": {
-          "male": 16,
-          "female": 12
+          "male": 0.16,
+          "female": 0.12
         },
         "org_size": {
-          "fewer_than_10": 8,
-          "10_to_49": 12,
-          "50_to_99": 15,
-          "100_to_499": 17,
-          "500_to_999": 17,
-          "1000_or_more": 13
+          "fewer_than_10": 0.08,
+          "10_to_49": 0.12,
+          "50_to_99": 0.15,
+          "100_to_499": 0.17,
+          "500_to_999": 0.17,
+          "1000_or_more": 0.13
         },
         "sector": {
-          "automotive": 16,
-          "business_administration": 15,
-          "technology": 21,
-          "construction": 14,
-          "consumer_goods": 11,
-          "education": 14,
-          "energy_utilities": 17,
-          "financial_services": 17,
-          "government": 12,
-          "healthcare": 11,
-          "manufacturing_industrial": 14,
-          "marketing_services": 15,
-          "legal_in-house": 11,
-          "legal_agency": 16,
-          "life_sciences": 19,
-          "professional_services": 13,
-          "real_estate": 18,
-          "retail": 11,
-          "sales": 13,
-          "telecommunications": 19,
-          "transport_storage": 14,
-          "travel_hospitality_leisure": 11,
-          "wholesale_distribution": 12,
-          "other": 12
+          "automotive": 0.16,
+          "business_administration": 0.15,
+          "technology": 0.21,
+          "construction": 0.14,
+          "consumer_goods": 0.11,
+          "education": 0.14,
+          "energy_utilities": 0.17,
+          "financial_services": 0.17,
+          "government": 0.12,
+          "healthcare": 0.11,
+          "manufacturing_industrial": 0.14,
+          "marketing_services": 0.15,
+          "legal_in-house": 0.11,
+          "legal_agency": 0.16,
+          "life_sciences": 0.19,
+          "professional_services": 0.13,
+          "real_estate": 0.18,
+          "retail": 0.11,
+          "sales": 0.13,
+          "telecommunications": 0.19,
+          "transport_storage": 0.14,
+          "travel_hospitality_leisure": 0.11,
+          "wholesale_distribution": 0.12,
+          "other": 0.12
         },
         "job_level": {
-          "ceo": 16,
-          "senior_executive": 20,
-          "senior_leader": 18,
-          "mid_level_leader": 17,
-          "first_level_supervisor": 15,
-          "individual_contributor": 9
+          "ceo": 0.16,
+          "senior_executive": 0.2,
+          "senior_leader": 0.18,
+          "mid_level_leader": 0.17,
+          "first_level_supervisor": 0.15,
+          "individual_contributor": 0.09
         },
         "relationship_status": {
-          "single": 14,
-          "cohabiting": 10,
-          "married": 16,
-          "divorced_separated": 9,
-          "widowed": 10
+          "single": 0.14,
+          "cohabiting": 0.1,
+          "married": 0.16,
+          "divorced_separated": 0.09,
+          "widowed": 0.1
         },
         "education": {
-          "secondary": 10,
-          "tertiary": 10,
-          "professional_certifications": 11,
-          "undergraduate": 15,
-          "postgraduate": 19,
-          "doctorate": 18
+          "secondary": 0.1,
+          "tertiary": 0.1,
+          "professional_certifications": 0.11,
+          "undergraduate": 0.15,
+          "postgraduate": 0.19,
+          "doctorate": 0.18
         },
         "generation": {
-          "gen_z": 16,
-          "millennials": 17,
-          "gen_x": 11,
-          "baby_boomers": 7,
-          "65_plus": 8
+          "gen_z": 0.16,
+          "millennials": 0.17,
+          "gen_x": 0.11,
+          "baby_boomers": 0.07
         },
         "employment_status": {
-          "full_time": 15,
-          "part_time": 10,
-          "contract": 15,
-          "freelance": 11
+          "full_time": 0.15,
+          "part_time": 0.1,
+          "contract": 0.15,
+          "freelance": 0.11
         }
       }
     }

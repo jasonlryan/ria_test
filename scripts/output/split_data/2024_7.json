@@ -34,6 +34,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -47,6 +48,55 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "7. How confident are you in the senior leadership in your company?",
@@ -55,9 +105,12 @@
       "response": "Confident",
       "data": {
         "region": {
+          "united_kingdom": 0.76,
+          "united_states": 0.87,
+          "australia": 0.77,
           "india": 0.95,
           "brazil": 0.87,
-          "australia": 0.77
+          "saudi_arabia_uae": 0.87
         },
         "age": {
           "18-24": 0.87,
@@ -106,22 +159,37 @@
           "first_level_supervisor": 0.85,
           "individual_contributor": 0.71
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.81,
+          "married": 0.88,
+          "divorced_separated": 0.74,
+          "widowed": 0.65
+        },
+        "education": {
+          "secondary": 0.8,
+          "tertiary": 0.74,
+          "undergraduate": 0.82,
+          "postgraduate": 0.91,
+          "doctorate": 0.85
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.85,
           "part_time": 0.79
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "Unconfident",
       "data": {
         "region": {
+          "united_kingdom": 0.22,
+          "united_states": 0.11,
+          "australia": 0.21,
           "india": 0.04,
           "brazil": 0.12,
-          "australia": 0.21
+          "saudi_arabia_uae": 0.12
         },
         "age": {
           "18-24": 0.12,
@@ -170,13 +238,25 @@
           "first_level_supervisor": 0.14,
           "individual_contributor": 0.24
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.17,
+          "married": 0.11,
+          "divorced_separated": 0.23,
+          "widowed": 0.28
+        },
+        "education": {
+          "secondary": 0.17,
+          "tertiary": 0.23,
+          "undergraduate": 0.16,
+          "postgraduate": 0.08,
+          "doctorate": 0.12
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.14,
           "part_time": 0.17
-        }
+        },
+        "overall": null
       }
     }
   ]

@@ -17,7 +17,7 @@
       "inclusive culture"
     ],
     "canonicalQuestion": "How committed is your organization to diversity, equity, and inclusion?",
-    "subQuestion": "I expect a significant reduction in DEI initiatives at my company since new governments were elected",
+    "subQuestion": "My organization's leaders value people over profits",
     "comparable": true,
     "userMessage": "Data based on comparable markets only.",
     "availableMarkets": [
@@ -34,6 +34,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -47,106 +48,155 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "Q7 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "I expect a significant reduction in DEI initiatives at my company since new governments were elected",
+      "response": "My organization's leaders value people over profits",
       "data": {
+        "overall": 0.52,
         "region": {
-          "united_states": 50,
-          "united_kingdom": 34,
-          "india": 65,
-          "france": 32,
-          "germany": 32,
-          "japan": 24,
-          "united_arab_emirates": 51,
-          "brazil": 45,
-          "saudi_arabia": 46,
-          "australia": 34
+          "united_states": 0.57,
+          "united_kingdom": 0.47,
+          "australia": 0.48,
+          "india": 0.78,
+          "brazil": 0.5,
+          "saudi_arabia": 0.65,
+          "france": 0.39,
+          "germany": 0.45,
+          "japan": 0.33,
+          "united_arab_emirates": 0.62
         },
         "age": {
-          "18-24": 48,
-          "25-34": 48,
-          "35-44": 44,
-          "45-54": 37,
-          "55-65": 25,
-          "65+": 26
+          "18-24": 0.58,
+          "25-34": 0.59,
+          "35-44": 0.56,
+          "45-54": 0.45,
+          "55-65": 0.35,
+          "65+": 0.4
         },
         "gender": {
-          "male": 45,
-          "female": 36
+          "male": 0.55,
+          "female": 0.48
         },
         "org_size": {
-          "fewer_than_10": 32,
-          "10_to_49": 36,
-          "50_to_99": 45,
-          "100_to_499": 46,
-          "500_to_999": 49,
-          "1000_or_more": 36
+          "fewer_than_10": 0.46,
+          "10_to_49": 0.48,
+          "50_to_99": 0.53,
+          "100_to_499": 0.57,
+          "500_to_999": 0.58,
+          "1000_or_more": 0.47
         },
         "sector": {
-          "automotive": 46,
-          "business_administration": 44,
-          "technology": 59,
-          "construction": 46,
-          "consumer_goods": 43,
-          "education": 38,
-          "energy_utilities": 39,
-          "financial_services": 47,
-          "government": 28,
-          "healthcare": 33,
-          "manufacturing_industrial": 40,
-          "marketing_services": 60,
-          "legal_in-house": 22,
-          "legal_agency": 30,
-          "life_sciences": 41,
-          "professional_services": 39,
-          "real_estate": 38,
-          "retail": 35,
-          "sales": 44,
-          "telecommunications": 51,
-          "transport_storage": 33,
-          "travel_hospitality_leisure": 35,
-          "wholesale_distribution": 33,
-          "other": 32
+          "automotive": 0.53,
+          "business_administration": 0.56,
+          "technology": 0.71,
+          "construction": 0.58,
+          "consumer_goods": 0.51,
+          "education": 0.53,
+          "energy_utilities": 0.45,
+          "financial_services": 0.56,
+          "government": 0.43,
+          "healthcare": 0.45,
+          "manufacturing_industrial": 0.51,
+          "marketing_services": 0.61,
+          "legal_in-house": 0.32,
+          "legal_agency": 0.42,
+          "life_sciences": 0.55,
+          "professional_services": 0.49,
+          "real_estate": 0.55,
+          "retail": 0.41,
+          "sales": 0.5,
+          "telecommunications": 0.57,
+          "transport_storage": 0.4,
+          "travel_hospitality_leisure": 0.44,
+          "wholesale_distribution": 0.39,
+          "other": 0.45
         },
         "job_level": {
-          "ceo": 55,
-          "senior_executive": 60,
-          "senior_leader": 51,
-          "mid_level_leader": 43,
-          "first_level_supervisor": 42,
-          "individual_contributor": 26
+          "ceo": 0.68,
+          "senior_executive": 0.72,
+          "senior_leader": 0.64,
+          "mid_level_leader": 0.53,
+          "first_level_supervisor": 0.54,
+          "individual_contributor": 0.36
         },
         "relationship_status": {
-          "single": 39,
-          "cohabiting": 30,
-          "married": 46,
-          "divorced_separated": 26,
-          "widowed": 33
+          "single": 0.49,
+          "cohabiting": 0.42,
+          "married": 0.57,
+          "divorced_separated": 0.33,
+          "widowed": 0.44
         },
         "education": {
-          "secondary": 34,
-          "tertiary": 33,
-          "professional_certifications": 31,
-          "undergraduate": 42,
-          "postgraduate": 51,
-          "doctorate": 47
+          "secondary": 0.44,
+          "tertiary": 0.4,
+          "professional_certifications": 0.43,
+          "undergraduate": 0.53,
+          "postgraduate": 0.62,
+          "doctorate": 0.61
         },
         "generation": {
-          "gen_z": 49,
-          "millennials": 45,
-          "gen_x": 34,
-          "baby_boomers": 25,
-          "65_plus": 26
+          "gen_z": 0.59,
+          "millennials": 0.58,
+          "gen_x": 0.43,
+          "baby_boomers": 0.35
         },
         "employment_status": {
-          "full_time": 43,
-          "part_time": 31,
-          "contract": 38,
-          "freelance": 39
+          "full_time": 0.53,
+          "part_time": 0.45,
+          "contract": 0.47,
+          "freelance": 0.47
         }
       }
     }

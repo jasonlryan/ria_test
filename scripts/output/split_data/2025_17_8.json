@@ -23,6 +23,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -36,6 +37,55 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "Q17 - To what extent do you agree with the following statements.",
@@ -43,99 +93,99 @@
     {
       "response": "The organization shows care and concern for its employees.",
       "data": {
+        "overall": 0.67,
         "region": {
-          "united_states": 73,
-          "united_kingdom": 67,
-          "india": 83,
-          "france": 55,
-          "germany": 64,
-          "japan": 41,
-          "united_arab_emirates": 76,
-          "brazil": 73,
-          "saudi_arabia": 76,
-          "australia": 67
+          "united_states": 0.73,
+          "united_kingdom": 0.67,
+          "australia": 0.67,
+          "india": 0.83,
+          "brazil": 0.73,
+          "saudi_arabia": 0.76,
+          "france": 0.55,
+          "germany": 0.64,
+          "japan": 0.41,
+          "united_arab_emirates": 0.76
         },
         "age": {
-          "18-24": 70,
-          "25-34": 72,
-          "35-44": 70,
-          "45-54": 63,
-          "55-65": 56,
-          "65+": 63
+          "18-24": 0.7,
+          "25-34": 0.72,
+          "35-44": 0.7,
+          "45-54": 0.63,
+          "55-65": 0.56,
+          "65+": 0.63
         },
         "gender": {
-          "male": 68,
-          "female": 66
+          "male": 0.68,
+          "female": 0.66
         },
         "org_size": {
-          "fewer_than_10": 62,
-          "10_to_49": 67,
-          "50_to_99": 69,
-          "100_to_499": 70,
-          "500_to_999": 71,
-          "1000_or_more": 65
+          "fewer_than_10": 0.62,
+          "10_to_49": 0.67,
+          "50_to_99": 0.69,
+          "100_to_499": 0.7,
+          "500_to_999": 0.71,
+          "1000_or_more": 0.65
         },
         "sector": {
-          "automotive": 68,
-          "business_administration": 70,
-          "technology": 82,
-          "construction": 75,
-          "consumer_goods": 68,
-          "education": 67,
-          "energy_utilities": 70,
-          "financial_services": 71,
-          "government": 60,
-          "healthcare": 61,
-          "manufacturing_industrial": 67,
-          "marketing_services": 71,
-          "legal_in-house": 55,
-          "legal_agency": 60,
-          "life_sciences": 64,
-          "professional_services": 63,
-          "real_estate": 73,
-          "retail": 64,
-          "sales": 67,
-          "telecommunications": 69,
-          "transport_storage": 58,
-          "travel_hospitality_leisure": 61,
-          "wholesale_distribution": 57,
-          "other": 63
+          "automotive": 0.68,
+          "business_administration": 0.7,
+          "technology": 0.82,
+          "construction": 0.75,
+          "consumer_goods": 0.68,
+          "education": 0.67,
+          "energy_utilities": 0.7,
+          "financial_services": 0.71,
+          "government": 0.6,
+          "healthcare": 0.61,
+          "manufacturing_industrial": 0.67,
+          "marketing_services": 0.71,
+          "legal_in-house": 0.55,
+          "legal_agency": 0.6,
+          "life_sciences": 0.64,
+          "professional_services": 0.63,
+          "real_estate": 0.73,
+          "retail": 0.64,
+          "sales": 0.67,
+          "telecommunications": 0.69,
+          "transport_storage": 0.58,
+          "travel_hospitality_leisure": 0.61,
+          "wholesale_distribution": 0.57,
+          "other": 0.63
         },
         "job_level": {
-          "ceo": 80,
-          "senior_executive": 82,
-          "senior_leader": 76,
-          "mid_level_leader": 68,
-          "first_level_supervisor": 69,
-          "individual_contributor": 56
+          "ceo": 0.8,
+          "senior_executive": 0.82,
+          "senior_leader": 0.76,
+          "mid_level_leader": 0.68,
+          "first_level_supervisor": 0.69,
+          "individual_contributor": 0.56
         },
         "relationship_status": {
-          "single": 63,
-          "cohabiting": 62,
-          "married": 72,
-          "divorced_separated": 58,
-          "widowed": 67
+          "single": 0.63,
+          "cohabiting": 0.62,
+          "married": 0.72,
+          "divorced_separated": 0.58,
+          "widowed": 0.67
         },
         "education": {
-          "secondary": 65,
-          "tertiary": 57,
-          "professional_certifications": 61,
-          "undergraduate": 68,
-          "postgraduate": 75,
-          "doctorate": 76
+          "secondary": 0.65,
+          "tertiary": 0.57,
+          "professional_certifications": 0.61,
+          "undergraduate": 0.68,
+          "postgraduate": 0.75,
+          "doctorate": 0.76
         },
         "generation": {
-          "gen_z": 72,
-          "millennials": 71,
-          "gen_x": 61,
-          "baby_boomers": 57,
-          "65_plus": 63
+          "gen_z": 0.72,
+          "millennials": 0.71,
+          "gen_x": 0.61,
+          "baby_boomers": 0.57
         },
         "employment_status": {
-          "full_time": 68,
-          "part_time": 65,
-          "contract": 63,
-          "freelance": 60
+          "full_time": 0.68,
+          "part_time": 0.65,
+          "contract": 0.63,
+          "freelance": 0.6
         }
       }
     }

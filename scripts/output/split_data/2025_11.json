@@ -12,7 +12,7 @@
       "Pay_and_Reward"
     ],
     "canonicalQuestion": "How fair do you consider your compensation relative to your contribution?",
-    "subQuestion": "My company gives me a salary and benefits that are below the value of my skills",
+    "subQuestion": "My company gives me a salary and benefits that exceed the value of my skills",
     "comparable": true,
     "userMessage": "Note: Wording differs between Q8 (2024) and Q11 (2025).",
     "availableMarkets": [
@@ -29,6 +29,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -42,304 +43,254 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "Q11 - How well do you think you are compensated for your skillset?",
   "responses": [
     {
-      "response": "My company gives me a salary and benefits that are below the value of my skills",
-      "data": {
-        "region": {
-          "united_states": 34,
-          "united_kingdom": 38,
-          "india": 30,
-          "france": 46,
-          "germany": 34,
-          "japan": 33,
-          "united_arab_emirates": 35,
-          "brazil": 31,
-          "saudi_arabia": 34,
-          "australia": 34
-        },
-        "age": {
-          "18-24": 34,
-          "25-34": 33,
-          "35-44": 33,
-          "45-54": 40,
-          "55-65": 40,
-          "65+": 31
-        },
-        "gender": {
-          "male": 33,
-          "female": 38
-        },
-        "org_size": {
-          "fewer_than_10": 36,
-          "10_to_49": 35,
-          "50_to_99": 36,
-          "100_to_499": 34,
-          "500_to_999": 33,
-          "1000_or_more": 37
-        },
-        "sector": {
-          "automotive": 39,
-          "business_administration": 36,
-          "technology": 24,
-          "construction": 31,
-          "consumer_goods": 34,
-          "education": 43,
-          "energy_utilities": 33,
-          "financial_services": 33,
-          "government": 41,
-          "healthcare": 43,
-          "manufacturing_industrial": 32,
-          "marketing_services": 30,
-          "legal_in-house": 36,
-          "legal_agency": 21,
-          "life_sciences": 41,
-          "professional_services": 35,
-          "real_estate": 27,
-          "retail": 38,
-          "sales": 38,
-          "telecommunications": 31,
-          "transport_storage": 39,
-          "travel_hospitality_leisure": 43,
-          "wholesale_distribution": 38,
-          "other": 34
-        },
-        "job_level": {
-          "ceo": 30,
-          "senior_executive": 24,
-          "senior_leader": 29,
-          "mid_level_leader": 34,
-          "first_level_supervisor": 36,
-          "individual_contributor": 42
-        },
-        "relationship_status": {
-          "single": 38,
-          "cohabiting": 41,
-          "married": 31,
-          "divorced_separated": 43,
-          "widowed": 36
-        },
-        "education": {
-          "secondary": 38,
-          "tertiary": 41,
-          "professional_certifications": 39,
-          "undergraduate": 33,
-          "postgraduate": 32,
-          "doctorate": 29
-        },
-        "generation": {
-          "gen_z": 34,
-          "millennials": 33,
-          "gen_x": 40,
-          "baby_boomers": 35,
-          "65_plus": 31
-        },
-        "employment_status": {
-          "full_time": 35,
-          "part_time": 37,
-          "contract": 36,
-          "freelance": 36
-        }
-      }
-    },
-    {
       "response": "My company gives me a salary and benefits that exceed the value of my skills",
       "data": {
+        "overall": 0.06,
         "region": {
-          "united_states": 9,
-          "united_kingdom": 6,
-          "india": 11,
-          "france": 3,
-          "germany": 4,
-          "japan": 7,
-          "united_arab_emirates": 5,
-          "brazil": 6,
-          "saudi_arabia": 6,
-          "australia": 7
+          "united_states": 0.09,
+          "united_kingdom": 0.06,
+          "australia": 0.07,
+          "india": 0.11,
+          "brazil": 0.06,
+          "saudi_arabia": 0.06,
+          "france": 0.03,
+          "germany": 0.04,
+          "japan": 0.07,
+          "united_arab_emirates": 0.05
         },
         "age": {
-          "18-24": 7,
-          "25-34": 7,
-          "35-44": 7,
-          "45-54": 6,
-          "55-65": 4,
-          "65+": 5
+          "18-24": 0.07,
+          "25-34": 0.07,
+          "35-44": 0.07,
+          "45-54": 0.06,
+          "55-65": 0.04,
+          "65+": 0.05
         },
         "gender": {
-          "male": 7,
-          "female": 6
+          "male": 0.07,
+          "female": 0.06
         },
         "org_size": {
-          "fewer_than_10": 6,
-          "10_to_49": 6,
-          "50_to_99": 5,
-          "100_to_499": 5,
-          "500_to_999": 7,
-          "1000_or_more": 6
+          "fewer_than_10": 0.06,
+          "10_to_49": 0.06,
+          "50_to_99": 0.05,
+          "100_to_499": 0.05,
+          "500_to_999": 0.07,
+          "1000_or_more": 0.06
         },
         "sector": {
-          "automotive": 5,
-          "business_administration": 7,
-          "technology": 13,
-          "construction": 9,
-          "consumer_goods": 6,
-          "education": 4,
-          "energy_utilities": 7,
-          "financial_services": 7,
-          "government": 5,
-          "healthcare": 4,
-          "manufacturing_industrial": 5,
-          "marketing_services": 11,
-          "legal_in-house": 3,
-          "legal_agency": 5,
-          "life_sciences": 4,
-          "professional_services": 6,
-          "real_estate": 4,
-          "retail": 4,
-          "sales": 5,
-          "telecommunications": 11,
-          "transport_storage": 5,
-          "travel_hospitality_leisure": 3,
-          "wholesale_distribution": 3,
-          "other": 6
+          "automotive": 0.05,
+          "business_administration": 0.07,
+          "technology": 0.13,
+          "construction": 0.09,
+          "consumer_goods": 0.06,
+          "education": 0.04,
+          "energy_utilities": 0.07,
+          "financial_services": 0.07,
+          "government": 0.05,
+          "healthcare": 0.04,
+          "manufacturing_industrial": 0.05,
+          "marketing_services": 0.11,
+          "legal_in-house": 0.03,
+          "legal_agency": 0.05,
+          "life_sciences": 0.04,
+          "professional_services": 0.06,
+          "real_estate": 0.04,
+          "retail": 0.04,
+          "sales": 0.05,
+          "telecommunications": 0.11,
+          "transport_storage": 0.05,
+          "travel_hospitality_leisure": 0.03,
+          "wholesale_distribution": 0.03,
+          "other": 0.06
         },
         "job_level": {
-          "ceo": 14,
-          "senior_executive": 11,
-          "senior_leader": 8,
-          "mid_level_leader": 5,
-          "first_level_supervisor": 7,
-          "individual_contributor": 4
+          "ceo": 0.14,
+          "senior_executive": 0.11,
+          "senior_leader": 0.08,
+          "mid_level_leader": 0.05,
+          "first_level_supervisor": 0.07,
+          "individual_contributor": 0.04
         },
         "relationship_status": {
-          "single": 6,
-          "cohabiting": 4,
-          "married": 7,
-          "divorced_separated": 4,
-          "widowed": 4
+          "single": 0.06,
+          "cohabiting": 0.04,
+          "married": 0.07,
+          "divorced_separated": 0.04,
+          "widowed": 0.04
         },
         "education": {
-          "secondary": 5,
-          "tertiary": 5,
-          "professional_certifications": 4,
-          "undergraduate": 6,
-          "postgraduate": 9,
-          "doctorate": 14
+          "secondary": 0.05,
+          "tertiary": 0.05,
+          "professional_certifications": 0.04,
+          "undergraduate": 0.06,
+          "postgraduate": 0.09,
+          "doctorate": 0.14
         },
         "generation": {
-          "gen_z": 6,
-          "millennials": 8,
-          "gen_x": 5,
-          "baby_boomers": 4,
-          "65_plus": 5
+          "gen_z": 0.06,
+          "millennials": 0.08,
+          "gen_x": 0.05,
+          "baby_boomers": 0.04
         },
         "employment_status": {
-          "full_time": 7,
-          "part_time": 5,
-          "contract": 6,
-          "freelance": 7
+          "full_time": 0.07,
+          "part_time": 0.05,
+          "contract": 0.06,
+          "freelance": 0.07
         }
       }
     },
     {
       "response": "My company gives me a salary and benefits that match the value of my skills",
       "data": {
+        "overall": 0.58,
         "region": {
-          "united_states": 57,
-          "united_kingdom": 56,
-          "india": 59,
-          "france": 52,
-          "germany": 62,
-          "japan": 60,
-          "united_arab_emirates": 60,
-          "brazil": 63,
-          "saudi_arabia": 60,
-          "australia": 60
+          "united_states": 0.57,
+          "united_kingdom": 0.56,
+          "australia": 0.6,
+          "india": 0.59,
+          "brazil": 0.63,
+          "saudi_arabia": 0.6,
+          "france": 0.52,
+          "germany": 0.62,
+          "japan": 0.6,
+          "united_arab_emirates": 0.6
         },
         "age": {
-          "18-24": 59,
-          "25-34": 60,
-          "35-44": 60,
-          "45-54": 55,
-          "55-65": 57,
-          "65+": 64
+          "18-24": 0.59,
+          "25-34": 0.6,
+          "35-44": 0.6,
+          "45-54": 0.55,
+          "55-65": 0.57,
+          "65+": 0.64
         },
         "gender": {
-          "male": 60,
-          "female": 56
+          "male": 0.6,
+          "female": 0.56
         },
         "org_size": {
-          "fewer_than_10": 58,
-          "10_to_49": 59,
-          "50_to_99": 59,
-          "100_to_499": 61,
-          "500_to_999": 60,
-          "1000_or_more": 57
+          "fewer_than_10": 0.58,
+          "10_to_49": 0.59,
+          "50_to_99": 0.59,
+          "100_to_499": 0.61,
+          "500_to_999": 0.6,
+          "1000_or_more": 0.57
         },
         "sector": {
-          "automotive": 56,
-          "business_administration": 57,
-          "technology": 63,
-          "construction": 61,
-          "consumer_goods": 61,
-          "education": 53,
-          "energy_utilities": 60,
-          "financial_services": 60,
-          "government": 54,
-          "healthcare": 53,
-          "manufacturing_industrial": 62,
-          "marketing_services": 59,
-          "legal_in-house": 62,
-          "legal_agency": 74,
-          "life_sciences": 55,
-          "professional_services": 59,
-          "real_estate": 69,
-          "retail": 58,
-          "sales": 57,
-          "telecommunications": 58,
-          "transport_storage": 56,
-          "travel_hospitality_leisure": 54,
-          "wholesale_distribution": 59,
-          "other": 60
+          "automotive": 0.56,
+          "business_administration": 0.57,
+          "technology": 0.63,
+          "construction": 0.61,
+          "consumer_goods": 0.61,
+          "education": 0.53,
+          "energy_utilities": 0.6,
+          "financial_services": 0.6,
+          "government": 0.54,
+          "healthcare": 0.53,
+          "manufacturing_industrial": 0.62,
+          "marketing_services": 0.59,
+          "legal_in-house": 0.62,
+          "legal_agency": 0.74,
+          "life_sciences": 0.55,
+          "professional_services": 0.59,
+          "real_estate": 0.69,
+          "retail": 0.58,
+          "sales": 0.57,
+          "telecommunications": 0.58,
+          "transport_storage": 0.56,
+          "travel_hospitality_leisure": 0.54,
+          "wholesale_distribution": 0.59,
+          "other": 0.6
         },
         "job_level": {
-          "ceo": 56,
-          "senior_executive": 65,
-          "senior_leader": 63,
-          "mid_level_leader": 61,
-          "first_level_supervisor": 57,
-          "individual_contributor": 54
+          "ceo": 0.56,
+          "senior_executive": 0.65,
+          "senior_leader": 0.63,
+          "mid_level_leader": 0.61,
+          "first_level_supervisor": 0.57,
+          "individual_contributor": 0.54
         },
         "relationship_status": {
-          "single": 56,
-          "cohabiting": 55,
-          "married": 61,
-          "divorced_separated": 53,
-          "widowed": 60
+          "single": 0.56,
+          "cohabiting": 0.55,
+          "married": 0.61,
+          "divorced_separated": 0.53,
+          "widowed": 0.6
         },
         "education": {
-          "secondary": 57,
-          "tertiary": 54,
-          "professional_certifications": 57,
-          "undergraduate": 61,
-          "postgraduate": 59,
-          "doctorate": 56
+          "secondary": 0.57,
+          "tertiary": 0.54,
+          "professional_certifications": 0.57,
+          "undergraduate": 0.61,
+          "postgraduate": 0.59,
+          "doctorate": 0.56
         },
         "generation": {
-          "gen_z": 59,
-          "millennials": 60,
-          "gen_x": 55,
-          "baby_boomers": 61,
-          "65_plus": 64
+          "gen_z": 0.59,
+          "millennials": 0.6,
+          "gen_x": 0.55,
+          "baby_boomers": 0.61
         },
         "employment_status": {
-          "full_time": 58,
-          "part_time": 58,
-          "contract": 58,
-          "freelance": 57
+          "full_time": 0.58,
+          "part_time": 0.58,
+          "contract": 0.58,
+          "freelance": 0.57
         }
       }
     }

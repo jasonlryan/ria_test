@@ -12,7 +12,7 @@
       "Culture_and_Values"
     ],
     "canonicalQuestion": "How important are company culture and values to your work experience?",
-    "subQuestion": "I am concerned that protectionism policies around immigration are affecting my ability to find work",
+    "subQuestion": "I am open to changing industries to have better job security",
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
@@ -23,6 +23,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -36,106 +37,155 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "Q7 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "I am concerned that protectionism policies around immigration are affecting my ability to find work",
+      "response": "I am open to changing industries to have better job security",
       "data": {
+        "overall": 0.63,
         "region": {
-          "united_states": 42,
-          "united_kingdom": 33,
-          "india": 68,
-          "france": 35,
-          "germany": 36,
-          "japan": 25,
-          "united_arab_emirates": 55,
-          "brazil": 42,
-          "saudi_arabia": 51,
-          "australia": 35
+          "united_states": 0.68,
+          "united_kingdom": 0.62,
+          "australia": 0.63,
+          "india": 0.8,
+          "brazil": 0.62,
+          "saudi_arabia": 0.78,
+          "france": 0.5,
+          "germany": 0.55,
+          "japan": 0.46,
+          "united_arab_emirates": 0.78
         },
         "age": {
-          "18-24": 49,
-          "25-34": 48,
-          "35-44": 45,
-          "45-54": 36,
-          "55-65": 25,
-          "65+": 25
+          "18-24": 0.69,
+          "25-34": 0.7,
+          "35-44": 0.68,
+          "45-54": 0.59,
+          "55-65": 0.44,
+          "65+": 0.39
         },
         "gender": {
-          "male": 46,
-          "female": 36
+          "male": 0.64,
+          "female": 0.61
         },
         "org_size": {
-          "fewer_than_10": 35,
-          "10_to_49": 39,
-          "50_to_99": 47,
-          "100_to_499": 47,
-          "500_to_999": 48,
-          "1000_or_more": 36
+          "fewer_than_10": 0.54,
+          "10_to_49": 0.56,
+          "50_to_99": 0.64,
+          "100_to_499": 0.64,
+          "500_to_999": 0.68,
+          "1000_or_more": 0.61
         },
         "sector": {
-          "automotive": 50,
-          "business_administration": 44,
-          "technology": 59,
-          "construction": 44,
-          "consumer_goods": 44,
-          "education": 36,
-          "energy_utilities": 39,
-          "financial_services": 49,
-          "government": 27,
-          "healthcare": 33,
-          "manufacturing_industrial": 41,
-          "marketing_services": 56,
-          "legal_in-house": 26,
-          "legal_agency": 21,
-          "life_sciences": 49,
-          "professional_services": 36,
-          "real_estate": 41,
-          "retail": 35,
-          "sales": 46,
-          "telecommunications": 48,
-          "transport_storage": 34,
-          "travel_hospitality_leisure": 36,
-          "wholesale_distribution": 38,
-          "other": 35
+          "automotive": 0.64,
+          "business_administration": 0.68,
+          "technology": 0.73,
+          "construction": 0.69,
+          "consumer_goods": 0.67,
+          "education": 0.58,
+          "energy_utilities": 0.65,
+          "financial_services": 0.68,
+          "government": 0.54,
+          "healthcare": 0.56,
+          "manufacturing_industrial": 0.63,
+          "marketing_services": 0.66,
+          "legal_in-house": 0.51,
+          "legal_agency": 0.53,
+          "life_sciences": 0.65,
+          "professional_services": 0.59,
+          "real_estate": 0.54,
+          "retail": 0.65,
+          "sales": 0.68,
+          "telecommunications": 0.68,
+          "transport_storage": 0.58,
+          "travel_hospitality_leisure": 0.63,
+          "wholesale_distribution": 0.59,
+          "other": 0.56
         },
         "job_level": {
-          "ceo": 53,
-          "senior_executive": 59,
-          "senior_leader": 52,
-          "mid_level_leader": 44,
-          "first_level_supervisor": 43,
-          "individual_contributor": 27
+          "ceo": 0.69,
+          "senior_executive": 0.72,
+          "senior_leader": 0.7,
+          "mid_level_leader": 0.64,
+          "first_level_supervisor": 0.65,
+          "individual_contributor": 0.53
         },
         "relationship_status": {
-          "single": 40,
-          "cohabiting": 31,
-          "married": 46,
-          "divorced_separated": 25,
-          "widowed": 26
+          "single": 0.61,
+          "cohabiting": 0.58,
+          "married": 0.66,
+          "divorced_separated": 0.52,
+          "widowed": 0.5
         },
         "education": {
-          "secondary": 35,
-          "tertiary": 34,
-          "professional_certifications": 34,
-          "undergraduate": 42,
-          "postgraduate": 50,
-          "doctorate": 45
+          "secondary": 0.57,
+          "tertiary": 0.57,
+          "professional_certifications": 0.57,
+          "undergraduate": 0.66,
+          "postgraduate": 0.67,
+          "doctorate": 0.63
         },
         "generation": {
-          "gen_z": 50,
-          "millennials": 46,
-          "gen_x": 34,
-          "baby_boomers": 23,
-          "65_plus": 25
+          "gen_z": 0.69,
+          "millennials": 0.69,
+          "gen_x": 0.56,
+          "baby_boomers": 0.4
         },
         "employment_status": {
-          "full_time": 43,
-          "part_time": 34,
-          "contract": 39,
-          "freelance": 37
+          "full_time": 0.64,
+          "part_time": 0.59,
+          "contract": 0.58,
+          "freelance": 0.59
         }
       }
     }

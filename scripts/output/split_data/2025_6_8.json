@@ -12,7 +12,7 @@
       "Intergenerational_Collaboration"
     ],
     "canonicalQuestion": "How effectively do different generations collaborate in your workplace?",
-    "subQuestion": "I would be motivated to work harder if I only worked a 4-day week on the same salary",
+    "subQuestion": "I have strong connections with my remote colleagues",
     "comparable": false,
     "userMessage": "New in 2025; no year‑on‑year comparison.",
     "availableMarkets": [],
@@ -23,6 +23,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -36,106 +37,155 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "Q6 - To what extent do you agree with the following statements with regards to your workplace.",
   "responses": [
     {
-      "response": "I would be motivated to work harder if I only worked a 4-day week on the same salary",
+      "response": "I have strong connections with my remote colleagues",
       "data": {
+        "overall": 0.59,
         "region": {
-          "united_states": 72,
-          "united_kingdom": 72,
-          "india": 83,
-          "france": 70,
-          "germany": 70,
-          "japan": 61,
-          "united_arab_emirates": 81,
-          "brazil": 82,
-          "saudi_arabia": 86,
-          "australia": 76
+          "united_states": 0.62,
+          "united_kingdom": 0.56,
+          "australia": 0.57,
+          "india": 0.82,
+          "brazil": 0.66,
+          "saudi_arabia": 0.8,
+          "france": 0.53,
+          "germany": 0.5,
+          "japan": 0.26,
+          "united_arab_emirates": 0.78
         },
         "age": {
-          "18-24": 76,
-          "25-34": 80,
-          "35-44": 78,
-          "45-54": 71,
-          "55-65": 61,
-          "65+": 56
+          "18-24": 0.6,
+          "25-34": 0.67,
+          "35-44": 0.64,
+          "45-54": 0.54,
+          "55-65": 0.45,
+          "65+": 0.42
         },
         "gender": {
-          "male": 73,
-          "female": 75
+          "male": 0.62,
+          "female": 0.57
         },
         "org_size": {
-          "fewer_than_10": 65,
-          "10_to_49": 70,
-          "50_to_99": 72,
-          "100_to_499": 74,
-          "500_to_999": 77,
-          "1000_or_more": 73
+          "fewer_than_10": 0.51,
+          "10_to_49": 0.51,
+          "50_to_99": 0.61,
+          "100_to_499": 0.62,
+          "500_to_999": 0.64,
+          "1000_or_more": 0.56
         },
         "sector": {
-          "automotive": 73,
-          "business_administration": 72,
-          "technology": 82,
-          "construction": 77,
-          "consumer_goods": 75,
-          "education": 75,
-          "energy_utilities": 76,
-          "financial_services": 77,
-          "government": 74,
-          "healthcare": 72,
-          "manufacturing_industrial": 72,
-          "marketing_services": 73,
-          "legal_in-house": 67,
-          "legal_agency": 74,
-          "life_sciences": 68,
-          "professional_services": 73,
-          "real_estate": 65,
-          "retail": 71,
-          "sales": 75,
-          "telecommunications": 76,
-          "transport_storage": 73,
-          "travel_hospitality_leisure": 74,
-          "wholesale_distribution": 66,
-          "other": 69
+          "automotive": 0.6,
+          "business_administration": 0.65,
+          "technology": 0.78,
+          "construction": 0.64,
+          "consumer_goods": 0.61,
+          "education": 0.55,
+          "energy_utilities": 0.62,
+          "financial_services": 0.67,
+          "government": 0.52,
+          "healthcare": 0.52,
+          "manufacturing_industrial": 0.55,
+          "marketing_services": 0.7,
+          "legal_in-house": 0.63,
+          "legal_agency": 0.58,
+          "life_sciences": 0.53,
+          "professional_services": 0.57,
+          "real_estate": 0.55,
+          "retail": 0.48,
+          "sales": 0.64,
+          "telecommunications": 0.69,
+          "transport_storage": 0.53,
+          "travel_hospitality_leisure": 0.5,
+          "wholesale_distribution": 0.5,
+          "other": 0.52
         },
         "job_level": {
-          "ceo": 74,
-          "senior_executive": 80,
-          "senior_leader": 78,
-          "mid_level_leader": 75,
-          "first_level_supervisor": 76,
-          "individual_contributor": 69
+          "ceo": 0.72,
+          "senior_executive": 0.77,
+          "senior_leader": 0.73,
+          "mid_level_leader": 0.62,
+          "first_level_supervisor": 0.62,
+          "individual_contributor": 0.43
         },
         "relationship_status": {
-          "single": 72,
-          "cohabiting": 75,
-          "married": 76,
-          "divorced_separated": 64,
-          "widowed": 65
+          "single": 0.53,
+          "cohabiting": 0.51,
+          "married": 0.66,
+          "divorced_separated": 0.46,
+          "widowed": 0.5
         },
         "education": {
-          "secondary": 70,
-          "tertiary": 69,
-          "professional_certifications": 71,
-          "undergraduate": 76,
-          "postgraduate": 77,
-          "doctorate": 76
+          "secondary": 0.53,
+          "tertiary": 0.49,
+          "professional_certifications": 0.5,
+          "undergraduate": 0.61,
+          "postgraduate": 0.7,
+          "doctorate": 0.68
         },
         "generation": {
-          "gen_z": 77,
-          "millennials": 79,
-          "gen_x": 69,
-          "baby_boomers": 57,
-          "65_plus": 56
+          "gen_z": 0.63,
+          "millennials": 0.66,
+          "gen_x": 0.52,
+          "baby_boomers": 0.43
         },
         "employment_status": {
-          "full_time": 76,
-          "part_time": 68,
-          "contract": 65,
-          "freelance": 68
+          "full_time": 0.62,
+          "part_time": 0.48,
+          "contract": 0.48,
+          "freelance": 0.53
         }
       }
     }

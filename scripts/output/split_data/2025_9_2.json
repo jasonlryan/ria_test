@@ -17,7 +17,7 @@
       "senior leadership"
     ],
     "canonicalQuestion": "How confident are you in your organization's leadership?",
-    "subQuestion": "I feel that I can be my full self around my co-workers.",
+    "subQuestion": "My manager is supportive and helpful",
     "comparable": true,
     "userMessage": "Data based on comparable markets only.",
     "availableMarkets": [
@@ -34,6 +34,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -47,106 +48,155 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "Q9 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "I feel that I can be my full self around my co-workers.",
+      "response": "My manager is supportive and helpful",
       "data": {
+        "overall": 0.68,
         "region": {
-          "united_states": 71,
-          "united_kingdom": 66,
-          "india": 80,
-          "france": 67,
-          "germany": 61,
-          "japan": 36,
-          "united_arab_emirates": 72,
-          "brazil": 75,
-          "saudi_arabia": 77,
-          "australia": 66
+          "united_states": 0.75,
+          "united_kingdom": 0.7,
+          "australia": 0.7,
+          "india": 0.84,
+          "brazil": 0.74,
+          "saudi_arabia": 0.79,
+          "france": 0.58,
+          "germany": 0.57,
+          "japan": 0.41,
+          "united_arab_emirates": 0.74
         },
         "age": {
-          "18-24": 62,
-          "25-34": 69,
-          "35-44": 69,
-          "45-54": 65,
-          "55-65": 62,
-          "65+": 68
+          "18-24": 0.67,
+          "25-34": 0.73,
+          "35-44": 0.71,
+          "45-54": 0.63,
+          "55-65": 0.59,
+          "65+": 0.61
         },
         "gender": {
-          "male": 67,
-          "female": 67
+          "male": 0.69,
+          "female": 0.67
         },
         "org_size": {
-          "fewer_than_10": 59,
-          "10_to_49": 60,
-          "50_to_99": 65,
-          "100_to_499": 66,
-          "500_to_999": 70,
-          "1000_or_more": 66
+          "fewer_than_10": 0.59,
+          "10_to_49": 0.62,
+          "50_to_99": 0.63,
+          "100_to_499": 0.69,
+          "500_to_999": 0.71,
+          "1000_or_more": 0.67
         },
         "sector": {
-          "automotive": 65,
-          "business_administration": 68,
-          "technology": 79,
-          "construction": 70,
-          "consumer_goods": 66,
-          "education": 68,
-          "energy_utilities": 63,
-          "financial_services": 68,
-          "government": 63,
-          "healthcare": 65,
-          "manufacturing_industrial": 67,
-          "marketing_services": 65,
-          "legal_in-house": 49,
-          "legal_agency": 61,
-          "life_sciences": 61,
-          "professional_services": 63,
-          "real_estate": 64,
-          "retail": 64,
-          "sales": 67,
-          "telecommunications": 70,
-          "transport_storage": 62,
-          "travel_hospitality_leisure": 64,
-          "wholesale_distribution": 61,
-          "other": 61
+          "automotive": 0.67,
+          "business_administration": 0.68,
+          "technology": 0.82,
+          "construction": 0.71,
+          "consumer_goods": 0.69,
+          "education": 0.69,
+          "energy_utilities": 0.73,
+          "financial_services": 0.71,
+          "government": 0.67,
+          "healthcare": 0.62,
+          "manufacturing_industrial": 0.65,
+          "marketing_services": 0.67,
+          "legal_in-house": 0.64,
+          "legal_agency": 0.75,
+          "life_sciences": 0.64,
+          "professional_services": 0.64,
+          "real_estate": 0.67,
+          "retail": 0.64,
+          "sales": 0.68,
+          "telecommunications": 0.69,
+          "transport_storage": 0.6,
+          "travel_hospitality_leisure": 0.65,
+          "wholesale_distribution": 0.6,
+          "other": 0.6
         },
         "job_level": {
-          "ceo": 69,
-          "senior_executive": 78,
-          "senior_leader": 73,
-          "mid_level_leader": 67,
-          "first_level_supervisor": 68,
-          "individual_contributor": 59
+          "ceo": 0.75,
+          "senior_executive": 0.8,
+          "senior_leader": 0.76,
+          "mid_level_leader": 0.68,
+          "first_level_supervisor": 0.7,
+          "individual_contributor": 0.58
         },
         "relationship_status": {
-          "single": 59,
-          "cohabiting": 62,
-          "married": 73,
-          "divorced_separated": 60,
-          "widowed": 69
+          "single": 0.62,
+          "cohabiting": 0.62,
+          "married": 0.73,
+          "divorced_separated": 0.58,
+          "widowed": 0.66
         },
         "education": {
-          "secondary": 66,
-          "tertiary": 59,
-          "professional_certifications": 61,
-          "undergraduate": 67,
-          "postgraduate": 74,
-          "doctorate": 72
+          "secondary": 0.65,
+          "tertiary": 0.59,
+          "professional_certifications": 0.59,
+          "undergraduate": 0.7,
+          "postgraduate": 0.76,
+          "doctorate": 0.74
         },
         "generation": {
-          "gen_z": 66,
-          "millennials": 69,
-          "gen_x": 65,
-          "baby_boomers": 64,
-          "65_plus": 68
+          "gen_z": 0.7,
+          "millennials": 0.72,
+          "gen_x": 0.63,
+          "baby_boomers": 0.58
         },
         "employment_status": {
-          "full_time": 68,
-          "part_time": 64,
-          "contract": 55,
-          "freelance": 55
+          "full_time": 0.69,
+          "part_time": 0.64,
+          "contract": 0.59,
+          "freelance": 0.61
         }
       }
     }

@@ -17,7 +17,7 @@
       "experimentation with AI"
     ],
     "canonicalQuestion": "How ready are you to adopt and use AI in your role?",
-    "subQuestion": "I feel leaders in my organization understand AI",
+    "subQuestion": "I would stay at a job if it granted me opportunities to progress and upskill quickly, even if I hated the current role",
     "comparable": false,
     "userMessage": "Year‑on‑year comparisons not available due to new question additions in 2025.",
     "availableMarkets": [],
@@ -28,6 +28,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -41,106 +42,155 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "Q5 - To what extent do you agree with the following statements about AI in the workplace and skills.",
   "responses": [
     {
-      "response": "I feel leaders in my organization understand AI",
+      "response": "I would stay at a job if it granted me opportunities to progress and upskill quickly, even if I hated the current role",
       "data": {
+        "overall": 0.63,
         "region": {
-          "united_states": 58,
-          "united_kingdom": 49,
-          "india": 82,
-          "france": 45,
-          "germany": 50,
-          "japan": 36,
-          "united_arab_emirates": 75,
-          "brazil": 67,
-          "saudi_arabia": 73,
-          "australia": 47
+          "united_states": 0.66,
+          "united_kingdom": 0.59,
+          "australia": 0.59,
+          "india": 0.82,
+          "brazil": 0.75,
+          "saudi_arabia": 0.82,
+          "france": 0.52,
+          "germany": 0.54,
+          "japan": 0.45,
+          "united_arab_emirates": 0.78
         },
         "age": {
-          "18-24": 61,
-          "25-34": 63,
-          "35-44": 60,
-          "45-54": 50,
-          "55-65": 40,
-          "65+": 44
+          "18-24": 0.68,
+          "25-34": 0.7,
+          "35-44": 0.68,
+          "45-54": 0.59,
+          "55-65": 0.44,
+          "65+": 0.44
         },
         "gender": {
-          "male": 59,
-          "female": 53
+          "male": 0.65,
+          "female": 0.6
         },
         "org_size": {
-          "fewer_than_10": 48,
-          "10_to_49": 50,
-          "50_to_99": 58,
-          "100_to_499": 58,
-          "500_to_999": 62,
-          "1000_or_more": 52
+          "fewer_than_10": 0.54,
+          "10_to_49": 0.55,
+          "50_to_99": 0.63,
+          "100_to_499": 0.66,
+          "500_to_999": 0.68,
+          "1000_or_more": 0.6
         },
         "sector": {
-          "automotive": 59,
-          "business_administration": 65,
-          "technology": 78,
-          "construction": 61,
-          "consumer_goods": 62,
-          "education": 51,
-          "energy_utilities": 54,
-          "financial_services": 65,
-          "government": 40,
-          "healthcare": 44,
-          "manufacturing_industrial": 56,
-          "marketing_services": 65,
-          "legal_in-house": 47,
-          "legal_agency": 46,
-          "life_sciences": 54,
-          "professional_services": 53,
-          "real_estate": 59,
-          "retail": 48,
-          "sales": 59,
-          "telecommunications": 65,
-          "transport_storage": 47,
-          "travel_hospitality_leisure": 48,
-          "wholesale_distribution": 41,
-          "other": 51
+          "automotive": 0.64,
+          "business_administration": 0.66,
+          "technology": 0.78,
+          "construction": 0.67,
+          "consumer_goods": 0.74,
+          "education": 0.58,
+          "energy_utilities": 0.59,
+          "financial_services": 0.71,
+          "government": 0.55,
+          "healthcare": 0.58,
+          "manufacturing_industrial": 0.62,
+          "marketing_services": 0.69,
+          "legal_in-house": 0.6,
+          "legal_agency": 0.7,
+          "life_sciences": 0.54,
+          "professional_services": 0.59,
+          "real_estate": 0.6,
+          "retail": 0.58,
+          "sales": 0.67,
+          "telecommunications": 0.65,
+          "transport_storage": 0.54,
+          "travel_hospitality_leisure": 0.6,
+          "wholesale_distribution": 0.53,
+          "other": 0.55
         },
         "job_level": {
-          "ceo": 71,
-          "senior_executive": 78,
-          "senior_leader": 71,
-          "mid_level_leader": 57,
-          "first_level_supervisor": 58,
-          "individual_contributor": 39
+          "ceo": 0.73,
+          "senior_executive": 0.77,
+          "senior_leader": 0.73,
+          "mid_level_leader": 0.65,
+          "first_level_supervisor": 0.66,
+          "individual_contributor": 0.49
         },
         "relationship_status": {
-          "single": 50,
-          "cohabiting": 45,
-          "married": 63,
-          "divorced_separated": 43,
-          "widowed": 41
+          "single": 0.59,
+          "cohabiting": 0.57,
+          "married": 0.68,
+          "divorced_separated": 0.49,
+          "widowed": 0.47
         },
         "education": {
-          "secondary": 48,
-          "tertiary": 46,
-          "professional_certifications": 46,
-          "undergraduate": 58,
-          "postgraduate": 66,
-          "doctorate": 68
+          "secondary": 0.58,
+          "tertiary": 0.55,
+          "professional_certifications": 0.53,
+          "undergraduate": 0.65,
+          "postgraduate": 0.71,
+          "doctorate": 0.68
         },
         "generation": {
-          "gen_z": 62,
-          "millennials": 62,
-          "gen_x": 48,
-          "baby_boomers": 39,
-          "65_plus": 44
+          "gen_z": 0.69,
+          "millennials": 0.69,
+          "gen_x": 0.56,
+          "baby_boomers": 0.42
         },
         "employment_status": {
-          "full_time": 58,
-          "part_time": 46,
-          "contract": 50,
-          "freelance": 51
+          "full_time": 0.64,
+          "part_time": 0.55,
+          "contract": 0.59,
+          "freelance": 0.6
         }
       }
     }

@@ -17,7 +17,7 @@
       "experimentation with AI"
     ],
     "canonicalQuestion": "How ready are you to adopt and use AI in your role?",
-    "subQuestion": "I feel my current skills will remain relevant in the next three years",
+    "subQuestion": "My organization encourages experimentation with new technologies",
     "comparable": false,
     "userMessage": "Year‑on‑year comparisons not available due to new question additions in 2025.",
     "availableMarkets": [],
@@ -28,6 +28,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -41,106 +42,155 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "Q5 - To what extent do you agree with the following statements about AI in the workplace and skills.",
   "responses": [
     {
-      "response": "I feel my current skills will remain relevant in the next three years",
+      "response": "My organization encourages experimentation with new technologies",
       "data": {
+        "overall": 0.62,
         "region": {
-          "united_states": 78,
-          "united_kingdom": 75,
-          "india": 82,
-          "france": 65,
-          "germany": 72,
-          "japan": 49,
-          "united_arab_emirates": 81,
-          "brazil": 84,
-          "saudi_arabia": 85,
-          "australia": 76
+          "united_states": 0.64,
+          "united_kingdom": 0.57,
+          "australia": 0.56,
+          "india": 0.85,
+          "brazil": 0.77,
+          "saudi_arabia": 0.78,
+          "france": 0.51,
+          "germany": 0.51,
+          "japan": 0.42,
+          "united_arab_emirates": 0.79
         },
         "age": {
-          "18-24": 73,
-          "25-34": 77,
-          "35-44": 77,
-          "45-54": 70,
-          "55-65": 68,
-          "65+": 73
+          "18-24": 0.64,
+          "25-34": 0.68,
+          "35-44": 0.66,
+          "45-54": 0.57,
+          "55-65": 0.45,
+          "65+": 0.51
         },
         "gender": {
-          "male": 74,
-          "female": 75
+          "male": 0.65,
+          "female": 0.58
         },
         "org_size": {
-          "fewer_than_10": 66,
-          "10_to_49": 70,
-          "50_to_99": 71,
-          "100_to_499": 74,
-          "500_to_999": 76,
-          "1000_or_more": 74
+          "fewer_than_10": 0.53,
+          "10_to_49": 0.53,
+          "50_to_99": 0.61,
+          "100_to_499": 0.63,
+          "500_to_999": 0.67,
+          "1000_or_more": 0.59
         },
         "sector": {
-          "automotive": 70,
-          "business_administration": 77,
-          "technology": 84,
-          "construction": 76,
-          "consumer_goods": 73,
-          "education": 75,
-          "energy_utilities": 72,
-          "financial_services": 77,
-          "government": 72,
-          "healthcare": 76,
-          "manufacturing_industrial": 72,
-          "marketing_services": 74,
-          "legal_in-house": 64,
-          "legal_agency": 74,
-          "life_sciences": 73,
-          "professional_services": 71,
-          "real_estate": 73,
-          "retail": 73,
-          "sales": 71,
-          "telecommunications": 74,
-          "transport_storage": 70,
-          "travel_hospitality_leisure": 73,
-          "wholesale_distribution": 64,
-          "other": 67
+          "automotive": 0.64,
+          "business_administration": 0.7,
+          "technology": 0.83,
+          "construction": 0.66,
+          "consumer_goods": 0.67,
+          "education": 0.57,
+          "energy_utilities": 0.65,
+          "financial_services": 0.7,
+          "government": 0.48,
+          "healthcare": 0.51,
+          "manufacturing_industrial": 0.62,
+          "marketing_services": 0.69,
+          "legal_in-house": 0.47,
+          "legal_agency": 0.49,
+          "life_sciences": 0.66,
+          "professional_services": 0.62,
+          "real_estate": 0.61,
+          "retail": 0.53,
+          "sales": 0.63,
+          "telecommunications": 0.72,
+          "transport_storage": 0.53,
+          "travel_hospitality_leisure": 0.51,
+          "wholesale_distribution": 0.46,
+          "other": 0.54
         },
         "job_level": {
-          "ceo": 79,
-          "senior_executive": 84,
-          "senior_leader": 81,
-          "mid_level_leader": 75,
-          "first_level_supervisor": 75,
-          "individual_contributor": 67
+          "ceo": 0.78,
+          "senior_executive": 0.81,
+          "senior_leader": 0.76,
+          "mid_level_leader": 0.64,
+          "first_level_supervisor": 0.65,
+          "individual_contributor": 0.44
         },
         "relationship_status": {
-          "single": 69,
-          "cohabiting": 70,
-          "married": 78,
-          "divorced_separated": 69,
-          "widowed": 70
+          "single": 0.56,
+          "cohabiting": 0.52,
+          "married": 0.68,
+          "divorced_separated": 0.46,
+          "widowed": 0.51
         },
         "education": {
-          "secondary": 70,
-          "tertiary": 67,
-          "professional_certifications": 71,
-          "undergraduate": 75,
-          "postgraduate": 80,
-          "doctorate": 80
+          "secondary": 0.52,
+          "tertiary": 0.53,
+          "professional_certifications": 0.5,
+          "undergraduate": 0.64,
+          "postgraduate": 0.73,
+          "doctorate": 0.73
         },
         "generation": {
-          "gen_z": 75,
-          "millennials": 78,
-          "gen_x": 70,
-          "baby_boomers": 70,
-          "65_plus": 73
+          "gen_z": 0.66,
+          "millennials": 0.67,
+          "gen_x": 0.55,
+          "baby_boomers": 0.43
         },
         "employment_status": {
-          "full_time": 76,
-          "part_time": 70,
-          "contract": 59,
-          "freelance": 69
+          "full_time": 0.64,
+          "part_time": 0.51,
+          "contract": 0.57,
+          "freelance": 0.58
         }
       }
     }

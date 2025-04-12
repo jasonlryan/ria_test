@@ -23,6 +23,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -36,6 +37,55 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "5_1. I feel that I can be my full self around my co-workers.",
@@ -44,9 +94,12 @@
       "response": "Agree",
       "data": {
         "region": {
+          "united_kingdom": 0.61,
+          "united_states": 0.76,
+          "australia": 0.63,
           "india": 0.85,
           "brazil": 0.73,
-          "australia": 0.63
+          "saudi_arabia_uae": 0.8
         },
         "age": {
           "18-24": 0.68,
@@ -95,22 +148,37 @@
           "first_level_supervisor": 0.75,
           "individual_contributor": 0.57
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.66,
+          "married": 0.78,
+          "divorced_separated": 0.59,
+          "widowed": 0.62
+        },
+        "education": {
+          "secondary": 0.64,
+          "tertiary": 0.64,
+          "undergraduate": 0.69,
+          "postgraduate": 0.81,
+          "doctorate": 0.78
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.74,
           "part_time": 0.66
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "Disagree",
       "data": {
         "region": {
+          "united_kingdom": 0.15,
+          "united_states": 0.09,
+          "australia": 0.15,
           "india": 0.04,
           "brazil": 0.1,
-          "australia": 0.15
+          "saudi_arabia_uae": 0.05
         },
         "age": {
           "18-24": 0.12,
@@ -159,13 +227,25 @@
           "first_level_supervisor": 0.09,
           "individual_contributor": 0.18
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.13,
+          "married": 0.07,
+          "divorced_separated": 0.19,
+          "widowed": 0.2
+        },
+        "education": {
+          "secondary": 0.13,
+          "tertiary": 0.15,
+          "undergraduate": 0.11,
+          "postgraduate": 0.06,
+          "doctorate": 0.11
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.1,
           "part_time": 0.13
-        }
+        },
+        "overall": null
       }
     }
   ]

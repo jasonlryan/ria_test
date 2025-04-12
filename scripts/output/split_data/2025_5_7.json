@@ -17,7 +17,7 @@
       "experimentation with AI"
     ],
     "canonicalQuestion": "How ready are you to adopt and use AI in your role?",
-    "subQuestion": "I think using AI in my role will bolster my value in the next three years",
+    "subQuestion": "I feel excited and positive about how emerging technologies like AI will change the way I work",
     "comparable": false,
     "userMessage": "Year‑on‑year comparisons not available due to new question additions in 2025.",
     "availableMarkets": [],
@@ -28,6 +28,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -41,106 +42,155 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "Q5 - To what extent do you agree with the following statements about AI in the workplace and skills.",
   "responses": [
     {
-      "response": "I think using AI in my role will bolster my value in the next three years",
+      "response": "I feel excited and positive about how emerging technologies like AI will change the way I work",
       "data": {
+        "overall": 0.61,
         "region": {
-          "united_states": 58,
-          "united_kingdom": 49,
-          "india": 82,
-          "france": 47,
-          "germany": 52,
-          "japan": 43,
-          "united_arab_emirates": 76,
-          "brazil": 75,
-          "saudi_arabia": 77,
-          "australia": 51
+          "united_states": 0.61,
+          "united_kingdom": 0.53,
+          "australia": 0.55,
+          "india": 0.85,
+          "brazil": 0.8,
+          "saudi_arabia": 0.84,
+          "france": 0.49,
+          "germany": 0.54,
+          "japan": 0.43,
+          "united_arab_emirates": 0.82
         },
         "age": {
-          "18-24": 57,
-          "25-34": 66,
-          "35-44": 64,
-          "45-54": 52,
-          "55-65": 40,
-          "65+": 40
+          "18-24": 0.64,
+          "25-34": 0.7,
+          "35-44": 0.68,
+          "45-54": 0.55,
+          "55-65": 0.41,
+          "65+": 0.43
         },
         "gender": {
-          "male": 62,
-          "female": 53
+          "male": 0.66,
+          "female": 0.57
         },
         "org_size": {
-          "fewer_than_10": 50,
-          "10_to_49": 52,
-          "50_to_99": 61,
-          "100_to_499": 62,
-          "500_to_999": 63,
-          "1000_or_more": 55
+          "fewer_than_10": 0.49,
+          "10_to_49": 0.55,
+          "50_to_99": 0.62,
+          "100_to_499": 0.64,
+          "500_to_999": 0.67,
+          "1000_or_more": 0.58
         },
         "sector": {
-          "automotive": 63,
-          "business_administration": 62,
-          "technology": 80,
-          "construction": 62,
-          "consumer_goods": 64,
-          "education": 54,
-          "energy_utilities": 60,
-          "financial_services": 66,
-          "government": 47,
-          "healthcare": 48,
-          "manufacturing_industrial": 59,
-          "marketing_services": 66,
-          "legal_in-house": 48,
-          "legal_agency": 65,
-          "life_sciences": 64,
-          "professional_services": 53,
-          "real_estate": 62,
-          "retail": 49,
-          "sales": 61,
-          "telecommunications": 67,
-          "transport_storage": 48,
-          "travel_hospitality_leisure": 44,
-          "wholesale_distribution": 49,
-          "other": 49
+          "automotive": 0.6,
+          "business_administration": 0.69,
+          "technology": 0.83,
+          "construction": 0.64,
+          "consumer_goods": 0.7,
+          "education": 0.58,
+          "energy_utilities": 0.63,
+          "financial_services": 0.69,
+          "government": 0.52,
+          "healthcare": 0.51,
+          "manufacturing_industrial": 0.6,
+          "marketing_services": 0.68,
+          "legal_in-house": 0.48,
+          "legal_agency": 0.67,
+          "life_sciences": 0.64,
+          "professional_services": 0.58,
+          "real_estate": 0.61,
+          "retail": 0.54,
+          "sales": 0.62,
+          "telecommunications": 0.7,
+          "transport_storage": 0.51,
+          "travel_hospitality_leisure": 0.51,
+          "wholesale_distribution": 0.54,
+          "other": 0.53
         },
         "job_level": {
-          "ceo": 71,
-          "senior_executive": 78,
-          "senior_leader": 74,
-          "mid_level_leader": 62,
-          "first_level_supervisor": 62,
-          "individual_contributor": 39
+          "ceo": 0.71,
+          "senior_executive": 0.83,
+          "senior_leader": 0.76,
+          "mid_level_leader": 0.65,
+          "first_level_supervisor": 0.64,
+          "individual_contributor": 0.43
         },
         "relationship_status": {
-          "single": 51,
-          "cohabiting": 47,
-          "married": 66,
-          "divorced_separated": 42,
-          "widowed": 42
+          "single": 0.55,
+          "cohabiting": 0.51,
+          "married": 0.69,
+          "divorced_separated": 0.46,
+          "widowed": 0.44
         },
         "education": {
-          "secondary": 47,
-          "tertiary": 49,
-          "professional_certifications": 46,
-          "undergraduate": 62,
-          "postgraduate": 69,
-          "doctorate": 67
+          "secondary": 0.49,
+          "tertiary": 0.52,
+          "professional_certifications": 0.5,
+          "undergraduate": 0.64,
+          "postgraduate": 0.73,
+          "doctorate": 0.71
         },
         "generation": {
-          "gen_z": 61,
-          "millennials": 66,
-          "gen_x": 50,
-          "baby_boomers": 38,
-          "65_plus": 40
+          "gen_z": 0.67,
+          "millennials": 0.69,
+          "gen_x": 0.53,
+          "baby_boomers": 0.39
         },
         "employment_status": {
-          "full_time": 61,
-          "part_time": 43,
-          "contract": 49,
-          "freelance": 56
+          "full_time": 0.64,
+          "part_time": 0.49,
+          "contract": 0.55,
+          "freelance": 0.56
         }
       }
     }

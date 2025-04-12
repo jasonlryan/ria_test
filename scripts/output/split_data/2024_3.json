@@ -22,6 +22,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -35,6 +36,55 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "3. Factors to Leave Current Company",
@@ -43,9 +93,12 @@
       "response": "Low salary / compensation",
       "data": {
         "region": {
+          "united_kingdom": 0.47,
+          "united_states": 0.37,
+          "australia": 0.52,
           "india": 0.3,
           "brazil": 0.44,
-          "australia": 0.52
+          "saudi_arabia_uae": 0.41
         },
         "age": {
           "18-24": 0.33,
@@ -94,22 +147,37 @@
           "first_level_supervisor": 0.43,
           "individual_contributor": 0.54
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.41,
+          "married": 0.4,
+          "divorced_separated": 0.53,
+          "widowed": 0.4
+        },
+        "education": {
+          "secondary": 0.41,
+          "tertiary": 0.46,
+          "undergraduate": 0.47,
+          "postgraduate": 0.37,
+          "doctorate": 0.33
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.42,
           "part_time": 0.42
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "Lack of career advancement opportunities",
       "data": {
         "region": {
+          "united_kingdom": 0.24,
+          "united_states": 0.26,
+          "australia": 0.29,
           "india": 0.29,
           "brazil": 0.37,
-          "australia": 0.29
+          "saudi_arabia_uae": 0.3
         },
         "age": {
           "18-24": 0.25,
@@ -158,22 +226,37 @@
           "first_level_supervisor": 0.3,
           "individual_contributor": 0.3
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.26,
+          "married": 0.3,
+          "divorced_separated": 0.23,
+          "widowed": 0.25
+        },
+        "education": {
+          "secondary": 0.23,
+          "tertiary": 0.26,
+          "undergraduate": 0.29,
+          "postgraduate": 0.31,
+          "doctorate": 0.33
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.29,
           "part_time": 0.26
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "Lack of job security (employment contract)",
       "data": {
         "region": {
+          "united_kingdom": 0.27,
+          "united_states": 0.26,
+          "australia": 0.27,
           "india": 0.26,
           "brazil": 0.25,
-          "australia": 0.27
+          "saudi_arabia_uae": 0.31
         },
         "age": {
           "18-24": 0.22,
@@ -222,22 +305,37 @@
           "first_level_supervisor": 0.25,
           "individual_contributor": 0.29
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.25,
+          "married": 0.27,
+          "divorced_separated": 0.29,
+          "widowed": 0.23
+        },
+        "education": {
+          "secondary": 0.24,
+          "tertiary": 0.27,
+          "undergraduate": 0.28,
+          "postgraduate": 0.26,
+          "doctorate": 0.23
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.27,
           "part_time": 0.27
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "Inflexible working hours policy",
       "data": {
         "region": {
+          "united_kingdom": 0.28,
+          "united_states": 0.26,
+          "australia": 0.29,
           "india": 0.26,
           "brazil": 0.22,
-          "australia": 0.29
+          "saudi_arabia_uae": 0.23
         },
         "age": {
           "18-24": 0.23,
@@ -286,22 +384,37 @@
           "first_level_supervisor": 0.26,
           "individual_contributor": 0.27
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.25,
+          "married": 0.27,
+          "divorced_separated": 0.27,
+          "widowed": 0.27
+        },
+        "education": {
+          "secondary": 0.26,
+          "tertiary": 0.26,
+          "undergraduate": 0.27,
+          "postgraduate": 0.27,
+          "doctorate": 0.23
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.26,
           "part_time": 0.29
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "Poor company culture or values",
       "data": {
         "region": {
+          "united_kingdom": 0.28,
+          "united_states": 0.24,
+          "australia": 0.32,
           "india": 0.21,
           "brazil": 0.21,
-          "australia": 0.32
+          "saudi_arabia_uae": 0.28
         },
         "age": {
           "18-24": 0.22,
@@ -350,22 +463,37 @@
           "first_level_supervisor": 0.27,
           "individual_contributor": 0.28
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.25,
+          "married": 0.26,
+          "divorced_separated": 0.25,
+          "widowed": 0.26
+        },
+        "education": {
+          "secondary": 0.24,
+          "tertiary": 0.27,
+          "undergraduate": 0.28,
+          "postgraduate": 0.25,
+          "doctorate": 0.24
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.26,
           "part_time": 0.26
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "Personal challenges with colleagues or manager",
       "data": {
         "region": {
+          "united_kingdom": 0.27,
+          "united_states": 0.26,
+          "australia": 0.28,
           "india": 0.23,
           "brazil": 0.14,
-          "australia": 0.28
+          "saudi_arabia_uae": 0.21
         },
         "age": {
           "18-24": 0.23,
@@ -414,22 +542,37 @@
           "first_level_supervisor": 0.24,
           "individual_contributor": 0.25
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.23,
+          "married": 0.25,
+          "divorced_separated": 0.26,
+          "widowed": 0.23
+        },
+        "education": {
+          "secondary": 0.22,
+          "tertiary": 0.27,
+          "undergraduate": 0.25,
+          "postgraduate": 0.24,
+          "doctorate": 0.27
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.25,
           "part_time": 0.25
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "Long or difficult commute to office",
       "data": {
         "region": {
+          "united_kingdom": 0.27,
+          "united_states": 0.24,
+          "australia": 0.28,
           "india": 0.23,
           "brazil": 0.22,
-          "australia": 0.28
+          "saudi_arabia_uae": 0.2
         },
         "age": {
           "18-24": 0.22,
@@ -478,22 +621,37 @@
           "first_level_supervisor": 0.25,
           "individual_contributor": 0.27
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.24,
+          "married": 0.24,
+          "divorced_separated": 0.3,
+          "widowed": 0.21
+        },
+        "education": {
+          "secondary": 0.24,
+          "tertiary": 0.27,
+          "undergraduate": 0.25,
+          "postgraduate": 0.24,
+          "doctorate": 0.23
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.25,
           "part_time": 0.26
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "Full-time in-office attendance is being mandated",
       "data": {
         "region": {
+          "united_kingdom": 0.21,
+          "united_states": 0.24,
+          "australia": 0.23,
           "india": 0.26,
           "brazil": 0.16,
-          "australia": 0.23
+          "saudi_arabia_uae": 0.16
         },
         "age": {
           "18-24": 0.21,
@@ -542,22 +700,37 @@
           "first_level_supervisor": 0.22,
           "individual_contributor": 0.2
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.21,
+          "married": 0.23,
+          "divorced_separated": 0.2,
+          "widowed": 0.19
+        },
+        "education": {
+          "secondary": 0.19,
+          "tertiary": 0.17,
+          "undergraduate": 0.21,
+          "postgraduate": 0.25,
+          "doctorate": 0.31
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.24,
           "part_time": 0.16
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "Inadequate learning and development opportunities",
       "data": {
         "region": {
+          "united_kingdom": 0.18,
+          "united_states": 0.22,
+          "australia": 0.2,
           "india": 0.22,
           "brazil": 0.2,
-          "australia": 0.2
+          "saudi_arabia_uae": 0.24
         },
         "age": {
           "18-24": 0.21,
@@ -606,22 +779,37 @@
           "first_level_supervisor": 0.21,
           "individual_contributor": 0.16
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.2,
+          "married": 0.22,
+          "divorced_separated": 0.14,
+          "widowed": 0.19
+        },
+        "education": {
+          "secondary": 0.15,
+          "tertiary": 0.18,
+          "undergraduate": 0.21,
+          "postgraduate": 0.23,
+          "doctorate": 0.24
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.21,
           "part_time": 0.19
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "Inadequate non-financial benefits",
       "data": {
         "region": {
+          "united_kingdom": 0.16,
+          "united_states": 0.2,
+          "australia": 0.16,
           "india": 0.17,
           "brazil": 0.27,
-          "australia": 0.16
+          "saudi_arabia_uae": 0.23
         },
         "age": {
           "18-24": 0.18,
@@ -670,22 +858,37 @@
           "first_level_supervisor": 0.18,
           "individual_contributor": 0.17
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.17,
+          "married": 0.2,
+          "divorced_separated": 0.17,
+          "widowed": 0.22
+        },
+        "education": {
+          "secondary": 0.16,
+          "tertiary": 0.17,
+          "undergraduate": 0.19,
+          "postgraduate": 0.21,
+          "doctorate": 0.17
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.19,
           "part_time": 0.16
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "High number of recent layoffs",
       "data": {
         "region": {
+          "united_kingdom": 0.15,
+          "united_states": 0.22,
+          "australia": 0.16,
           "india": 0.21,
           "brazil": 0.17,
-          "australia": 0.16
+          "saudi_arabia_uae": 0.22
         },
         "age": {
           "18-24": 0.2,
@@ -734,22 +937,37 @@
           "first_level_supervisor": 0.21,
           "individual_contributor": 0.16
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.18,
+          "married": 0.2,
+          "divorced_separated": 0.17,
+          "widowed": 0.11
+        },
+        "education": {
+          "secondary": 0.18,
+          "tertiary": 0.14,
+          "undergraduate": 0.18,
+          "postgraduate": 0.21,
+          "doctorate": 0.2
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.2,
           "part_time": 0.16
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "Employer will relocate to a different area",
       "data": {
         "region": {
+          "united_kingdom": 0.18,
+          "united_states": 0.21,
+          "australia": 0.18,
           "india": 0.22,
           "brazil": 0.1,
-          "australia": 0.18
+          "saudi_arabia_uae": 0.18
         },
         "age": {
           "18-24": 0.19,
@@ -798,22 +1016,37 @@
           "first_level_supervisor": 0.18,
           "individual_contributor": 0.15
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.16,
+          "married": 0.2,
+          "divorced_separated": 0.17,
+          "widowed": 0.28
+        },
+        "education": {
+          "secondary": 0.17,
+          "tertiary": 0.16,
+          "undergraduate": 0.17,
+          "postgraduate": 0.21,
+          "doctorate": 0.2
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.19,
           "part_time": 0.19
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "Poor sustainability policies and practices within the company",
       "data": {
         "region": {
+          "united_kingdom": 0.15,
+          "united_states": 0.21,
+          "australia": 0.14,
           "india": 0.22,
           "brazil": 0.11,
-          "australia": 0.14
+          "saudi_arabia_uae": 0.22
         },
         "age": {
           "18-24": 0.2,
@@ -862,22 +1095,37 @@
           "first_level_supervisor": 0.18,
           "individual_contributor": 0.12
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.17,
+          "married": 0.19,
+          "divorced_separated": 0.09,
+          "widowed": 0.12
+        },
+        "education": {
+          "secondary": 0.13,
+          "tertiary": 0.13,
+          "undergraduate": 0.16,
+          "postgraduate": 0.22,
+          "doctorate": 0.25
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.19,
           "part_time": 0.14
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "Lack of diversity and inclusion within the company",
       "data": {
         "region": {
+          "united_kingdom": 0.14,
+          "united_states": 0.21,
+          "australia": 0.12,
           "india": 0.21,
           "brazil": 0.16,
-          "australia": 0.12
+          "saudi_arabia_uae": 0.21
         },
         "age": {
           "18-24": 0.2,
@@ -926,22 +1174,37 @@
           "first_level_supervisor": 0.17,
           "individual_contributor": 0.12
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.17,
+          "married": 0.19,
+          "divorced_separated": 0.1,
+          "widowed": 0.1
+        },
+        "education": {
+          "secondary": 0.14,
+          "tertiary": 0.11,
+          "undergraduate": 0.15,
+          "postgraduate": 0.21,
+          "doctorate": 0.25
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.18,
           "part_time": 0.15
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "No allowance for full-time remote working",
       "data": {
         "region": {
+          "united_kingdom": 0.17,
+          "united_states": 0.19,
+          "australia": 0.15,
           "india": 0.2,
           "brazil": 0.15,
-          "australia": 0.15
+          "saudi_arabia_uae": 0.16
         },
         "age": {
           "18-24": 0.21,
@@ -990,22 +1253,37 @@
           "first_level_supervisor": 0.17,
           "individual_contributor": 0.16
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.19,
+          "married": 0.17,
+          "divorced_separated": 0.14,
+          "widowed": 0.25
+        },
+        "education": {
+          "secondary": 0.15,
+          "tertiary": 0.17,
+          "undergraduate": 0.17,
+          "postgraduate": 0.18,
+          "doctorate": 0.2
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.17,
           "part_time": 0.16
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "Lack of affordable childcare during working hours",
       "data": {
         "region": {
+          "united_kingdom": 0.13,
+          "united_states": 0.16,
+          "australia": 0.09,
           "india": 0.17,
           "brazil": 0.08,
-          "australia": 0.09
+          "saudi_arabia_uae": 0.13
         },
         "age": {
           "18-24": 0.15,
@@ -1054,13 +1332,25 @@
           "first_level_supervisor": 0.13,
           "individual_contributor": 0.07
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.12,
+          "married": 0.15,
+          "divorced_separated": 0.06,
+          "widowed": 0.1
+        },
+        "education": {
+          "secondary": 0.11,
+          "tertiary": 0.08,
+          "undergraduate": 0.12,
+          "postgraduate": 0.16,
+          "doctorate": 0.17
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.14,
           "part_time": 0.13
-        }
+        },
+        "overall": null
       }
     }
   ]

@@ -12,7 +12,7 @@
       "Pay_and_Reward"
     ],
     "canonicalQuestion": "How fair do you consider your compensation relative to your contribution?",
-    "subQuestion": "I feel my company provides adequate support for employee mental well-being",
+    "subQuestion": "I feel my company provides a variety of ways to communicate and connect with colleagues",
     "comparable": true,
     "userMessage": "Note: Wording differs between Q8 (2024) and Q11 (2025).",
     "availableMarkets": [
@@ -29,6 +29,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -42,106 +43,155 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "Q6 - To what extent do you agree with the following statements with regards to your workplace.",
   "responses": [
     {
-      "response": "I feel my company provides adequate support for employee mental well-being",
+      "response": "I feel my company provides a variety of ways to communicate and connect with colleagues",
       "data": {
+        "overall": 0.68,
         "region": {
-          "united_states": 70,
-          "united_kingdom": 66,
-          "india": 82,
-          "france": 50,
-          "germany": 55,
-          "japan": 35,
-          "united_arab_emirates": 73,
-          "brazil": 68,
-          "saudi_arabia": 75,
-          "australia": 65
+          "united_states": 0.73,
+          "united_kingdom": 0.68,
+          "australia": 0.67,
+          "india": 0.85,
+          "brazil": 0.73,
+          "saudi_arabia": 0.79,
+          "france": 0.61,
+          "germany": 0.64,
+          "japan": 0.4,
+          "united_arab_emirates": 0.76
         },
         "age": {
-          "18-24": 64,
-          "25-34": 71,
-          "35-44": 67,
-          "45-54": 58,
-          "55-65": 50,
-          "65+": 59
+          "18-24": 0.7,
+          "25-34": 0.73,
+          "35-44": 0.72,
+          "45-54": 0.65,
+          "55-65": 0.56,
+          "65+": 0.6
         },
         "gender": {
-          "male": 65,
-          "female": 61
+          "male": 0.7,
+          "female": 0.67
         },
         "org_size": {
-          "fewer_than_10": 57,
-          "10_to_49": 57,
-          "50_to_99": 61,
-          "100_to_499": 63,
-          "500_to_999": 67,
-          "1000_or_more": 62
+          "fewer_than_10": 0.57,
+          "10_to_49": 0.61,
+          "50_to_99": 0.65,
+          "100_to_499": 0.7,
+          "500_to_999": 0.72,
+          "1000_or_more": 0.68
         },
         "sector": {
-          "automotive": 62,
-          "business_administration": 66,
-          "technology": 81,
-          "construction": 68,
-          "consumer_goods": 66,
-          "education": 59,
-          "energy_utilities": 66,
-          "financial_services": 68,
-          "government": 58,
-          "healthcare": 58,
-          "manufacturing_industrial": 61,
-          "marketing_services": 66,
-          "legal_in-house": 52,
-          "legal_agency": 61,
-          "life_sciences": 54,
-          "professional_services": 59,
-          "real_estate": 59,
-          "retail": 59,
-          "sales": 61,
-          "telecommunications": 68,
-          "transport_storage": 54,
-          "travel_hospitality_leisure": 57,
-          "wholesale_distribution": 51,
-          "other": 58
+          "automotive": 0.7,
+          "business_administration": 0.72,
+          "technology": 0.84,
+          "construction": 0.73,
+          "consumer_goods": 0.68,
+          "education": 0.68,
+          "energy_utilities": 0.72,
+          "financial_services": 0.75,
+          "government": 0.65,
+          "healthcare": 0.63,
+          "manufacturing_industrial": 0.66,
+          "marketing_services": 0.7,
+          "legal_in-house": 0.64,
+          "legal_agency": 0.7,
+          "life_sciences": 0.7,
+          "professional_services": 0.67,
+          "real_estate": 0.7,
+          "retail": 0.58,
+          "sales": 0.66,
+          "telecommunications": 0.76,
+          "transport_storage": 0.58,
+          "travel_hospitality_leisure": 0.66,
+          "wholesale_distribution": 0.59,
+          "other": 0.6
         },
         "job_level": {
-          "ceo": 77,
-          "senior_executive": 81,
-          "senior_leader": 74,
-          "mid_level_leader": 63,
-          "first_level_supervisor": 65,
-          "individual_contributor": 51
+          "ceo": 0.78,
+          "senior_executive": 0.83,
+          "senior_leader": 0.79,
+          "mid_level_leader": 0.7,
+          "first_level_supervisor": 0.71,
+          "individual_contributor": 0.55
         },
         "relationship_status": {
-          "single": 57,
-          "cohabiting": 56,
-          "married": 70,
-          "divorced_separated": 52,
-          "widowed": 59
+          "single": 0.63,
+          "cohabiting": 0.64,
+          "married": 0.73,
+          "divorced_separated": 0.57,
+          "widowed": 0.66
         },
         "education": {
-          "secondary": 60,
-          "tertiary": 53,
-          "professional_certifications": 56,
-          "undergraduate": 64,
-          "postgraduate": 72,
-          "doctorate": 72
+          "secondary": 0.61,
+          "tertiary": 0.59,
+          "professional_certifications": 0.62,
+          "undergraduate": 0.7,
+          "postgraduate": 0.76,
+          "doctorate": 0.78
         },
         "generation": {
-          "gen_z": 67,
-          "millennials": 69,
-          "gen_x": 56,
-          "baby_boomers": 53,
-          "65_plus": 59
+          "gen_z": 0.72,
+          "millennials": 0.73,
+          "gen_x": 0.64,
+          "baby_boomers": 0.56
         },
         "employment_status": {
-          "full_time": 65,
-          "part_time": 58,
-          "contract": 53,
-          "freelance": 53
+          "full_time": 0.7,
+          "part_time": 0.6,
+          "contract": 0.6,
+          "freelance": 0.58
         }
       }
     }
