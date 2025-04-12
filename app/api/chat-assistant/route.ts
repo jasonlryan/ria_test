@@ -5,6 +5,8 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { Stream } from "openai/streaming";
 import readline from "readline";
+import fs from 'fs';
+import path from 'path';
 
 // Add import for retrieval system
 import { processQueryWithData, identifyRelevantFiles } from "../../../utils/openai/retrieval";
@@ -72,9 +74,50 @@ function logPerformanceMetrics(stage, metrics) {
   console.log("---------------------");
 }
 
+/**
+ * Logs performance metrics to the performance_metrics.log file
+ */
+function logPerformanceToFile(query, cachedFileIds, fileIds, pollCount, totalTimeMs, status, message = '') {
+  try {
+    const logDir = path.join(process.cwd(), 'logs');
+    const logFile = path.join(logDir, 'performance_metrics.log');
+    
+    // Ensure directory exists
+    if (!fs.existsSync(logDir)) {
+      fs.mkdirSync(logDir, { recursive: true });
+    }
+    
+    // Format the log entry (query | cachedFileIds | fileIds | pollCount | responseTime | status | timestamp)
+    const cachedFileIdsStr = Array.isArray(cachedFileIds) ? cachedFileIds.join(',') : '';
+    const fileIdsStr = Array.isArray(fileIds) ? fileIds.join(',') : '';
+    const timestamp = new Date().toISOString();
+    
+    const logEntry = `${query.substring(0, 100)} | ${cachedFileIdsStr} | ${fileIdsStr} | ${pollCount} | ${totalTimeMs} | ${status} | ${timestamp}\n`;
+    
+    // Append to log file
+    fs.appendFileSync(logFile, logEntry);
+    
+    console.log(`Performance metrics saved to ${logFile}`);
+  } catch (error) {
+    console.error('Error writing to performance log:', error);
+  }
+}
+
 // post a new message and stream OpenAI Assistant response
 export async function POST(request: NextRequest) {
   try {
+    // Performance tracking
+    const apiStartTime = Date.now();
+    let perfTimings = {
+      requestStart: apiStartTime,
+      runCreated: 0,
+      pollStart: 0,
+      firstPoll: 0,
+      messageReceived: 0,
+      totalTime: 0,
+      pollingInterval: 250 // Current setting - for tracking changes
+    };
+    
     // Parse the request body
     const body = await request.json();
     const { assistantId, threadId, content } = body;
@@ -136,6 +179,8 @@ export async function POST(request: NextRequest) {
       assistant_id: assistantId,
       instructions: isDirectMode ? "OPERATING MODE: DIRECT" : "OPERATING MODE: STANDARD",
     });
+    
+    perfTimings.runCreated = Date.now();
 
     const assistantCreationTime = ((Date.now() - startTime) / 1000).toFixed(3);
     console.log(`[ASSISTANT] Run creation time: ${assistantCreationTime}s`);
@@ -147,6 +192,8 @@ export async function POST(request: NextRequest) {
     const stream = new ReadableStream({
       async start(controller) {
         try {
+          perfTimings.pollStart = Date.now();
+          
           // Send initial events
           controller.enqueue(encoder.encode(`event: run\ndata: ${JSON.stringify({
             id: run.id,
@@ -157,9 +204,17 @@ export async function POST(request: NextRequest) {
           // Poll for completion
           let runStatus = "queued";
           let messageReceived = false;
+          let pollCount = 0;
           
           while (!messageReceived && runStatus !== "failed") {
             try {
+              pollCount++;
+              
+              // Record first poll time
+              if (pollCount === 1) {
+                perfTimings.firstPoll = Date.now();
+              }
+              
               // Get current status
               const currentRun = await openai.beta.threads.runs.retrieve(finalThreadId, run.id);
               runStatus = currentRun.status;
@@ -292,6 +347,9 @@ export async function POST(request: NextRequest) {
                 const messages = await openai.beta.threads.messages.list(finalThreadId);
                 
                 if (messages.data && messages.data.length > 0) {
+                  // Record when message was received
+                  perfTimings.messageReceived = Date.now();
+                  
                   const message = messages.data[0];
                   let fullText = "";
                   
@@ -307,8 +365,8 @@ export async function POST(request: NextRequest) {
                   // Add debug log for text content
                   console.log(`Sending text content (${cleanText.length} chars)`);
                   
-                  // MODIFICATION: Stream text in larger chunks for better performance while maintaining streaming
-                  const chunkSize = 200; // Characters per chunk (increased from 50)
+                  // Stream text in smaller chunks with a moderate delay for visible but smoother streaming
+                  const chunkSize = 40; // Increased from 25 to 40 characters per chunk
                   for (let i = 0; i < cleanText.length; i += chunkSize) {
                     const chunk = cleanText.substring(i, i + chunkSize);
                     
@@ -316,8 +374,8 @@ export async function POST(request: NextRequest) {
                       value: chunk,
                     })}\n\n`));
                     
-                    // No delay between chunks for faster response times
-                    // Previous code had: await new Promise(resolve => setTimeout(resolve, 30));
+                    // Moderate delay for visible but smoother streaming
+                    await new Promise(resolve => setTimeout(resolve, 100));
                   }
                   
                   // Then send the full message
@@ -350,7 +408,7 @@ export async function POST(request: NextRequest) {
               
               // Short wait between polls
               if (!messageReceived && runStatus !== "failed") {
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                await new Promise(resolve => setTimeout(resolve, perfTimings.pollingInterval));
               }
             } catch (error) {
               console.error("Error in polling loop:", error);
@@ -360,6 +418,39 @@ export async function POST(request: NextRequest) {
               break;
             }
           }
+          
+          // Log performance data
+          perfTimings.totalTime = Date.now() - apiStartTime;
+          console.log("\n===== PERFORMANCE METRICS =====");
+          console.log(`Total response time: ${perfTimings.totalTime}ms`);
+          console.log(`Run creation time: ${perfTimings.runCreated - apiStartTime}ms`);
+          console.log(`Processing time: ${perfTimings.messageReceived - perfTimings.runCreated}ms`);
+          console.log(`Polling interval: ${perfTimings.pollingInterval}ms`);
+          console.log(`Poll count: ${pollCount}`);
+          console.log(`CHANGE LOG: Reduced polling interval to ${perfTimings.pollingInterval}ms (from 1000ms)`);
+          console.log("===============================\n");
+          
+          // Save to performance_metrics.log file
+          // Extract query from content (first 100 chars max)
+          const queryText = content.includes('Query:') 
+            ? content.split('Query:')[1].split('\n')[0].trim()
+            : content.substring(0, 100);
+
+          // Get cached file IDs if available
+          const cachedFileIds = await getCachedFilesForThread(finalThreadId);
+
+          // Log to file with polling optimization details
+          const logMessage = `Polling interval: ${perfTimings.pollingInterval}ms (reduced from 1000ms)`;
+          logPerformanceToFile(
+            queryText,
+            cachedFileIds, 
+            [], // File IDs from this request (not easily available here)
+            pollCount, 
+            perfTimings.totalTime,
+            0, // Status code
+            logMessage
+          );
+          
         } catch (error) {
           console.error("Stream start error:", error);
           controller.enqueue(encoder.encode(`event: error\ndata: ${JSON.stringify({

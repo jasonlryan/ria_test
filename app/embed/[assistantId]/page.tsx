@@ -8,7 +8,13 @@ import { track } from "@vercel/analytics";
 // api/chat-assistant/route.ts is where we call the OpenAI API to get the response, there we can stream the response.
 
 // React
-import { useState, useRef, useEffect, Suspense, useCallback } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  Suspense,
+  useCallback,
+} from "react";
 // Open AI
 import { AssistantStream } from "openai/lib/AssistantStream";
 // Markdown
@@ -22,6 +28,136 @@ import chatConfig from "../../../config/chat.config.json";
 import CollapsibleContent from "../../../components/CollapsibleContent";
 // Add the new AssistantSelector component
 import AssistantSelector from "../../../components/AssistantSelector";
+
+// Define interface for MarkdownErrorBoundary props and state
+interface MarkdownErrorBoundaryProps {
+  children: React.ReactNode;
+}
+
+interface MarkdownErrorBoundaryState {
+  hasError: boolean;
+}
+
+// Error boundary for markdown rendering during streaming
+class MarkdownErrorBoundary extends React.Component<
+  MarkdownErrorBoundaryProps,
+  MarkdownErrorBoundaryState
+> {
+  constructor(props: MarkdownErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidUpdate(prevProps: MarkdownErrorBoundaryProps) {
+    if (prevProps.children !== this.props.children) {
+      this.setState({ hasError: false });
+    }
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // Fallback: render as plain text when markdown parsing fails
+      return (
+        <div style={{ whiteSpace: "pre-wrap" }}>{this.props.children}</div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// Define interface for StreamingMarkdown props
+interface StreamingMarkdownProps {
+  content: string;
+}
+
+// Streaming-friendly markdown component
+function StreamingMarkdown({ content }: StreamingMarkdownProps) {
+  // Add a zero-width space and handle incomplete markup for better parsing
+  const safeContent = content ? content + "\u200B" : "";
+
+  // Fix common incomplete markdown that could cause render issues
+  const fixedContent = React.useMemo(() => {
+    let fixed = safeContent;
+
+    // Handle incomplete lists
+    if (fixed.match(/^\s*[-*+]\s*$/m)) {
+      fixed += " ";
+    }
+
+    // Handle incomplete code blocks
+    const backtickMatches = fixed.match(/```/g);
+    if (backtickMatches && backtickMatches.length % 2 !== 0) {
+      fixed += "\n```";
+    }
+
+    // Handle incomplete bold/italic
+    const asteriskMatches = fixed.match(/\*\*/g);
+    if (asteriskMatches && asteriskMatches.length % 2 !== 0) {
+      fixed += "**";
+    }
+
+    // Handle incomplete tables
+    if (fixed.includes("|") && !fixed.includes("|-")) {
+      const lineWithPipe = fixed.split("\n").find((line) => line.includes("|"));
+      if (lineWithPipe) {
+        const pipeCount = (lineWithPipe.match(/\|/g) || []).length;
+        if (pipeCount > 1) {
+          // Check if there's an incomplete table header without separator row
+          const lines = fixed.split("\n");
+          const tableLineIndex = lines.findIndex((line) => line.includes("|"));
+          if (tableLineIndex >= 0 && lines.length > tableLineIndex + 1) {
+            if (!lines[tableLineIndex + 1].includes("|-")) {
+              // Add appropriate separator row based on column count
+              let separator = "|";
+              for (let i = 0; i < pipeCount - 1; i++) {
+                separator += "---|";
+              }
+              lines.splice(tableLineIndex + 1, 0, separator);
+              fixed = lines.join("\n");
+            }
+          }
+        }
+      }
+    }
+
+    return fixed;
+  }, [safeContent]);
+
+  return (
+    <MarkdownErrorBoundary>
+      <ReactMarkdown
+        className="prose max-w-none text-sm sm:text-base"
+        remarkPlugins={[remarkGfm]}
+        components={{
+          table: ({ node, ...props }) => (
+            <div className="overflow-x-auto">
+              <table {...props} />
+            </div>
+          ),
+          // Ensure proper heading styles
+          h1: ({ node, ...props }) => (
+            <h1 {...props} className="font-bold text-primary" />
+          ),
+          h2: ({ node, ...props }) => (
+            <h2 {...props} className="font-bold text-primary" />
+          ),
+          h3: ({ node, ...props }) => (
+            <h3 {...props} className="font-semibold text-primary" />
+          ),
+          h4: ({ node, ...props }) => (
+            <h4 {...props} className="font-semibold text-primary" />
+          ),
+        }}
+      >
+        {fixedContent}
+      </ReactMarkdown>
+    </MarkdownErrorBoundary>
+  );
+}
 
 function Embed({ params: { assistantId } }) {
   const title = "WORKFORCE 2025";
@@ -909,44 +1045,7 @@ ${
                             dangerouslySetInnerHTML={{ __html: msg.content }}
                           />
                         ) : (
-                          <ReactMarkdown
-                            className="prose max-w-none text-sm sm:text-base"
-                            remarkPlugins={[remarkGfm]}
-                            components={{
-                              table: ({ node, ...props }) => (
-                                <div className="overflow-x-auto">
-                                  <table {...props} />
-                                </div>
-                              ),
-                              // Ensure proper heading styles
-                              h1: ({ node, ...props }) => (
-                                <h1
-                                  {...props}
-                                  className="font-bold text-primary"
-                                />
-                              ),
-                              h2: ({ node, ...props }) => (
-                                <h2
-                                  {...props}
-                                  className="font-bold text-primary"
-                                />
-                              ),
-                              h3: ({ node, ...props }) => (
-                                <h3
-                                  {...props}
-                                  className="font-semibold text-primary"
-                                />
-                              ),
-                              h4: ({ node, ...props }) => (
-                                <h4
-                                  {...props}
-                                  className="font-semibold text-primary"
-                                />
-                              ),
-                            }}
-                          >
-                            {msg.content}
-                          </ReactMarkdown>
+                          <StreamingMarkdown content={msg.content} />
                         )
                       ) : (
                         <div className="message-content">{msg.content}</div>
@@ -973,12 +1072,7 @@ ${
                         }}
                       />
                     ) : (
-                      <ReactMarkdown
-                        className="prose max-w-none text-sm sm:text-base"
-                        remarkPlugins={[remarkGfm]}
-                      >
-                        {streamingMessage.content}
-                      </ReactMarkdown>
+                      <StreamingMarkdown content={streamingMessage.content} />
                     )}
                   </div>
                 )}
