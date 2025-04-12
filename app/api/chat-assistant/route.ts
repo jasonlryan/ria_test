@@ -54,12 +54,14 @@ function sanitizeOutput(text: string): string {
  * Determines if the message content is likely a valid JSON string
  */
 function isJsonContent(content: string): boolean {
+  if (typeof content !== 'string') return false;
+  
+  // Try to parse as JSON
   try {
-    // Attempt to parse as JSON and check if it's an object
-    const parsed = JSON.parse(content.trim());
-    return typeof parsed === "object" && parsed !== null;
-  } catch (e) {
-    return false;
+    const parsed = JSON.parse(content);
+    return typeof parsed === 'object';
+  } catch {
+    return false; 
   }
 }
 
@@ -75,32 +77,33 @@ function logPerformanceMetrics(stage, metrics) {
 }
 
 /**
- * Logs performance metrics to the performance_metrics.log file
+ * Logs performance metrics to the performance_metrics.log file asynchronously
  */
 function logPerformanceToFile(query, cachedFileIds, fileIds, pollCount, totalTimeMs, status, message = '') {
-  try {
-    const logDir = path.join(process.cwd(), 'logs');
-    const logFile = path.join(logDir, 'performance_metrics.log');
-    
-    // Ensure directory exists
-    if (!fs.existsSync(logDir)) {
-      fs.mkdirSync(logDir, { recursive: true });
-    }
-    
-    // Format the log entry (query | cachedFileIds | fileIds | pollCount | responseTime | status | timestamp)
-    const cachedFileIdsStr = Array.isArray(cachedFileIds) ? cachedFileIds.join(',') : '';
-    const fileIdsStr = Array.isArray(fileIds) ? fileIds.join(',') : '';
-    const timestamp = new Date().toISOString();
-    
-    const logEntry = `${query.substring(0, 100)} | ${cachedFileIdsStr} | ${fileIdsStr} | ${pollCount} | ${totalTimeMs} | ${status} | ${timestamp}\n`;
-    
-    // Append to log file
-    fs.appendFileSync(logFile, logEntry);
-    
-    console.log(`Performance metrics saved to ${logFile}`);
-  } catch (error) {
-    console.error('Error writing to performance log:', error);
-  }
+  // Create the log entry first, before any IO
+  const logDir = path.join(process.cwd(), 'logs');
+  const logFile = path.join(logDir, 'performance_metrics.log');
+  
+  // Format the log entry (query | cachedFileIds | fileIds | pollCount | responseTime | status | timestamp)
+  const cachedFileIdsStr = Array.isArray(cachedFileIds) ? cachedFileIds.join(',') : '';
+  const fileIdsStr = Array.isArray(fileIds) ? fileIds.join(',') : '';
+  const timestamp = new Date().toISOString();
+  
+  const logEntry = `${query.substring(0, 100)} | ${cachedFileIdsStr} | ${fileIdsStr} | ${pollCount} | ${totalTimeMs} | ${status} | ${timestamp}\n`;
+  
+  // Don't block the main thread - use async file operations
+  // This is not awaited, so it won't block the response
+  fs.promises.mkdir(logDir, { recursive: true })
+    .then(() => fs.promises.appendFile(logFile, logEntry))
+    .then(() => {
+      // Only log success at debug level
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`Performance metrics saved to ${logFile}`);
+      }
+    })
+    .catch(error => {
+      console.error('Error writing to performance log:', error);
+    });
 }
 
 // post a new message and stream OpenAI Assistant response
@@ -429,7 +432,7 @@ export async function POST(request: NextRequest) {
           // Get cached file IDs if available
           const cachedFileIds = await getCachedFilesForThread(finalThreadId);
 
-          // Log to file with polling optimization details
+          // Log to file with polling optimization details - AFTER sending response
           const logMessage = `Polling interval: ${perfTimings.pollingInterval}ms (reduced from 1000ms)`;
           logPerformanceToFile(
             queryText,

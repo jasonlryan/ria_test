@@ -2,8 +2,8 @@
 // This file implements the data retrieval and OpenAI analysis integration
 
 import OpenAI from "openai";
-import fs from "fs";
-import path from "path";
+const fs = require("fs");
+const path = require("path");
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -912,7 +912,7 @@ export async function processQueryWithData(query, context, cachedFileIds = []) {
   // Step 3: Prepare response for the assistant
   console.log("Step 3: Preparing response for assistant...");
 
-  // Extract the important data from each file for analysis - OPTIMIZED to reduce payload size
+  // Extract the important data from each file for analysis
   const raw_data = [];
 
   // Limit the number of files processed to reduce payload size
@@ -1051,54 +1051,6 @@ export async function processQueryWithData(query, context, cachedFileIds = []) {
     }
   }
 
-  // DIRECT FILE WRITING - save the raw data immediately
-  const fs = require("fs");
-  const path = require("path");
-
-  try {
-    // Only save debug files in development mode
-    if (process.env.NODE_ENV === "development") {
-      // Create a timestamp for unique filenames
-      const timestamp = Date.now();
-
-      // Create logs directory if it doesn't exist
-      const logsDir = path.join(process.cwd(), "logs");
-      if (!fs.existsSync(logsDir)) {
-        fs.mkdirSync(logsDir, { recursive: true });
-      }
-
-      // Save the raw data directly
-      const rawDataPath = path.join(logsDir, `raw-data-${timestamp}.json`);
-      fs.writeFileSync(rawDataPath, JSON.stringify(raw_data, null, 2), "utf8");
-      console.log(`DIRECTLY SAVED RAW DATA TO: ${rawDataPath}`);
-
-      // Save query metadata
-      const metadataPath = path.join(
-        logsDir,
-        `query-metadata-${timestamp}.json`
-      );
-      fs.writeFileSync(
-        metadataPath,
-        JSON.stringify(
-          {
-            query,
-            topics: retrievedData.topics,
-            files_used: fileIdArray,
-            total_data_points: retrievedData.totalDataPoints,
-            timestamp: new Date().toISOString(),
-            context: context,
-          },
-          null,
-          2
-        ),
-        "utf8"
-      );
-      console.log(`DIRECTLY SAVED QUERY METADATA TO: ${metadataPath}`);
-    }
-  } catch (error) {
-    console.error("Error directly saving files:", error);
-  }
-
   // Format simple response with key information about the data
   const analysis = `# Workforce Survey Data for "${query}"
 
@@ -1130,20 +1082,68 @@ Responses: ${file.responses ? file.responses.length : 0} options`;
 The raw data below contains all relevant information from our workforce survey database. Please use this to provide accurate insights about ${query}.`;
 
   const endTime = performance.now();
-  console.log(
-    `Query processing completed in ${((endTime - startTime) / 1000).toFixed(
-      2
-    )} seconds`
-  );
+  const processingTime = ((endTime - startTime) / 1000).toFixed(2);
+  console.log(`Query processing completed in ${processingTime} seconds`);
 
-  // Return the data for the assistant
-  return {
+  // Prepare the return value first
+  const result = {
     analysis,
     matched_topics: retrievedData.topics,
     files_used: fileIdArray,
     data_points: retrievedData.totalDataPoints,
     raw_data: raw_data, // Include the raw data in the response
+    processing_time_ms: Math.round(endTime - startTime),
   };
+
+  // ASYNC FILE WRITING - moved after main processing
+  // Only do this in development mode and don't block the main thread
+  if (process.env.NODE_ENV === "development") {
+    const timestamp = Date.now();
+    const logsDir = path.join(process.cwd(), "logs");
+
+    // Asynchronously create dir and write log files
+    fs.promises
+      .mkdir(logsDir, { recursive: true })
+      .then(() => {
+        // Write raw data file
+        const rawDataPath = path.join(logsDir, `raw-data-${timestamp}.json`);
+        return fs.promises
+          .writeFile(rawDataPath, JSON.stringify(raw_data, null, 2), "utf8")
+          .then(() => {
+            console.log(`ASYNC SAVED RAW DATA TO: ${rawDataPath}`);
+
+            // Write metadata file
+            const metadataPath = path.join(
+              logsDir,
+              `query-metadata-${timestamp}.json`
+            );
+            const metadata = {
+              query,
+              topics: retrievedData.topics,
+              files_used: fileIdArray,
+              total_data_points: retrievedData.totalDataPoints,
+              timestamp: new Date().toISOString(),
+              context: context,
+            };
+
+            return fs.promises
+              .writeFile(
+                metadataPath,
+                JSON.stringify(metadata, null, 2),
+                "utf8"
+              )
+              .then(() => {
+                console.log(`ASYNC SAVED METADATA TO: ${metadataPath}`);
+              });
+          });
+      })
+      .catch((error) => {
+        console.error("Error writing log files:", error);
+      });
+  }
+
+  // Return the data for the assistant immediately, don't wait for logging
+  return result;
 }
 
 /**
