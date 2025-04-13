@@ -1,0 +1,34 @@
+{
+  "starterQuestionCode": "SQ3",
+  "question": "What are different countries doing to prepare for AI and how is this impacting workers?",
+  "summary": "In 2025, countries are taking varied approaches to prepare for the rise of AI in the workplace. Survey data shows that organizations are investing in upskilling and reskilling programs, with a significant proportion of workers reporting increased access to learning and development opportunities (see files: 2025_5_1, 2025_17_3). Attitudes toward AI are generally positive, with many employees expressing excitement about AI's potential, though some concerns about job displacement remain (2025_5_2, 2025_5_3, 2025_5_8). Readiness to adopt AI varies by country and sector, with higher readiness reported in technology and professional services (2025_5_4 to 2025_5_7). Leadership confidence and organizational adaptation are key factors in successful AI integration, as reflected in files 2025_17_5, 2025_7_6, and 2025_17_7. Overall, the impact on workers includes both opportunities for skill growth and challenges related to change management and job security.",
+  "stats": {},
+  "matched_topics": [
+    "AI_Attitudes",
+    "AI_Readiness",
+    "Skills_Utilization",
+    "Learning_and_Development",
+    "Organizational_Adaptation",
+    "Leadership_Confidence"
+  ],
+  "data_files": [
+    "2025_5_1.json",
+    "2025_5_2.json",
+    "2025_5_3.json",
+    "2025_5_4.json",
+    "2025_5_5.json",
+    "2025_5_6.json",
+    "2025_5_7.json",
+    "2025_5_8.json",
+    "2025_8_1.json",
+    "2025_8_2.json",
+    "2025_8_5.json",
+    "2025_9_2.json",
+    "2025_17_2.json",
+    "2025_17_3.json",
+    "2025_17_5.json",
+    "2025_17_7.json",
+    "2025_7_6.json"
+  ],
+  "notes": "For country-level breakdowns, refer to the 'country' fields in each data file. Some files may contain additional metadata on sector, job level, or region. The above list is based on canonical mapping."
+}
