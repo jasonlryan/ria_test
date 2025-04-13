@@ -1,26 +1,9 @@
-/**
- * OpenAI Integration for Data Retrieval System
- * Refactored for smart filtering and incremental caching
- */
+// OpenAI Integration for Data Retrieval System
+// This file implements the data retrieval and OpenAI analysis integration
 
 import OpenAI from "openai";
 const fs = require("fs");
 const path = require("path");
-
-// Import smart filtering and incremental cache modules
-const {
-  parseQueryIntent,
-  mapIntentToDataScope,
-  getBaseData,
-  getSpecificData,
-} = require("../../data/smart_filtering");
-const {
-  getThreadCache,
-  updateThreadCache,
-  getDataScope,
-  getIncrementalData,
-  calculateMissingDataScope,
-} = require("../../data/incremental_cache");
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -737,23 +720,10 @@ export async function retrieveDataFiles(fileIds) {
  * @param {Array} cachedFileIds - Optional array of file IDs that are already cached
  * @returns {Promise<object>} - The processed result
  */
-/**
- * Process a query using smart filtering and incremental caching
- * @param {string} query - The user's query
- * @param {string} context - The context for filtering data (e.g., 'sectors', 'all')
- * @param {Array} cachedFileIds - Optional array of file IDs that are already cached
- * @param {string} threadId - Optional thread ID for cache (to be integrated with API)
- * @returns {Promise<object>} - The processed result
- */
-export async function processQueryWithData(
-  query,
-  context,
-  cachedFileIds = [],
-  threadId = "default"
-) {
+export async function processQueryWithData(query, context, cachedFileIds = []) {
   const startTime = performance.now();
 
-  // Early return for empty queries
+  // Immediate early return for empty queries
   if (!query || query.trim().length === 0) {
     return {
       analysis: "No query provided",
@@ -766,38 +736,456 @@ export async function processQueryWithData(
     };
   }
 
-  // 1. Parse query intent
-  const conversationHistory = []; // TODO: Pass actual conversation history if available
-  const queryIntent = parseQueryIntent(query, conversationHistory);
+  // Check cached files first - if we have them, prioritize fast response
+  if (cachedFileIds && cachedFileIds.length > 0) {
+    // Fast path for follow-up queries with cached files
+    console.log(
+      `Using thread continuity with ${cachedFileIds.length} cached files`
+    );
 
-  // 2. Use incremental cache to get data (cache-aware retrieval)
-  const { data: cachedData, cacheStatus } = await getIncrementalData(
-    queryIntent,
-    threadId
-  );
-
-  // 3. Map intent to data scope (for monitoring/debugging)
-  const dataScope = mapIntentToDataScope(queryIntent);
-
-  // 4. Filter data based on intent specificity
-  let filteredData;
-  if (queryIntent.specificity === "specific") {
-    filteredData = getSpecificData(cachedData, queryIntent);
-  } else {
-    filteredData = getBaseData(cachedData, queryIntent);
+    return {
+      analysis: "Using existing thread data for your follow-up question",
+      matched_topics: [],
+      files_used: cachedFileIds,
+      file_ids: cachedFileIds,
+      data_points: cachedFileIds.length,
+      status: "thread_continuity",
+      processing_time_ms: Math.round(performance.now() - startTime),
+    };
   }
 
-  // 5. Prepare result object
+  // Check if we're in direct mode - if so, we ONLY identify files, not extract data
+  const isDirectMode = process.env.FILE_ACCESS_MODE === "direct";
+  if (isDirectMode) {
+    console.log(
+      "⭐⭐⭐ DIRECT MODE: processQueryWithData is skipping data extraction"
+    );
+
+    // Only identify files but don't retrieve them
+    const fileIdsResult = await identifyRelevantFiles(query, context);
+    const fileIdArray = fileIdsResult?.file_ids || [];
+
+    // Merge with cached files (avoid duplicates)
+    const allRelevantFileIds = Array.from(
+      new Set([...(cachedFileIds || []), ...(fileIdArray || [])])
+    );
+
+    // Return only the file IDs without retrieving data
+    return {
+      file_ids: allRelevantFileIds,
+      matched_topics: fileIdsResult.matched_topics || [],
+      files_used: allRelevantFileIds,
+      data_points: allRelevantFileIds.length,
+      analysis:
+        "DIRECT MODE: Analysis will be performed by the assistant directly using the provided file IDs.",
+      processing_time_ms: Math.round(performance.now() - startTime),
+    };
+  }
+
+  // Standard mode - continue with full data retrieval and processing
+  // Thread-based data continuity approach
+  // If we have cached files for this thread, we apply thread continuity principles
+  if (cachedFileIds && cachedFileIds.length > 0) {
+    console.log(`Thread has ${cachedFileIds.length} cached files`);
+
+    // PRINCIPLE 1: Topic-based cache validation
+    // Check if this query needs additional data files that aren't in the cache
+    // First, try to identify what files this query would typically need
+    const topicFileIds = await identifyRelevantFiles(query, context);
+    const potentiallyNeededFileIds = topicFileIds?.file_ids || [];
+
+    // PRINCIPLE 2: Additional data detection
+    // Check if we need any files that aren't in our cache
+    const missingFileIds = potentiallyNeededFileIds.filter(
+      (id) => !cachedFileIds.includes(id)
+    );
+
+    console.log(`Thread continuity analysis:
+      - Cached files: ${cachedFileIds.length}
+      - Potentially needed files: ${potentiallyNeededFileIds.length} 
+      - Missing files: ${missingFileIds.length}`);
+
+    // PRINCIPLE 3: If no files are needed or if the needed files are all in cache
+    // Use existing thread data
+    if (missingFileIds.length === 0 || potentiallyNeededFileIds.length === 0) {
+      // No new files needed - use cached data
+      // Note: potentiallyNeededFileIds.length === 0 means the query doesn't map to specific files
+      // This happens with follow-ups, generic prompts, etc. - use thread continuity
+      console.log(`Using thread continuity - this query will use cached files`);
+
+      return {
+        analysis: "Using existing thread data",
+        matched_topics: [],
+        files_used: cachedFileIds,
+        file_ids: cachedFileIds,
+        raw_data: "Using cached thread data",
+        data_points: cachedFileIds.length,
+        status: "thread_continuity",
+        processing_time_ms: Math.round(performance.now() - startTime),
+      };
+    } else {
+      // We need to get additional data files
+      console.log(
+        `This query needs ${missingFileIds.length} additional data files beyond what's in the thread`
+      );
+
+      // Continue with retrieval below, but only for the missing files
+      // We'll merge with existing files later
+    }
+  }
+
+  // If we don't have cached files or need additional files, proceed with identification
+  console.log("Step 1: Identifying relevant files...");
+  const fileIdsResult = await identifyRelevantFiles(query, context);
+
+  // If result is an object with file_ids property, extract it; otherwise assume it's an array
+  let fileIdArray = [];
+  if (
+    fileIdsResult &&
+    typeof fileIdsResult === "object" &&
+    fileIdsResult.file_ids
+  ) {
+    fileIdArray = fileIdsResult.file_ids;
+  } else if (Array.isArray(fileIdsResult)) {
+    fileIdArray = fileIdsResult;
+  }
+
+  console.log(`File IDs for retrieval: ${JSON.stringify(fileIdArray)}`);
+
+  // If we have cached files, only retrieve the new ones
+  let newFileIds = [];
+  if (cachedFileIds.length > 0) {
+    newFileIds = fileIdArray.filter((id) => !cachedFileIds.includes(id));
+    console.log(`New file IDs to retrieve: ${JSON.stringify(newFileIds)}`);
+  } else {
+    newFileIds = fileIdArray;
+  }
+
+  if (
+    (!fileIdArray || fileIdArray.length === 0) &&
+    cachedFileIds.length === 0
+  ) {
+    // No files identified and no cached files - can't proceed
+    console.log("No relevant files identified for query and no cached context");
+    return {
+      analysis:
+        "I couldn't find any relevant data to answer your question. Please try asking about workforce trends, employee preferences, or organizational challenges.",
+      matched_topics: [],
+      files_used: [],
+      file_ids: [],
+      data_points: 0,
+      status: "no_data",
+    };
+  } else if (
+    (!fileIdArray || fileIdArray.length === 0) &&
+    cachedFileIds.length > 0
+  ) {
+    // No new files identified but we have cached files - use thread continuity
+    console.log(
+      "No new files identified - using thread continuity with existing cached files"
+    );
+    return {
+      analysis: "Using existing thread data for your question",
+      matched_topics: [],
+      files_used: cachedFileIds,
+      file_ids: cachedFileIds,
+      raw_data: "Using cached thread data",
+      data_points: cachedFileIds.length,
+      status: "thread_continuity",
+      processing_time_ms: Math.round(performance.now() - startTime),
+    };
+  }
+
+  // Step 2: Retrieve the files
+  console.log("Step 2: Retrieving data files...");
+  const retrievalStartTime = performance.now();
+
+  let retrievedData;
+  try {
+    // Only retrieve new files if we have cached files, otherwise retrieve all
+    if (cachedFileIds.length > 0 && newFileIds.length > 0) {
+      console.log(
+        `📥 RETRIEVING ${newFileIds.length} NEW FILES (already have ${cachedFileIds.length} cached)`
+      );
+      retrievedData = await retrieveDataFiles(newFileIds);
+    } else if (newFileIds.length > 0) {
+      console.log(
+        `📥 RETRIEVING ALL ${newFileIds.length} FILES (no cache available)`
+      );
+      retrievedData = await retrieveDataFiles(newFileIds);
+    } else {
+      console.log("⚠️ NO FILES TO RETRIEVE - this shouldn't normally happen");
+      // Create a placeholder for retrievedData since we're using only cached files
+      retrievedData = {
+        topics: [],
+        totalDataPoints: cachedFileIds.length,
+        data: {},
+        files: [],
+      };
+    }
+  } catch (error) {
+    console.error("Error retrieving data files:", error);
+    return {
+      error: `Failed to retrieve data: ${error.message}`,
+      status: "error",
+    };
+  }
+
+  const retrievalEndTime = performance.now();
+  console.log(
+    `Retrieved ${retrievedData.files.length} files with ${
+      retrievedData.totalDataPoints
+    } data points in ${((retrievalEndTime - retrievalStartTime) / 1000).toFixed(
+      3
+    )} seconds`
+  );
+
+  if (!retrievedData.files || retrievedData.files.length === 0) {
+    return {
+      analysis:
+        "I was able to identify relevant topics, but couldn't access the data files. Please try again or ask a different question.",
+      matched_topics: [],
+      files_used: fileIdArray,
+      data_points: 0,
+      status: "no_data",
+    };
+  }
+
+  // Step 3: Prepare response for the assistant
+  console.log("Step 3: Preparing response for assistant...");
+
+  // Extract the important data from each file for analysis
+  const raw_data = [];
+
+  // Limit the number of files processed to reduce payload size
+  const maxFilesToProcess = 8; // Reduced to process only most relevant files
+  const filesToProcess = retrievedData.files.slice(0, maxFilesToProcess);
+
+  // Process files in parallel for faster execution
+  await Promise.all(
+    filesToProcess.map(async (file) => {
+      try {
+        if (!file.data) {
+          console.warn(`File ${file.id} has no data`);
+          return;
+        }
+
+        // Create a direct simplified representation of the data
+        // This avoids any nested extraction issues
+        const extractedData = {
+          file_id: file.id,
+          topic:
+            file.topic ||
+            (file.data.metadata ? file.data.metadata.topicId : "Unknown"),
+          question: file.data.question || "No question available",
+          responses: [],
+        };
+
+        // Extract response data directly
+        if (file.data.responses && Array.isArray(file.data.responses)) {
+          // Create a more formatted representation with the question prominently displayed
+          extractedData.question_text = `SURVEY QUESTION: ${
+            file.data.question || "No question available"
+          }`;
+
+          // Add an array to store summarized top responses
+          extractedData.top_responses = [];
+
+          file.data.responses.forEach((response) => {
+            if (response) {
+              const simplifiedResponse = {
+                text: response.response,
+                data: {},
+              };
+
+              // Track highest value for this response to determine if it's a top response
+              let highestValue = 0;
+
+              // Directly extract percentage values without nesting
+              if (response.data) {
+                Object.entries(response.data).forEach(([category, values]) => {
+                  // Filter based on context
+                  const shouldIncludeCategory =
+                    context === "all" ||
+                    (context === "sectors" && category === "sector") ||
+                    (context === "all-sector" && category !== "sector") ||
+                    (context !== "sectors" &&
+                      context !== "all" &&
+                      context !== "all-sector" &&
+                      category !== "sector");
+
+                  if (
+                    shouldIncludeCategory &&
+                    values &&
+                    typeof values === "object"
+                  ) {
+                    Object.entries(values).forEach(([key, value]) => {
+                      // Store as flat key-value pair for simplicity
+                      simplifiedResponse.data[`${category}_${key}`] = value;
+
+                      // Track highest value
+                      if (typeof value === "number" && value > highestValue) {
+                        highestValue = value;
+                      }
+                    });
+                  }
+                });
+              }
+
+              // Only add responses that have data after filtering
+              if (Object.keys(simplifiedResponse.data).length > 0) {
+                extractedData.responses.push(simplifiedResponse);
+
+                // Add to top responses if value is high (over 80%)
+                if (highestValue >= 80) {
+                  extractedData.top_responses.push({
+                    text: response.response,
+                    highest_value: highestValue,
+                  });
+                }
+              }
+            }
+          });
+
+          // Sort top responses by highest value
+          extractedData.top_responses.sort(
+            (a, b) => b.highest_value - a.highest_value
+          );
+        }
+
+        // Only add files that have responses after filtering
+        if (extractedData.responses.length > 0) {
+          raw_data.push(extractedData);
+          console.log(
+            `Successfully extracted data from file ${file.id}: ${extractedData.responses.length} responses`
+          );
+        } else {
+          console.log(
+            `File ${file.id} had no relevant responses for context: ${context}`
+          );
+        }
+      } catch (error) {
+        console.error(`Error processing file data: ${error.message}`);
+      }
+    })
+  );
+
+  console.log(
+    `Extracted data from ${raw_data.length} files for context: ${context}`
+  );
+  if (raw_data.length > 0) {
+    const sampleFile = raw_data[0];
+    const responseCount = sampleFile.responses?.length || 0;
+    console.log(
+      `Sample file ${sampleFile.file_id} has ${responseCount} responses with percentage data`
+    );
+
+    if (responseCount > 0) {
+      const percentageKeys = Object.keys(sampleFile.responses[0].data || {});
+      console.log(
+        `First response has ${percentageKeys.length} percentage values`
+      );
+      if (percentageKeys.length > 0) {
+        console.log(
+          `Example percentages: ${percentageKeys.slice(0, 3).join(", ")}`
+        );
+      }
+    }
+  }
+
+  // Format simple response with key information about the data
+  const analysis = `# Workforce Survey Data for "${query}"
+
+Found data on topics: ${retrievedData.topics.join(", ")}.
+Files used: ${fileIdArray.join(", ")}.
+Total data points: ${retrievedData.totalDataPoints}.
+
+## Survey Questions Overview:
+${raw_data
+  .map((file) => {
+    let questionInfo = `### ${
+      file.question_text || file.question || "Unknown Question"
+    }
+From file: ${file.file_id} (${file.topic})
+Responses: ${file.responses ? file.responses.length : 0} options`;
+
+    // Add top responses if available
+    if (file.top_responses && file.top_responses.length > 0) {
+      questionInfo += `\n\nTop responses (highest % agreement):`;
+      file.top_responses.slice(0, 5).forEach((resp) => {
+        questionInfo += `\n- ${resp.text} (up to ${resp.highest_value}%)`;
+      });
+    }
+
+    return questionInfo;
+  })
+  .join("\n\n")}
+
+The raw data below contains all relevant information from our workforce survey database. Please use this to provide accurate insights about ${query}.`;
+
   const endTime = performance.now();
-  return {
-    analysis: "Smart filtering and incremental caching result (scaffolded)",
-    filteredData,
-    queryIntent,
-    dataScope,
-    cacheStatus,
+  const processingTime = ((endTime - startTime) / 1000).toFixed(2);
+  console.log(`Query processing completed in ${processingTime} seconds`);
+
+  // Prepare the return value first
+  const result = {
+    analysis,
+    matched_topics: retrievedData.topics,
+    files_used: fileIdArray,
+    data_points: retrievedData.totalDataPoints,
+    raw_data: raw_data, // Include the raw data in the response
     processing_time_ms: Math.round(endTime - startTime),
-    // TODO: Add more fields as needed for downstream processing
   };
+
+  // ASYNC FILE WRITING - moved after main processing
+  // Only do this in development mode and don't block the main thread
+  if (process.env.NODE_ENV === "development") {
+    const timestamp = Date.now();
+    const logsDir = path.join(process.cwd(), "logs");
+
+    // Asynchronously create dir and write log files
+    fs.promises
+      .mkdir(logsDir, { recursive: true })
+      .then(() => {
+        // Write raw data file
+        const rawDataPath = path.join(logsDir, `raw-data-${timestamp}.json`);
+        return fs.promises
+          .writeFile(rawDataPath, JSON.stringify(raw_data, null, 2), "utf8")
+          .then(() => {
+            console.log(`ASYNC SAVED RAW DATA TO: ${rawDataPath}`);
+
+            // Write metadata file
+            const metadataPath = path.join(
+              logsDir,
+              `query-metadata-${timestamp}.json`
+            );
+            const metadata = {
+              query,
+              topics: retrievedData.topics,
+              files_used: fileIdArray,
+              total_data_points: retrievedData.totalDataPoints,
+              timestamp: new Date().toISOString(),
+              context: context,
+            };
+
+            return fs.promises
+              .writeFile(
+                metadataPath,
+                JSON.stringify(metadata, null, 2),
+                "utf8"
+              )
+              .then(() => {
+                console.log(`ASYNC SAVED METADATA TO: ${metadataPath}`);
+              });
+          });
+      })
+      .catch((error) => {
+        console.error("Error writing log files:", error);
+      });
+  }
+
+  // Return the data for the assistant immediately, don't wait for logging
+  return result;
 }
 
 /**
