@@ -9,7 +9,7 @@ import fs from 'fs';
 import path from 'path';
 
 // Add import for retrieval system
-import { processQueryWithData, identifyRelevantFiles } from "../../../utils/openai/retrieval";
+import { processQueryWithData, identifyRelevantFiles, getPrecompiledStarterData, isStarterQuestion } from "../../../utils/openai/retrieval";
 
 // Add import for cache utilities
 import { getCachedFilesForThread, updateThreadCache } from "../../../utils/cache-utils";
@@ -124,6 +124,37 @@ async function waitForNoActiveRuns(openai: OpenAI, threadId: string, pollInterva
   }
 }
 
+/**
+ * Logs starter question invocations to a log file asynchronously.
+ */
+async function logStarterQuestionInvocation({
+  starterQuestionCode,
+  question,
+  assistantId,
+  threadId,
+  dataFiles,
+  stats,
+  timestamp = new Date().toISOString()
+}) {
+  try {
+    const logDir = path.join(process.cwd(), 'logs');
+    const logFile = path.join(logDir, 'starter_question_invocations.log');
+    const logEntry = JSON.stringify({
+      timestamp,
+      starterQuestionCode,
+      question,
+      assistantId,
+      threadId,
+      dataFiles,
+      stats
+    }) + '\n';
+    await fs.promises.mkdir(logDir, { recursive: true });
+    await fs.promises.appendFile(logFile, logEntry, 'utf8');
+  } catch (err) {
+    console.error('Error writing starter question invocation log:', err);
+  }
+}
+
 // post a new message and stream OpenAI Assistant response
 export async function POST(request: NextRequest) {
   try {
@@ -141,13 +172,62 @@ export async function POST(request: NextRequest) {
     
     // Parse the request body
     const body = await request.json();
-    const { assistantId, threadId, content } = body;
+    let { assistantId, threadId, content } = body;
 
     if (!content) {
       return NextResponse.json(
         { error: "Missing required field: content" },
         { status: 400 }
       );
+    }
+
+    // Starter Question Optimization: Intercept starter question codes and route to assistant with special prompt
+    if (isStarterQuestion(content)) {
+      const precompiled = getPrecompiledStarterData(content);
+      if (precompiled) {
+        // Improved logging for starter questions
+        console.log(`[QUERY API] 🚀 Starter question detected: ${content} (using precompiled data from utils/openai/precompiled_starters/${content.toUpperCase()}.json)`);
+        console.log(`[QUERY API] 📦 Sending precompiled data files: ${content.toUpperCase()}.json`);
+        console.log(`[QUERY API] 🔕 Retrieval step bypassed for starter question.`);
+
+        // Call the logging function (fire and forget)
+        logStarterQuestionInvocation({
+          starterQuestionCode: precompiled.starterQuestionCode || content,
+          question: precompiled.question,
+          assistantId,
+          threadId,
+          dataFiles: precompiled.data_files,
+          stats: precompiled.stats
+        });
+
+        // Load the starter prompt template
+        const starterPromptPath = path.join(process.cwd(), "prompts", "starter_prompt_template.md");
+        let starterPromptTemplate = "";
+        try {
+          starterPromptTemplate = fs.readFileSync(starterPromptPath, "utf8");
+        } catch (err) {
+          console.error("Error loading starter prompt template:", err);
+          starterPromptTemplate = "You are answering a precompiled starter question. Use the provided summary and stats to generate a narrative response.";
+        }
+
+        // Build the full prompt for the assistant
+        const fullPrompt =
+  `${starterPromptTemplate}
+
+  ---
+  Starter Question: ${precompiled.question || content}
+  Summary: ${precompiled.summary}
+  Stats: ${JSON.stringify(precompiled.stats, null, 2)}
+  Matched Topics: ${precompiled.matched_topics ? precompiled.matched_topics.join(", ") : ""}
+  Data Files: ${precompiled.data_files ? precompiled.data_files.join(", ") : ""}
+  ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
+  `;
+
+        // Replace the user content with the constructed prompt
+        body.content = fullPrompt;
+        content = body.content;
+      }
+      // If not found, continue as normal (could also return an error)
     }
 
     if (!assistantId) {

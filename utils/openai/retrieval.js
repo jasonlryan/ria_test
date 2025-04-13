@@ -22,11 +22,53 @@ const DEFAULT_OPENAI_MODEL = "gpt-4o-mini";
 const PROMPTS_DIR = path.join(process.cwd(), "utils", "openai");
 const DATA_DIR = path.join(process.cwd(), "scripts", "output", "split_data");
 
+// Directory for precompiled starter data
+const PRECOMPILED_STARTERS_DIR = path.join(
+  process.cwd(),
+  "utils",
+  "openai",
+  "precompiled_starters"
+);
+
 // Cache for the canonical topic mapping to avoid repeated file reads
 let canonicalTopicMapping = null;
 
 // Cache for query results to avoid repeated OpenAI calls for similar queries
 const queryCache = new Map();
+
+/**
+ * Loads and returns the precompiled data for a given starter question code.
+ * @param {string} code - The starter question code (e.g., "SQ1")
+ * @returns {object|null} The precompiled data object, or null if not found
+ */
+function getPrecompiledStarterData(code) {
+  if (!code || typeof code !== "string") return null;
+  const filename = `${code.toUpperCase()}.json`;
+  const filePath = path.join(PRECOMPILED_STARTERS_DIR, filename);
+  try {
+    if (!fs.existsSync(filePath)) {
+      console.warn(`Precompiled starter data not found: ${filePath}`);
+      return null;
+    }
+    const data = fs.readFileSync(filePath, "utf8");
+    return JSON.parse(data);
+  } catch (error) {
+    console.error(`Error loading precompiled starter data for ${code}:`, error);
+    return null;
+  }
+}
+
+/**
+ * Detects if the prompt is a starter question code (e.g., "SQ1", "SQ2", case-insensitive).
+ * @param {string} prompt - The prompt or code to check
+ * @returns {boolean} True if the prompt matches the starter question code pattern
+ */
+function isStarterQuestion(prompt) {
+  if (!prompt || typeof prompt !== "string") return false;
+  return /^SQ\d+$/i.test(prompt.trim());
+}
+
+export { getPrecompiledStarterData, isStarterQuestion };
 
 /**
  * Load the canonical topic mapping file - results are cached for performance

@@ -281,6 +281,47 @@ function Embed({ params: { assistantId } }) {
     console.log("========================");
   }, [assistantId]);
 
+  // Starter question code support: check for ?starterQuestion=CODE and trigger assistant
+  // Use a ref to ensure this logic only runs once per mount, preventing duplicate question submissions and errors.
+  const starterTriggeredRef = useRef(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (starterTriggeredRef.current) return; // Prevent double-triggering
+    // Only trigger if chat is at initial state (welcome message only)
+    if (!messages || messages.length > 1) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const starterCode = params.get("starterQuestion");
+    const questionText = params.get("question");
+
+    if (starterCode) {
+      starterTriggeredRef.current = true;
+      // Dynamically import the corresponding starter JSON
+      import(`../../../utils/openai/precompiled_starters/${starterCode}.json`)
+        .then((module) => {
+          const starter = module.default || module;
+          if (starter && starter.question) {
+            sendPrompt(threadId, starter.question);
+          } else {
+            console.warn(
+              `Starter file for code ${starterCode} did not contain a 'question' field.`
+            );
+          }
+        })
+        .catch((err) => {
+          console.error(
+            `Could not load starter question for code ${starterCode}:`,
+            err
+          );
+        });
+    } else if (questionText) {
+      starterTriggeredRef.current = true;
+      sendPrompt(threadId, questionText);
+    }
+    // Only run on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Reset chat
   const refreshChat = () => {
     console.log("Refreshing chat, clearing messages and thread ID");

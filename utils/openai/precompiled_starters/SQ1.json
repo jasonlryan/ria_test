@@ -1,0 +1,17 @@
+{
+  "starterQuestionCode": "SQ1",
+  "question": "How do the manager cutbacks affect workers?",
+  "summary": "Manager cutbacks in 2025 have impacted workers primarily through reduced support, fewer resources, and diminished opportunities for recognition and inclusion. Survey data indicates that employees feel less supported and perceive a decline in manager effectiveness, with notable effects on their ability to deliver on expectations and have their ideas welcomed by leadership.",
+  "stats": {
+    "resource_support_overall": 0.7,
+    "inclusion_opinion_overall": 0.61
+  },
+  "matched_topics": ["Manager_Capability"],
+  "data_files": [
+    "2025_9_1.json",
+    "2025_9_6.json",
+    "2025_9_7.json",
+    "2025_9_8.json"
+  ],
+  "notes": "Stats are derived from the 'overall' values in the relevant split data files. For detailed breakdowns by region, job level, or other segments, refer to the data_files array."
+}
