@@ -14,12 +14,10 @@ import { processQueryWithData, identifyRelevantFiles, getPrecompiledStarterData,
 // Add import for cache utilities
 import { getCachedFilesForThread, updateThreadCache } from "../../../utils/cache-utils";
 
-
-// Centralized mode check
+// Check if we're in direct mode (file IDs only) or standard mode (processed data)
+console.log(`[ENV] FILE_ACCESS_MODE is set to: '${process.env.FILE_ACCESS_MODE}'`);
 const isDirectMode = process.env.FILE_ACCESS_MODE === 'direct';
-
-// [ENV] FILE_ACCESS_MODE is set to: '${process.env.FILE_ACCESS_MODE}'
-// [MODE] Running in ${isDirectMode ? 'DIRECT (file IDs only)' : 'STANDARD (processed data)'} mode
+console.log(`[MODE] Running in ${isDirectMode ? 'DIRECT (file IDs only)' : 'STANDARD (processed data)'} mode`);
 
 // Skip data extraction entirely in DIRECT mode
 // We skip file retrieval and data extraction in DIRECT mode - the assistant will do that itself
@@ -206,7 +204,7 @@ export async function POST(request: NextRequest) {
         const starterPromptPath = path.join(process.cwd(), "prompts", "starter_prompt_template.md");
         let starterPromptTemplate = "";
         try {
-          starterPromptTemplate = await fs.promises.readFile(starterPromptPath, "utf8");
+          starterPromptTemplate = fs.readFileSync(starterPromptPath, "utf8");
         } catch (err) {
           console.error("Error loading starter prompt template:", err);
           starterPromptTemplate = "You are answering a precompiled starter question. Use the provided summary and stats to generate a narrative response.";
@@ -259,8 +257,10 @@ export async function POST(request: NextRequest) {
     // Handle thread creation if needed
     let finalThreadId = threadId;
     if (!finalThreadId) {
+      console.log("[THREAD] Creating new thread...");
       const thread = await openai.beta.threads.create();
       finalThreadId = thread.id;
+      console.log(`[THREAD] Created new thread: ${finalThreadId}`);
     }
 
     // Wait for any active runs to finish before adding a new message
@@ -271,8 +271,11 @@ export async function POST(request: NextRequest) {
       role: "user",
       content: content,
     });
+    console.log(`[THREAD] Added message to thread: ${finalThreadId}`);
 
     // Create a run with the assistant
+    console.log(`[ASSISTANT] Creating run with assistant ${assistantId}`);
+
     const startTime = Date.now();
     // Only pass the mode information to the assistant, not a full set of instructions
     // The assistant already has comprehensive instructions in its configuration
@@ -284,6 +287,8 @@ export async function POST(request: NextRequest) {
     perfTimings.runCreated = Date.now();
 
     const assistantCreationTime = ((Date.now() - startTime) / 1000).toFixed(3);
+    console.log(`[ASSISTANT] Run creation time: ${assistantCreationTime}s`);
+    console.log(`[ASSISTANT] Run ID: ${run.id} | Thread ID: ${finalThreadId}`);
 
     // Create a simpler manual streaming implementation
     // This implementation avoids issues with controller closing by keeping event handling simple

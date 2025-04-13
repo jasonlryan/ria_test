@@ -120,3 +120,19 @@ Throughout the development process, several key themes emerged:
 The RIA25 prompt system underwent significant evolution from initial testing concepts to a sophisticated, rule-based system with strict data integrity enforcement. The final system prompt (`system_prompt.json`) represents the culmination of this development process, incorporating lessons learned through multiple testing iterations and refinements.
 
 The progression shows a deliberate path from initial concept testing to increasingly formalized structures, with particular emphasis on data integrity, segment handling, and high-quality response generation. The final system encapsulates these developments into a comprehensive JSON configuration that powers the workforce insights assistant.
+
+---
+
+## Current Implementation (2025)
+
+- **Prompt Templates**: The system uses prompt templates and configurations stored in the `prompts/` directory (e.g., `system_prompt.md`, `system_prompt.json`, `starter_prompt_template.md`).
+- **Integration in Codebase**: Prompt selection, anti-fabrication logic, and canonical topic mapping are programmatically enforced in `utils/openai/retrieval.js` and orchestrated by API endpoints (`app/api/chat-assistant/route.ts`).
+- **Canonical Topic Mapping**: The prompt system leverages canonical topic mapping to ensure queries are mapped to valid survey topics, with harmonization logic for year-over-year comparison.
+- **Anti-Fabrication Enforcement**: The anti-fabrication and two-segment rules are enforced both in prompt templates and in the logic of utility modules, ensuring that responses are always grounded in real data and system constraints.
+- **Dynamic Prompting**: The system dynamically selects and customizes prompts based on the query, topic, and data context, supporting robust, high-integrity responses.
+
+This implementation ensures that the prompt system is not only a set of static templates but an integrated, programmatically enforced part of the RIA25 architecture.
+
+---
+
+_Last updated: April 13, 2025_

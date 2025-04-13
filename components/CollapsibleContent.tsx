@@ -108,7 +108,6 @@ export default function CollapsibleContent({ handleStarterQuestion, loading }) {
           id="conversation-starters"
           title="Conversation Starters"
           icon={<ConversationStarter />}
-          defaultOpen={!isMobile}
           isOpen={openBlockId === "conversation-starters"}
           onToggle={() => toggleBlock("conversation-starters")}
         >
@@ -141,7 +140,6 @@ export default function CollapsibleContent({ handleStarterQuestion, loading }) {
           id={chatConfig.contentCards.aboutProject.id}
           title={chatConfig.contentCards.aboutProject.title}
           icon={<AboutProject />}
-          defaultOpen={false}
           isOpen={openBlockId === chatConfig.contentCards.aboutProject.id}
           onToggle={() => toggleBlock(chatConfig.contentCards.aboutProject.id)}
         >
@@ -157,7 +155,6 @@ export default function CollapsibleContent({ handleStarterQuestion, loading }) {
           id={chatConfig.contentCards.technicalDetails.id}
           title={chatConfig.contentCards.technicalDetails.title}
           icon={<TechnicalDetails />}
-          defaultOpen={false}
           isOpen={openBlockId === chatConfig.contentCards.technicalDetails.id}
           onToggle={() =>
             toggleBlock(chatConfig.contentCards.technicalDetails.id)
@@ -175,7 +172,6 @@ export default function CollapsibleContent({ handleStarterQuestion, loading }) {
           id={chatConfig.contentCards.importantDisclaimer.id}
           title={chatConfig.contentCards.importantDisclaimer.title}
           icon={<ImportantDisclaimer />}
-          defaultOpen={false}
           isOpen={
             openBlockId === chatConfig.contentCards.importantDisclaimer.id
           }

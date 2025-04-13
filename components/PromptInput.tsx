@@ -3,12 +3,6 @@ import React, { useEffect, useState, KeyboardEvent } from "react";
 import Send from "./icons/Send";
 import { useSearchParams } from "next/navigation";
 
-const queries = [
-  "How do I use this?",
-  "What regions are covered?",
-  "What is the appetite for re-skilling in the UK?",
-];
-
 export default function PromptInput({
   prompt,
   setPrompt,

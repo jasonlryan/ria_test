@@ -14,26 +14,31 @@ Raw CSV Data → Data Validation → Column Mapping → JSON Transformation → 
 
 ### 1. Input Data Format
 
-- **Source**: Raw CSV files from the 2025 Global Workforce Survey
+- **Source**: Raw CSV files from the 2025 and 2024 Global Workforce Surveys
 - **Format**: CSV with headers
-- **Location**: `/2025_DATA_PROCESSING/2025_global_data.csv`
+- **Location**: `/scripts/data/2025/2025_global_data.csv`, `/scripts/data/2024/2024_global_data.csv`
 - **Structure**:
   - Rows represent individual survey responses
   - Columns include question responses and demographic information
 
-### A2. Data Validation
+### 2. Data Validation & Harmonization
 
-- **Purpose**: Ensure data integrity before processing
-- **Implementation**: Initial data validation in `process_survey_data.js`
+- **Purpose**: Ensure data integrity and harmonize structure across years before processing
+- **Implementation**:
+  - Initial data validation in `process_survey_data.js`
+  - Advanced harmonization and validation in `process_2025_data.js`
+  - Canonical topic mapping and normalization logic
 - **Checks**:
   - CSV format verification
   - Required columns presence
   - Data type validation
+  - Consistency and mapping to canonical topics
+  - Harmonization of 2024/2025 data for valid comparison
 
 ### 3. Column Mapping
 
 - **Purpose**: Create flexible mapping between CSV columns and structured JSON
-- **Implementation**: Dynamic column mapping in `process_survey_data.js`
+- **Implementation**: Dynamic column mapping in `process_survey_data.js` and harmonization in `process_2025_data.js`
 - **Benefits**:
   - Resilience to column order changes
   - Adaptation to CSV format variations
@@ -42,30 +47,34 @@ Raw CSV Data → Data Validation → Column Mapping → JSON Transformation → 
 ### 4. JSON Transformation
 
 - **Purpose**: Convert raw CSV data into structured JSON
-- **Implementation**: Transformation logic in `process_survey_data.js`
+- **Implementation**: Transformation logic in `process_survey_data.js` and `process_2025_data.js`
 - **Structure**:
   - Consistent metadata format
   - Demographic information categorization
   - Response data formatting
   - Year information
+  - Canonical topic mapping
 
 ### 5. Split by Question
 
 - **Purpose**: Create individual JSON files per question for optimized retrieval
-- **Implementation**: File creation in `process_survey_data.js`
+- **Implementation**: File creation in `process_survey_data.js` and `process_2025_data.js`
 - **Output**:
-  - Individual files named `2025_[question_number].json`
+  - Individual files named `2025_[question_number].json`, `2024_[question_number].json`
   - Located in `scripts/output/split_data/`
+  - Harmonized and global files in `scripts/output/`
 
-### 6. Vector Store Ingestion
+### 6. Vector Store Integration
 
-- **Purpose**: Prepare and upload data to vector database
-- **Proposed Implementation**: Development of tools to process JSON files for vector database
+- **Purpose**: Prepare and upload data to vector database for semantic retrieval
+- **Implementation**:
+  - Data retrieval and embedding logic implemented in `utils/openai/retrieval.js` and API endpoints (e.g., `app/api/retrieve-data/route.js`)
+  - Validation and coverage checks in `utils/validation/data-validation.js`
 - **Process**:
   - Read processed JSON files
   - Format for vector embedding
-  - Upload to OpenAI Assistants API
-  - Verify successful ingestion
+  - Upload and retrieve via OpenAI Assistants API and utility modules
+  - Verify successful ingestion and retrieval
 
 ## Example Data Transformation
 
@@ -111,7 +120,7 @@ question_1,question_2,region,age_group,gender,org_size
 
 ### process_survey_data.js
 
-- **Purpose**: Core data processing script
+- **Purpose**: Core data processing script for both 2024 and 2025 data
 - **Location**: `/scripts/process_survey_data.js`
 - **Functionality**:
   - CSV parsing
@@ -120,13 +129,26 @@ question_1,question_2,region,age_group,gender,org_size
   - JSON transformation
   - File generation
 
-### Vector Store Integration (To Be Developed)
+### process_2025_data.js
 
-- **Purpose**: Future vector store integration
-- **Requirements**:
-  - Process for reading JSON files
-  - Methods for vector embedding
-  - Integration with OpenAI Assistants API
+- **Purpose**: Advanced harmonization and canonical topic mapping for 2025 data
+- **Location**: `/scripts/process_2025_data.js`
+- **Functionality**:
+  - Data harmonization across years
+  - Canonical topic mapping
+  - Output of harmonized and split files
+
+### Vector Store Integration
+
+- **Purpose**: Vector store integration for semantic retrieval
+- **Implementation**:
+  - Data retrieval and embedding logic in `utils/openai/retrieval.js`
+  - API endpoints in `app/api/retrieve-data/route.js`, `app/api/chat-assistant/route.ts`
+  - Validation in `utils/validation/data-validation.js`
+- **Process**:
+  - Read and process JSON files
+  - Embed and retrieve via OpenAI Assistants API and utility modules
+  - Validate and log results
 
 ## Expected Performance
 
@@ -167,4 +189,4 @@ question_1,question_2,region,age_group,gender,org_size
 
 ---
 
-_Last updated: April 5, 2024_
+_Last updated: April 13, 2025_

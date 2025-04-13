@@ -257,6 +257,25 @@ In addition to the automated tests, manual testing is performed to:
 3. Ensure proper formatting of responses
 4. Confirm resistance to generating fabricated data
 
+#### Data Retrieval Tester Interface (`/test-retrieval`)
+
+A dedicated manual testing interface is available at the `/test-retrieval` route. This tool allows developers and QA to submit queries directly to the backend data retrieval system and visualize the results, errors, and processing time.
+
+- **How to Access:**  
+  Navigate to `http://localhost:3000/test-retrieval` in your browser while the app is running locally.
+- **Purpose:**  
+  Provides a direct way to test the two-step data retrieval and analysis pipeline, independent of the main user-facing application.
+- **Usage:**
+  1. Enter a query in the provided input box.
+  2. Submit the query to trigger the backend retrieval and analysis.
+  3. Review the returned results, matched topics, files used, analysis, and validation status.
+- **When to Use:**
+  - During development to verify backend changes.
+  - For QA to manually test edge cases and data accuracy.
+  - To debug issues with the data retrieval or analysis logic.
+
+This interface is essential for rapid iteration, debugging, and validation of backend functionality.
+
 ## Test Documentation
 
 - **Test Plans**: Detailed plans for each testing phase

@@ -3,7 +3,6 @@ import React, { ReactNode } from "react";
 interface CollapsibleBlockProps {
   title: string;
   icon?: ReactNode;
-  defaultOpen?: boolean;
   children: ReactNode;
   className?: string;
   isOpen: boolean;
@@ -14,7 +13,6 @@ interface CollapsibleBlockProps {
 export default function CollapsibleBlock({
   title,
   icon,
-  defaultOpen = true,
   children,
   className = "",
   isOpen,

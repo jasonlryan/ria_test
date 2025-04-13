@@ -6,23 +6,28 @@ This document outlines the system architecture of RIA25, detailing the component
 
 ## Architecture Diagram
 
-```
-┌────────────────┐    ┌─────────────────┐    ┌──────────────────┐
-│                │    │                 │    │                  │
-│  Next.js       │    │  OpenAI         │    │  Vector          │
-│  Web Interface │───▶│  Assistants API │───▶│  Store           │
-│                │    │                 │    │                  │
-└────────────────┘    └─────────────────┘    └──────────────────┘
-        ▲                                           ▲
-        │                                           │
-        │                                           │
-        │             ┌─────────────────┐          │
-        │             │                 │          │
-        └─────────────│  Data           │──────────┘
-                      │  Processing     │
-                      │  Pipeline       │
-                      │                 │
-                      └─────────────────┘
+> **Note:** The following diagram is written in [Mermaid](https://mermaid-js.github.io/mermaid/#/) syntax.
+>
+> - On GitHub, GitLab, Obsidian, Notion, and many documentation tools, this will render as a visual diagram.
+> - In VSCode, install the "Markdown Preview Mermaid Support" extension to see the diagram in the Markdown preview.
+> - If you need a static image (PNG/SVG) version of this diagram embedded in the .md, let the development team know and it can be generated and inserted.
+
+```mermaid
+graph TD
+  UI[Web Interface<br/>(Next.js, app/, components/)]
+  API[API Layer<br/>(app/api/chat-assistant, retrieve-data, etc.)]
+  UTILS[Utility Modules<br/>(utils/openai/retrieval, validation, cache)]
+  SCRIPTS[Data Processing<br/>(scripts/process_survey_data, process_2025_data)]
+  DATA[Data Files<br/>(scripts/output/, split_data/)]
+  PROMPTS[Prompts<br/>(prompts/, config/)]
+
+  UI --> API
+  API --> UTILS
+  API --> DATA
+  UTILS --> DATA
+  SCRIPTS --> DATA
+  API --> PROMPTS
+  UI --> PROMPTS
 ```
 
 ## Core Components
@@ -42,21 +47,27 @@ This document outlines the system architecture of RIA25, detailing the component
   - TailwindCSS for styling
   - API integration libraries
 
-### 2. OpenAI Assistants API
+### 2. API Layer (app/api/)
 
-- **Purpose**: Processes user queries and generates responses using AI capabilities
-- **Key Features**:
-  - Natural language understanding
-  - Context tracking
-  - Thread management
-  - File attachment support
-  - Vector retrieval capabilities
+- **Purpose**: Handles user queries, data retrieval, and orchestration of analysis and validation
+- **Key Endpoints**:
+  - `chat-assistant/route.ts`: Main endpoint for handling user queries, integrating with OpenAI, logging, and orchestrating retrieval/analysis.
+  - `retrieve-data/route.js`: Endpoint for direct data retrieval and analysis.
+  - Other endpoints: `save-assistant-data` (now archived in `scripts/legacy/`), etc. (`direct-save` now archived in `scripts/legacy/`)
 - **Implementation Details**:
-  - System prompts for data accuracy
-  - Anti-fabrication measures
-  - Response formatting rules
+  - Integrates with utility modules for retrieval, validation, and caching.
+  - Handles logging and performance metrics.
 
-### 3. Vector Store
+### 3. Utility Modules
+
+- **Purpose**: Provide core logic for data retrieval, validation, caching, and prompt handling
+- **Key Files**:
+  - `utils/openai/retrieval.js`: File identification, analysis generation, prompt handling, vector store integration.
+  - `utils/validation/data-validation.js`: Data validation and coverage checks.
+  - `utils/cache-utils.ts`: Thread/file cache management.
+  - `utils/helpers.tsx`: Performance metrics and helpers.
+
+### 4. Vector Store
 
 - **Purpose**: Stores embedded survey data for efficient retrieval
 - **Key Features**:
@@ -68,40 +79,45 @@ This document outlines the system architecture of RIA25, detailing the component
   - OpenAI vector storage system
   - Question-specific vector files
   - Metadata preservation
+  - Accessed via utility modules and API endpoints
 
-### 4. Data Processing Pipeline
+### 5. Data Processing Pipeline
 
-- **Purpose**: Transforms raw survey data into structured format for vector storage
+- **Purpose**: Transforms raw survey data into structured format for vector storage and analysis
 - **Key Features**:
   - CSV parsing and validation
-  - Data normalization
+  - Data normalization and harmonization (2024/2025)
+  - Canonical topic mapping
   - JSON transformation
-  - File generation
+  - File generation (split, harmonized, global)
 - **Implementation**:
-  - Node.js scripts
+  - Node.js scripts: `process_survey_data.js`, `process_2025_data.js`
   - CSV parsing libraries
   - File system operations
-  - OpenAI API integration
+  - Output to `scripts/output/` and `scripts/output/split_data/`
 
 ## Data Flow
 
 ### User Query Flow
 
 1. User enters query in web interface
-2. Next.js application sends query to OpenAI Assistants API
-3. Assistants API uses vector search to retrieve relevant survey data
-4. AI processes query with retrieved data and system prompts
-5. Response is generated and returned to web interface
-6. Web interface renders formatted response to user
+2. Next.js application sends query to API endpoint (`chat-assistant`, `retrieve-data`, etc.)
+3. API endpoint uses utility modules (`retrieval.js`, `data-validation.js`, `cache-utils.ts`) to:
+   - Identify relevant data files
+   - Validate and analyze data
+   - Retrieve and process data for the query
+4. Utility modules access processed JSON data files (2024/2025, split/harmonized)
+5. API endpoint generates response (with OpenAI integration if needed)
+6. Response is returned to web interface and rendered for the user
 
 ### Data Processing Flow
 
-1. Raw CSV survey data is validated and parsed
-2. Data is transformed into structured JSON format
-3. JSON files are split by question number
-4. Files are processed for vector embedding
-5. Embedded data is uploaded to OpenAI Vector Store
-6. Assistants API is configured to access vector data
+1. Raw CSV survey data (2024/2025) is validated and parsed
+2. Data is harmonized and mapped to canonical topics (`process_2025_data.js`)
+3. Data is transformed into structured JSON format (`process_survey_data.js`)
+4. JSON files are split by question number and harmonized
+5. Files are processed for vector embedding and retrieval
+6. Utility modules and API endpoints access these files for analysis and response generation
 
 ## Integration Points
 
@@ -154,12 +170,12 @@ This document outlines the system architecture of RIA25, detailing the component
 - **API Efficiency**: Optimized prompt design for reduced token usage
 - **Vector Retrieval**: Question-specific JSON files for improved retrieval accuracy
 
-## Monitoring and Logging (Planned)
+## Monitoring and Logging
 
-- **API Interactions**: Logging of API requests and responses
-- **Error Tracking**: Comprehensive error logging
-- **Performance Metrics**: Response time tracking
-- **Usage Statistics**: Query volume and patterns
+- **API Interactions**: Logging of API requests and responses (partially implemented in `chat-assistant/route.ts`)
+- **Error Tracking**: Error logging in API endpoints and utility modules
+- **Performance Metrics**: Performance metrics and logging in helpers and API endpoints
+- **Usage Statistics**: Query volume and patterns (planned)
 
 ## Scaling Considerations (Future)
 
@@ -176,4 +192,4 @@ This document outlines the system architecture of RIA25, detailing the component
 
 ---
 
-_Last updated: April 5, 2024_
+_Last updated: April 13, 2025_

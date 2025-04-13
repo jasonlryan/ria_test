@@ -4,14 +4,9 @@ import path from "path";
 
 export async function POST() {
   try {
-    // Create logs directory if it doesn't exist
+    // Create logs directory if it doesn't exist (async, idempotent)
     const logsDir = path.join(process.cwd(), "logs");
-    if (!fs.existsSync(logsDir)) {
-      fs.mkdirSync(logsDir, { recursive: true });
-      console.log("Created logs directory at", logsDir);
-    } else {
-      console.log("Logs directory already exists at", logsDir);
-    }
+    await fs.promises.mkdir(logsDir, { recursive: true });
 
     return NextResponse.json({
       success: true,

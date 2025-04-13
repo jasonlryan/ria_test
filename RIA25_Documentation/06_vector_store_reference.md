@@ -73,6 +73,19 @@ When querying the vector store:
 3. For year-over-year comparisons, it follows the rules in the canonical mapping
 4. Reference files provide guidelines for tone, structure, and boundaries
 
+---
+
+## System Integration
+
+- **Integration Logic**: Vector store access, embedding, and retrieval are orchestrated by utility modules (`utils/openai/retrieval.js`) and API endpoints (`app/api/chat-assistant/route.ts`, `app/api/retrieve-data/route.js`).
+- **Validation**: Data validation and coverage checks are performed by `utils/validation/data-validation.js` to ensure integrity and completeness of responses.
+- **Process**:
+  1. User query is received by the API endpoint.
+  2. Utility modules identify relevant canonical topics and data files.
+  3. Data is retrieved from the vector store and validated.
+  4. Results are formatted and returned to the user.
+- **File Structure**: The system expects split data files and reference files to follow the conventions described above for seamless integration.
+
 ## Maintenance
 
 When updating the vector store:
@@ -82,4 +95,4 @@ When updating the vector store:
 3. All files should be uploaded maintaining the same structure
 4. The vector store ID should be updated in the system configuration
 
-_Last updated: April 5, 2024_
+_Last updated: April 13, 2025_
