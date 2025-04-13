@@ -106,6 +106,24 @@ function logPerformanceToFile(query, cachedFileIds, fileIds, pollCount, totalTim
     });
 }
 
+/**
+ * Waits until there are no active runs on the thread.
+ * Active statuses: "queued", "in_progress", "requires_action"
+ */
+async function waitForNoActiveRuns(openai: OpenAI, threadId: string, pollInterval = 250, timeoutMs = 60000) {
+  const activeStatuses = new Set(["queued", "in_progress", "requires_action"]);
+  const start = Date.now();
+  while (true) {
+    const runs = await openai.beta.threads.runs.list(threadId, { limit: 10 });
+    const activeRun = runs.data.find(run => activeStatuses.has(run.status));
+    if (!activeRun) break;
+    if (Date.now() - start > timeoutMs) {
+      throw new Error("Timeout waiting for previous run to complete on thread " + threadId);
+    }
+    await new Promise(res => setTimeout(res, pollInterval));
+  }
+}
+
 // post a new message and stream OpenAI Assistant response
 export async function POST(request: NextRequest) {
   try {
@@ -164,6 +182,9 @@ export async function POST(request: NextRequest) {
       finalThreadId = thread.id;
       console.log(`[THREAD] Created new thread: ${finalThreadId}`);
     }
+
+    // Wait for any active runs to finish before adding a new message
+    await waitForNoActiveRuns(openai, finalThreadId);
 
     // Add the user message to the thread
     await openai.beta.threads.messages.create(finalThreadId, {
