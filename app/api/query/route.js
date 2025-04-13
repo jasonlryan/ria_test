@@ -3,6 +3,7 @@
 
 import { NextResponse } from "next/server";
 import { processQueryWithData } from "../../../utils/openai/retrieval";
+import logger from "../../../utils/logger";
 
 // New route segment config format for Next.js 14+
 export const runtime = "nodejs";
@@ -26,12 +27,10 @@ export async function POST(request) {
       ? cachedFileIds
       : [];
 
-    console.log(
-      `[QUERY API] 🔍 Query: "${query.substring(0, 50)}${
-        query.length > 50 ? "..." : ""
-      }"`
-    );
-    console.log(`[QUERY API] 💾 Cached files: ${validCachedFileIds.length}`);
+    logger.info(`[QUERY API] Query received`, {
+      query: query.substring(0, 100),
+      cachedFileIdsCount: validCachedFileIds.length,
+    });
 
     // Process the query using our retrieval system
     const result = await processQueryWithData(
@@ -42,9 +41,9 @@ export async function POST(request) {
 
     // Mark if this is a follow-up and using cached files
     if (result.status === "follow_up") {
-      console.log(
-        `[QUERY API] ✅ Follow-up detected, using ${validCachedFileIds.length} cached files`
-      );
+      logger.info(`[QUERY API] Follow-up detected, using cached files`, {
+        cachedFileIdsCount: validCachedFileIds.length,
+      });
     } else if (result.file_ids) {
       // Calculate which files are new vs cached
       const newFiles = result.file_ids.filter(
@@ -52,16 +51,17 @@ export async function POST(request) {
       );
       result.new_file_ids = newFiles;
 
-      console.log(
-        `[QUERY API] 📊 Files: ${result.file_ids.length} total, ${newFiles.length} new`
-      );
+      logger.info(`[QUERY API] Files processed`, {
+        totalFiles: result.file_ids.length,
+        newFiles: newFiles.length,
+      });
     }
 
     // Check for special error status
     if (result.status === "error_no_context") {
-      console.log(
-        "[QUERY API] ⚠️ Content transformation without context error"
-      );
+      logger.warn("[QUERY API] Content transformation without context error", {
+        query,
+      });
 
       // Pass the error along to the client
       return NextResponse.json({
@@ -84,7 +84,7 @@ export async function POST(request) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error(`[QUERY API] ❌ Error processing query:`, error);
+    logger.error(`[QUERY API] Error processing query`, { error, query });
     return NextResponse.json(
       { error: "Error processing query", details: error.message },
       { status: 500 }

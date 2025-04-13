@@ -13,14 +13,14 @@ const {
   mapIntentToDataScope,
   getBaseData,
   getSpecificData,
-} = require("../../data/smart_filtering");
+} = require("../data/smart_filtering");
 const {
   getThreadCache,
   updateThreadCache,
   getDataScope,
   getIncrementalData,
   calculateMissingDataScope,
-} = require("../../data/incremental_cache");
+} = require("../data/incremental_cache");
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -104,7 +104,9 @@ function loadCanonicalTopicMapping() {
     );
     const mappingData = fs.readFileSync(mappingPath, "utf8");
     canonicalTopicMapping = JSON.parse(mappingData);
-    console.log("Canonical topic mapping loaded and cached");
+    if (process.env.DEBUG) {
+      console.log("Canonical topic mapping loaded and cached");
+    }
     return canonicalTopicMapping;
   } catch (error) {
     console.error("Error loading canonical topic mapping:", error);
@@ -139,7 +141,9 @@ export async function identifyRelevantFiles(query, context) {
     // Check cache first
     const cacheKey = generateCacheKey(query);
     if (queryCache.has(cacheKey)) {
-      console.log("Using cached query results");
+      if (process.env.DEBUG) {
+        console.log("Using cached query results");
+      }
       return queryCache.get(cacheKey);
     }
 
@@ -208,7 +212,9 @@ export async function identifyRelevantFiles(query, context) {
 
     try {
       // Parse the JSON content
-      console.log("Raw response content:", content.substring(0, 100) + "...");
+      if (process.env.DEBUG) {
+        console.log("Raw response content:", content.substring(0, 100) + "...");
+      }
       const result = JSON.parse(content);
 
       // Apply validations
@@ -251,7 +257,9 @@ export async function identifyRelevantFiles(query, context) {
  * @returns {object} - Formatted data files optimized for OpenAI processing
  */
 function formatDataForAnalysis(dataFiles) {
-  console.log("Formatting data for analysis...");
+  if (process.env.DEBUG) {
+    console.log("Formatting data for analysis...");
+  }
 
   try {
     // Create a simplified data representation that EXPLICITLY includes percentages
@@ -259,7 +267,11 @@ function formatDataForAnalysis(dataFiles) {
       files: dataFiles.files.map((file) => {
         // Skip files with errors
         if (file.error || !file.data || !Array.isArray(file.data)) {
-          console.log(`Skipping file ${file.id} due to error or missing data`);
+          if (process.env.DEBUG) {
+            console.log(
+              `Skipping file ${file.id} due to error or missing data`
+            );
+          }
           return {
             id: file.id,
             error: file.error || "No valid data available",
@@ -328,9 +340,11 @@ function formatDataForAnalysis(dataFiles) {
           }
         });
 
-        console.log(
-          `File ${file.id}: Found ${percentageCount} percentage values in ${percentageData.length} data points`
-        );
+        if (process.env.DEBUG) {
+          console.log(
+            `File ${file.id}: Found ${percentageCount} percentage values in ${percentageData.length} data points`
+          );
+        }
 
         return {
           id: file.id,
@@ -358,9 +372,11 @@ function formatDataForAnalysis(dataFiles) {
       }
     });
 
-    console.log(
-      `Total: ${totalPercentageValues} percentage values in ${totalDataPointsWithPercentages} data points`
-    );
+    if (process.env.DEBUG) {
+      console.log(
+        `Total: ${totalPercentageValues} percentage values in ${totalDataPointsWithPercentages} data points`
+      );
+    }
     formattedData.metadata.percentageCount = totalPercentageValues;
 
     return formattedData;
@@ -385,10 +401,12 @@ function formatDataForAnalysis(dataFiles) {
 export async function generateAnalysis(query, dataFiles, matchedTopics) {
   try {
     const startTime = Date.now();
-    console.log(
-      "Starting direct data extraction at",
-      new Date(startTime).toISOString()
-    );
+    if (process.env.DEBUG) {
+      console.log(
+        "Starting direct data extraction at",
+        new Date(startTime).toISOString()
+      );
+    }
 
     // Get information about matched topics
     const topicInfo = matchedTopics.map((topic) => {
@@ -563,29 +581,31 @@ export async function generateAnalysis(query, dataFiles, matchedTopics) {
     analysisText += `- Topics covered: ${matchedTopics.join(", ")}\n`;
 
     const endTime = Date.now();
-    console.log(
-      `Direct data extraction completed in ${
-        (endTime - startTime) / 1000
-      } seconds`
-    );
-    console.log(
-      `Extracted ${percentageStats.length} percentage values from ${fileStats.length} files`
-    );
+    if (process.env.DEBUG) {
+      console.log(
+        `Direct data extraction completed in ${
+          (endTime - startTime) / 1000
+        } seconds`
+      );
+      console.log(
+        `Extracted ${percentageStats.length} percentage values from ${fileStats.length} files`
+      );
 
-    // Log a preview of the analysis
-    console.log("====== ANALYSIS PREVIEW ======");
-    console.log(analysisText.substring(0, 500) + "...");
-    console.log("=============================");
+      // Log a preview of the analysis
+      console.log("====== ANALYSIS PREVIEW ======");
+      console.log(analysisText.substring(0, 500) + "...");
+      console.log("=============================");
 
-    // Check for percentages in the analysis
-    const percentageMatches = analysisText.match(/\d+%/g) || [];
-    console.log(
-      `Analysis contains ${
-        percentageMatches.length
-      } percentage values: ${percentageMatches.slice(0, 5).join(", ")}${
-        percentageMatches.length > 5 ? "..." : ""
-      }`
-    );
+      // Check for percentages in the analysis
+      const percentageMatches = analysisText.match(/\d+%/g) || [];
+      console.log(
+        `Analysis contains ${
+          percentageMatches.length
+        } percentage values: ${percentageMatches.slice(0, 5).join(", ")}${
+          percentageMatches.length > 5 ? "..." : ""
+        }`
+      );
+    }
 
     return analysisText;
   } catch (error) {
@@ -600,13 +620,19 @@ export async function generateAnalysis(query, dataFiles, matchedTopics) {
  * @returns {Promise<object>} - The retrieved data
  */
 export async function retrieveDataFiles(fileIds) {
-  console.log(`Retrieving ${fileIds.length} data files...`);
+  if (process.env.DEBUG) {
+    console.log(`Retrieving ${fileIds.length} data files...`);
+  }
 
   // In production on Vercel, read files directly from the file system
   // This avoids API cross-calling issues with authentication
   if (process.env.NODE_ENV === "production") {
     try {
-      console.log("Using direct file system access in production environment");
+      if (process.env.DEBUG) {
+        console.log(
+          "Using direct file system access in production environment"
+        );
+      }
 
       // Topics to collect
       const topics = new Set();
@@ -629,7 +655,9 @@ export async function retrieveDataFiles(fileIds) {
               normalizedId
             );
 
-            console.log(`Attempting to read file: ${filePath}`);
+            if (process.env.DEBUG) {
+              console.log(`Attempting to read file: ${filePath}`);
+            }
 
             // Ensure file exists
             if (!fs.existsSync(filePath)) {
@@ -712,11 +740,13 @@ export async function retrieveDataFiles(fileIds) {
 
     // Parse the API response
     const result = await response.json();
-    console.log(
-      `API response: ${result.files ? result.files.length : 0} files, ${
-        result.totalDataPoints || 0
-      } data points`
-    );
+    if (process.env.DEBUG) {
+      console.log(
+        `API response: ${result.files ? result.files.length : 0} files, ${
+          result.totalDataPoints || 0
+        } data points`
+      );
+    }
 
     // Return the retrieved data in the expected format
     return {
@@ -770,31 +800,147 @@ export async function processQueryWithData(
   const conversationHistory = []; // TODO: Pass actual conversation history if available
   const queryIntent = parseQueryIntent(query, conversationHistory);
 
-  // 2. Use incremental cache to get data (cache-aware retrieval)
-  const { data: cachedData, cacheStatus } = await getIncrementalData(
-    queryIntent,
-    threadId
-  );
-
-  // 3. Map intent to data scope (for monitoring/debugging)
-  const dataScope = mapIntentToDataScope(queryIntent);
-
-  // 4. Filter data based on intent specificity
-  let filteredData;
-  if (queryIntent.specificity === "specific") {
-    filteredData = getSpecificData(cachedData, queryIntent);
-  } else {
-    filteredData = getBaseData(cachedData, queryIntent);
+  // 1a. Starter question route: if query is a starter question code, load precompiled data and filter it
+  if (isStarterQuestion(query)) {
+    const starterData = getPrecompiledStarterData(query.trim());
+    let filteredData;
+    if (queryIntent.specificity === "specific") {
+      filteredData = getSpecificData(starterData, queryIntent);
+    } else {
+      filteredData = getBaseData(starterData, queryIntent);
+    }
+    const endTime = performance.now();
+    return {
+      analysis: "Smart filtered starter question data",
+      filteredData,
+      queryIntent,
+      cacheStatus: "STARTER_QUESTION",
+      processing_time_ms: Math.round(endTime - startTime),
+    };
   }
 
-  // 5. Prepare result object
+  // 2. Use OpenAI to identify relevant files (semantic mapping)
+  const fileIdResult = await identifyRelevantFiles(query, context);
+  const fileIds = fileIdResult.file_ids || [];
+  const matchedTopics = fileIdResult.matched_topics || [];
+  const explanation = fileIdResult.explanation || "";
+
+  // 3. Load only the relevant files
+  const fs = require("fs");
+  const path = require("path");
+  const dataDir = path.join(process.cwd(), "scripts", "output", "split_data");
+  let files = [];
+  if (process.env.DEBUG) {
+    console.log("=== DEBUG: File loading step ===");
+    console.log("File IDs returned by LLM:", fileIds);
+  }
+  for (const fileId of fileIds) {
+    const fileName = fileId.endsWith(".json") ? fileId : fileId + ".json";
+    const filePath = path.join(dataDir, fileName);
+    if (process.env.DEBUG) {
+      console.log(`Attempting to load file: ${filePath}`);
+    }
+    try {
+      if (!fs.existsSync(filePath)) {
+        console.error(`File does not exist: ${filePath}`);
+        continue;
+      }
+      const fileContent = fs.readFileSync(filePath, "utf8");
+      let jsonData;
+      try {
+        jsonData = JSON.parse(fileContent);
+      } catch (parseErr) {
+        console.error(`JSON parse error for file ${filePath}:`, parseErr);
+        continue;
+      }
+      // Log structure of loaded data
+      if (process.env.DEBUG && jsonData && typeof jsonData === "object") {
+        if (Array.isArray(jsonData.responses)) {
+          console.log(
+            `File ${fileName} loaded. responses[] length: ${jsonData.responses.length}`
+          );
+        } else if (Array.isArray(jsonData.data)) {
+          console.log(
+            `File ${fileName} loaded. data[] length: ${jsonData.data.length}`
+          );
+        } else {
+          console.log(
+            `File ${fileName} loaded. Top-level keys:`,
+            Object.keys(jsonData)
+          );
+        }
+      }
+      files.push({
+        id: fileId.replace(/\.json$/, ""),
+        data: jsonData,
+      });
+    } catch (e) {
+      console.error(`Error loading file ${filePath}:`, e);
+      continue;
+    }
+  }
+  if (process.env.DEBUG) {
+    console.log("=== END DEBUG: File loading step ===");
+    // Extra debug: print structure of first loaded file
+    if (files.length > 0) {
+      const first = files[0];
+      console.log("=== DEBUG: First loaded file structure ===");
+      if (first.data && typeof first.data === "object") {
+        console.log("Top-level keys:", Object.keys(first.data));
+        if (Array.isArray(first.data.responses)) {
+          console.log(
+            "responses[0]:",
+            JSON.stringify(first.data.responses[0], null, 2)
+          );
+        }
+      } else {
+        console.log("First file data is not an object:", typeof first.data);
+      }
+      console.log("=== END DEBUG: First loaded file structure ===");
+    }
+  }
+  const loadedData = { files };
+
+  // 4. Map intent to data scope (for monitoring/debugging)
+  const dataScope = mapIntentToDataScope(queryIntent);
+
+  // 5. Filter data based on intent specificity
+  let filteredData;
+  if (queryIntent.specificity === "specific") {
+    filteredData = getSpecificData(loadedData, queryIntent);
+  } else {
+    filteredData = getBaseData(loadedData, queryIntent);
+  }
+
+  // 6. Prepare result object
   const endTime = performance.now();
+
+  // DEBUG: Log filteredData for inspection
+  if (process.env.DEBUG) {
+    console.log(
+      "=== DEBUG: filteredData being returned from processQueryWithData ==="
+    );
+    try {
+      console.log(
+        JSON.stringify(filteredData, null, 2).substring(0, 2000) +
+          (JSON.stringify(filteredData).length > 2000 ? "... (truncated)" : "")
+      );
+    } catch (e) {
+      console.log("Could not stringify filteredData for debug log.");
+    }
+    console.log(
+      "==================================================================="
+    );
+  }
+
   return {
-    analysis: "Smart filtering and incremental caching result (scaffolded)",
+    analysis: "LLM-driven file identification and smart filtering result",
     filteredData,
     queryIntent,
     dataScope,
-    cacheStatus,
+    fileIds,
+    matchedTopics,
+    explanation,
     processing_time_ms: Math.round(endTime - startTime),
     // TODO: Add more fields as needed for downstream processing
   };
@@ -830,12 +976,16 @@ function loadPromptFromFile(promptName) {
   try {
     // Try the original location first
     const originalPromptPath = path.join(PROMPTS_DIR, `${promptName}.md`);
-    console.log(`Loaded prompt from ${originalPromptPath}`);
+    if (process.env.DEBUG) {
+      console.log(`Loaded prompt from ${originalPromptPath}`);
+    }
     return fs.readFileSync(originalPromptPath, "utf8");
   } catch (error) {
-    console.log(
-      `Error loading original prompt: ${error.message}, trying fallback locations...`
-    );
+    if (process.env.DEBUG) {
+      console.log(
+        `Error loading original prompt: ${error.message}, trying fallback locations...`
+      );
+    }
     // Try public folder as fallback
     try {
       const publicPromptPath = path.join(
@@ -844,7 +994,9 @@ function loadPromptFromFile(promptName) {
         "prompts",
         `${promptName}.md`
       );
-      console.log(`Trying fallback prompt from ${publicPromptPath}`);
+      if (process.env.DEBUG) {
+        console.log(`Trying fallback prompt from ${publicPromptPath}`);
+      }
       return fs.readFileSync(publicPromptPath, "utf8");
     } catch (fallbackError) {
       // Try public/prompt_files as another fallback
@@ -855,9 +1007,11 @@ function loadPromptFromFile(promptName) {
           "prompt_files",
           `${promptName}.md`
         );
-        console.log(
-          `Trying alternative fallback prompt from ${altPublicPromptPath}`
-        );
+        if (process.env.DEBUG) {
+          console.log(
+            `Trying alternative fallback prompt from ${altPublicPromptPath}`
+          );
+        }
         return fs.readFileSync(altPublicPromptPath, "utf8");
       } catch (altFallbackError) {
         console.error(

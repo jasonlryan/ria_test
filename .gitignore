@@ -45,3 +45,6 @@ logs/
 .cache/
 
 .DS_Store
+
+# Ignore all legacy scripts
+scripts/legacy/
