@@ -27,6 +27,7 @@ After analyzing the query, you must:
 {
   "file_ids": ["2025_1", "2025_3", ...],  // Specific file_ids from the canonical mapping
   "matched_topics": ["Topic1", "Topic2"], // Names of relevant topics
+  "segments": ["sector", "age"],          // Array of detected segments (e.g., sector, age, region, gender)
   "out_of_scope": false,                  // true if the query is outside workforce survey data
   "out_of_scope_message": "",             // explanation if out_of_scope is true
   "explanation": "Brief rationale"        // Explanation of your reasoning
@@ -72,6 +73,7 @@ After analyzing the query, you must:
    Respond with ONLY a valid JSON object containing:
    - `"file_ids"`: An array of file IDs (without the .json extension) that are relevant.
    - `"matched_topics"`: An array of the matched canonical topic IDs.
+   - `"segments"`: An array of detected segments (e.g., ["sector", "age", "region", "gender"]). If no segment is detected, use an empty array.
    - `"out_of_scope"`: A boolean indicating whether the query is out-of-scope.
    - `"out_of_scope_message"`: A message explaining why the query is out-of-scope.
    - `"explanation"`: A brief explanation of your selection and parsing outcome, including any notes on segment detection.
@@ -82,8 +84,9 @@ Example:
 {
   "file_ids": ["2025_14", "2025_15"],
   "matched_topics": ["Work_Life_Balance", "Remote_Work"],
+  "segments": ["region"],
   "out_of_scope": false,
-  "explanation": "Query relates to flexible work arrangements; detected segments: global workforce."
+  "explanation": "Query relates to flexible work arrangements; detected segments: region."
 }
 ```
 

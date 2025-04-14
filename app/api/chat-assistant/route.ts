@@ -84,6 +84,7 @@ function logPerformanceMetrics(stage, metrics) {
  * Logs performance metrics to the performance_metrics.log file asynchronously
  */
 function logPerformanceToFile(query, cachedFileIds, fileIds, pollCount, totalTimeMs, status, message = '') {
+  if (process.env.VERCEL) return; // Skip file logging on Vercel
   // Create the log entry first, before any IO
   const logDir = path.join(process.cwd(), 'logs');
   const logFile = path.join(logDir, 'performance_metrics.log');
@@ -140,6 +141,7 @@ async function logStarterQuestionInvocation({
   stats,
   timestamp = new Date().toISOString()
 }) {
+  if (process.env.VERCEL) return; // Skip file logging on Vercel
   try {
     const logDir = path.join(process.cwd(), 'logs');
     const logFile = path.join(logDir, 'starter_question_invocations.log');
@@ -381,14 +383,16 @@ ${statsPreview}`
 No data matched for the selected segments.`;
 
       // Write the full prompt to logs/assistant_full_prompt.txt for inspection
-      try {
-        const logsDir = path.join(process.cwd(), "logs");
-        const promptLogFile = path.join(logsDir, "assistant_full_prompt.txt");
-        await fs.promises.mkdir(logsDir, { recursive: true });
-        await fs.promises.writeFile(promptLogFile, standardModePrompt, "utf8");
-        logger.info(`[LOG] Full assistant prompt written to ${promptLogFile}`);
-      } catch (err) {
-        logger.error("Failed to write full assistant prompt to log:", err);
+      if (!process.env.VERCEL) {
+        try {
+          const logsDir = path.join(process.cwd(), "logs");
+          const promptLogFile = path.join(logsDir, "assistant_full_prompt.txt");
+          await fs.promises.mkdir(logsDir, { recursive: true });
+          await fs.promises.writeFile(promptLogFile, standardModePrompt, "utf8");
+          logger.info(`[LOG] Full assistant prompt written to ${promptLogFile}`);
+        } catch (err) {
+          logger.error("Failed to write full assistant prompt to log:", err);
+        }
       }
 
       content = standardModePrompt;

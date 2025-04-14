@@ -8,6 +8,17 @@ import logger from "../../../utils/logger";
 // New route segment config format for Next.js 14+
 export const runtime = "nodejs";
 
+/**
+ * GET handler for /api/query
+ * Returns a clear error message for unsupported GET requests.
+ */
+export async function GET(request) {
+  return NextResponse.json(
+    { error: "GET method is not supported on this endpoint. Please use POST." },
+    { status: 405 }
+  );
+}
+
 // This handles requests to analyze datasets
 export async function POST(request) {
   let query, context, cachedFileIds; // Ensure all are defined for error logging
