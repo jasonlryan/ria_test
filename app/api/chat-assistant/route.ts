@@ -289,6 +289,15 @@ export async function POST(request: NextRequest) {
       // Run smart filtering and data retrieval
       const result = await processQueryWithData(content, "all-sector", cachedFileIds, finalThreadId);
 
+      // === OUT OF SCOPE HANDLING ===
+      if (result && result.out_of_scope === true) {
+        logger.info(`[OUT OF SCOPE] Query flagged as out-of-scope. Returning message to frontend.`);
+        return NextResponse.json({
+          out_of_scope: true,
+          message: result.out_of_scope_message || "Your query is outside the scope of workforce survey data."
+        }, { status: 200 });
+      }
+
       // Track file IDs used for this query
       if (result.dataScope && result.dataScope.fileIds && result.dataScope.fileIds.size > 0) {
         usedFileIds = Array.from(result.dataScope.fileIds).map(String);

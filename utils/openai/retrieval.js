@@ -802,6 +802,18 @@ export async function processQueryWithData(
 
   // 1. Use OpenAI to identify relevant files (semantic mapping)
   const fileIdResult = await identifyRelevantFiles(query, context);
+
+  // === OUT OF SCOPE HANDLING ===
+  if (fileIdResult && fileIdResult.out_of_scope === true) {
+    return {
+      out_of_scope: true,
+      out_of_scope_message:
+        fileIdResult.out_of_scope_message ||
+        "Your query is outside the scope of workforce survey data.",
+      explanation: fileIdResult.explanation || "",
+    };
+  }
+
   const fileIds = fileIdResult.file_ids || [];
   const matchedTopics = fileIdResult.matched_topics || [];
   const explanation = fileIdResult.explanation || "";

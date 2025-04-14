@@ -517,6 +517,23 @@ function Embed({ params: { assistantId } }) {
         error: dataResult.error,
       });
 
+      // === PATCH: Intercept out-of-scope queries ===
+      if (dataResult.out_of_scope) {
+        const outOfScopeMessage = {
+          role: "assistant",
+          content:
+            dataResult.out_of_scope_message ||
+            "Sorry, your query is outside the scope of what I can answer.",
+          id: `out-of-scope-${Date.now()}`,
+          createdAt: new Date(),
+        };
+        setMessages((prevMessages) => [...prevMessages, outOfScopeMessage]);
+        setStreamingMessage(null);
+        setLoading(false);
+        clearInterval(intervalRef.current);
+        return;
+      }
+
       // Check for errors in the data retrieval response
       if (dataResult.error) {
         setStreamingMessage((prev) => ({
