@@ -28,6 +28,7 @@ import chatConfig from "../../../config/chat.config.json";
 import CollapsibleContent from "../../../components/CollapsibleContent";
 // Add the new AssistantSelector component
 import AssistantSelector from "../../../components/AssistantSelector";
+import { sendHeightToParent } from "../../../utils/iframe-resizer";
 
 // Define interface for MarkdownErrorBoundary props and state
 interface MarkdownErrorBoundaryProps {
@@ -1011,6 +1012,16 @@ ${
     setTimeout(scrollToBottom, 300); // Additional delayed scroll to catch late renders
   }, [messages, streamingMessage, scrollToBottom]);
 
+  // Add effect for iframe resizing
+  useEffect(() => {
+    // Initial height update
+    sendHeightToParent();
+
+    // Update height whenever messages or streaming state changes
+    const updateTimeout = setTimeout(sendHeightToParent, 100);
+    return () => clearTimeout(updateTimeout);
+  }, [messages, streamingMessage]);
+
   const handleStarterQuestion = (question: string) => {
     if (loading) return;
 
@@ -1060,7 +1071,7 @@ ${
       {/* Main Content */}
       <div
         className="w-full max-w-7xl mx-auto px-4 pt-1 flex-1 flex flex-col overflow-hidden"
-        style={{ height: "calc(100vh - 90px)" }}
+        style={{ minHeight: "500px", height: "100%" }}
       >
         <div className="flex flex-col lg:flex-row gap-4 flex-1 overflow-hidden">
           {/* Chat and Input Section - NOT FIXED, CONTAINED WITHIN PARENT */}

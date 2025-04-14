@@ -39,10 +39,24 @@ https://ria25-staging.vercel.app/embed/asst_D0BPAJjvg3UK6Lcb1lqIM1xS?question=Wh
 Example HTML:
 
 ```html
+<!-- Parent page script to handle iframe resizing -->
+<script>
+  window.addEventListener("message", function (e) {
+    if (e.data && e.data.type === "resize") {
+      const iframe = document.querySelector("iframe#ria-chat");
+      if (iframe) {
+        iframe.style.height = e.data.height + "px";
+      }
+    }
+  });
+</script>
+
+<!-- Iframe with minimum height -->
 <iframe
-  src="https://ria25-staging.vercel.app/embed/asst_D0BPAJjvg3UK6Lcb1lqIM1xS?question=What%20are%20the%20biggest%20challenges%20when%20it%20comes%20to%20working%20across%20generations%3F"
+  id="ria-chat"
+  src="https://ria25-staging.vercel.app/embed/asst_D0BPAJjvg3UK6Lcb1lqIM1xS"
   width="100%"
-  height="600px"
+  style="min-height: 500px; width: 100%; border: none;"
   frameborder="0"
 >
 </iframe>
@@ -52,27 +66,12 @@ Example HTML:
 
 1. These URLs can be used directly in a browser or as the `src` attribute in an iframe
 2. The system will automatically process the question parameter and populate the chat input
+3. The iframe will automatically resize to fit its content
 
 ## URL Structure
 
 The structure follows:
 
 ```
-https://ria25-staging.vercel.app/embed/[assistantId]?question=[encodedQuestion]
-```
 
-## Reference to Original Format (2024 Version)
-
-For reference, this format worked with the 2024 version:
-
-```
-https://chatbot.kornferry.spin-up.io/embed/asst_MgRnSzOzQxrR3KNSjMczF3mY?question=What%20are%20the%20most%20important%20job%20search%20factors%20by%20age%3F
-```
-
-## Production URLs (When Ready)
-
-When moving to production, replace the staging domain with:
-
-```
-https://www.kornferry.com/test-pages/workforce-planning-insights/ria
 ```
