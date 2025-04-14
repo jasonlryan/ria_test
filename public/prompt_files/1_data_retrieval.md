@@ -36,8 +36,8 @@ After analyzing the query, you must:
 
 # Special Cases:
 
-- If the query clearly relates to workforce trends, but no specific data files match, suggest the closest available files.
-- If the query is completely outside of workforce survey topics, set out_of_scope to true.
+- If the query clearly relates to workforce trends, cost of living, or any topic that can be reasonably mapped to the available data, always suggest the closest available files and set out_of_scope to false, even if the match is not perfect.
+- Only set out_of_scope to true if the query is completely unrelated to workforce, workplace, or employment topics (e.g., questions about sports, cooking, or unrelated domains).
 - For time periods not in our data, use the most recent available data (default to "2025").
 
 2. **Scope Check:**
