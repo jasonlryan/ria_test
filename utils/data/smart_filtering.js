@@ -1,12 +1,9 @@
 /**
  * Smart filtering module for query intent parsing and data filtering
  *
- * Functions:
- * - parseQueryIntent
- * - mapIntentToDataScope
- * - getBaseData
- * - getSpecificData
+ * Segment keys are imported from utils/data/segment_keys.js
  */
+const { CANONICAL_SEGMENTS } = require("./segment_keys");
 
 /**
  * Parse the user query and conversation history to extract intent.
@@ -140,8 +137,8 @@ function getBaseData(retrievedData, queryIntent) {
  * @param {import("./types").QueryIntent} queryIntent
  * @returns {any}
  */
-function getSpecificData(retrievedData, queryIntent) {
-  // Robust implementation: filter by year, demographics, and topics if possible
+function getSpecificData(retrievedData, { demographics = [] }) {
+  // Only filter by canonical segment keys as provided by the LLM
   if (
     !retrievedData ||
     typeof retrievedData !== "object" ||
@@ -150,11 +147,29 @@ function getSpecificData(retrievedData, queryIntent) {
     return { filteredData: [] };
   }
 
-  const { years = [], demographics = [], topics = [] } = queryIntent;
+  // If no demographics provided, use all canonical segments
+  let segmentsToUse =
+    demographics && demographics.length > 0
+      ? demographics
+          .map((d) => {
+            // Map LLM-provided segment to canonical if possible (e.g., "country" → "region")
+            if (d.toLowerCase() === "country") return "region";
+            return d;
+          })
+          .filter((d) => CANONICAL_SEGMENTS.includes(d))
+      : CANONICAL_SEGMENTS;
+
+  // Always include "overall" in segmentsToUse
+  if (!segmentsToUse.includes("overall")) {
+    segmentsToUse = ["overall", ...segmentsToUse];
+  }
+
   const filteredStats = [];
 
   for (const file of retrievedData.files) {
-    if (!file.data || !Array.isArray(file.data.responses)) continue;
+    if (!file.data || !Array.isArray(file.data.responses)) {
+      continue;
+    }
     const question =
       file.data.question ||
       (file.data.metadata && file.data.metadata.canonicalQuestion) ||
@@ -165,43 +180,18 @@ function getSpecificData(retrievedData, queryIntent) {
       // For each segment in dataObj
       for (const segmentKey of Object.keys(dataObj)) {
         const segmentValue = dataObj[segmentKey];
+        if (!segmentsToUse.includes(segmentKey)) {
+          continue;
+        }
         if (typeof segmentValue === "number") {
-          // Filter by year, demographics, topics if needed
-          let yearMatch = true;
-          if (years.length > 0) {
-            yearMatch = years.some(
-              (y) =>
-                (question && String(question).includes(String(y))) ||
-                (responseText && String(responseText).includes(String(y)))
-            );
-          }
-          if (!yearMatch) continue;
-
-          let demoMatch = true;
-          if (demographics.length > 0) {
-            demoMatch = demographics.some(
-              (demo) =>
-                segmentKey &&
-                segmentKey.toLowerCase().includes(demo.toLowerCase())
-            );
-          }
-          if (demographics.length > 0 && !demoMatch) continue;
-
-          let topicMatch = true;
-          if (topics.length > 0) {
-            topicMatch = topics.some(
-              (t) =>
-                question && question.toLowerCase().includes(t.toLowerCase())
-            );
-          }
-          if (topics.length > 0 && !topicMatch) continue;
-
           filteredStats.push({
             fileId: file.id,
             question,
             response: responseText,
             segment: segmentKey,
-            value: segmentValue,
+            category: segmentKey,
+            value: "overall",
+            stat: segmentValue,
             percentage: Math.round(segmentValue * 100),
             formatted: `${Math.round(segmentValue * 100)}%`,
           });
@@ -210,41 +200,14 @@ function getSpecificData(retrievedData, queryIntent) {
           for (const subKey of Object.keys(segmentValue)) {
             const subValue = segmentValue[subKey];
             if (typeof subValue === "number") {
-              // Filter by year, demographics, topics if needed
-              let yearMatch = true;
-              if (years.length > 0) {
-                yearMatch = years.some(
-                  (y) =>
-                    (question && String(question).includes(String(y))) ||
-                    (responseText && String(responseText).includes(String(y)))
-                );
-              }
-              if (!yearMatch) continue;
-
-              let demoMatch = true;
-              if (demographics.length > 0) {
-                demoMatch = demographics.some(
-                  (demo) =>
-                    subKey && subKey.toLowerCase().includes(demo.toLowerCase())
-                );
-              }
-              if (demographics.length > 0 && !demoMatch) continue;
-
-              let topicMatch = true;
-              if (topics.length > 0) {
-                topicMatch = topics.some(
-                  (t) =>
-                    question && question.toLowerCase().includes(t.toLowerCase())
-                );
-              }
-              if (topics.length > 0 && !topicMatch) continue;
-
               filteredStats.push({
                 fileId: file.id,
                 question,
                 response: responseText,
                 segment: `${segmentKey}:${subKey}`,
-                value: subValue,
+                category: segmentKey,
+                value: subKey,
+                stat: subValue,
                 percentage: Math.round(subValue * 100),
                 formatted: `${Math.round(subValue * 100)}%`,
               });

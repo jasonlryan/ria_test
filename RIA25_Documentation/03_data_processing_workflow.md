@@ -187,18 +187,32 @@ After data is processed and ingested, the system applies a segment-aware smart f
 
 - **Starter Questions:** If the query is a recognized starter question (e.g., "SQ2"), the relevant segments are explicitly set in the corresponding starter JSON file (e.g., `"segments": ["sector"]`).
 - **All Other Queries:** For general queries, the OpenAI model is prompted (see `utils/openai/1_data_retrieval.md`) to infer the most relevant segments (e.g., "sector", "age", "region", "gender") and return them in a `"segments"` array in its JSON response.
-- **Default Fallback:** If neither the starter JSON nor OpenAI inference provides segments, the system defaults to `["country", "age", "gender"]`.
+- **Default Fallback:** If neither the starter JSON nor OpenAI inference provides segments, the system defaults to `["region", "age", "gender"]` (see `utils/data/segment_keys.js`).
+
+**Canonical Segment Keys and Centralized Config:**
+
+- All valid segment keys are defined in a single config file: `utils/data/segment_keys.js`.
+  - `DEFAULT_SEGMENTS` is the fallback: `["region", "age", "gender"]`
+  - `CANONICAL_SEGMENTS` is the full set used for filtering: `["overall", "region", "age", "gender", "org_size", "sector", "job_level", "relationship_status", "education", "generation", "employment_status"]`
+- All filtering, matching, and fallback logic references this config, ensuring consistency and maintainability.
 
 **How Segments Are Used:**
 
-- The selected segments are injected into the query intent and used throughout the filtering and caching pipeline (see `utils/openai/retrieval.js`).
-- This ensures that only the relevant slices of data are retrieved, filtered, and cached, improving both performance and accuracy.
+- The selected segments are injected into the query intent and used throughout the filtering and caching pipeline (see `utils/openai/retrieval.js` and `utils/data/smart_filtering.js`).
+- Only canonical segment keys are used for filtering, guaranteeing alignment with the data files.
 - The cache tracks which segments have been retrieved for each file, enabling efficient follow-up queries and minimizing redundant data loading.
+
+**Enhanced Logging and Traceability:**
+
+- Every step logs the query, files, topics, and segments being retrieved.
+- If no stats are found for the selected segments, the system logs both the requested segments and the available segments in the data file, making it easy to debug any mismatch or data hygiene issue.
+- This provides full transparency and traceability from query to assistant response.
 
 **Rationale:**
 
 - This hybrid approach allows for per-question customization (for starters), dynamic adaptation (for general queries), and robust fallback behavior.
-- It ensures that queries like "How is the cost of living affecting different workers across industries?" automatically use the "sector" segment, while broad queries default to standard demographic breakdowns.
+- Centralizing segment logic in a config file ensures that all code paths use the same canonical keys, eliminating inconsistencies.
+- Enhanced logging guarantees that any segment alignment issues can be quickly diagnosed and resolved.
 
 ---
 

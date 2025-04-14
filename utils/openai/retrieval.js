@@ -6,7 +6,9 @@
 import OpenAI from "openai";
 const fs = require("fs");
 const path = require("path");
+const logger = require("../../utils/logger").default;
 
+const { DEFAULT_SEGMENTS } = require("../data/segment_keys");
 // Import smart filtering and incremental cache modules
 const {
   parseQueryIntent,
@@ -64,13 +66,13 @@ function getPrecompiledStarterData(code) {
   const filePath = path.join(PRECOMPILED_STARTERS_DIR, filename);
   try {
     if (!fs.existsSync(filePath)) {
-      console.warn(`Precompiled starter data not found: ${filePath}`);
+      logger.warn(`Precompiled starter data not found: ${filePath}`);
       return null;
     }
     const data = fs.readFileSync(filePath, "utf8");
     return JSON.parse(data);
   } catch (error) {
-    console.error(`Error loading precompiled starter data for ${code}:`, error);
+    logger.error(`Error loading precompiled starter data for ${code}:`, error);
     return null;
   }
 }
@@ -105,11 +107,11 @@ function loadCanonicalTopicMapping() {
     const mappingData = fs.readFileSync(mappingPath, "utf8");
     canonicalTopicMapping = JSON.parse(mappingData);
     if (process.env.DEBUG) {
-      console.log("Canonical topic mapping loaded and cached");
+      logger.debug("Canonical topic mapping loaded and cached");
     }
     return canonicalTopicMapping;
   } catch (error) {
-    console.error("Error loading canonical topic mapping:", error);
+    logger.error("Error loading canonical topic mapping:", error);
     throw new Error("Failed to load canonical topic mapping");
   }
 }
@@ -142,7 +144,7 @@ export async function identifyRelevantFiles(query, context) {
     const cacheKey = generateCacheKey(query);
     if (queryCache.has(cacheKey)) {
       if (process.env.DEBUG) {
-        console.log("Using cached query results");
+        logger.debug("Using cached query results");
       }
       return queryCache.get(cacheKey);
     }
@@ -213,7 +215,9 @@ export async function identifyRelevantFiles(query, context) {
     try {
       // Parse the JSON content
       if (process.env.DEBUG) {
-        console.log("Raw response content:", content.substring(0, 100) + "...");
+        logger.debug(
+          "Raw response content: " + content.substring(0, 100) + "..."
+        );
       }
       const result = JSON.parse(content);
 
@@ -235,8 +239,8 @@ export async function identifyRelevantFiles(query, context) {
 
       return result;
     } catch (parseError) {
-      console.error("JSON parse error in response content:", parseError);
-      console.error("Content that failed to parse:", content);
+      logger.error("JSON parse error in response content:", parseError);
+      logger.error("Content that failed to parse:", content);
 
       // Provide a fallback result
       return {
@@ -246,7 +250,7 @@ export async function identifyRelevantFiles(query, context) {
       };
     }
   } catch (error) {
-    console.error("Error identifying relevant files:", error);
+    logger.error("Error identifying relevant files:", error);
     throw error;
   }
 }
@@ -258,7 +262,7 @@ export async function identifyRelevantFiles(query, context) {
  */
 function formatDataForAnalysis(dataFiles) {
   if (process.env.DEBUG) {
-    console.log("Formatting data for analysis...");
+    logger.debug("Formatting data for analysis...");
   }
 
   try {
@@ -268,7 +272,7 @@ function formatDataForAnalysis(dataFiles) {
         // Skip files with errors
         if (file.error || !file.data || !Array.isArray(file.data)) {
           if (process.env.DEBUG) {
-            console.log(
+            logger.debug(
               `Skipping file ${file.id} due to error or missing data`
             );
           }
@@ -341,7 +345,7 @@ function formatDataForAnalysis(dataFiles) {
         });
 
         if (process.env.DEBUG) {
-          console.log(
+          logger.debug(
             `File ${file.id}: Found ${percentageCount} percentage values in ${percentageData.length} data points`
           );
         }
@@ -373,7 +377,7 @@ function formatDataForAnalysis(dataFiles) {
     });
 
     if (process.env.DEBUG) {
-      console.log(
+      logger.debug(
         `Total: ${totalPercentageValues} percentage values in ${totalDataPointsWithPercentages} data points`
       );
     }
@@ -381,7 +385,7 @@ function formatDataForAnalysis(dataFiles) {
 
     return formattedData;
   } catch (error) {
-    console.error("Error in formatDataForAnalysis:", error);
+    logger.error("Error in formatDataForAnalysis:", error);
     return {
       files: [],
       metadata: {
@@ -402,9 +406,9 @@ export async function generateAnalysis(query, dataFiles, matchedTopics) {
   try {
     const startTime = Date.now();
     if (process.env.DEBUG) {
-      console.log(
-        "Starting direct data extraction at",
-        new Date(startTime).toISOString()
+      logger.debug(
+        "Starting direct data extraction at " +
+          new Date(startTime).toISOString()
       );
     }
 
@@ -582,23 +586,23 @@ export async function generateAnalysis(query, dataFiles, matchedTopics) {
 
     const endTime = Date.now();
     if (process.env.DEBUG) {
-      console.log(
+      logger.debug(
         `Direct data extraction completed in ${
           (endTime - startTime) / 1000
         } seconds`
       );
-      console.log(
+      logger.debug(
         `Extracted ${percentageStats.length} percentage values from ${fileStats.length} files`
       );
 
       // Log a preview of the analysis
-      console.log("====== ANALYSIS PREVIEW ======");
-      console.log(analysisText.substring(0, 500) + "...");
-      console.log("=============================");
+      logger.debug("====== ANALYSIS PREVIEW ======");
+      logger.debug(analysisText.substring(0, 500) + "...");
+      logger.debug("=============================");
 
       // Check for percentages in the analysis
       const percentageMatches = analysisText.match(/\d+%/g) || [];
-      console.log(
+      logger.debug(
         `Analysis contains ${
           percentageMatches.length
         } percentage values: ${percentageMatches.slice(0, 5).join(", ")}${
@@ -609,7 +613,7 @@ export async function generateAnalysis(query, dataFiles, matchedTopics) {
 
     return analysisText;
   } catch (error) {
-    console.error("Error generating direct data analysis:", error);
+    logger.error("Error generating direct data analysis:", error);
     return `Error extracting data: ${error.message}`;
   }
 }
@@ -621,7 +625,7 @@ export async function generateAnalysis(query, dataFiles, matchedTopics) {
  */
 export async function retrieveDataFiles(fileIds) {
   if (process.env.DEBUG) {
-    console.log(`Retrieving ${fileIds.length} data files...`);
+    logger.debug(`Retrieving ${fileIds.length} data files...`);
   }
 
   // In production on Vercel, read files directly from the file system
@@ -629,7 +633,7 @@ export async function retrieveDataFiles(fileIds) {
   if (process.env.NODE_ENV === "production") {
     try {
       if (process.env.DEBUG) {
-        console.log(
+        logger.debug(
           "Using direct file system access in production environment"
         );
       }
@@ -656,12 +660,12 @@ export async function retrieveDataFiles(fileIds) {
             );
 
             if (process.env.DEBUG) {
-              console.log(`Attempting to read file: ${filePath}`);
+              logger.debug(`Attempting to read file: ${filePath}`);
             }
 
             // Ensure file exists
             if (!fs.existsSync(filePath)) {
-              console.error(`File not found: ${filePath}`);
+              logger.error(`File not found: ${filePath}`);
               return {
                 id: fileId,
                 error: `File not found: ${filePath}`,
@@ -692,7 +696,7 @@ export async function retrieveDataFiles(fileIds) {
               data: jsonData,
             };
           } catch (error) {
-            console.error(`Error retrieving file ${fileId}:`, error);
+            logger.error(`Error retrieving file ${fileId}:`, error);
             return {
               id: fileId,
               error: error.message,
@@ -717,7 +721,7 @@ export async function retrieveDataFiles(fileIds) {
         totalDataPoints: totalDataPoints || 0,
       };
     } catch (error) {
-      console.error("Error with direct file access:", error);
+      logger.error("Error with direct file access:", error);
       throw error;
     }
   }
@@ -741,7 +745,7 @@ export async function retrieveDataFiles(fileIds) {
     // Parse the API response
     const result = await response.json();
     if (process.env.DEBUG) {
-      console.log(
+      logger.debug(
         `API response: ${result.files ? result.files.length : 0} files, ${
           result.totalDataPoints || 0
         } data points`
@@ -755,7 +759,7 @@ export async function retrieveDataFiles(fileIds) {
       totalDataPoints: result.totalDataPoints || 0,
     };
   } catch (error) {
-    console.error("Error retrieving data files:", error);
+    logger.error("Error retrieving data files:", error);
     throw error;
   }
 }
@@ -796,71 +800,49 @@ export async function processQueryWithData(
     };
   }
 
-  // 1. Parse query intent
-  const conversationHistory = []; // TODO: Pass actual conversation history if available
-  const queryIntent = parseQueryIntent(query, conversationHistory);
-
-  // 1a. Starter question route: if query is a starter question code, load precompiled data and filter it
-  if (isStarterQuestion(query)) {
-    const starterData = getPrecompiledStarterData(query.trim());
-    // If the starterData has a "segments" field, inject it into queryIntent
-    if (starterData && Array.isArray(starterData.segments)) {
-      queryIntent.segments = starterData.segments;
-    }
-    let filteredData;
-    if (queryIntent.specificity === "specific") {
-      filteredData = getSpecificData(starterData, queryIntent);
-    } else {
-      filteredData = getBaseData(starterData, queryIntent);
-    }
-    const endTime = performance.now();
-    return {
-      analysis: "Smart filtered starter question data",
-      filteredData,
-      queryIntent,
-      cacheStatus: "STARTER_QUESTION",
-      processing_time_ms: Math.round(endTime - startTime),
-    };
-  }
-
-  // 2. Use OpenAI to identify relevant files (semantic mapping)
+  // 1. Use OpenAI to identify relevant files (semantic mapping)
   const fileIdResult = await identifyRelevantFiles(query, context);
   const fileIds = fileIdResult.file_ids || [];
   const matchedTopics = fileIdResult.matched_topics || [];
   const explanation = fileIdResult.explanation || "";
 
-  // Set segments from LLM response if present
-  if (fileIdResult.segments && Array.isArray(fileIdResult.segments)) {
-    queryIntent.segments = fileIdResult.segments;
-  }
-
-  // Fallback to default segments if none specified
+  // Use segments from LLM response if present, otherwise fallback to default
+  let segments = [];
   if (
-    !queryIntent.segments ||
-    !Array.isArray(queryIntent.segments) ||
-    queryIntent.segments.length === 0
+    fileIdResult.segments &&
+    Array.isArray(fileIdResult.segments) &&
+    fileIdResult.segments.length > 0
   ) {
-    queryIntent.segments = ["country", "age", "gender"];
+    segments = fileIdResult.segments;
+  } else {
+    segments = DEFAULT_SEGMENTS;
+    logger.warn(
+      "[RETRIEVAL] No segments returned by LLM, using default segments:",
+      segments
+    );
   }
 
-  // 3. Load only the relevant files
+  // LOGGING: Output what files, topics, and segments are being retrieved
+  // (Removed unconditional console.log statements for cleaner output)
+
+  // 2. Load only the relevant files
   const fs = require("fs");
   const path = require("path");
   const dataDir = path.join(process.cwd(), "scripts", "output", "split_data");
   let files = [];
   if (process.env.DEBUG) {
-    console.log("=== DEBUG: File loading step ===");
-    console.log("File IDs returned by LLM:", fileIds);
+    logger.debug("=== DEBUG: File loading step ===");
+    logger.debug("File IDs returned by LLM:", fileIds);
   }
   for (const fileId of fileIds) {
     const fileName = fileId.endsWith(".json") ? fileId : fileId + ".json";
     const filePath = path.join(dataDir, fileName);
     if (process.env.DEBUG) {
-      console.log(`Attempting to load file: ${filePath}`);
+      logger.debug(`Attempting to load file: ${filePath}`);
     }
     try {
       if (!fs.existsSync(filePath)) {
-        console.error(`File does not exist: ${filePath}`);
+        logger.error(`File does not exist: ${filePath}`);
         continue;
       }
       const fileContent = fs.readFileSync(filePath, "utf8");
@@ -868,21 +850,21 @@ export async function processQueryWithData(
       try {
         jsonData = JSON.parse(fileContent);
       } catch (parseErr) {
-        console.error(`JSON parse error for file ${filePath}:`, parseErr);
+        logger.error(`JSON parse error for file ${filePath}:`, parseErr);
         continue;
       }
       // Log structure of loaded data
       if (process.env.DEBUG && jsonData && typeof jsonData === "object") {
         if (Array.isArray(jsonData.responses)) {
-          console.log(
+          logger.debug(
             `File ${fileName} loaded. responses[] length: ${jsonData.responses.length}`
           );
         } else if (Array.isArray(jsonData.data)) {
-          console.log(
+          logger.debug(
             `File ${fileName} loaded. data[] length: ${jsonData.data.length}`
           );
         } else {
-          console.log(
+          logger.debug(
             `File ${fileName} loaded. Top-level keys:`,
             Object.keys(jsonData)
           );
@@ -893,72 +875,136 @@ export async function processQueryWithData(
         data: jsonData,
       });
     } catch (e) {
-      console.error(`Error loading file ${filePath}:`, e);
+      logger.error(`Error loading file ${filePath}:`, e);
       continue;
     }
   }
-  if (process.env.DEBUG) {
-    console.log("=== END DEBUG: File loading step ===");
-    // Extra debug: print structure of first loaded file
-    if (files.length > 0) {
-      const first = files[0];
-      console.log("=== DEBUG: First loaded file structure ===");
-      if (first.data && typeof first.data === "object") {
-        console.log("Top-level keys:", Object.keys(first.data));
-        if (Array.isArray(first.data.responses)) {
-          console.log(
-            "responses[0]:",
-            JSON.stringify(first.data.responses[0], null, 2)
+  // --- BEGIN: Data structure normalization and debug logging ---
+  // Normalize: ensure file.data is always an object with a 'responses' array
+  files = files.map((file) => {
+    if (Array.isArray(file.data)) {
+      return { ...file, data: { responses: file.data } };
+    }
+    return file;
+  });
+
+  // Unconditional debug logging of first loaded file structure
+  if (files.length > 0) {
+    const first = files[0];
+    if (first.data && typeof first.data === "object") {
+      logger.debug(
+        "UNCONDITIONAL LOG: file.data keys:",
+        Object.keys(first.data)
+      );
+      if (Array.isArray(first.data.responses)) {
+        const resp0 = first.data.responses[0];
+        if (resp0 && typeof resp0 === "object") {
+          logger.debug(
+            "UNCONDITIONAL LOG: first.data.responses[0] keys:",
+            Object.keys(resp0)
           );
+          // Print a shallow preview, not the full object
+          const preview = JSON.stringify(resp0, null, 2);
+          logger.debug(
+            "UNCONDITIONAL LOG: first.data.responses[0] preview:",
+            preview.length > 200
+              ? preview.substring(0, 200) + " ... (truncated)"
+              : preview
+          );
+        } else {
+          logger.debug("UNCONDITIONAL LOG: first.data.responses[0]:", resp0);
         }
-      } else {
-        console.log("First file data is not an object:", typeof first.data);
       }
-      console.log("=== END DEBUG: First loaded file structure ===");
+    } else {
+      logger.debug(
+        "UNCONDITIONAL LOG: first file data is not an object:",
+        typeof first.data
+      );
     }
   }
+  // --- END: Data structure normalization and debug logging ---
+  // NOTE: mapIntentToDataScope is now only used for logging/monitoring, not for filtering
+  const dataScope = { segments: new Set(segments) };
+
+  // 3. Construct loadedData for filtering
   const loadedData = { files };
 
-  // 4. Map intent to data scope (for monitoring/debugging)
-  const dataScope = mapIntentToDataScope(queryIntent);
-
-  // 5. Filter data based on intent specificity
+  // 4. Filter data using segments from LLM
+  // Pass segments as a parameter to the filtering functions
   let filteredData;
-  if (queryIntent.specificity === "specific") {
-    filteredData = getSpecificData(loadedData, queryIntent);
-  } else {
-    filteredData = getBaseData(loadedData, queryIntent);
-  }
+  // Always use getSpecificData, passing segments as demographics
+  filteredData = getSpecificData(loadedData, { demographics: segments });
 
-  // 6. Prepare result object
+  // 5. Prepare result object
   const endTime = performance.now();
 
   // DEBUG: Log filteredData for inspection
   if (process.env.DEBUG) {
-    console.log(
+    logger.debug(
       "=== DEBUG: filteredData being returned from processQueryWithData ==="
     );
     try {
-      console.log(
+      logger.debug(
         JSON.stringify(filteredData, null, 2).substring(0, 2000) +
           (JSON.stringify(filteredData).length > 2000 ? "... (truncated)" : "")
       );
     } catch (e) {
-      console.log("Could not stringify filteredData for debug log.");
+      logger.debug("Could not stringify filteredData for debug log.");
     }
-    console.log(
+    logger.debug(
       "==================================================================="
+    );
+  }
+
+  // ENHANCED LOGGING: If no stats found, log available vs requested segments for debugging
+  if (
+    filteredData &&
+    Array.isArray(filteredData.filteredData) &&
+    filteredData.filteredData.length === 0 &&
+    loadedData.files.length > 0
+  ) {
+    const firstFile = loadedData.files[0];
+    let availableSegments = [];
+    if (
+      firstFile.data &&
+      typeof firstFile.data === "object" &&
+      Array.isArray(firstFile.data.responses) &&
+      firstFile.data.responses.length > 0
+    ) {
+      // Collect all unique segment keys from the first file's responses
+      const segmentSet = new Set();
+      for (const resp of firstFile.data.responses) {
+        if (resp.data && typeof resp.data === "object") {
+          Object.keys(resp.data).forEach((k) => segmentSet.add(k));
+        }
+      }
+      availableSegments = Array.from(segmentSet);
+    }
+    logger.warn(
+      "[RETRIEVAL] No stats matched for selected segments.",
+      "\nRequested segments:",
+      segments,
+      "\nAvailable segments in first file:",
+      availableSegments
     );
   }
 
   return {
     analysis: "LLM-driven file identification and smart filtering result",
     filteredData,
-    queryIntent,
+    segments,
     dataScope,
     fileIds,
     matchedTopics,
     explanation,
+    data_points:
+      filteredData && Array.isArray(filteredData.filteredData)
+        ? filteredData.filteredData.length
+        : 0,
+    stats:
+      filteredData && Array.isArray(filteredData.filteredData)
+        ? filteredData.filteredData
+        : [],
     processing_time_ms: Math.round(endTime - startTime),
     // TODO: Add more fields as needed for downstream processing
   };
@@ -980,7 +1026,7 @@ export async function handleQueryAPI(req, res) {
     const result = await processQueryWithData(query);
     return res.status(200).json(result);
   } catch (error) {
-    console.error("Error processing query:", error);
+    logger.error("Error processing query:", error);
     return res.status(500).json({ error: error.message });
   }
 }
@@ -995,12 +1041,12 @@ function loadPromptFromFile(promptName) {
     // Try the original location first
     const originalPromptPath = path.join(PROMPTS_DIR, `${promptName}.md`);
     if (process.env.DEBUG) {
-      console.log(`Loaded prompt from ${originalPromptPath}`);
+      logger.debug(`Loaded prompt from ${originalPromptPath}`);
     }
     return fs.readFileSync(originalPromptPath, "utf8");
   } catch (error) {
     if (process.env.DEBUG) {
-      console.log(
+      logger.debug(
         `Error loading original prompt: ${error.message}, trying fallback locations...`
       );
     }
@@ -1013,7 +1059,7 @@ function loadPromptFromFile(promptName) {
         `${promptName}.md`
       );
       if (process.env.DEBUG) {
-        console.log(`Trying fallback prompt from ${publicPromptPath}`);
+        logger.debug(`Trying fallback prompt from ${publicPromptPath}`);
       }
       return fs.readFileSync(publicPromptPath, "utf8");
     } catch (fallbackError) {
@@ -1026,13 +1072,13 @@ function loadPromptFromFile(promptName) {
           `${promptName}.md`
         );
         if (process.env.DEBUG) {
-          console.log(
+          logger.debug(
             `Trying alternative fallback prompt from ${altPublicPromptPath}`
           );
         }
         return fs.readFileSync(altPublicPromptPath, "utf8");
       } catch (altFallbackError) {
-        console.error(
+        logger.error(
           `Failed to load prompt ${promptName} from any location:`,
           error.message
         );

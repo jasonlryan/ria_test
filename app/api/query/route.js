@@ -10,10 +10,13 @@ export const runtime = "nodejs";
 
 // This handles requests to analyze datasets
 export async function POST(request) {
+  let query, context, cachedFileIds; // Ensure all are defined for error logging
   try {
     // Parse the request body
     const body = await request.json();
-    const { query, context, cachedFileIds = [] } = body;
+    query = body.query;
+    context = body.context;
+    cachedFileIds = body.cachedFileIds || [];
 
     if (!query) {
       return NextResponse.json(
@@ -84,9 +87,27 @@ export async function POST(request) {
 
     return NextResponse.json(result);
   } catch (error) {
-    logger.error(`[QUERY API] Error processing query`, { error, query });
+    // Enhanced error logging for better diagnosis
+    let errorInfo = {};
+    if (error instanceof Error) {
+      errorInfo = {
+        message: error.message,
+        stack: error.stack,
+      };
+    } else {
+      errorInfo = {
+        raw: JSON.stringify(error),
+      };
+    }
+    logger.error(`[QUERY API] Error processing query`, {
+      error: errorInfo,
+      query,
+    });
     return NextResponse.json(
-      { error: "Error processing query", details: error.message },
+      {
+        error: "Error processing query",
+        details: errorInfo.message || errorInfo.raw || "Unknown error",
+      },
       { status: 500 }
     );
   }

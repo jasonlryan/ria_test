@@ -9,6 +9,7 @@ import fs from 'fs';
 import path from 'path';
 import logger from "../../../utils/logger";
 
+import { DEFAULT_SEGMENTS } from "../../../utils/data/segment_keys";
 // Add import for retrieval system
 import { processQueryWithData, identifyRelevantFiles, getPrecompiledStarterData, isStarterQuestion } from "../../../utils/openai/retrieval";
 
@@ -296,30 +297,101 @@ export async function POST(request: NextRequest) {
       const fileSet = new Set(result.filteredData?.stats?.map(stat => stat.fileId));
       const fileCount = fileSet.size;
       const summaryText = result.filteredData?.summary || 'No summary available.';
-      logger.info(`[DATA] FilteredData: ${statCount} stats from ${fileCount} files. Summary: ${summaryText}`);
+      logger.info(`[DATA] Data files used: ${Array.from(fileSet).join(", ")}`);
+      logger.info(`[DATA] Segments selected: ${DEFAULT_SEGMENTS.join(", ")}`);
+      logger.info(`[DATA] Summary: ${summaryText}`);
 
-      // Build a data-rich prompt for the assistant
-      let statsSection = '';
-      if (statCount > 0) {
-        // Show up to 10 stats for brevity, but include count
-        const statsToShow = result.filteredData.stats.slice(0, 10);
-        statsSection = `Statistics (showing up to 10 of ${statCount}):\n` +
-          statsToShow.map(stat =>
-            `- [${stat.fileId}] ${stat.question} | ${stat.response} | ${stat.segment}: ${stat.formatted || stat.value}`
-          ).join('\n');
-        if (statCount > 10) {
-          statsSection += `\n...and ${statCount - 10} more.`;
+      // Build the STANDARD MODE JSON object for the assistant
+      const filteredStats = result.filteredData?.filteredData || [];
+
+      // Log detailed stats being sent (up to 20 for brevity) in a concise table
+      // (Removed verbose prompt and data logging to console)
+
+      // Construct a natural language prompt with the data
+      const segmentsUsed = (result.segments && Array.isArray(result.segments))
+        ? result.segments.join(", ")
+        : DEFAULT_SEGMENTS.join(", ");
+
+      // Group filteredStats by fileId, question, response
+      const groupStats = (stats: any[]) => {
+        const grouped = [];
+        const keyMap = new Map();
+        for (const stat of stats) {
+          const key = `${stat.fileId}||${stat.question}||${stat.response}`;
+          if (!keyMap.has(key)) {
+            keyMap.set(key, {
+              fileId: stat.fileId,
+              question: stat.question,
+              response: stat.response,
+              overall: null,
+              region: {},
+              age: {},
+              gender: {}
+            });
+          }
+          const entry = keyMap.get(key);
+          if (stat.segment === "overall") {
+            entry.overall = stat.percentage;
+          } else if (stat.segment.startsWith("region:")) {
+            const region = stat.segment.split(":")[1];
+            entry.region[region] = stat.percentage;
+          } else if (stat.segment.startsWith("age:")) {
+            const age = stat.segment.split(":")[1];
+            entry.age[age] = stat.percentage;
+          } else if (stat.segment.startsWith("gender:")) {
+            const gender = stat.segment.split(":")[1];
+            entry.gender[gender] = stat.percentage;
+          }
         }
-      } else {
-        statsSection = 'No statistics were extracted for this query.';
+        return Array.from(keyMap.values());
+      };
+
+      const formatGroupedStats = (grouped: any[]) => {
+        return grouped.map(entry => {
+          let lines = [];
+          lines.push(`Question: ${entry.question}`);
+          lines.push(`Response: ${entry.response}`);
+          if (entry.overall !== null) {
+            lines.push(`- overall: ${entry.overall}%`);
+          }
+          if (Object.keys(entry.region).length > 0) {
+            lines.push(`- region { ${Object.entries(entry.region).map(([k, v]) => `${k}: ${v}%`).join(", ")} }`);
+          }
+          if (Object.keys(entry.age).length > 0) {
+            lines.push(`- age { ${Object.entries(entry.age).map(([k, v]) => `${k}: ${v}%`).join(", ")} }`);
+          }
+          if (Object.keys(entry.gender).length > 0) {
+            lines.push(`- gender { ${Object.entries(entry.gender).map(([k, v]) => `${k}: ${v}%`).join(", ")} }`);
+          }
+          return lines.join("\n");
+        }).join("\n\n");
+      };
+
+      const groupedStats = groupStats(filteredStats);
+      const statsPreview = groupedStats.length > 0
+        ? formatGroupedStats(groupedStats)
+        : "No data matched for the selected segments.";
+
+      const standardModePrompt = statsPreview && statsPreview.trim().length > 0
+        ? `${originalUserContent}
+
+${statsPreview}`
+        : `${originalUserContent}
+
+No data matched for the selected segments.`;
+
+      // Write the full prompt to logs/assistant_full_prompt.txt for inspection
+      try {
+        const logsDir = path.join(process.cwd(), "logs");
+        const promptLogFile = path.join(logsDir, "assistant_full_prompt.txt");
+        await fs.promises.mkdir(logsDir, { recursive: true });
+        await fs.promises.writeFile(promptLogFile, standardModePrompt, "utf8");
+        logger.info(`[LOG] Full assistant prompt written to ${promptLogFile}`);
+      } catch (err) {
+        logger.error("Failed to write full assistant prompt to log:", err);
       }
 
-      content = `Query: ${content}
-
-Analysis Summary: ${summaryText}
-
-${statsSection}
-`;
+      content = standardModePrompt;
     } else if (!isStarterQuestion(content) && isDirectMode) {
       // For DIRECT mode, track file IDs after identifyRelevantFiles
       cachedFileIds = await getCachedFilesForThread(finalThreadId);
@@ -333,12 +405,7 @@ ${statsSection}
     }
 
     // Concise log for prompt sent to assistant
-    if (!isStarterQuestion(content)) {
-      const promptSummary = content.includes('Query:') ? content.split('Query:')[1].split('\n')[0].trim() : content.substring(0, 80);
-      logger.info(`[PROMPT] Sent to assistant: "${promptSummary}"`);
-    } else {
-      logger.info(`[PROMPT] Sent to assistant: Starter question`);
-    }
+    // (Removed prompt content logging to console)
 
     // Add the user message to the thread
     await openai.beta.threads.messages.create(finalThreadId, {
@@ -827,6 +894,32 @@ export async function PUT(request: NextRequest) {
           logger.info(`CACHE STATUS: ${result.cacheStatus}`);
           logger.info(`PROCESSING TIME: ${result.processing_time_ms}ms`);
           logger.info("================================");
+
+          // Log detailed stats being sent (up to 20 for brevity) in a concise table
+          const filteredStats = (result.filteredData?.stats || []).filter(
+            stat => DEFAULT_SEGMENTS.includes(stat.category)
+          );
+          if (filteredStats.length > 0) {
+            const maxStatsToLog = 20;
+            logger.info(`[DATA] Stats sent to assistant (showing up to ${maxStatsToLog}):`);
+            // Print header
+            logger.info(
+              `| # | fileId         | category      | segment        | value         | question`
+            );
+            logger.info(
+              `|---|---------------|--------------|---------------|--------------|---------`
+            );
+            filteredStats.slice(0, maxStatsToLog).forEach((stat, idx) => {
+              logger.info(
+                `| ${String(idx + 1).padEnd(2)}| ${String(stat.fileId).padEnd(13)} | ${String(stat.category).padEnd(12)} | ${String(stat.segment).padEnd(13)} | ${String(stat.value).padEnd(12)} | ${stat.question}`
+              );
+            });
+            if (filteredStats.length > maxStatsToLog) {
+              logger.info(`[DATA] ...and ${filteredStats.length - maxStatsToLog} more stats not shown.`);
+            }
+          } else {
+            logger.info(`[DATA] No stats matched for selected segments.`);
+          }
 
           // Submit the tool outputs back to the assistant
           try {
