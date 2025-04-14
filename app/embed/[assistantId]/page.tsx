@@ -27,7 +27,6 @@ import { parseResponse } from "../../../utils/helpers";
 import chatConfig from "../../../config/chat.config.json";
 import CollapsibleContent from "../../../components/CollapsibleContent";
 // Add the new AssistantSelector component
-import AssistantSelector from "../../../components/AssistantSelector";
 import { sendHeightToParent } from "../../../utils/iframe-resizer";
 
 // Define interface for MarkdownErrorBoundary props and state
@@ -1158,31 +1157,26 @@ ${
                 loading={loading}
               />
 
-              {/* Assistant selector directly below input with privacy message aligned */}
-              <div className="flex items-center justify-between mt-2">
-                <AssistantSelector currentAssistantId={assistantId} />
-
-                {/* Legal Text - aligned with selector */}
-                <div className="text-xs text-gray-500">
-                  By chatting, you agree to the{" "}
-                  <a
-                    href="https://www.kornferry.com/terms"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gray-900 font-medium hover:underline"
-                  >
-                    Terms of Use
-                  </a>{" "}
-                  and{" "}
-                  <a
-                    href="https://www.kornferry.com/privacy"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gray-900 font-medium hover:underline"
-                  >
-                    Global Privacy Policy
-                  </a>
-                </div>
+              {/* Legal Text - centered */}
+              <div className="text-xs text-gray-500 text-center mt-2">
+                By chatting, you agree to the{" "}
+                <a
+                  href="https://www.kornferry.com/terms"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-900 font-medium hover:underline"
+                >
+                  Terms of Use
+                </a>{" "}
+                and{" "}
+                <a
+                  href="https://www.kornferry.com/privacy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-900 font-medium hover:underline"
+                >
+                  Global Privacy Policy
+                </a>
               </div>
             </div>
           </div>

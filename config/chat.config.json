@@ -39,9 +39,8 @@
             "id": "technical-details",
             "title": "Technical Details",
             "content": [
-                "RIA analyzes survey data from 15,000 respondents across 10 international markets (US, UK, India, France, Germany, Japan, UAE, Brazil, Saudi Arabia, and Australia) to help business leaders understand workforce trends.",
-                "Behind the scenes, RIA processes structured data files containing responses across various questions, from career preferences to attitudes about AI adoption. The system includes robust testing protocols to ensure accuracy, reliability, and compliance with privacy standards before deployment on the Korn Ferry website.",
-                "The platform enables users to explore workforce insights through natural conversation rather than complex data tables, making powerful analytics accessible to business leaders."
+                "Behind the scenes, RIA processes structured data files containing responses across various questions, from career preferences to attitudes about AI adoption.",
+                "The system includes robust testing protocols to ensure accuracy, reliability, and compliance with privacy standards before deployment on the Korn Ferry website."
             ]
         },
         "importantDisclaimer": {
