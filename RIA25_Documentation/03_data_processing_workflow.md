@@ -179,14 +179,83 @@ question_1,question_2,region,age_group,gender,org_size
 3. Regenerate all JSON files
 4. Update vector database with new format
 
-## Future Enhancements
+## Smart Filtering and Segment-Aware Caching
 
-- Automated validation reporting
-- Incremental processing capabilities
-- Enhanced error recovery
-- Performance optimization for larger datasets
-- Vector database integration tooling
+After data is processed and ingested, the system applies a segment-aware smart filtering and caching pipeline to ensure that queries are answered with the most relevant demographic or categorical breakdowns.
+
+**Segment Selection Logic:**
+
+- **Starter Questions:** If the query is a recognized starter question (e.g., "SQ2"), the relevant segments are explicitly set in the corresponding starter JSON file (e.g., `"segments": ["sector"]`).
+- **All Other Queries:** For general queries, the OpenAI model is prompted (see `utils/openai/1_data_retrieval.md`) to infer the most relevant segments (e.g., "sector", "age", "region", "gender") and return them in a `"segments"` array in its JSON response.
+- **Default Fallback:** If neither the starter JSON nor OpenAI inference provides segments, the system defaults to `["country", "age", "gender"]`.
+
+**How Segments Are Used:**
+
+- The selected segments are injected into the query intent and used throughout the filtering and caching pipeline (see `utils/openai/retrieval.js`).
+- This ensures that only the relevant slices of data are retrieved, filtered, and cached, improving both performance and accuracy.
+- The cache tracks which segments have been retrieved for each file, enabling efficient follow-up queries and minimizing redundant data loading.
+
+**Rationale:**
+
+- This hybrid approach allows for per-question customization (for starters), dynamic adaptation (for general queries), and robust fallback behavior.
+- It ensures that queries like "How is the cost of living affecting different workers across industries?" automatically use the "sector" segment, while broad queries default to standard demographic breakdowns.
 
 ---
 
-_Last updated: April 13, 2025_
+## Technical Details: Thread-Level Caching and Data Payload Minimization
+
+The system implements a thread-level cache to optimize data retrieval and minimize payloads sent to the assistant. This cache tracks which datafiles and segment slices have already been sent for each thread, ensuring that only new or required data is transmitted for follow-on queries.
+
+### Caching Workflow Scenarios
+
+**1. Follow-on question (same thread), no additional data needed**
+
+- The follow-on question can be answered using datafiles and segments already cached in the thread.
+- The system recognizes that all required data is present in the cache.
+- No new datafiles or segments are loaded or sent.
+- The assistant uses the cached data to answer the question.
+
+_Result: Zero additional data payload; response is generated from the existing in-memory cache._
+
+**2. Follow-on question (same thread), additional data needed (e.g., user requests job_level breakdown)**
+
+- The follow-on question requires a segment (e.g., job_level) or datafile not previously loaded.
+- The system compares the required datafiles/segments for the new query against the thread's cache.
+- Only the missing datafiles or segment slices are loaded and sent to the assistant.
+- The cache is updated to include the new data/segments for future queries in the thread.
+
+_Result: Only the incremental data (e.g., job_level segment) is sent, minimizing payload. Future queries can use the expanded cache._
+
+**3. Follow-on, but a completely different question (same thread) requiring different datafiles**
+
+- The new question requires datafiles and/or segments not present in the thread's cache.
+- The system identifies which datafiles/segments are missing.
+- Only the new, required datafiles/segments are loaded and sent.
+- The cache is updated to include these new datafiles/segments.
+
+_Result: Payload includes only the new data needed for the new question; previously cached data remains available for further follow-ons._
+
+**4. New thread**
+
+- A new thread starts with an empty cache.
+- The system determines all datafiles and segments required for the initial question.
+- All required datafiles/segments are loaded and sent to the assistant.
+- A new cache is established for this thread.
+
+_Result: Full payload for the initial question; subsequent follow-ons in this thread benefit from caching as described above._
+
+### Summary Table
+
+| Scenario                         | Data Sent to Assistant          | Cache Update          |
+| -------------------------------- | ------------------------------- | --------------------- |
+| 1. Follow-on, no new data        | None (all from cache)           | No change             |
+| 2. Follow-on, new segment/data   | Only missing data/segments      | Add new data/segments |
+| 3. Follow-on, different question | Only new required data/segments | Add new data/segments |
+| 4. New thread                    | All required data/segments      | New cache created     |
+
+**Key Point:**  
+The system always checks the thread's cache before sending data, ensuring that only the minimum necessary payload is transmitted to the assistant, optimizing both performance and cost.
+
+---
+
+_Last updated: April 14, 2025_

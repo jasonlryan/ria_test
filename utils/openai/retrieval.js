@@ -803,6 +803,10 @@ export async function processQueryWithData(
   // 1a. Starter question route: if query is a starter question code, load precompiled data and filter it
   if (isStarterQuestion(query)) {
     const starterData = getPrecompiledStarterData(query.trim());
+    // If the starterData has a "segments" field, inject it into queryIntent
+    if (starterData && Array.isArray(starterData.segments)) {
+      queryIntent.segments = starterData.segments;
+    }
     let filteredData;
     if (queryIntent.specificity === "specific") {
       filteredData = getSpecificData(starterData, queryIntent);
@@ -824,6 +828,20 @@ export async function processQueryWithData(
   const fileIds = fileIdResult.file_ids || [];
   const matchedTopics = fileIdResult.matched_topics || [];
   const explanation = fileIdResult.explanation || "";
+
+  // Set segments from LLM response if present
+  if (fileIdResult.segments && Array.isArray(fileIdResult.segments)) {
+    queryIntent.segments = fileIdResult.segments;
+  }
+
+  // Fallback to default segments if none specified
+  if (
+    !queryIntent.segments ||
+    !Array.isArray(queryIntent.segments) ||
+    queryIntent.segments.length === 0
+  ) {
+    queryIntent.segments = ["country", "age", "gender"];
+  }
 
   // 3. Load only the relevant files
   const fs = require("fs");

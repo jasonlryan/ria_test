@@ -7,6 +7,7 @@
     "lowest_satisfaction_sectors": ["education", "healthcare", "retail"]
   },
   "matched_topics": ["Pay_and_Reward"],
+  "segments": ["sector"],
   "data_files": [
     "2025_11.json"
   ],

@@ -47,6 +47,31 @@ const dataRetrievalResponse = await fetch("/api/query", {
 1. Checks if this is using cached data from a thread
 2. If not cached or needs new data, proceeds with retrieval
 
+---
+
+#### Smart Filtering and Segment-Aware Caching
+
+The system uses a segment-aware smart filtering pipeline to ensure that data is filtered and cached according to the most relevant demographic or categorical segments for each query.
+
+**Segment Selection Logic:**
+
+- **Starter Questions:** If the query is a recognized starter question (e.g., "SQ2"), the relevant segments are explicitly set in the corresponding starter JSON file (e.g., `"segments": ["sector"]`).
+- **All Other Queries:** For general queries, the OpenAI model is prompted (see `1_data_retrieval.md`) to infer the most relevant segments (e.g., "sector", "age", "region", "gender") and return them in a `"segments"` array in its JSON response.
+- **Default Fallback:** If neither the starter JSON nor OpenAI inference provides segments, the system defaults to `["country", "age", "gender"]`.
+
+**How Segments Are Used:**
+
+- The selected segments are injected into the query intent and used throughout the filtering and caching pipeline.
+- This ensures that only the relevant slices of data are retrieved, filtered, and cached, improving both performance and accuracy.
+- The cache tracks which segments have been retrieved for each file, enabling efficient follow-up queries and minimizing redundant data loading.
+
+**Rationale:**
+
+- This hybrid approach allows for per-question customization (for starters), dynamic adaptation (for general queries), and robust fallback behavior.
+- It ensures that queries like "How is the cost of living affecting different workers across industries?" automatically use the "sector" segment, while broad queries default to standard demographic breakdowns.
+
+---
+
 ### Step 2.4: File Identification
 
 **File**: `utils/openai/retrieval.js`  

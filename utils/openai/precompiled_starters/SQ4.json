@@ -3,6 +3,7 @@
   "question": "What did workers tell us about their preference for flexibility?",
   "summary": "Workers in 2025 continue to express a strong preference for flexibility in their work arrangements. Survey data shows that flexibility is a top priority for many employees, influencing both job satisfaction and retention. The most relevant data can be found in files 2025_6_6, 2025_16, and 2025_7_8, which cover flexible work arrangements, importance of flexibility, and related factors. Additional insights on location preferences are available in 2025_4, and wellbeing-related flexibility can be referenced in 2025_6_3 and 2025_9_3.",
   "stats": {},
+  "segments": ["country", "sector", "job_level"],
   "matched_topics": [
     "Work_Life_Flexibility",
     "Current_and_Preferred",

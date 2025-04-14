@@ -11,6 +11,7 @@
     "Organizational_Adaptation",
     "Leadership_Confidence"
   ],
+  "segments": ["country"],
   "data_files": [
     "2025_5_1.json",
     "2025_5_2.json",
