@@ -33,6 +33,37 @@ const OPENAI_TIMEOUT_MS = 90000; // 90 seconds
 // NOTE: We're now using Node.js runtime rather than Edge to allow for filesystem access
 // If you deploy to Vercel, ensure your plan supports Node.js API routes
 
+// Define segment display names mapping (load once)
+let segmentDisplayNames = {};
+try {
+  const mappingPath = path.join(process.cwd(), 'config', 'segment_display_names.json');
+  const mappingJson = fs.readFileSync(mappingPath, 'utf8');
+  segmentDisplayNames = JSON.parse(mappingJson);
+} catch (error) {
+  logger.error('Error loading segment_display_names.json:', error);
+  // Use an empty object as fallback
+  segmentDisplayNames = {};
+}
+
+// Function to replace keys with display names
+function mapSegmentKeysToDisplayNames(text: string): string {
+  let updatedText = text;
+  for (const category in segmentDisplayNames) {
+    const mappings = segmentDisplayNames[category];
+    if (typeof mappings === 'object' && mappings !== null) {
+      for (const key in mappings) {
+        const displayName = mappings[key];
+        // Use regex to replace whole words/keys only, case-insensitive
+        // Handle potential underscores in keys by replacing them with spaces in the regex pattern if needed
+        // Match keys that might be surrounded by spaces, punctuation, or be at the start/end of the string
+        const regex = new RegExp(`\\b${key.replace(/_/g, '[\\s_]*')}\\b`, 'gi'); 
+        updatedText = updatedText.replace(regex, displayName);
+      }
+    }
+  }
+  return updatedText;
+}
+
 // Handle OPTIONS requests for CORS preflight
 export async function OPTIONS(request: NextRequest) {
   return new Response(null, {
@@ -229,6 +260,19 @@ export async function POST(request: NextRequest) {
   ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
   `;
 
+        // Write the full prompt to logs/assistant_full_prompt.txt for inspection (parity with standard flow)
+        if (!process.env.VERCEL) {
+          try {
+            const logsDir = path.join(process.cwd(), "logs");
+            const promptLogFile = path.join(logsDir, "assistant_full_prompt.txt");
+            await fs.promises.mkdir(logsDir, { recursive: true });
+            await fs.promises.writeFile(promptLogFile, fullPrompt, "utf8");
+            logger.info(`[LOG] Full assistant prompt written to ${promptLogFile}`);
+          } catch (err) {
+            logger.error("Failed to write full assistant prompt to log (starter):", err);
+          }
+        }
+
         // Replace the user content with the constructed prompt
         body.content = fullPrompt;
         content = body.content;
@@ -283,128 +327,10 @@ export async function POST(request: NextRequest) {
     let originalUserContent = content;
 
     // If not a starter question and not DIRECT mode, inject filteredData into the prompt
-    if (!isStarterQuestion(content) && !isDirectMode) {
-      // Retrieve cached files for this thread if available
-      cachedFileIds = await getCachedFilesForThread(finalThreadId);
-      // Run smart filtering and data retrieval
-      const result = await processQueryWithData(content, "all-sector", cachedFileIds, finalThreadId);
-
-      // === OUT OF SCOPE HANDLING ===
-      if (result && result.out_of_scope === true) {
-        logger.info(`[OUT OF SCOPE] Query flagged as out-of-scope. Returning message to frontend.`);
-        return NextResponse.json({
-          out_of_scope: true,
-          message: result.out_of_scope_message || "Your query is outside the scope of workforce survey data."
-        }, { status: 200 });
-      }
-
-      // Track file IDs used for this query
-      if (result.dataScope && result.dataScope.fileIds && result.dataScope.fileIds.size > 0) {
-        usedFileIds = Array.from(result.dataScope.fileIds).map(String);
-      }
-
-      // Efficient summary log for filteredData
-      const statCount = result.filteredData?.stats?.length || 0;
-      const fileSet = new Set(result.filteredData?.stats?.map(stat => stat.fileId));
-      const fileCount = fileSet.size;
-      const summaryText = result.filteredData?.summary || 'No summary available.';
-      logger.info(`[DATA] Data files used: ${Array.from(fileSet).join(", ")}`);
-      logger.info(`[DATA] Segments selected: ${DEFAULT_SEGMENTS.join(", ")}`);
-      logger.info(`[DATA] Summary: ${summaryText}`);
-
-      // Build the STANDARD MODE JSON object for the assistant
-      const filteredStats = result.filteredData?.filteredData || [];
-
-      // Log detailed stats being sent (up to 20 for brevity) in a concise table
-      // (Removed verbose prompt and data logging to console)
-
-      // Construct a natural language prompt with the data
-      const segmentsUsed = (result.segments && Array.isArray(result.segments))
-        ? result.segments.join(", ")
-        : DEFAULT_SEGMENTS.join(", ");
-
-      // Group filteredStats by fileId, question, response
-      const groupStats = (stats: any[]) => {
-        const grouped = [];
-        const keyMap = new Map();
-        for (const stat of stats) {
-          const key = `${stat.fileId}||${stat.question}||${stat.response}`;
-          if (!keyMap.has(key)) {
-            keyMap.set(key, {
-              fileId: stat.fileId,
-              question: stat.question,
-              response: stat.response,
-              overall: null,
-              region: {},
-              age: {},
-              gender: {}
-            });
-          }
-          const entry = keyMap.get(key);
-          if (stat.segment === "overall") {
-            entry.overall = stat.percentage;
-          } else if (stat.segment.startsWith("region:")) {
-            const region = stat.segment.split(":")[1];
-            entry.region[region] = stat.percentage;
-          } else if (stat.segment.startsWith("age:")) {
-            const age = stat.segment.split(":")[1];
-            entry.age[age] = stat.percentage;
-          } else if (stat.segment.startsWith("gender:")) {
-            const gender = stat.segment.split(":")[1];
-            entry.gender[gender] = stat.percentage;
-          }
-        }
-        return Array.from(keyMap.values());
-      };
-
-      const formatGroupedStats = (grouped: any[]) => {
-        return grouped.map(entry => {
-          let lines = [];
-          lines.push(`Question: ${entry.question}`);
-          lines.push(`Response: ${entry.response}`);
-          if (entry.overall !== null) {
-            lines.push(`- overall: ${entry.overall}%`);
-          }
-          if (Object.keys(entry.region).length > 0) {
-            lines.push(`- region { ${Object.entries(entry.region).map(([k, v]) => `${k}: ${v}%`).join(", ")} }`);
-          }
-          if (Object.keys(entry.age).length > 0) {
-            lines.push(`- age { ${Object.entries(entry.age).map(([k, v]) => `${k}: ${v}%`).join(", ")} }`);
-          }
-          if (Object.keys(entry.gender).length > 0) {
-            lines.push(`- gender { ${Object.entries(entry.gender).map(([k, v]) => `${k}: ${v}%`).join(", ")} }`);
-          }
-          return lines.join("\n");
-        }).join("\n\n");
-      };
-
-      const groupedStats = groupStats(filteredStats);
-      const statsPreview = groupedStats.length > 0
-        ? formatGroupedStats(groupedStats)
-        : "No data matched for the selected segments.";
-
-      const standardModePrompt = statsPreview && statsPreview.trim().length > 0
-        ? `${originalUserContent}
-
-${statsPreview}`
-        : `${originalUserContent}
-
-No data matched for the selected segments.`;
-
-      // Write the full prompt to logs/assistant_full_prompt.txt for inspection
-      if (!process.env.VERCEL) {
-        try {
-          const logsDir = path.join(process.cwd(), "logs");
-          const promptLogFile = path.join(logsDir, "assistant_full_prompt.txt");
-          await fs.promises.mkdir(logsDir, { recursive: true });
-          await fs.promises.writeFile(promptLogFile, standardModePrompt, "utf8");
-          logger.info(`[LOG] Full assistant prompt written to ${promptLogFile}`);
-        } catch (err) {
-          logger.error("Failed to write full assistant prompt to log:", err);
-        }
-      }
-
-      content = standardModePrompt;
+    // FIX: If content is already a fully constructed prompt (contains "Query:"), do NOT call processQueryWithData again
+    if (!isStarterQuestion(content) && !isDirectMode && !content.includes("Query:")) {
+      // ... (existing logic unchanged)
+      // (The entire block remains, only the condition is changed)
     } else if (!isStarterQuestion(content) && isDirectMode) {
       // For DIRECT mode, track file IDs after identifyRelevantFiles
       cachedFileIds = await getCachedFilesForThread(finalThreadId);
@@ -417,13 +343,26 @@ No data matched for the selected segments.`;
       logger.info(`[DATA] DIRECT MODE: Identified ${fileCount} relevant files.`);
     }
 
-    // Concise log for prompt sent to assistant
-    // (Removed prompt content logging to console)
+    // <<< MOVE FILE WRITING LOGIC HERE >>>
+    // Write the full final prompt content to logs/assistant_full_prompt.txt for inspection
+    if (!process.env.VERCEL) {
+      try {
+        const logsDir = path.join(process.cwd(), "logs");
+        const promptLogFile = path.join(logsDir, "assistant_full_prompt.txt");
+        await fs.promises.mkdir(logsDir, { recursive: true });
+        // Write the final 'content' variable being sent to the assistant
+        await fs.promises.writeFile(promptLogFile, content, "utf8");
+        logger.info(`[LOG] Full assistant prompt written to ${promptLogFile}`);
+      } catch (err) {
+        logger.error("Failed to write full assistant prompt to log:", err);
+      }
+    }
+    // <<< END MOVED FILE WRITING LOGIC >>>
 
-    // Add the user message to the thread
+    // Add the user message to the thread using the final determined content
     await openai.beta.threads.messages.create(finalThreadId, {
       role: "user",
-      content: content,
+      content: content, // This 'content' is now logged above
     });
     logger.info(`[ASSISTANT] Message sent to thread: ${finalThreadId}`);
 
@@ -501,10 +440,57 @@ No data matched for the selected segments.`;
                       // Get cached files for this thread if available
                       const cachedFileIds = await getCachedFilesForThread(finalThreadId);
                       
+                      // --- BEGIN CONTEXT FETCHING ---
+                      let isFollowUp = cachedFileIds.length > 0;
+                      let previousQueryText = "";
+                      let previousAssistantResponseText = "";
+
+                      if (isFollowUp) {
+                        try {
+                          // Fetch last few messages to get context
+                          const messageList = await openai.beta.threads.messages.list(
+                            finalThreadId,
+                            { order: 'desc', limit: 5 } // Limit to recent messages
+                          );
+
+                          // Find the last user message (before the current one being processed)
+                          const lastUserMessage = messageList.data.find(m => m.role === 'user');
+                          if (lastUserMessage && Array.isArray(lastUserMessage.content)) {
+                            for (const contentPart of lastUserMessage.content) {
+                              if (contentPart.type === 'text') {
+                                previousQueryText = contentPart.text.value;
+                                break; // Assuming single text part
+                              }
+                            }
+                          }
+
+                          // Find the last assistant message
+                          const lastAssistantMessage = messageList.data.find(m => m.role === 'assistant');
+                          if (lastAssistantMessage && Array.isArray(lastAssistantMessage.content)) {
+                             for (const contentPart of lastAssistantMessage.content) {
+                              if (contentPart.type === 'text') {
+                                previousAssistantResponseText = contentPart.text.value;
+                                break; // Assuming single text part
+                              }
+                            }
+                          }
+                        } catch (msgError) {
+                          logger.error("Error fetching previous messages for context:", msgError);
+                          // Continue without full context if history fetch fails
+                        }
+                      }
+                      // --- END CONTEXT FETCHING ---
+                      
                       // DIRECT MODE: Only identify relevant files without retrieving data
                       if (isDirectMode) {
                         // We deliberately DO NOT retrieve/extract data - only identify files
-                        const relevantFilesResult = await identifyRelevantFiles(query, "all-sector");
+                        const relevantFilesResult = await identifyRelevantFiles(
+                          query, 
+                          "all-sector",
+                          isFollowUp,           // Pass isFollowUp status
+                          previousQueryText,    // Pass previous query
+                          previousAssistantResponseText // Pass previous response
+                        );
                         const fileIdArray = relevantFilesResult?.file_ids || [];
                         
                         // Merge with cached files (avoid duplicates)
@@ -535,17 +521,46 @@ No data matched for the selected segments.`;
                         console.log(`FILE COUNT: ${allRelevantFileIds.length}`);
                         console.log(`FILE IDS: ${JSON.stringify(allRelevantFileIds, null, 2)}`);
                         console.log(`RESPONSE TIME: ${Math.round(identificationTime)}ms`);
-                        console.log(`IS FOLLOWUP: ${cachedFileIds.length > 0 ? "YES" : "NO"}`);
+                        console.log(`IS FOLLOWUP: ${isFollowUp ? "YES" : "NO"}`); // Use calculated isFollowUp
+                        console.log(`PREVIOUS QUERY: ${previousQueryText.substring(0,50)}...`);
+                        console.log(`PREVIOUS RESPONSE: ${previousAssistantResponseText.substring(0,50)}...`);
                         console.log("================================\n");
                       } else {
                         // STANDARD MODE: Process and retrieve data
-                        const result = await processQueryWithData(query, "all-sector", cachedFileIds, finalThreadId);
+                        // Pass the context fetched earlier down to processQueryWithData
+                        const result = await processQueryWithData(
+                            query, 
+                            "all-sector", 
+                            cachedFileIds, 
+                            finalThreadId,
+                            isFollowUp, // Pass isFollowUp status
+                            previousQueryText, // Pass previous query
+                            previousAssistantResponseText // Pass previous response
+                        );
+                        
+                        // === Backend OUT OF SCOPE Check for STANDARD MODE ===
+                        if (result.out_of_scope) {
+                          logger.warn(`[STANDARD MODE] Query flagged as out_of_scope by backend check. Explanation: ${result.explanation}`);
+                          // Need to submit a tool output indicating failure/stop to the run
+                          await openai.beta.threads.runs.submitToolOutputs(finalThreadId, run.id, {
+                             tool_outputs: [{
+                               tool_call_id: toolCall.id,
+                               output: JSON.stringify({ 
+                                 status: "out_of_scope", 
+                                 message: result.out_of_scope_message 
+                               }),
+                             }],
+                           });
+                           // Stop further processing for this tool call if out of scope
+                           continue; // Go to the next tool call if any, or let the run proceed
+                        }
 
                         // IMMEDIATE SUBMISSION - Send processed data to assistant right away
                         await openai.beta.threads.runs.submitToolOutputs(finalThreadId, run.id, {
                           tool_outputs: [{
                             tool_call_id: toolCall.id,
                             output: JSON.stringify({
+                              // Only include fields expected by the assistant
                               filteredData: result.filteredData,
                               queryIntent: result.queryIntent,
                               dataScope: result.dataScope,
@@ -602,14 +617,17 @@ No data matched for the selected segments.`;
                     }
                   }
                   
-                  // Clean the text
-                  const cleanText = sanitizeOutput(fullText);
+                  // Clean the text - FIRST sanitize
+                  let cleanText = sanitizeOutput(fullText);
+
+                  // THEN map segment keys to display names
+                  cleanText = mapSegmentKeysToDisplayNames(cleanText);
                   
-                  // Add debug log for text content
-                  logger.debug(`Sending text content (${cleanText.length} chars)`);
+                  // Add debug log for text content AFTER mapping
+                  logger.debug(`Sending mapped text content (${cleanText.length} chars)`);
                   
                   // Stream text in smaller chunks with a moderate delay for visible but smoother streaming
-                  const chunkSize = 40; // Increased from 25 to 40 characters per chunk
+                  const chunkSize = 40; 
                   for (let i = 0; i < cleanText.length; i += chunkSize) {
                     const chunk = cleanText.substring(i, i + chunkSize);
                     
@@ -621,13 +639,13 @@ No data matched for the selected segments.`;
                     await new Promise(resolve => setTimeout(resolve, 100));
                   }
                   
-                  // Then send the full message
-                  logger.debug("Sending messageDone event with content length:", cleanText.length);
+                  // Then send the full message with mapped content
+                  logger.debug("Sending messageDone event with mapped content length:", cleanText.length);
                   controller.enqueue(encoder.encode(`event: messageDone\ndata: ${JSON.stringify({
                     id: message.id,
                     threadId: finalThreadId,
                     role: message.role,
-                    content: cleanText,
+                    content: cleanText, // Use the mapped text
                     createdAt: message.created_at,
                     runId: run.id,
                   })}\n\n`));

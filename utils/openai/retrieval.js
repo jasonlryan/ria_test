@@ -134,14 +134,25 @@ function generateCacheKey(query) {
  * Identify relevant data files based on a user query
  * @param {string} query - The user's query
  * @param {string} context - The context for filtering data
+ * @param {boolean} isFollowUp - Whether the query is a follow-up
+ * @param {string} previousQuery - The previous query
+ * @param {string} previousAssistantResponse - The previous assistant response
  * @returns {Promise<{file_ids: string[], matched_topics: string[], explanation: string}>} - The identified file IDs and explanation
  */
-export async function identifyRelevantFiles(query, context) {
+export async function identifyRelevantFiles(
+  query,
+  context,
+  isFollowUp = false,
+  previousQuery = "",
+  previousAssistantResponse = ""
+) {
   try {
     // No more keyword checks - rely purely on semantic analysis
 
-    // Check cache first
-    const cacheKey = generateCacheKey(query);
+    // Check cache first (Cache key should ideally include context for follow-ups)
+    const cacheKey = generateCacheKey(
+      query + (isFollowUp ? `_followup_${previousQuery.substring(0, 50)}` : "")
+    );
     if (queryCache.has(cacheKey)) {
       if (process.env.DEBUG) {
         logger.debug("Using cached query results");
@@ -187,8 +198,11 @@ export async function identifyRelevantFiles(query, context) {
       "You analyze workforce survey queries to determine relevant data files. Be precise in your JSON responses.";
     let userPromptTemplate = loadPromptFromFile("1_data_retrieval");
 
-    // Replace template variables
+    // Replace template variables, including new context placeholders
     const userPrompt = userPromptTemplate
+      .replace("{{IS_FOLLOWUP}}", String(isFollowUp))
+      .replace("{{PREVIOUS_QUERY}}", previousQuery)
+      .replace("{{PREVIOUS_ASSISTANT_RESPONSE}}", previousAssistantResponse)
       .replace("{{QUERY}}", query)
       .replace("{{MAPPING}}", JSON.stringify(simplifiedMapping, null, 2));
 
@@ -232,6 +246,18 @@ export async function identifyRelevantFiles(query, context) {
 
       if (!result.explanation) {
         result.explanation = "No explanation provided";
+      }
+
+      // ENFORCE: If isFollowUp is true, forcibly set out_of_scope to false
+      if (isFollowUp === true || isFollowUp === "true") {
+        result.out_of_scope = false;
+        // Optionally, clear out_of_scope_message if present
+        if ("out_of_scope_message" in result) {
+          result.out_of_scope_message = "";
+        }
+        // Optionally, update explanation
+        result.explanation +=
+          " (out_of_scope forcibly set to false for follow-up)";
       }
 
       // Cache the result
@@ -783,9 +809,19 @@ export async function processQueryWithData(
   query,
   context,
   cachedFileIds = [],
-  threadId = "default"
+  threadId = "default",
+  // Add parameters to receive context from caller
+  isFollowUpContext = false,
+  previousQueryContext = "",
+  previousAssistantResponseContext = ""
 ) {
   const startTime = performance.now();
+
+  // DIAGNOSTIC LOGGING: Log the received query and starter check
+  logger.info(`[processQueryWithData] Received query: "${query}"`);
+  logger.info(
+    `[processQueryWithData] isStarterQuestion: ${isStarterQuestion(query)}`
+  );
 
   // Early return for empty queries
   if (!query || query.trim().length === 0) {
@@ -800,20 +836,150 @@ export async function processQueryWithData(
     };
   }
 
-  // 1. Use OpenAI to identify relevant files (semantic mapping)
-  const fileIdResult = await identifyRelevantFiles(query, context);
+  // === STARTER QUESTION HANDLING ===
+  if (isStarterQuestion(query)) {
+    // Refactored per starter_question_plan.md
+    // 1. Load the starter data
+    const starterData = getPrecompiledStarterData(query);
+    if (!starterData) {
+      return {
+        error: `Starter question data not found for code: ${query}`,
+        status: "error_starter_not_found",
+        processing_time_ms: Math.round(performance.now() - startTime),
+      };
+    }
 
-  // === OUT OF SCOPE HANDLING ===
-  if (fileIdResult && fileIdResult.out_of_scope === true) {
+    // 2. Validate required fields
+    if (
+      !starterData.data_files ||
+      !Array.isArray(starterData.data_files) ||
+      !starterData.segments ||
+      !Array.isArray(starterData.segments) ||
+      !starterData.question
+    ) {
+      return {
+        error: `Starter data for ${query} is missing required fields (data_files, segments, question)`,
+        status: "error_starter_invalid",
+        processing_time_ms: Math.round(performance.now() - startTime),
+      };
+    }
+
+    // 3. Extract fields
+    const fileIds = starterData.data_files;
+    const segments = starterData.segments;
+    const naturalLanguageQuery = starterData.question;
+    const matchedTopics = starterData.matched_topics || [];
+
+    // 4. Bypass LLM: do NOT call identifyRelevantFiles
+    // 5. Load files based on fileIds
+    const fs = require("fs");
+    const path = require("path");
+    const dataDir = path.join(process.cwd(), "scripts", "output", "split_data");
+    let files = [];
+    for (const fileId of fileIds) {
+      const fileName = fileId.endsWith(".json") ? fileId : fileId + ".json";
+      const filePath = path.join(dataDir, fileName);
+      try {
+        if (!fs.existsSync(filePath)) {
+          logger.error(`File does not exist: ${filePath}`);
+          continue;
+        }
+        const fileContent = fs.readFileSync(filePath, "utf8");
+        let jsonData;
+        try {
+          jsonData = JSON.parse(fileContent);
+        } catch (parseErr) {
+          logger.error(`JSON parse error for file ${filePath}:`, parseErr);
+          continue;
+        }
+        files.push({
+          id: fileId.replace(/\.json$/, ""),
+          data: jsonData,
+        });
+      } catch (e) {
+        logger.error(`Error loading file ${filePath}:`, e);
+        continue;
+      }
+    }
+    files = files.map((file) => {
+      if (Array.isArray(file.data)) {
+        return { ...file, data: { responses: file.data } };
+      }
+      return file;
+    });
+
+    // 6. Filter data using segments from starter
+    const loadedData = { files };
+    let filteredData = getSpecificData(loadedData, { demographics: segments });
+
+    // 7. Format statsPreview for the assistant prompt
+    function formatStats(stats) {
+      if (!Array.isArray(stats) || stats.length === 0)
+        return "No data available.";
+      let lines = [];
+      for (const stat of stats) {
+        lines.push(
+          `Segment: ${stat.category} | Value: ${stat.value} | Question: ${stat.question} | Response: ${stat.response} | Stat: ${stat.stat} (${stat.formatted})`
+        );
+      }
+      return lines.join("\n");
+    }
+    const statsPreview = formatStats(filteredData.filteredData);
+
+    const endTime = performance.now();
+
     return {
-      out_of_scope: true,
-      out_of_scope_message:
-        fileIdResult.out_of_scope_message ||
-        "Your query is outside the scope of workforce survey data.",
-      explanation: fileIdResult.explanation || "",
+      analysis: "Starter question direct data retrieval",
+      filteredData,
+      segments,
+      dataScope: { segments: new Set(segments) },
+      fileIds,
+      matchedTopics,
+      naturalLanguageQuery,
+      statsPreview,
+      data_points:
+        filteredData && Array.isArray(filteredData.filteredData)
+          ? filteredData.filteredData.length
+          : 0,
+      stats:
+        filteredData && Array.isArray(filteredData.filteredData)
+          ? filteredData.filteredData
+          : [],
+      processing_time_ms: Math.round(endTime - startTime),
     };
   }
 
+  // === NORMAL QUESTION HANDLING ===
+
+  // 1. Use OpenAI to identify relevant files (semantic mapping)
+  // Pass the received context down to identifyRelevantFiles
+  const fileIdResult = await identifyRelevantFiles(
+    query,
+    context,
+    isFollowUpContext,
+    previousQueryContext,
+    previousAssistantResponseContext
+  );
+
+  // === OUT OF SCOPE HANDLING (Revised) ===
+  if (fileIdResult && fileIdResult.out_of_scope === true) {
+    // The prompt no longer includes the message, so the backend handles it.
+    // The 'explanation' field from fileIdResult might be useful for logging.
+    logger.warn(
+      `[processQueryWithData] Query flagged as out_of_scope by initial check. Explanation: ${fileIdResult.explanation}`
+    );
+    return {
+      out_of_scope: true,
+      // Standard rejection message generated here by the backend
+      out_of_scope_message:
+        "I'm a workforce insights specialist. Your question is outside my scope. I can help with any queries you have related to the workforce.",
+      explanation:
+        fileIdResult.explanation ||
+        "Query determined out of scope by initial analysis.", // Keep explanation for internal use
+    };
+  }
+
+  // If not out_of_scope, proceed with loading files and filtering...
   const fileIds = fileIdResult.file_ids || [];
   const matchedTopics = fileIdResult.matched_topics || [];
   const explanation = fileIdResult.explanation || "";
@@ -833,9 +999,6 @@ export async function processQueryWithData(
       segments
     );
   }
-
-  // LOGGING: Output what files, topics, and segments are being retrieved
-  // (Removed unconditional console.log statements for cleaner output)
 
   // 2. Load only the relevant files
   const fs = require("fs");

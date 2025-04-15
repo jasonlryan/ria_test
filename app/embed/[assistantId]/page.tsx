@@ -296,26 +296,18 @@ function Embed({ params: { assistantId } }) {
 
     if (starterCode) {
       starterTriggeredRef.current = true;
-      // Dynamically import the corresponding starter JSON
-      import(`../../../utils/openai/precompiled_starters/${starterCode}.json`)
-        .then((module) => {
-          const starter = module.default || module;
-          if (starter && starter.question) {
-            sendPrompt(threadId, starter.question);
-          } else {
-            console.warn(
-              `Starter file for code ${starterCode} did not contain a 'question' field.`
-            );
-          }
-        })
-        .catch((err) => {
-          console.error(
-            `Could not load starter question for code ${starterCode}:`,
-            err
-          );
-        });
+      console.log(
+        "[STARTER EFFECT] Triggering sendPrompt with starterCode:",
+        starterCode
+      );
+      // Instead of loading the JSON and sending the question, send the starter code directly to the backend
+      sendPrompt(threadId, starterCode);
     } else if (questionText) {
       starterTriggeredRef.current = true;
+      console.log(
+        "[STARTER EFFECT] Triggering sendPrompt with questionText:",
+        questionText
+      );
       sendPrompt(threadId, questionText);
     }
     // Only run on mount
@@ -438,16 +430,8 @@ function Embed({ params: { assistantId } }) {
     messageId.current += 1;
     const msgId = messageId.current;
 
-    // Add user message to chat
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      {
-        id: msgId.toString(),
-        role: "user",
-        content: questionText,
-        createdAt: new Date(),
-      },
-    ]);
+    // We'll determine the user message content after the /api/query call
+    let userMessageContent = questionText;
 
     try {
       console.log("Processing query:", questionText);
@@ -516,6 +500,25 @@ function Embed({ params: { assistantId } }) {
         files: dataResult.file_ids?.length || 0,
         error: dataResult.error,
       });
+
+      // If the backend returned a naturalLanguageQuery (e.g., for starter questions), use that as the user message
+      if (dataResult.naturalLanguageQuery) {
+        userMessageContent = dataResult.naturalLanguageQuery;
+      }
+
+      // Add user message to chat (after knowing the real content)
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          id: msgId.toString(),
+          role: "user",
+          content: userMessageContent,
+          createdAt: new Date(),
+        },
+      ]);
+
+      // For starter questions, update the questionText variable to match the backend's question for the assistant prompt
+      let assistantPromptQuestion = userMessageContent;
 
       // === PATCH: Intercept out-of-scope queries ===
       if (dataResult.out_of_scope) {
@@ -595,8 +598,19 @@ function Embed({ params: { assistantId } }) {
       console.log("Starting stage 2: Generating insights from retrieved data");
 
       // Prepare content for the assistant with safety checks
-      const assistantPrompt = `
-Query: ${questionText}
+      // Use the real question from the backend if available (for starter questions)
+      // If statsPreview is present (starter question), include it in the prompt
+      const assistantPrompt = dataResult?.statsPreview
+        ? `
+Query: ${assistantPromptQuestion}
+
+Analysis Summary: ${dataResult?.analysis || "No analysis available"}
+
+Sector Data:
+${dataResult.statsPreview}
+`
+        : `
+Query: ${assistantPromptQuestion}
 
 Analysis Summary: ${dataResult?.analysis || "No analysis available"}
 

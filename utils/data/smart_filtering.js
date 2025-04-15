@@ -164,6 +164,9 @@ function getSpecificData(retrievedData, { demographics = [] }) {
     segmentsToUse = ["overall", ...segmentsToUse];
   }
 
+  // DIAGNOSTIC LOG: Print segmentsToUse
+  console.log("[getSpecificData] segmentsToUse:", segmentsToUse);
+
   const filteredStats = [];
 
   for (const file of retrievedData.files) {
@@ -217,6 +220,12 @@ function getSpecificData(retrievedData, { demographics = [] }) {
       }
     }
   }
+
+  // DIAGNOSTIC LOG: Count sector stats
+  const sectorStatsCount = filteredStats.filter(
+    (stat) => stat.category === "sector" || stat.segment === "sector"
+  ).length;
+  console.log("[getSpecificData] sectorStatsCount:", sectorStatsCount);
 
   return { filteredData: filteredStats };
 }
