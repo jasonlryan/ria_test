@@ -12,10 +12,8 @@ import logger from "../../../utils/logger";
 import { DEFAULT_SEGMENTS } from "../../../utils/data/segment_keys";
 // Add import for retrieval system
 import { processQueryWithData, identifyRelevantFiles, getPrecompiledStarterData, isStarterQuestion } from "../../../utils/openai/retrieval";
-
-// Add import for cache utilities
 import { getCachedFilesForThread, updateThreadCache } from "../../../utils/cache-utils";
-
+import { buildPromptWithFilteredData } from "../../../utils/openai/promptUtils";
 
 // Centralized mode check
 const isDirectMode = process.env.FILE_ACCESS_MODE === 'direct';
@@ -162,7 +160,6 @@ async function logStarterQuestionInvocation({
     logger.error('Error writing starter question invocation log:', err);
   }
 }
-
 // post a new message and stream OpenAI Assistant response
 export async function POST(request: NextRequest) {
   try {
@@ -202,50 +199,50 @@ export async function POST(request: NextRequest) {
       const starterCode = typeof content === 'string' ? content.trim().toUpperCase() : content;
       logger.info(`[STARTER DEBUG] Using starter code: ${starterCode}`);
       
-      const precompiled = getPrecompiledStarterData(starterCode);
-      if (precompiled) {
-        // Improved logging for starter questions
-        logger.info(`[QUERY API] 🚀 Starter question detected: ${starterCode} (using precompiled data from utils/openai/precompiled_starters/${starterCode}.json)`);
-        logger.info(`[QUERY API] 📦 Sending precompiled data files: ${starterCode}.json`);
-        logger.info(`[QUERY API] 🔕 Retrieval step bypassed for starter question.`);
+    const precompiled = await getPrecompiledStarterData(starterCode);
+    if (precompiled) {
+      // Improved logging for starter questions
+      logger.info(`[QUERY API] 🚀 Starter question detected: ${starterCode} (using precompiled data from utils/openai/precompiled_starters/${starterCode}.json)`);
+      logger.info(`[QUERY API] 📦 Sending precompiled data files: ${starterCode}.json`);
+      logger.info(`[QUERY API] 🔕 Retrieval step bypassed for starter question.`);
 
-        // Call the logging function (fire and forget)
-        logStarterQuestionInvocation({
-          starterQuestionCode: precompiled.starterQuestionCode || starterCode,
-          question: precompiled.question,
-          assistantId,
-          threadId,
-          dataFiles: precompiled.data_files,
-          stats: precompiled.stats
-        });
+      // Call the logging function (fire and forget)
+      logStarterQuestionInvocation({
+        starterQuestionCode: precompiled.starterQuestionCode || starterCode,
+        question: precompiled.question,
+        assistantId,
+        threadId,
+        dataFiles: precompiled.data_files,
+        stats: precompiled.stats
+      });
 
-        // Load the starter prompt template
-        const starterPromptPath = path.join(process.cwd(), "prompts", "starter_prompt_template.md");
-        let starterPromptTemplate = "";
-        try {
-          starterPromptTemplate = await fs.promises.readFile(starterPromptPath, "utf8");
-        } catch (err) {
-          logger.error("Error loading starter prompt template:", err);
-          starterPromptTemplate = "You are answering a precompiled starter question. Use the provided summary and stats to generate a narrative response.";
-        }
-
-        // Build the full prompt for the assistant
-        const fullPrompt =
-  `${starterPromptTemplate}
-
-  ---
-  Starter Question: ${precompiled.question || starterCode}
-  Summary: ${precompiled.summary}
-  Stats: ${JSON.stringify(precompiled.stats, null, 2)}
-  Matched Topics: ${precompiled.matched_topics ? precompiled.matched_topics.join(", ") : ""}
-  Data Files: ${precompiled.data_files ? precompiled.data_files.join(", ") : ""}
-  ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
-  `;
-
-        // Replace the user content with the constructed prompt
-        body.content = fullPrompt;
-        content = body.content;
+      // Load the starter prompt template
+      const starterPromptPath = path.join(process.cwd(), "prompts", "starter_prompt_template.md");
+      let starterPromptTemplate = "";
+      try {
+        starterPromptTemplate = await fs.promises.readFile(starterPromptPath, "utf8");
+      } catch (err) {
+        logger.error("Error loading starter prompt template:", err);
+        starterPromptTemplate = "You are answering a precompiled starter question. Use the provided summary and stats to generate a narrative response.";
       }
+
+      // Build the full prompt for the assistant
+      const fullPrompt =
+`${starterPromptTemplate}
+
+---
+Starter Question: ${precompiled.question || starterCode}
+Summary: ${precompiled.summary}
+Stats: ${JSON.stringify(precompiled.stats, null, 2)}
+Matched Topics: ${precompiled.matched_topics ? precompiled.matched_topics.join(", ") : ""}
+Data Files: ${precompiled.data_files ? precompiled.data_files.join(", ") : ""}
+${precompiled.notes ? "Notes: " + precompiled.notes : ""}
+`;
+
+      // Replace the user content with the constructed prompt
+      body.content = fullPrompt;
+      content = body.content;
+    }
       // If not found, continue as normal (could also return an error)
     }
 
@@ -314,6 +311,8 @@ export async function POST(request: NextRequest) {
       // Track file IDs used for this query
       if (result.dataScope && result.dataScope.fileIds && result.dataScope.fileIds.size > 0) {
         usedFileIds = Array.from(result.dataScope.fileIds).map(String);
+        // Update thread cache immediately after data retrieval
+        await updateThreadCache(finalThreadId, usedFileIds);
       }
 
       // Efficient summary log for filteredData
@@ -328,16 +327,16 @@ export async function POST(request: NextRequest) {
       // Build the STANDARD MODE JSON object for the assistant
       let filteredStats = [];
       
-      logger.info(`[DEBUG] Raw result structure: ${JSON.stringify({
-        hasFilteredData: !!result.filteredData,
-        filteredDataKeys: result.filteredData ? Object.keys(result.filteredData) : [],
-        filteredDataType: typeof result.filteredData,
-        hasStats: !!result.stats,
-        statsType: typeof result.stats,
-        statsIsArray: Array.isArray(result.stats),
-        statsLength: result.stats && Array.isArray(result.stats) ? result.stats.length : -1,
-        statsSample: result.stats && Array.isArray(result.stats) ? result.stats.slice(0, 2) : null
-      })}`);
+      logger.info(`[DEBUG] Raw result structure: {
+        hasFilteredData: ${!!result.filteredData},
+        filteredDataKeys: ${result.filteredData ? Object.keys(result.filteredData).join(", ") : "none"},
+        filteredDataType: ${typeof result.filteredData},
+        hasStats: ${!!result.stats},
+        statsType: ${typeof result.stats},
+        statsIsArray: ${Array.isArray(result.stats)},
+        statsLength: ${result.stats && Array.isArray(result.stats) ? result.stats.length : -1},
+        statsSampleCount: ${result.stats && Array.isArray(result.stats) ? Math.min(result.stats.length, 2) : 0}
+      }`);
       
       // DIRECT ACCESS: Try to use stats directly from result first as the most reliable source
       if (result.stats && Array.isArray(result.stats) && result.stats.length > 0) {
@@ -356,11 +355,7 @@ export async function POST(request: NextRequest) {
       }
       
       // Ensure we have valid data before proceeding - add debug logging
-      logger.info(`[DEBUG] filteredStats: ${JSON.stringify({
-        isArray: Array.isArray(filteredStats),
-        length: filteredStats?.length || 0,
-        sample: filteredStats?.slice(0, 2) || 'N/A'
-      })}`);
+      logger.info(`[DEBUG] filteredStats: { isArray: ${Array.isArray(filteredStats)}, length: ${filteredStats?.length || 0} }`);
       
       // If we still don't have valid data, log error
       if (!Array.isArray(filteredStats) || filteredStats.length === 0) {

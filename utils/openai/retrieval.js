@@ -56,6 +56,65 @@ let canonicalTopicMapping = null;
 const queryCache = new Map();
 
 /**
+ * Load a prompt from a markdown file
+ * @param {string} promptName - The name of the prompt file without extension
+ * @returns {string} - The prompt content
+ */
+function loadPromptFromFile(promptName) {
+  try {
+    // Try the original location first
+    const originalPromptPath = path.join(PROMPTS_DIR, `${promptName}.md`);
+    if (process.env.DEBUG) {
+      logger.debug(`Loaded prompt from ${originalPromptPath}`);
+    }
+    return fs.readFileSync(originalPromptPath, "utf8");
+  } catch (error) {
+    if (process.env.DEBUG) {
+      logger.debug(
+        `Error loading original prompt: ${error.message}, trying fallback locations...`
+      );
+    }
+    // Try public folder as fallback
+    try {
+      const publicPromptPath = path.join(
+        process.cwd(),
+        "public",
+        "prompts",
+        `${promptName}.md`
+      );
+      if (process.env.DEBUG) {
+        logger.debug(`Trying fallback prompt from ${publicPromptPath}`);
+      }
+      return fs.readFileSync(publicPromptPath, "utf8");
+    } catch (fallbackError) {
+      // Try public/prompt_files as another fallback
+      try {
+        const altPublicPromptPath = path.join(
+          process.cwd(),
+          "public",
+          "prompt_files",
+          `${promptName}.md`
+        );
+        if (process.env.DEBUG) {
+          logger.debug(
+            `Trying alternative fallback prompt from ${altPublicPromptPath}`
+          );
+        }
+        return fs.readFileSync(altPublicPromptPath, "utf8");
+      } catch (altFallbackError) {
+        logger.error(
+          `Failed to load prompt ${promptName} from any location:`,
+          error.message
+        );
+        throw new Error(
+          `Failed to load prompt file ${promptName}: ${error.message}`
+        );
+      }
+    }
+  }
+}
+
+/**
  * Loads and returns the precompiled data for a given starter question code.
  * @param {string} code - The starter question code (e.g., "SQ1")
  * @returns {object|null} The precompiled data object, or null if not found
@@ -1357,64 +1416,5 @@ export async function handleQueryAPI(req, res) {
   } catch (error) {
     logger.error("Error processing query:", error);
     return res.status(500).json({ error: error.message });
-  }
-}
-
-/**
- * Load a prompt from a markdown file
- * @param {string} promptName - The name of the prompt file without extension
- * @returns {string} - The prompt content
- */
-function loadPromptFromFile(promptName) {
-  try {
-    // Try the original location first
-    const originalPromptPath = path.join(PROMPTS_DIR, `${promptName}.md`);
-    if (process.env.DEBUG) {
-      logger.debug(`Loaded prompt from ${originalPromptPath}`);
-    }
-    return fs.readFileSync(originalPromptPath, "utf8");
-  } catch (error) {
-    if (process.env.DEBUG) {
-      logger.debug(
-        `Error loading original prompt: ${error.message}, trying fallback locations...`
-      );
-    }
-    // Try public folder as fallback
-    try {
-      const publicPromptPath = path.join(
-        process.cwd(),
-        "public",
-        "prompts",
-        `${promptName}.md`
-      );
-      if (process.env.DEBUG) {
-        logger.debug(`Trying fallback prompt from ${publicPromptPath}`);
-      }
-      return fs.readFileSync(publicPromptPath, "utf8");
-    } catch (fallbackError) {
-      // Try public/prompt_files as another fallback
-      try {
-        const altPublicPromptPath = path.join(
-          process.cwd(),
-          "public",
-          "prompt_files",
-          `${promptName}.md`
-        );
-        if (process.env.DEBUG) {
-          logger.debug(
-            `Trying alternative fallback prompt from ${altPublicPromptPath}`
-          );
-        }
-        return fs.readFileSync(altPublicPromptPath, "utf8");
-      } catch (altFallbackError) {
-        logger.error(
-          `Failed to load prompt ${promptName} from any location:`,
-          error.message
-        );
-        throw new Error(
-          `Failed to load prompt file ${promptName}: ${error.message}`
-        );
-      }
-    }
   }
 }
