@@ -138,14 +138,34 @@ function getBaseData(retrievedData, queryIntent) {
  * @returns {any}
  */
 function getSpecificData(retrievedData, { demographics = [] }) {
+  // INITIAL DEBUG - Check what we received
+  // console.log("[getSpecificData] Called with retrievedData:", {
+  //   type: typeof retrievedData,
+  //   hasFiles: retrievedData?.files ? true : false,
+  //   filesCount: retrievedData?.files?.length || 0,
+  //   demographics: JSON.stringify(demographics),
+  // });
+
   // Only filter by canonical segment keys as provided by the LLM
   if (
     !retrievedData ||
     typeof retrievedData !== "object" ||
     !retrievedData.files
   ) {
-    return { filteredData: [] };
+    console.error("[getSpecificData] ERROR: Invalid retrievedData format");
+    return { filteredData: { stats: [] } };
   }
+
+  // Count files with valid responses
+  // const filesWithResponses = retrievedData.files.filter(
+  //   (file) =>
+  //     file.data &&
+  //     Array.isArray(file.data.responses) &&
+  //     file.data.responses.length > 0
+  // ).length;
+  // console.log(
+  //   `[getSpecificData] Files with valid responses: ${filesWithResponses}/${retrievedData.files.length}`
+  // );
 
   // If no demographics provided, use all canonical segments
   let segmentsToUse =
@@ -165,7 +185,7 @@ function getSpecificData(retrievedData, { demographics = [] }) {
   }
 
   // DIAGNOSTIC LOG: Print segmentsToUse
-  console.log("[getSpecificData] segmentsToUse:", segmentsToUse);
+  // console.log("[getSpecificData] segmentsToUse:", segmentsToUse);
 
   const filteredStats = [];
 
@@ -199,7 +219,7 @@ function getSpecificData(retrievedData, { demographics = [] }) {
             formatted: `${Math.round(segmentValue * 100)}%`,
           });
         } else if (typeof segmentValue === "object" && segmentValue !== null) {
-          // Nested segments (e.g., region, age, etc.)
+          // Flatten ALL sub-segments for this segmentKey
           for (const subKey of Object.keys(segmentValue)) {
             const subValue = segmentValue[subKey];
             if (typeof subValue === "number") {
@@ -221,13 +241,22 @@ function getSpecificData(retrievedData, { demographics = [] }) {
     }
   }
 
-  // DIAGNOSTIC LOG: Count sector stats
-  const sectorStatsCount = filteredStats.filter(
-    (stat) => stat.category === "sector" || stat.segment === "sector"
-  ).length;
-  console.log("[getSpecificData] sectorStatsCount:", sectorStatsCount);
+  // DIAGNOSTIC LOG: Count stats for each segment
+  // segmentsToUse.forEach((seg) => {
+  //   const count = filteredStats.filter((stat) => stat.category === seg).length;
+  //   console.log(`[getSpecificData] ${seg} stats count:`, count);
+  // });
 
-  return { filteredData: filteredStats };
+  // Add debug summary at the end
+  // console.log(
+  //   `[getSpecificData] FINAL: Generated ${filteredStats.length} stats items`
+  // );
+
+  // Fix: Return a consistent data structure that works with the pipeline
+  return {
+    filteredData: filteredStats,
+    stats: filteredStats, // Also include at top level for direct access
+  };
 }
 
 module.exports = {
