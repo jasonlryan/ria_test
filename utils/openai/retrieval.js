@@ -37,7 +37,7 @@ const CANONICAL_MAPPING_PATH = path.join(
   "2025",
   "canonical_topic_mapping.json"
 );
-const DEFAULT_OPENAI_MODEL = "gpt-4o-mini";
+const DEFAULT_OPENAI_MODEL = "gpt-4.1-mini";
 const PROMPTS_DIR = path.join(process.cwd(), "utils", "openai");
 const DATA_DIR = path.join(process.cwd(), "scripts", "output", "split_data");
 
@@ -1103,6 +1103,27 @@ export async function processQueryWithData(
     previousQueryContext,
     previousAssistantResponseContext
   );
+
+  // --- START DEBUG LOGGING ---
+  logger.info("--- Retrieval Step Analysis ---");
+  logger.info(`Query: "${query.substring(0, 100)}..."`);
+  logger.info(`isFollowUp: ${isFollowUpContext}`); // Use the actual variable name
+  logger.info(`Cached File IDs: [${(cachedFileIds || []).join(", ")}]`);
+  logger.info(`LLM Result - out_of_scope: ${fileIdResult?.out_of_scope}`);
+  logger.info(
+    `LLM Result - file_ids: [${(fileIdResult?.file_ids || []).join(", ")}]`
+  );
+  logger.info(
+    `LLM Result - matched_topics: [${(fileIdResult?.matched_topics || []).join(
+      ", "
+    )}]`
+  );
+  logger.info(
+    `LLM Result - segments: [${(fileIdResult?.segments || []).join(", ")}]`
+  );
+  logger.info(`LLM Result - explanation: ${fileIdResult?.explanation}`);
+  logger.info("-----------------------------");
+  // --- END DEBUG LOGGING ---
 
   // === OUT OF SCOPE HANDLING (Revised) ===
   if (fileIdResult && fileIdResult.out_of_scope === true) {
