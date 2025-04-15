@@ -64,16 +64,16 @@ function loadPromptFromFile(promptName) {
   try {
     // Try the original location first
     const originalPromptPath = path.join(PROMPTS_DIR, `${promptName}.md`);
-    if (process.env.DEBUG) {
-      logger.debug(`Loaded prompt from ${originalPromptPath}`);
-    }
+    // if (process.env.DEBUG) {
+    //   logger.debug(`Loaded prompt from ${originalPromptPath}`);
+    // }
     return fs.readFileSync(originalPromptPath, "utf8");
   } catch (error) {
-    if (process.env.DEBUG) {
-      logger.debug(
-        `Error loading original prompt: ${error.message}, trying fallback locations...`
-      );
-    }
+    // if (process.env.DEBUG) {
+    //   logger.debug(
+    //     `Error loading original prompt: ${error.message}, trying fallback locations...`
+    //   );
+    // }
     // Try public folder as fallback
     try {
       const publicPromptPath = path.join(
@@ -82,9 +82,9 @@ function loadPromptFromFile(promptName) {
         "prompts",
         `${promptName}.md`
       );
-      if (process.env.DEBUG) {
-        logger.debug(`Trying fallback prompt from ${publicPromptPath}`);
-      }
+      // if (process.env.DEBUG) {
+      //   logger.debug(`Trying fallback prompt from ${publicPromptPath}`);
+      // }
       return fs.readFileSync(publicPromptPath, "utf8");
     } catch (fallbackError) {
       // Try public/prompt_files as another fallback
@@ -95,11 +95,11 @@ function loadPromptFromFile(promptName) {
           "prompt_files",
           `${promptName}.md`
         );
-        if (process.env.DEBUG) {
-          logger.debug(
-            `Trying alternative fallback prompt from ${altPublicPromptPath}`
-          );
-        }
+        // if (process.env.DEBUG) {
+        //   logger.debug(
+        //     `Trying alternative fallback prompt from ${altPublicPromptPath}`
+        //   );
+        // }
         return fs.readFileSync(altPublicPromptPath, "utf8");
       } catch (altFallbackError) {
         logger.error(
@@ -120,73 +120,73 @@ function loadPromptFromFile(promptName) {
  * @returns {object|null} The precompiled data object, or null if not found
  */
 function getPrecompiledStarterData(code) {
-  console.log(
-    `[getPrecompiledStarterData] Called with code: "${code}" (type: ${typeof code})`
-  );
+  // console.log(
+  //   `[getPrecompiledStarterData] Called with code: "${code}" (type: ${typeof code})`
+  // );
 
   if (!code || typeof code !== "string") {
-    console.log(
-      "[getPrecompiledStarterData] Error: code is null, undefined, or not a string"
-    );
+    // console.log(
+    //   "[getPrecompiledStarterData] Error: code is null, undefined, or not a string"
+    // );
     return null;
   }
 
   // Normalize the code to ensure proper casing
   const normalizedCode = code.trim().toUpperCase();
-  console.log(
-    `[getPrecompiledStarterData] Normalized code: "${normalizedCode}"`
-  );
+  // console.log(
+  //   `[getPrecompiledStarterData] Normalized code: "${normalizedCode}"`
+  // );
 
   const filename = `${normalizedCode}.json`;
   const filePath = path.join(PRECOMPILED_STARTERS_DIR, filename);
 
-  console.log(`[getPrecompiledStarterData] Looking for file at: ${filePath}`);
+  // console.log(`[getPrecompiledStarterData] Looking for file at: ${filePath}`);
 
   try {
     if (!fs.existsSync(filePath)) {
-      console.log(
-        `[getPrecompiledStarterData] ERROR: File not found: ${filePath}`
-      );
+      // console.log(
+      //   `[getPrecompiledStarterData] ERROR: File not found: ${filePath}`
+      // );
 
       // List available starter files for debugging
-      try {
-        const files = fs.readdirSync(PRECOMPILED_STARTERS_DIR);
-        console.log(
-          `[getPrecompiledStarterData] Available starter files: ${files.join(
-            ", "
-          )}`
-        );
-      } catch (err) {
-        console.log(
-          "[getPrecompiledStarterData] Unable to list directory contents:",
-          err.message
-        );
-      }
+      // try {
+      //   const files = fs.readdirSync(PRECOMPILED_STARTERS_DIR);
+      //   console.log(
+      //     `[getPrecompiledStarterData] Available starter files: ${files.join(
+      //       ", "
+      //     )}`
+      //   );
+      // } catch (err) {
+      //   console.log(
+      //     "[getPrecompiledStarterData] Unable to list directory contents:",
+      //     err.message
+      //   );
+      // }
 
       return null;
     }
 
-    console.log(`[getPrecompiledStarterData] File found, reading contents`);
+    // console.log(`[getPrecompiledStarterData] File found, reading contents`);
     const data = fs.readFileSync(filePath, "utf8");
 
     try {
       const parsedData = JSON.parse(data);
-      console.log(
-        `[getPrecompiledStarterData] Successfully parsed JSON data with keys: ${Object.keys(
-          parsedData
-        ).join(", ")}`
-      );
+      // console.log(
+      //   `[getPrecompiledStarterData] Successfully parsed JSON data with keys: ${Object.keys(
+      //     parsedData
+      //   ).join(", ")}`
+      // );
       return parsedData;
     } catch (parseError) {
-      console.log(
-        `[getPrecompiledStarterData] Error parsing JSON: ${parseError.message}`
-      );
+      // console.log(
+      //   `[getPrecompiledStarterData] Error parsing JSON: ${parseError.message}`
+      // );
       return null;
     }
   } catch (error) {
-    console.log(
-      `[getPrecompiledStarterData] Error reading file: ${error.message}`
-    );
+    // console.log(
+    //   `[getPrecompiledStarterData] Error reading file: ${error.message}`
+    // );
     return null;
   }
 }
@@ -198,22 +198,22 @@ function getPrecompiledStarterData(code) {
  */
 function isStarterQuestion(prompt) {
   // Add detailed logging
-  console.log(
-    `[isStarterQuestion] Called with prompt: "${prompt}" (type: ${typeof prompt})`
-  );
+  // console.log(
+  //   `[isStarterQuestion] Called with prompt: "${prompt}" (type: ${typeof prompt})`
+  // );
 
   if (!prompt || typeof prompt !== "string") {
-    console.log(
-      "[isStarterQuestion] Result: false (prompt is null, undefined, or not a string)"
-    );
+    // console.log(
+    //   "[isStarterQuestion] Result: false (prompt is null, undefined, or not a string)"
+    // );
     return false;
   }
 
   const trimmed = prompt.trim();
-  const result = /^SQ\d+$/i.test(trimmed);
-  console.log(
-    `[isStarterQuestion] Trimmed: "${trimmed}", Regex test result: ${result}`
-  );
+  const result = /^SQ\\d+$/i.test(trimmed);
+  // console.log(
+  //   `[isStarterQuestion] Trimmed: "${trimmed}", Regex test result: ${result}`
+  // );
 
   return result;
 }
@@ -237,9 +237,9 @@ function loadCanonicalTopicMapping() {
     );
     const mappingData = fs.readFileSync(mappingPath, "utf8");
     canonicalTopicMapping = JSON.parse(mappingData);
-    if (process.env.DEBUG) {
-      logger.debug("Canonical topic mapping loaded and cached");
-    }
+    // if (process.env.DEBUG) {
+    //   logger.debug("Canonical topic mapping loaded and cached");
+    // }
     return canonicalTopicMapping;
   } catch (error) {
     logger.error("Error loading canonical topic mapping:", error);
@@ -256,8 +256,8 @@ function generateCacheKey(query) {
   // Normalize query by removing punctuation, extra spaces, and converting to lowercase
   return query
     .toLowerCase()
-    .replace(/[^\w\s]/g, "")
-    .replace(/\s+/g, " ")
+    .replace(/[^\\w\\s]/g, "")
+    .replace(/\\s+/g, " ")
     .trim();
 }
 
@@ -285,9 +285,9 @@ export async function identifyRelevantFiles(
       query + (isFollowUp ? `_followup_${previousQuery.substring(0, 50)}` : "")
     );
     if (queryCache.has(cacheKey)) {
-      if (process.env.DEBUG) {
-        logger.debug("Using cached query results");
-      }
+      // if (process.env.DEBUG) {
+      //   logger.debug("Using cached query results");
+      // }
       return queryCache.get(cacheKey);
     }
 
@@ -359,11 +359,11 @@ export async function identifyRelevantFiles(
 
     try {
       // Parse the JSON content
-      if (process.env.DEBUG) {
-        logger.debug(
-          "Raw response content: " + content.substring(0, 100) + "..."
-        );
-      }
+      // if (process.env.DEBUG) {
+      //   logger.debug(
+      //     "Raw response content: " + content.substring(0, 100) + "..."
+      //   );
+      // }
       const result = JSON.parse(content);
 
       // Apply validations
@@ -418,9 +418,9 @@ export async function identifyRelevantFiles(
  * @returns {object} - Formatted data files optimized for OpenAI processing
  */
 function formatDataForAnalysis(dataFiles) {
-  if (process.env.DEBUG) {
-    logger.debug("Formatting data for analysis...");
-  }
+  // if (process.env.DEBUG) {
+  //   logger.debug("Formatting data for analysis...");
+  // }
 
   try {
     // Create a simplified data representation that EXPLICITLY includes percentages
@@ -428,11 +428,11 @@ function formatDataForAnalysis(dataFiles) {
       files: dataFiles.files.map((file) => {
         // Skip files with errors
         if (file.error || !file.data || !Array.isArray(file.data)) {
-          if (process.env.DEBUG) {
-            logger.debug(
-              `Skipping file ${file.id} due to error or missing data`
-            );
-          }
+          // if (process.env.DEBUG) {
+          //   logger.debug(
+          //     `Skipping file ${file.id} due to error or missing data`
+          //   );
+          // }
           return {
             id: file.id,
             error: file.error || "No valid data available",
@@ -501,11 +501,11 @@ function formatDataForAnalysis(dataFiles) {
           }
         });
 
-        if (process.env.DEBUG) {
-          logger.debug(
-            `File ${file.id}: Found ${percentageCount} percentage values in ${percentageData.length} data points`
-          );
-        }
+        // if (process.env.DEBUG) {
+        //   logger.debug(
+        //     `File ${file.id}: Found ${percentageCount} percentage values in ${percentageData.length} data points`
+        //   );
+        // }
 
         return {
           id: file.id,
@@ -533,11 +533,11 @@ function formatDataForAnalysis(dataFiles) {
       }
     });
 
-    if (process.env.DEBUG) {
-      logger.debug(
-        `Total: ${totalPercentageValues} percentage values in ${totalDataPointsWithPercentages} data points`
-      );
-    }
+    // if (process.env.DEBUG) {
+    //   logger.debug(
+    //     `Total: ${totalPercentageValues} percentage values in ${totalDataPointsWithPercentages} data points`
+    //   );
+    // }
     formattedData.metadata.percentageCount = totalPercentageValues;
 
     return formattedData;
@@ -562,12 +562,12 @@ function formatDataForAnalysis(dataFiles) {
 export async function generateAnalysis(query, dataFiles, matchedTopics) {
   try {
     const startTime = Date.now();
-    if (process.env.DEBUG) {
-      logger.debug(
-        "Starting direct data extraction at " +
-          new Date(startTime).toISOString()
-      );
-    }
+    // if (process.env.DEBUG) {
+    //   logger.debug(
+    //     "Starting direct data extraction at " +
+    //       new Date(startTime).toISOString()
+    //   );
+    // }
 
     // Get information about matched topics
     const topicInfo = matchedTopics.map((topic) => {
@@ -588,15 +588,15 @@ export async function generateAnalysis(query, dataFiles, matchedTopics) {
     });
 
     // Build a structured text representation of the data
-    let analysisText = `# Workforce Survey Data Analysis\n\n`;
-    analysisText += `## Analysis for Query: "${query}"\n\n`;
+    let analysisText = `# Workforce Survey Data Analysis\\n\\n`;
+    analysisText += `## Analysis for Query: "${query}"\\n\\n`;
 
     // Add topics section
-    analysisText += `### Topics Analyzed\n`;
+    analysisText += `### Topics Analyzed\\n`;
     topicInfo.forEach((info) => {
-      analysisText += `- **${info.topic}**: ${info.question}\n`;
+      analysisText += `- **${info.topic}**: ${info.question}\\n`;
     });
-    analysisText += `\n`;
+    analysisText += `\\n`;
 
     // Extract percentage data
     let percentageStats = [];
@@ -663,14 +663,14 @@ export async function generateAnalysis(query, dataFiles, matchedTopics) {
     }
 
     // Add file info to analysis
-    analysisText += `### Files and Data Points\n`;
+    analysisText += `### Files and Data Points\\n`;
     fileStats.forEach((file) => {
-      analysisText += `- **${file.id}**: ${file.dataPoints} data points, ${file.percentageCount} percentage values\n`;
+      analysisText += `- **${file.id}**: ${file.dataPoints} data points, ${file.percentageCount} percentage values\\n`;
     });
-    analysisText += `\n`;
+    analysisText += `\\n`;
 
     // Add key percentage data
-    analysisText += `### Key Percentage Values\n\n`;
+    analysisText += `### Key Percentage Values\\n\\n`;
 
     // Group percentages by topic
     const topicGroups = {};
@@ -698,7 +698,7 @@ export async function generateAnalysis(query, dataFiles, matchedTopics) {
     Object.entries(topicGroups).forEach(([topic, stats]) => {
       if (stats.length === 0) return;
 
-      analysisText += `#### ${topic}\n`;
+      analysisText += `#### ${topic}\\n`;
 
       // Group by question
       const questionGroups = {};
@@ -711,7 +711,7 @@ export async function generateAnalysis(query, dataFiles, matchedTopics) {
 
       // Add data for each question
       Object.entries(questionGroups).forEach(([question, questionStats]) => {
-        analysisText += `**${question}**\n`;
+        analysisText += `**${question}**\\n`;
 
         // Group by category
         const categoryGroups = {};
@@ -724,49 +724,49 @@ export async function generateAnalysis(query, dataFiles, matchedTopics) {
 
         // Add data for each category
         Object.entries(categoryGroups).forEach(([category, categoryStats]) => {
-          analysisText += `- ${category}:\n`;
+          analysisText += `- ${category}:\\n`;
           categoryStats.forEach((stat) => {
-            analysisText += `  - ${stat.segment}: **${stat.value}%**\n`;
+            analysisText += `  - ${stat.segment}: **${stat.value}%**\\n`;
           });
         });
 
-        analysisText += `\n`;
+        analysisText += `\\n`;
       });
     });
 
     // Add metadata
-    analysisText += `### Analysis Metadata\n`;
-    analysisText += `- Total data points: ${dataFiles.metadata.total_data_points}\n`;
-    analysisText += `- Total percentage values: ${percentageStats.length}\n`;
-    analysisText += `- Files analyzed: ${fileStats.length}\n`;
-    analysisText += `- Topics covered: ${matchedTopics.join(", ")}\n`;
+    analysisText += `### Analysis Metadata\\n`;
+    analysisText += `- Total data points: ${dataFiles.metadata.total_data_points}\\n`;
+    analysisText += `- Total percentage values: ${percentageStats.length}\\n`;
+    analysisText += `- Files analyzed: ${fileStats.length}\\n`;
+    analysisText += `- Topics covered: ${matchedTopics.join(", ")}\\n`;
 
     const endTime = Date.now();
-    if (process.env.DEBUG) {
-      logger.debug(
-        `Direct data extraction completed in ${
-          (endTime - startTime) / 1000
-        } seconds`
-      );
-      logger.debug(
-        `Extracted ${percentageStats.length} percentage values from ${fileStats.length} files`
-      );
+    // if (process.env.DEBUG) {
+    //   logger.debug(
+    //     `Direct data extraction completed in ${
+    //       (endTime - startTime) / 1000
+    //     } seconds`
+    //   );
+    //   logger.debug(
+    //     `Extracted ${percentageStats.length} percentage values from ${fileStats.length} files`
+    //   );
 
-      // Log a preview of the analysis
-      logger.debug("====== ANALYSIS PREVIEW ======");
-      logger.debug(analysisText.substring(0, 500) + "...");
-      logger.debug("=============================");
+    //   // Log a preview of the analysis
+    //   logger.debug("====== ANALYSIS PREVIEW ======");
+    //   logger.debug(analysisText.substring(0, 500) + "...");
+    //   logger.debug("=============================");
 
-      // Check for percentages in the analysis
-      const percentageMatches = analysisText.match(/\d+%/g) || [];
-      logger.debug(
-        `Analysis contains ${
-          percentageMatches.length
-        } percentage values: ${percentageMatches.slice(0, 5).join(", ")}${
-          percentageMatches.length > 5 ? "..." : ""
-        }`
-      );
-    }
+    //   // Check for percentages in the analysis
+    //   const percentageMatches = analysisText.match(/\\d+%/g) || [];
+    //   logger.debug(
+    //     `Analysis contains ${
+    //       percentageMatches.length
+    //     } percentage values: ${percentageMatches.slice(0, 5).join(", ")}${
+    //       percentageMatches.length > 5 ? "..." : ""
+    //     }`
+    //   );
+    // }
 
     return analysisText;
   } catch (error) {
@@ -781,19 +781,19 @@ export async function generateAnalysis(query, dataFiles, matchedTopics) {
  * @returns {Promise<object>} - The retrieved data
  */
 export async function retrieveDataFiles(fileIds) {
-  if (process.env.DEBUG) {
-    logger.debug(`Retrieving ${fileIds.length} data files...`);
-  }
+  // if (process.env.DEBUG) {
+  //   logger.debug(`Retrieving ${fileIds.length} data files...`);
+  // }
 
   // In production on Vercel, read files directly from the file system
   // This avoids API cross-calling issues with authentication
   if (process.env.NODE_ENV === "production") {
     try {
-      if (process.env.DEBUG) {
-        logger.debug(
-          "Using direct file system access in production environment"
-        );
-      }
+      // if (process.env.DEBUG) {
+      //   logger.debug(
+      //     "Using direct file system access in production environment"
+      //   );
+      // }
 
       // Topics to collect
       const topics = new Set();
@@ -816,9 +816,9 @@ export async function retrieveDataFiles(fileIds) {
               normalizedId
             );
 
-            if (process.env.DEBUG) {
-              logger.debug(`Attempting to read file: ${filePath}`);
-            }
+            // if (process.env.DEBUG) {
+            //   logger.debug(`Attempting to read file: ${filePath}`);
+            // }
 
             // Ensure file exists
             if (!fs.existsSync(filePath)) {
@@ -901,13 +901,13 @@ export async function retrieveDataFiles(fileIds) {
 
     // Parse the API response
     const result = await response.json();
-    if (process.env.DEBUG) {
-      logger.debug(
-        `API response: ${result.files ? result.files.length : 0} files, ${
-          result.totalDataPoints || 0
-        } data points`
-      );
-    }
+    // if (process.env.DEBUG) {
+    //   logger.debug(
+    //     `API response: ${result.files ? result.files.length : 0} files, ${
+    //       result.totalDataPoints || 0
+    //     } data points`
+    //   );
+    // }
 
     // Return the retrieved data in the expected format
     return {
@@ -949,10 +949,10 @@ export async function processQueryWithData(
   const startTime = performance.now();
 
   // DIAGNOSTIC LOGGING: Log the received query and starter check
-  logger.info(`[processQueryWithData] Received query: "${query}"`);
-  logger.info(
-    `[processQueryWithData] isStarterQuestion: ${isStarterQuestion(query)}`
-  );
+  // logger.info(`[processQueryWithData] Received query: "${query}"`);
+  // logger.info(
+  //   `[processQueryWithData] isStarterQuestion: ${isStarterQuestion(query)}`
+  // );
 
   // Early return for empty queries
   if (!query || query.trim().length === 0) {
@@ -1024,7 +1024,7 @@ export async function processQueryWithData(
           continue;
         }
         files.push({
-          id: fileId.replace(/\.json$/, ""),
+          id: fileId.replace(/\\.json$/, ""),
           data: jsonData,
         });
       } catch (e) {
@@ -1065,7 +1065,7 @@ export async function processQueryWithData(
           `Segment: ${stat.category} | Value: ${stat.value} | Question: ${stat.question} | Response: ${stat.response} | Stat: ${stat.stat} (${stat.formatted})`
         );
       }
-      return lines.join("\n");
+      return lines.join("\\n");
     }
     const statsPreview = formatStats(filteredData.filteredData);
 
@@ -1149,36 +1149,36 @@ export async function processQueryWithData(
   const dataDir = path.join(process.cwd(), "scripts", "output", "split_data");
 
   // DEBUG: Log the data directory path and check if it exists
-  logger.info(`[DEBUG FILES] Data directory path: ${dataDir}`);
-  logger.info(`[DEBUG FILES] Data directory exists: ${fs.existsSync(dataDir)}`);
-  if (fs.existsSync(dataDir)) {
-    try {
-      const dirContents = fs.readdirSync(dataDir);
-      logger.info(
-        `[DEBUG FILES] Data directory contains ${dirContents.length} files`
-      );
-      logger.info(
-        `[DEBUG FILES] First 5 files: ${dirContents.slice(0, 5).join(", ")}`
-      );
-    } catch (dirError) {
-      logger.error(
-        `[DEBUG FILES] Error reading data directory: ${dirError.message}`
-      );
-    }
-  }
+  // logger.info(`[DEBUG FILES] Data directory path: ${dataDir}`);
+  // logger.info(`[DEBUG FILES] Data directory exists: ${fs.existsSync(dataDir)}`);
+  // if (fs.existsSync(dataDir)) {
+  //   try {
+  //     const dirContents = fs.readdirSync(dataDir);
+  //     logger.info(
+  //       `[DEBUG FILES] Data directory contains ${dirContents.length} files`
+  //     );
+  //     logger.info(
+  //       `[DEBUG FILES] First 5 files: ${dirContents.slice(0, 5).join(", ")}`
+  //     );
+  //   } catch (dirError) {
+  //     logger.error(
+  //       `[DEBUG FILES] Error reading data directory: ${dirError.message}`
+  //     );
+  //   }
+  // }
 
   // Log the file IDs we're trying to load
-  logger.info(
-    `[DEBUG FILES] Attempting to load ${fileIds.length} files: ${fileIds.join(
-      ", "
-    )}`
-  );
+  // logger.info(
+  //   `[DEBUG FILES] Attempting to load ${fileIds.length} files: ${fileIds.join(
+  //     ", "
+  //   )}`
+  // );
 
   let files = [];
-  if (process.env.DEBUG) {
-    logger.debug("=== DEBUG: File loading step ===");
-    logger.debug("File IDs returned by LLM:", fileIds);
-  }
+  // if (process.env.DEBUG) {
+  //   logger.debug("=== DEBUG: File loading step ===");
+  //   logger.debug("File IDs returned by LLM:", fileIds);
+  // }
 
   // Ensure we have valid file IDs - validate before attempting to load
   const validFileIds = fileIds.filter(
@@ -1195,12 +1195,12 @@ export async function processQueryWithData(
     const filePath = path.join(dataDir, fileName);
 
     // DEBUG: Log each file path and existence check
-    logger.info(`[DEBUG FILES] Checking file: ${filePath}`);
-    logger.info(`[DEBUG FILES] File exists: ${fs.existsSync(filePath)}`);
+    // logger.info(`[DEBUG FILES] Checking file: ${filePath}`);
+    // logger.info(`[DEBUG FILES] File exists: ${fs.existsSync(filePath)}`);
 
-    if (process.env.DEBUG) {
-      logger.debug(`Attempting to load file: ${filePath}`);
-    }
+    // if (process.env.DEBUG) {
+    //   logger.debug(`Attempting to load file: ${filePath}`);
+    // }
     try {
       if (!fs.existsSync(filePath)) {
         logger.error(`File does not exist: ${filePath}`);
@@ -1209,39 +1209,39 @@ export async function processQueryWithData(
       const fileContent = fs.readFileSync(filePath, "utf8");
 
       // DEBUG: Log file size
-      logger.info(
-        `[DEBUG FILES] Successfully read file: ${filePath}, size: ${fileContent.length} bytes`
-      );
+      // logger.info(
+      //   `[DEBUG FILES] Successfully read file: ${filePath}, size: ${fileContent.length} bytes`
+      // );
 
       let jsonData;
       try {
         jsonData = JSON.parse(fileContent);
-        logger.info(
-          `[DEBUG FILES] Successfully parsed JSON from file: ${filePath}`
-        );
+        // logger.info(
+        //   `[DEBUG FILES] Successfully parsed JSON from file: ${filePath}`
+        // );
       } catch (parseErr) {
         logger.error(`JSON parse error for file ${filePath}:`, parseErr);
         continue;
       }
       // Log structure of loaded data
-      if (process.env.DEBUG && jsonData && typeof jsonData === "object") {
-        if (Array.isArray(jsonData.responses)) {
-          logger.debug(
-            `File ${fileName} loaded. responses[] length: ${jsonData.responses.length}`
-          );
-        } else if (Array.isArray(jsonData.data)) {
-          logger.debug(
-            `File ${fileName} loaded. data[] length: ${jsonData.data.length}`
-          );
-        } else {
-          logger.debug(
-            `File ${fileName} loaded. Top-level keys:`,
-            Object.keys(jsonData)
-          );
-        }
-      }
+      // if (process.env.DEBUG && jsonData && typeof jsonData === "object") {
+      //   if (Array.isArray(jsonData.responses)) {
+      //     logger.debug(
+      //       `File ${fileName} loaded. responses[] length: ${jsonData.responses.length}`
+      //     );
+      //   } else if (Array.isArray(jsonData.data)) {
+      //     logger.debug(
+      //       `File ${fileName} loaded. data[] length: ${jsonData.data.length}`
+      //     );
+      //   } else {
+      //     logger.debug(
+      //       `File ${fileName} loaded. Top-level keys:`,
+      //       Object.keys(jsonData)
+      //     );
+      //   }
+      // }
       files.push({
-        id: fileId.replace(/\.json$/, ""),
+        id: fileId.replace(/\\.json$/, ""),
         data: jsonData,
       });
     } catch (e) {
@@ -1259,39 +1259,39 @@ export async function processQueryWithData(
   });
 
   // Unconditional debug logging of first loaded file structure
-  if (files.length > 0) {
-    const first = files[0];
-    if (first.data && typeof first.data === "object") {
-      logger.debug(
-        "UNCONDITIONAL LOG: file.data keys:",
-        Object.keys(first.data)
-      );
-      if (Array.isArray(first.data.responses)) {
-        const resp0 = first.data.responses[0];
-        if (resp0 && typeof resp0 === "object") {
-          logger.debug(
-            "UNCONDITIONAL LOG: first.data.responses[0] keys:",
-            Object.keys(resp0)
-          );
-          // Print a shallow preview, not the full object
-          const preview = JSON.stringify(resp0, null, 2);
-          logger.debug(
-            "UNCONDITIONAL LOG: first.data.responses[0] preview:",
-            preview.length > 200
-              ? preview.substring(0, 200) + " ... (truncated)"
-              : preview
-          );
-        } else {
-          logger.debug("UNCONDITIONAL LOG: first.data.responses[0]:", resp0);
-        }
-      }
-    } else {
-      logger.debug(
-        "UNCONDITIONAL LOG: first file data is not an object:",
-        typeof first.data
-      );
-    }
-  }
+  // if (files.length > 0) {
+  //   const first = files[0];
+  //   if (first.data && typeof first.data === "object") {
+  //     logger.debug(
+  //       "UNCONDITIONAL LOG: file.data keys:",
+  //       Object.keys(first.data)
+  //     );
+  //     if (Array.isArray(first.data.responses)) {
+  //       const resp0 = first.data.responses[0];
+  //       if (resp0 && typeof resp0 === "object") {
+  //         logger.debug(
+  //           "UNCONDITIONAL LOG: first.data.responses[0] keys:",
+  //           Object.keys(resp0)
+  //         );
+  //         // Print a shallow preview, not the full object
+  //         const preview = JSON.stringify(resp0, null, 2);
+  //         logger.debug(
+  //           "UNCONDITIONAL LOG: first.data.responses[0] preview:",
+  //           preview.length > 200
+  //             ? preview.substring(0, 200) + " ... (truncated)"
+  //             : preview
+  //         );
+  //       } else {
+  //         logger.debug("UNCONDITIONAL LOG: first.data.responses[0]:", resp0);
+  //       }
+  //     }
+  //   } else {
+  //     logger.debug(
+  //       "UNCONDITIONAL LOG: first file data is not an object:",
+  //       typeof first.data
+  //     );
+  //   }
+  // }
   // --- END: Data structure normalization and debug logging ---
   // NOTE: mapIntentToDataScope is now only used for logging/monitoring, not for filtering
   const dataScope = { segments: new Set(segments) };
@@ -1329,32 +1329,32 @@ export async function processQueryWithData(
       : [];
   }
 
-  console.log(
-    "[processQueryWithData] Extracted",
-    filteredData.filteredData ? filteredData.filteredData.length : 0,
-    "stats items from getSpecificData result"
-  );
+  // console.log(
+  //   "[processQueryWithData] Extracted",
+  //   filteredData.filteredData ? filteredData.filteredData.length : 0,
+  //   "stats items from getSpecificData result"
+  // );
 
   // 5. Prepare result object
   const endTime = performance.now();
 
   // DEBUG: Log filteredData for inspection
-  if (process.env.DEBUG) {
-    logger.debug(
-      "=== DEBUG: filteredData being returned from processQueryWithData ==="
-    );
-    try {
-      logger.debug(
-        JSON.stringify(filteredData, null, 2).substring(0, 2000) +
-          (JSON.stringify(filteredData).length > 2000 ? "... (truncated)" : "")
-      );
-    } catch (e) {
-      logger.debug("Could not stringify filteredData for debug log.");
-    }
-    logger.debug(
-      "==================================================================="
-    );
-  }
+  // if (process.env.DEBUG) {
+  //   logger.debug(
+  //     "=== DEBUG: filteredData being returned from processQueryWithData ==="
+  //   );
+  //   try {
+  //     logger.debug(
+  //       JSON.stringify(filteredData, null, 2).substring(0, 2000) +
+  //         (JSON.stringify(filteredData).length > 2000 ? "... (truncated)" : "")
+  //     );
+  //   } catch (e) {
+  //     logger.debug("Could not stringify filteredData for debug log.");
+  //   }
+  //   logger.debug(
+  //     "==================================================================="
+  //   );
+  // }
 
   // ENHANCED LOGGING: If no stats found, log available vs requested segments for debugging
   if (filteredData.stats.length === 0 && loadedData.files.length > 0) {
@@ -1377,9 +1377,9 @@ export async function processQueryWithData(
     }
     logger.warn(
       "[RETRIEVAL] No stats matched for selected segments.",
-      "\nRequested segments:",
+      "\\nRequested segments:",
       segments,
-      "\nAvailable segments in first file:",
+      "\\nAvailable segments in first file:",
       availableSegments
     );
   }
