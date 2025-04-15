@@ -8,15 +8,29 @@
  * - getIncrementalData
  */
 
+const fs = require("fs").promises;
+const path = require("path");
+
+const CACHE_MAX_AGE_MS = 1000 * 60 * 60; // 1 hour cache expiration
+
 const threadCaches = new Map();
 
 /**
  * Get the cache entry for a thread.
+ * Expire cache if older than CACHE_MAX_AGE_MS.
  * @param {string} threadId
  * @returns {import("./types").CacheEntry}
  */
 function getThreadCache(threadId) {
-  return threadCaches.get(threadId) || { data: null, scope: {}, timestamp: 0 };
+  const entry = threadCaches.get(threadId);
+  if (!entry) {
+    return { data: null, scope: {}, timestamp: 0 };
+  }
+  if (Date.now() - entry.timestamp > CACHE_MAX_AGE_MS) {
+    threadCaches.delete(threadId);
+    return { data: null, scope: {}, timestamp: 0 };
+  }
+  return entry;
 }
 
 /**
@@ -35,8 +49,8 @@ function updateThreadCache(threadId, data, scope) {
  * @returns {import("./types").DataScope}
  */
 function getDataScope(threadId) {
-  const entry = threadCaches.get(threadId);
-  return entry ? entry.scope : {};
+  const entry = getThreadCache(threadId);
+  return entry.scope || {};
 }
 
 /**
@@ -99,8 +113,6 @@ async function getIncrementalData(queryIntent, threadId) {
 
   // Fetch only missing data based on missingScope
   // Use canonical mapping to select relevant files for the query
-  const fs = require("fs");
-  const path = require("path");
   const dataDir = path.join(process.cwd(), "scripts", "output", "split_data");
   const canonicalPath = path.join(
     process.cwd(),
@@ -113,7 +125,8 @@ async function getIncrementalData(queryIntent, threadId) {
   // Load canonical mapping
   let canonicalMapping = null;
   try {
-    canonicalMapping = JSON.parse(fs.readFileSync(canonicalPath, "utf8"));
+    const canonicalContent = await fs.readFile(canonicalPath, "utf8");
+    canonicalMapping = JSON.parse(canonicalContent);
   } catch (e) {
     console.error("Could not load canonical mapping:", e);
     canonicalMapping = null;
@@ -146,7 +159,8 @@ async function getIncrementalData(queryIntent, threadId) {
   // If no topics matched, fallback to all files (for generic queries)
   let fileNames = [];
   try {
-    fileNames = fs.readdirSync(dataDir).filter((f) => f.endsWith(".json"));
+    const allFiles = await fs.readdir(dataDir);
+    fileNames = allFiles.filter((f) => f.endsWith(".json"));
   } catch (e) {
     fileNames = [];
   }
@@ -161,7 +175,7 @@ async function getIncrementalData(queryIntent, threadId) {
   for (const fileName of filesToLoad) {
     const filePath = path.join(dataDir, fileName);
     try {
-      const fileContent = fs.readFileSync(filePath, "utf8");
+      const fileContent = await fs.readFile(filePath, "utf8");
       const jsonData = JSON.parse(fileContent);
       files.push({
         id: fileName.replace(/\.json$/, ""),

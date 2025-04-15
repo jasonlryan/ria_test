@@ -187,17 +187,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Add direct logging for content
-    logger.info(`[STARTER DEBUG] Content received: "${content}"`);
+    // logger.info(`[STARTER DEBUG] Content received: "${content}"`);
     
     // Direct check for starter question pattern
     const isDirectStarterQuestion = typeof content === 'string' && /^SQ\d+$/i.test(content.trim());
-    logger.info(`[STARTER DEBUG] Direct starter check: ${isDirectStarterQuestion}`);
+    // logger.info(`[STARTER DEBUG] Direct starter check: ${isDirectStarterQuestion}`);
     
     // Starter Question Optimization: Intercept starter question codes and route to assistant with special prompt
     if (isDirectStarterQuestion || (typeof content === 'string' && isStarterQuestion(content))) {
       // Use uppercase version of content for consistency
       const starterCode = typeof content === 'string' ? content.trim().toUpperCase() : content;
-      logger.info(`[STARTER DEBUG] Using starter code: ${starterCode}`);
+      // logger.info(`[STARTER DEBUG] Using starter code: ${starterCode}`);
       
     const precompiled = await getPrecompiledStarterData(starterCode);
     if (precompiled) {
@@ -261,14 +261,14 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
     });
 
     // Log API key info for debugging (safely)
-    logger.debug("OpenAI API Key info:", {
-      defined: !!process.env.OPENAI_API_KEY,
-      length: process.env.OPENAI_API_KEY?.length,
-      prefix: process.env.OPENAI_API_KEY?.substring(0, 7),
-      suffix: process.env.OPENAI_API_KEY?.substring(
-        process.env.OPENAI_API_KEY.length - 4
-      ),
-    });
+    // logger.debug("OpenAI API Key info:", {
+    //   defined: !!process.env.OPENAI_API_KEY,
+    //   length: process.env.OPENAI_API_KEY?.length,
+    //   prefix: process.env.OPENAI_API_KEY?.substring(0, 7),
+    //   suffix: process.env.OPENAI_API_KEY?.substring(
+    //     process.env.OPENAI_API_KEY.length - 4
+    //   ),
+    // });
 
     // Handle thread creation if needed
     let finalThreadId = threadId;
@@ -283,9 +283,9 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
     // Wait for any active runs to finish before adding a new message
     await waitForNoActiveRuns(openai, finalThreadId);
     // Confirm follow-on logic: threadId is reused for follow-up questions, and cache is used per thread
-    if (threadId) {
-      logger.info(`[FOLLOW-UP] This is a follow-up question using thread: ${finalThreadId}`);
-    }
+    // if (threadId) {
+    //   logger.info(`[FOLLOW-UP] This is a follow-up question using thread: ${finalThreadId}`);
+    // }
 
     // Track file IDs for logging
     let usedFileIds: string[] = [];
@@ -327,35 +327,35 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
       // Build the STANDARD MODE JSON object for the assistant
       let filteredStats = [];
       
-      logger.info(`[DEBUG] Raw result structure: {
-        hasFilteredData: ${!!result.filteredData},
-        filteredDataKeys: ${result.filteredData ? Object.keys(result.filteredData).join(", ") : "none"},
-        filteredDataType: ${typeof result.filteredData},
-        hasStats: ${!!result.stats},
-        statsType: ${typeof result.stats},
-        statsIsArray: ${Array.isArray(result.stats)},
-        statsLength: ${result.stats && Array.isArray(result.stats) ? result.stats.length : -1},
-        statsSampleCount: ${result.stats && Array.isArray(result.stats) ? Math.min(result.stats.length, 2) : 0}
-      }`);
+      // logger.info(`[DEBUG] Raw result structure: {
+      //   hasFilteredData: ${!!result.filteredData},
+      //   filteredDataKeys: ${result.filteredData ? Object.keys(result.filteredData).join(", ") : "none"},
+      //   filteredDataType: ${typeof result.filteredData},
+      //   hasStats: ${!!result.stats},
+      //   statsType: ${typeof result.stats},
+      //   statsIsArray: ${Array.isArray(result.stats)},
+      //   statsLength: ${result.stats && Array.isArray(result.stats) ? result.stats.length : -1},
+      //   statsSampleCount: ${result.stats && Array.isArray(result.stats) ? Math.min(result.stats.length, 2) : 0}
+      // }`);
       
       // DIRECT ACCESS: Try to use stats directly from result first as the most reliable source
       if (result.stats && Array.isArray(result.stats) && result.stats.length > 0) {
-        logger.info(`[DEBUG] Using result.stats directly (${result.stats.length} items)`);
+        // logger.info(`[DEBUG] Using result.stats directly (${result.stats.length} items)`);
         filteredStats = result.stats;
       }
       // Option 1: result.filteredData.filteredData exists and is an array
       else if (result.filteredData?.filteredData && Array.isArray(result.filteredData.filteredData) && result.filteredData.filteredData.length > 0) {
-        logger.info(`[DEBUG] Using result.filteredData.filteredData (${result.filteredData.filteredData.length} items)`);
+        // logger.info(`[DEBUG] Using result.filteredData.filteredData (${result.filteredData.filteredData.length} items)`);
         filteredStats = result.filteredData.filteredData;
       } 
       // Option 2: result.filteredData.stats exists and is an array
       else if (result.filteredData?.stats && Array.isArray(result.filteredData.stats) && result.filteredData.stats.length > 0) {
-        logger.info(`[DEBUG] Using result.filteredData.stats (${result.filteredData.stats.length} items)`);
+        // logger.info(`[DEBUG] Using result.filteredData.stats (${result.filteredData.stats.length} items)`);
         filteredStats = result.filteredData.stats;
       }
       
       // Ensure we have valid data before proceeding - add debug logging
-      logger.info(`[DEBUG] filteredStats: { isArray: ${Array.isArray(filteredStats)}, length: ${filteredStats?.length || 0} }`);
+      // logger.info(`[DEBUG] filteredStats: { isArray: ${Array.isArray(filteredStats)}, length: ${filteredStats?.length || 0} }`);
       
       // If we still don't have valid data, log error
       if (!Array.isArray(filteredStats) || filteredStats.length === 0) {
@@ -455,7 +455,7 @@ No data matched for the selected segments.`;
           const promptLogFile = path.join(logsDir, "assistant_full_prompt.txt");
           await fs.promises.mkdir(logsDir, { recursive: true });
           await fs.promises.writeFile(promptLogFile, standardModePrompt, "utf8");
-          logger.info(`[LOG] Full assistant prompt written to ${promptLogFile}`);
+          // logger.info(`[LOG] Full assistant prompt written to ${promptLogFile}`);
         } catch (err) {
           logger.error("Failed to write full assistant prompt to log:", err);
         }
@@ -471,7 +471,7 @@ No data matched for the selected segments.`;
       }
       // Efficient summary log for DIRECT mode
       const fileCount = usedFileIds.length;
-      logger.info(`[DATA] DIRECT MODE: Identified ${fileCount} relevant files.`);
+      // logger.info(`[DATA] DIRECT MODE: Identified ${fileCount} relevant files.`);
     }
 
     // Concise log for prompt sent to assistant
@@ -586,14 +586,14 @@ No data matched for the selected segments.`;
                         
                         // Non-critical operations moved after submission
                         const identificationTime = performance.now() - toolStartTime;
-                        console.log("\n=== FILE IDENTIFICATION SUMMARY (DIRECT MODE) ===");
-                        console.log(`THREAD ID: ${finalThreadId}`);
-                        console.log(`PROMPT: "${query}"`);
-                        console.log(`FILE COUNT: ${allRelevantFileIds.length}`);
-                        console.log(`FILE IDS: ${JSON.stringify(allRelevantFileIds, null, 2)}`);
-                        console.log(`RESPONSE TIME: ${Math.round(identificationTime)}ms`);
-                        console.log(`IS FOLLOWUP: ${cachedFileIds.length > 0 ? "YES" : "NO"}`);
-                        console.log("================================\n");
+                        // console.log("\n=== FILE IDENTIFICATION SUMMARY (DIRECT MODE) ===");
+                        // console.log(`THREAD ID: ${finalThreadId}`);
+                        // console.log(`PROMPT: "${query}"`);
+                        // console.log(`FILE COUNT: ${allRelevantFileIds.length}`);
+                        // console.log(`FILE IDS: ${JSON.stringify(allRelevantFileIds, null, 2)}`);
+                        // console.log(`RESPONSE TIME: ${Math.round(identificationTime)}ms`);
+                        // console.log(`IS FOLLOWUP: ${cachedFileIds.length > 0 ? "YES" : "NO"}`);
+                        // console.log("================================\n");
                       } else {
                         // STANDARD MODE: Process and retrieve data
                         const result = await processQueryWithData(query, "all-sector", cachedFileIds, finalThreadId);
@@ -616,20 +616,20 @@ No data matched for the selected segments.`;
                         if (result.dataScope && result.dataScope.fileIds && result.dataScope.fileIds.size > 0) {
                           const fileIdsArray = Array.from(result.dataScope.fileIds).map(String);
                           updateThreadCache(finalThreadId, fileIdsArray).catch(err => {
-                            console.error("Error updating thread cache:", err);
+                            // console.error("Error updating thread cache:", err);
                           });
                         }
 
                         // Logging moved after submission
-                        console.log("\n=== DATA RETRIEVAL SUMMARY (STANDARD MODE) ===");
-                        console.log(`THREAD ID: ${finalThreadId}`);
-                        console.log(`PROMPT: "${query}"`);
-                        console.log(`CACHE STATUS: ${result.cacheStatus}`);
-                        console.log(`PROCESSING TIME: ${result.processing_time_ms}ms`);
-                        console.log("================================\n");
+                        // console.log("\n=== DATA RETRIEVAL SUMMARY (STANDARD MODE) ===");
+                        // console.log(`THREAD ID: ${finalThreadId}`);
+                        // console.log(`PROMPT: "${query}"`);
+                        // console.log(`CACHE STATUS: ${result.cacheStatus}`);
+                        // console.log(`PROCESSING TIME: ${result.processing_time_ms}ms`);
+                        // console.log("================================\n");
                       }
                     } catch (error) {
-                      console.error("Error processing tool call:", error);
+                      logger.error("Error processing tool call:", error);
                       // Still need to submit even on error
                       await openai.beta.threads.runs.submitToolOutputs(finalThreadId, run.id, {
                         tool_outputs: [{
@@ -662,8 +662,8 @@ No data matched for the selected segments.`;
                   // Clean the text
                   const cleanText = sanitizeOutput(fullText);
                   
-                  // Add debug log for text content
-                  logger.debug(`Sending text content (${cleanText.length} chars)`);
+                  // Add debug log for text content - REMOVED
+                  // logger.debug(`Sending text content (${cleanText.length} chars)`);
                   
                   // Stream text in smaller chunks with a moderate delay for visible but smoother streaming
                   const chunkSize = 40; // Increased from 25 to 40 characters per chunk
@@ -679,7 +679,7 @@ No data matched for the selected segments.`;
                   }
                   
                   // Then send the full message
-                  logger.debug("Sending messageDone event with content length:", cleanText.length);
+                  // logger.debug("Sending messageDone event with content length:", cleanText.length);
                   controller.enqueue(encoder.encode(`event: messageDone\ndata: ${JSON.stringify({
                     id: message.id,
                     threadId: finalThreadId,
@@ -711,7 +711,7 @@ No data matched for the selected segments.`;
                 await new Promise(resolve => setTimeout(resolve, perfTimings.pollingInterval));
               }
             } catch (error) {
-              console.error("Error in polling loop:", error);
+              logger.error("Error in polling loop:", error);
               controller.enqueue(encoder.encode(`event: error\ndata: ${JSON.stringify({
                 message: `Error processing run: ${error.message}`,
               })}\n\n`));
@@ -799,12 +799,12 @@ export async function PUT(request: NextRequest) {
     let requestBody;
     try {
       requestBody = await request.json();
-      logger.info("PUT request body received:", {
-        hasThreadId: !!requestBody.threadId,
-        hasRunId: !!requestBody.runId,
-        hasToolCall: !!requestBody.toolCall,
-        toolCallType: requestBody.toolCall?.function?.name || 'unknown'
-      });
+      // logger.info("PUT request body received:", {
+      //   hasThreadId: !!requestBody.threadId,
+      //   hasRunId: !!requestBody.runId,
+      //   hasToolCall: !!requestBody.toolCall,
+      //   toolCallType: requestBody.toolCall?.function?.name || 'unknown'
+      // });
     } catch (parseError) {
       logger.error("Failed to parse request JSON:", parseError);
       return new Response(JSON.stringify({ 
@@ -830,7 +830,7 @@ export async function PUT(request: NextRequest) {
         else if (!toolCall.function.name) missingFields.push('toolCall.function.name');
       }
       
-      console.error("Missing required fields:", missingFields);
+      logger.error("Missing required fields in PUT request:", missingFields);
       return new Response(JSON.stringify({ 
         error: "Missing required fields", 
         missingFields 
@@ -840,11 +840,11 @@ export async function PUT(request: NextRequest) {
       });
     }
     
-    logger.info("Tool call received:", {
-      threadId,
-      runId,
-      toolName: toolCall.function.name,
-    });
+    // logger.info("Tool call received:", {
+    //   threadId,
+    //   runId,
+    //   toolName: toolCall.function.name,
+    // });
     
     // Initialize OpenAI client with timeout
     const openai = new OpenAI({
@@ -859,9 +859,9 @@ export async function PUT(request: NextRequest) {
       let args;
       try {
         args = JSON.parse(toolCall.function.arguments);
-        logger.debug("[TOOL] Function arguments:", JSON.stringify(args));
+        // logger.debug("[TOOL] Function arguments:", JSON.stringify(args));
       } catch (argError) {
-        console.error("[ERROR] Failed to parse function arguments:", argError);
+        logger.error("[ERROR] Failed to parse function arguments for tool call:", argError);
         args = {}; // Default to empty object
       }
       
@@ -871,7 +871,7 @@ export async function PUT(request: NextRequest) {
       try {
         // Get cached files for this thread if available
         const cachedFileIds = await getCachedFilesForThread(threadId);
-        logger.info(`[CACHE] Thread ${threadId} has ${cachedFileIds.length} cached file IDs`);
+        // logger.info(`[CACHE] Thread ${threadId} has ${cachedFileIds.length} cached file IDs`);
         
         if (isDirectMode && !forceStandardMode) {
           // DIRECT MODE: Only identify relevant files without retrieving data
@@ -896,25 +896,25 @@ export async function PUT(request: NextRequest) {
           
           // Update thread cache with ALL file IDs
           if (allRelevantFileIds.length > 0) {
-            logger.info(`[CACHE] Updating thread cache with ${allRelevantFileIds.length} file IDs`);
+            // logger.info(`[CACHE] Updating thread cache with ${allRelevantFileIds.length} file IDs`);
             await updateThreadCache(threadId, allRelevantFileIds);
           }
           
-          logger.info("File identification completed successfully");
+          // logger.info("File identification completed successfully");
           
           // Submit the tool outputs back to the assistant
           try {
             logger.info("Submitting tool output to OpenAI run:", runId);
             
             // Log direct mode summary
-            logger.info("=== DATA RETRIEVAL SUMMARY (DIRECT MODE) ===");
-            logger.info(`THREAD ID: ${threadId}`);
-            logger.info(`PROMPT: "${query}"`);
-            logger.info(`FILE COUNT: ${allRelevantFileIds.length}`);
-            logger.debug(`FILE IDS: ${JSON.stringify(allRelevantFileIds, null, 2)}`);
-            logger.info(`RESPONSE TIME: ${Math.round(identificationTime)}ms`);
-            logger.info(`IS FOLLOWUP: ${cachedFileIds.length > 0 ? "YES" : "NO"}`);
-            logger.info("================================");
+            // logger.info("=== DATA RETRIEVAL SUMMARY (DIRECT MODE) ===");
+            // logger.info(`THREAD ID: ${threadId}`);
+            // logger.info(`PROMPT: "${query}"`);
+            // logger.info(`FILE COUNT: ${allRelevantFileIds.length}`);
+            // logger.debug(`FILE IDS: ${JSON.stringify(allRelevantFileIds, null, 2)}`);
+            // logger.info(`RESPONSE TIME: ${Math.round(identificationTime)}ms`);
+            // logger.info(`IS FOLLOWUP: ${cachedFileIds.length > 0 ? "YES" : "NO"}`);
+            // logger.info("================================");
             
             // Send just the file IDs to the assistant
             await openai.beta.threads.runs.submitToolOutputs(threadId, runId, {
@@ -958,12 +958,12 @@ export async function PUT(request: NextRequest) {
           }
 
           // Log clear summary of the critical data
-          logger.info("=== DATA RETRIEVAL SUMMARY (STANDARD MODE) ===");
-          logger.info(`THREAD ID: ${threadId}`);
-          logger.info(`PROMPT: "${query}"`);
-          logger.info(`CACHE STATUS: ${result.cacheStatus}`);
-          logger.info(`PROCESSING TIME: ${result.processing_time_ms}ms`);
-          logger.info("================================");
+          // logger.info("=== DATA RETRIEVAL SUMMARY (STANDARD MODE) ===");
+          // logger.info(`THREAD ID: ${threadId}`);
+          // logger.info(`PROMPT: "${query}"`);
+          // logger.info(`CACHE STATUS: ${result.cacheStatus}`);
+          // logger.info(`PROCESSING TIME: ${result.processing_time_ms}ms`);
+          // logger.info("================================");
 
           // Log detailed stats being sent (up to 20 for brevity) in a concise table
           const filteredStats = (result.filteredData?.stats || []).filter(
