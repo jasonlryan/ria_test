@@ -120,80 +120,31 @@ function loadPromptFromFile(promptName) {
  * @returns {object|null} The precompiled data object, or null if not found
  */
 function getPrecompiledStarterData(code) {
-  // Keep existing initial logs...
-  console.log(
-    `[STARTER DEBUG] Called with code: "${code}" (type: ${typeof code})`
-  );
-
-  // Log the current working directory which is critical for path resolution
-  console.log(`[STARTER DEBUG] Current working directory: ${process.cwd()}`);
-  console.log(
-    `[STARTER DEBUG] Directory constants: PRECOMPILED_STARTERS_DIR=${PRECOMPILED_STARTERS_DIR}`
-  );
-
   if (!code || typeof code !== "string") {
-    console.log(
-      "[STARTER DEBUG] Error: code is null, undefined, or not a string"
-    );
     return null;
   }
 
   const normalizedCode = code.trim().toUpperCase();
-  console.log(`[STARTER DEBUG] Normalized code: "${normalizedCode}"`);
 
   const filename = `${normalizedCode}.json`;
   const filePath = path.join(PRECOMPILED_STARTERS_DIR, filename);
   // Also try absolute path for comparison
   const absolutePath = path.resolve(PRECOMPILED_STARTERS_DIR, filename);
 
-  console.log(`[STARTER DEBUG] Looking for file at relative path: ${filePath}`);
-  console.log(`[STARTER DEBUG] Absolute path: ${absolutePath}`);
-
   let fileExists = false;
   try {
     // --- Step 1: Check Existence ---
     fileExists = fs.existsSync(filePath);
-    console.log(`[STARTER DEBUG] File exists check result: ${fileExists}`);
 
     // Try the absolute path as fallback
     if (!fileExists) {
-      console.log(`[STARTER DEBUG] Trying absolute path instead...`);
       fileExists = fs.existsSync(absolutePath);
-      console.log(`[STARTER DEBUG] Absolute path exists check: ${fileExists}`);
     }
 
     if (!fileExists) {
-      console.error(`[STARTER DEBUG] File not found: ${filePath}`);
-      // Attempt to list directory for more context
-      try {
-        const files = fs.readdirSync(PRECOMPILED_STARTERS_DIR);
-        console.log(
-          `[STARTER DEBUG] Available files in ${PRECOMPILED_STARTERS_DIR}: ${files.join(
-            ", "
-          )}`
-        );
-
-        // Try listing parent directory too
-        const parentDir = path.dirname(PRECOMPILED_STARTERS_DIR);
-        const parentFiles = fs.readdirSync(parentDir);
-        console.log(
-          `[STARTER DEBUG] Available files in parent dir ${parentDir}: ${parentFiles.join(
-            ", "
-          )}`
-        );
-      } catch (dirErr) {
-        console.error(
-          "[STARTER DEBUG] Failed to list directory:",
-          dirErr.message
-        );
-      }
       return null;
     }
   } catch (existsError) {
-    console.error(
-      `[STARTER DEBUG] Error checking file existence for ${filePath}:`,
-      existsError
-    );
     return null;
   }
 
@@ -201,53 +152,20 @@ function getPrecompiledStarterData(code) {
   let fileContent = null;
   try {
     // --- Step 2: Read File ---
-    console.log(`[STARTER DEBUG] Attempting to read file: ${pathToUse}`);
     fileContent = fs.readFileSync(pathToUse, "utf8");
-    console.log(
-      `[STARTER DEBUG] Successfully read file (length: ${fileContent?.length})`
-    );
-    console.log(
-      `[STARTER DEBUG] First 50 chars of content: ${fileContent?.substring(
-        0,
-        50
-      )}...`
-    );
   } catch (readError) {
-    console.error(
-      `[STARTER DEBUG] Error reading file ${pathToUse}:`,
-      readError
-    );
     return null; // Return null if read fails
   }
 
   if (fileContent === null || fileContent.trim() === "") {
-    console.error(
-      `[STARTER DEBUG] File content is null or empty for ${pathToUse}`
-    );
     return null;
   }
 
   try {
     // --- Step 3: Parse JSON ---
-    console.log(`[STARTER DEBUG] Attempting to parse JSON content...`);
     const parsedData = JSON.parse(fileContent);
-    console.log(
-      `[STARTER DEBUG] Successfully parsed JSON. Keys: ${Object.keys(
-        parsedData
-      ).join(", ")}`
-    );
     return parsedData; // Success! Return the parsed data
   } catch (parseError) {
-    console.error(
-      `[STARTER DEBUG] Error parsing JSON from ${pathToUse}:`,
-      parseError
-    );
-    console.error(
-      `[STARTER DEBUG] Content that failed to parse (first 200 chars): ${fileContent.substring(
-        0,
-        200
-      )}`
-    );
     return null; // Return null if parse fails
   }
 }
@@ -259,23 +177,23 @@ function getPrecompiledStarterData(code) {
  */
 function isStarterQuestion(prompt) {
   // Add detailed logging
-  console.log(
-    `[STARTER DEBUG] isStarterQuestion called with: "${prompt}" (type: ${typeof prompt})`
-  );
+  // console.log(
+  //   `[STARTER DEBUG] isStarterQuestion called with: "${prompt}" (type: ${typeof prompt})`
+  // );
 
   if (!prompt || typeof prompt !== "string") {
-    console.log(
-      "[STARTER DEBUG] isStarterQuestion result: false (prompt is null, undefined, or not a string)"
-    );
+    // console.log(
+    //   "[STARTER DEBUG] isStarterQuestion result: false (prompt is null, undefined, or not a string)"
+    // );
     return false;
   }
 
   const trimmed = prompt.trim();
   // Fix the regex pattern - remove the escaped backslashes that are breaking the pattern
   const result = /^SQ\d+$/i.test(trimmed);
-  console.log(
-    `[STARTER DEBUG] isStarterQuestion trimmed: "${trimmed}", regex test result: ${result}`
-  );
+  // console.log(
+  //   `[STARTER DEBUG] isStarterQuestion trimmed: "${trimmed}", regex test result: ${result}`
+  // );
 
   return result;
 }

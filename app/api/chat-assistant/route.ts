@@ -191,22 +191,15 @@ export async function POST(request: NextRequest) {
     
     // Direct check for starter question pattern
     const isDirectStarterQuestion = typeof content === 'string' && /^SQ\d+$/i.test(content.trim());
-    // logger.info(`[STARTER DEBUG] Direct starter check: ${isDirectStarterQuestion}`);
-    
     // Starter Question Optimization: Intercept starter question codes and route to assistant with special prompt
     if (isDirectStarterQuestion || (typeof content === 'string' && isStarterQuestion(content))) {
       // Use uppercase version of content for consistency
       const starterCode = typeof content === 'string' ? content.trim().toUpperCase() : content;
-      logger.info(`[STARTER DEBUG] Identified as starter question. Code: ${starterCode}`);
 
       const precompiled = getPrecompiledStarterData(starterCode);
 
       if (precompiled) {
-        logger.info(`[STARTER DEBUG] Successfully loaded precompiled data for ${starterCode}. Keys: ${Object.keys(precompiled).join(', ')}`);
         // Improved logging for starter questions
-        logger.info(`[QUERY API] 🚀 Starter question detected: ${starterCode} (using precompiled data from utils/openai/precompiled_starters/${starterCode}.json)`);
-        logger.info(`[QUERY API] 📦 Sending precompiled data files: ${starterCode}.json`);
-        logger.info(`[QUERY API] 🔕 Retrieval step bypassed for starter question.`);
 
         // Call the logging function (fire and forget)
         logStarterQuestionInvocation({
@@ -224,7 +217,6 @@ export async function POST(request: NextRequest) {
         try {
           starterPromptTemplate = await fs.promises.readFile(starterPromptPath, "utf8");
         } catch (err) {
-          logger.error("Error loading starter prompt template:", err);
           starterPromptTemplate = "You are answering a precompiled starter question. Use the provided summary and stats to generate a narrative response.";
         }
 
@@ -241,20 +233,18 @@ export async function POST(request: NextRequest) {
     Data Files: ${precompiled.data_files ? precompiled.data_files.join(", ") : ""}
     ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
     `;
-          logger.info(`[STARTER DEBUG] Constructed full prompt (length: ${fullPrompt.length}). Replacing original content.`);
           // Replace the user content with the constructed prompt
           body.content = fullPrompt;
           content = body.content;
         } catch (promptError) {
-           logger.error(`[STARTER DEBUG] Error constructing starter prompt: ${promptError}`);
            // Consider how to handle this error - maybe return a specific error response?
            // For now, it will fall through and use the original content if prompt construction fails.
         }
       } else {
-         logger.warn(`[STARTER DEBUG] getPrecompiledStarterData returned null for ${starterCode}. Proceeding with original content.`);
+         // Proceeding with original content if precompiled data is null
       }
     } else {
-        logger.info("[STARTER DEBUG] Did NOT identify as starter question.");
+        // Did NOT identify as starter question
     }
 
     if (!assistantId) {
