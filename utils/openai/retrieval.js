@@ -7,6 +7,10 @@ import OpenAI from "openai";
 const fs = require("fs");
 const path = require("path");
 const logger = require("../../utils/logger").default;
+const {
+  logPerformanceMetrics,
+  logPerformanceToFile,
+} = require("../../utils/shared/loggerHelpers");
 
 const { DEFAULT_SEGMENTS } = require("../data/segment_keys");
 // Import smart filtering and incremental cache modules

@@ -8,6 +8,8 @@ import readline from "readline";
 import fs from 'fs';
 import path from 'path';
 import logger from "../../../utils/logger";
+import { logPerformanceMetrics, logPerformanceToFile } from "../../../utils/shared/loggerHelpers";
+import { formatErrorResponse, formatBadRequestResponse } from "../../../utils/shared/errorHandler";
 
 import { DEFAULT_SEGMENTS } from "../../../utils/data/segment_keys";
 // Add import for retrieval system
@@ -45,71 +47,31 @@ export async function OPTIONS(request: NextRequest) {
   });
 }
 
+import { sanitizeOutput, isJsonContent } from "../../../utils/shared/utils";
+
 /**
  * Sanitizes the output from OpenAI to remove embedded citation markers
  */
-function sanitizeOutput(text: string): string {
-  // Use the simpler version from staging: only remove [[n](#source)] style citations
-  // This avoids collapsing whitespace which breaks markdown.
-  return String(text || '').replace(/\[\[(\d+)\]\(#.*?\)\]/g, "");
-}
+// function sanitizeOutput(text: string): string {
+//   // Use the simpler version from staging: only remove [[n](#source)] style citations
+//   // This avoids collapsing whitespace which breaks markdown.
+//   return String(text || '').replace(/\[\[(\d+)\]\(#.*?\)\]/g, "");
+// }
 
 /**
  * Determines if the message content is likely a valid JSON string
  */
-function isJsonContent(content: string): boolean {
-  if (typeof content !== 'string') return false;
+// function isJsonContent(content: string): boolean {
+//   if (typeof content !== 'string') return false;
   
-  // Try to parse as JSON
-  try {
-    const parsed = JSON.parse(content);
-    return typeof parsed === 'object';
-  } catch {
-    return false; 
-  }
-}
-
-/**
- * Logs performance metrics in a consistent format for testing
- */
-function logPerformanceMetrics(stage, metrics) {
-  logger.info(`----- ${stage} -----`);
-  Object.entries(metrics).forEach(([key, value]) => {
-    logger.info(`${key}: ${value}`);
-  });
-  logger.info("---------------------");
-}
-
-/**
- * Logs performance metrics to the performance_metrics.log file asynchronously
- */
-function logPerformanceToFile(query, cachedFileIds, fileIds, pollCount, totalTimeMs, status, message = '') {
-  if (process.env.VERCEL) return; // Skip file logging on Vercel
-  // Create the log entry first, before any IO
-  const logDir = path.join(process.cwd(), 'logs');
-  const logFile = path.join(logDir, 'performance_metrics.log');
-  
-  // Format the log entry (query | cachedFileIds | fileIds | pollCount | responseTime | status | timestamp)
-  const cachedFileIdsStr = Array.isArray(cachedFileIds) ? cachedFileIds.join(',') : '';
-  const fileIdsStr = Array.isArray(fileIds) ? fileIds.join(',') : '';
-  const timestamp = new Date().toISOString();
-  
-  const logEntry = `${query.substring(0, 100)} | ${cachedFileIdsStr} | ${fileIdsStr} | ${pollCount} | ${totalTimeMs} | ${status} | ${timestamp}\n`;
-  
-  // Don't block the main thread - use async file operations
-  // This is not awaited, so it won't block the response
-  fs.promises.mkdir(logDir, { recursive: true })
-    .then(() => fs.promises.appendFile(logFile, logEntry))
-    .then(() => {
-      // Only log success at debug level
-      if (process.env.NODE_ENV === 'development') {
-        logger.debug(`Performance metrics saved to ${logFile}`);
-      }
-    })
-    .catch(error => {
-      logger.error('Error writing to performance log:', error);
-    });
-}
+//   // Try to parse as JSON
+//   try {
+//     const parsed = JSON.parse(content);
+//     return typeof parsed === 'object';
+//   } catch {
+//     return false; 
+//   }
+// }
 
 /**
  * Waits until there are no active runs on the thread.
