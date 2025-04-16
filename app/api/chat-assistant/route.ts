@@ -73,23 +73,25 @@ import { sanitizeOutput, isJsonContent } from "../../../utils/shared/utils";
 //   }
 // }
 
+import { waitForNoActiveRuns } from "../../../utils/shared/polling";
+
 /**
  * Waits until there are no active runs on the thread.
  * Active statuses: "queued", "in_progress", "requires_action"
  */
-async function waitForNoActiveRuns(openai: OpenAI, threadId: string, pollInterval = 250, timeoutMs = 60000) {
-  const activeStatuses = new Set(["queued", "in_progress", "requires_action"]);
-  const start = Date.now();
-  while (true) {
-    const runs = await openai.beta.threads.runs.list(threadId, { limit: 10 });
-    const activeRun = runs.data.find(run => activeStatuses.has(run.status));
-    if (!activeRun) break;
-    if (Date.now() - start > timeoutMs) {
-      throw new Error("Timeout waiting for previous run to complete on thread " + threadId);
-    }
-    await new Promise(res => setTimeout(res, pollInterval));
-  }
-}
+// async function waitForNoActiveRuns(openai: OpenAI, threadId: string, pollInterval = 250, timeoutMs = 60000) {
+//   const activeStatuses = new Set(["queued", "in_progress", "requires_action"]);
+//   const start = Date.now();
+//   while (true) {
+//     const runs = await openai.beta.threads.runs.list(threadId, { limit: 10 });
+//     const activeRun = runs.data.find(run => activeStatuses.has(run.status));
+//     if (!activeRun) break;
+//     if (Date.now() - start > timeoutMs) {
+//       throw new Error("Timeout waiting for previous run to complete on thread " + threadId);
+//     }
+//     await new Promise(res => setTimeout(res, pollInterval));
+//   }
+// }
 
 /**
  * Logs starter question invocations to a log file asynchronously.
