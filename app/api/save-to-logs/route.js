@@ -1,46 +1,21 @@
-import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+// Route handlers for save-to-logs API endpoints
+// Delegates business logic to saveToLogsController
+
+import { NextRequest, NextResponse } from "next/server";
+import { handleOptions } from "../../../utils/shared/cors";
+import { formatErrorResponse } from "../../../utils/shared/errorHandler";
+import { postHandler } from "../controllers/saveToLogsController";
+
+export async function OPTIONS(request) {
+  const response = await handleOptions(request);
+  if (response) return response;
+  return new Response(null, { status: 405 });
+}
 
 export async function POST(request) {
   try {
-    const body = await request.json();
-    const { filename, data } = body;
-
-    if (!filename || !data) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Missing filename or data",
-        },
-        { status: 400 }
-      );
-    }
-
-    // Create logs directory if it doesn't exist
-    const logsDir = path.join(process.cwd(), "logs");
-    if (!fs.existsSync(logsDir)) {
-      fs.mkdirSync(logsDir, { recursive: true });
-    }
-
-    // Save the file to the logs directory
-    const filePath = path.join(logsDir, filename);
-    fs.writeFileSync(filePath, data, "utf8");
-
-    console.log(`Saved file to ${filePath}`);
-
-    return NextResponse.json({
-      success: true,
-      message: `File saved to ${filePath}`,
-    });
+    return await postHandler(request);
   } catch (error) {
-    console.error("Error saving file to logs:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message,
-      },
-      { status: 500 }
-    );
+    return formatErrorResponse(error);
   }
 }

@@ -1,25 +1,22 @@
-import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+// Route handlers for create-logs-dir API endpoints
+// Delegates business logic to createLogsDirController (to be implemented)
 
-export async function POST() {
+import { NextRequest, NextResponse } from "next/server";
+import { handleOptions } from "../../utils/shared/cors";
+import { formatErrorResponse } from "../../utils/shared/errorHandler";
+
+import { postHandler } from "../controllers/createLogsDirController";
+
+export async function OPTIONS(request) {
+  const response = await handleOptions(request);
+  if (response) return response;
+  return new Response(null, { status: 405 });
+}
+
+export async function POST(request) {
   try {
-    // Create logs directory if it doesn't exist (async, idempotent)
-    const logsDir = path.join(process.cwd(), "logs");
-    await fs.promises.mkdir(logsDir, { recursive: true });
-
-    return NextResponse.json({
-      success: true,
-      message: "Logs directory created or verified",
-    });
+    return await postHandler(request);
   } catch (error) {
-    console.error("Error creating logs directory:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message,
-      },
-      { status: 500 }
-    );
+    return formatErrorResponse(error);
   }
 }

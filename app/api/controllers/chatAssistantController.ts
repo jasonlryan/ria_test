@@ -187,6 +187,15 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
       };
 
       const formatGroupedStats = (grouped) => {
+        if (!Array.isArray(grouped)) {
+          logger.error(`[ERROR] formatGroupedStats received non-array: ${typeof grouped}`);
+          return "No data matched for the selected segments.";
+        }
+        // Defensive check: if grouped is a function (likely a bug), return default message
+        if (typeof grouped === "function") {
+          logger.error("[ERROR] formatGroupedStats received a function instead of array");
+          return "No data matched for the selected segments.";
+        }
         return grouped.map((entry) => {
           let lines = [];
           lines.push(`Question: ${entry.question}`);
@@ -207,8 +216,9 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
         }).join("\n\n");
       };
 
-      const statsPreview = groupStats.length > 0
-        ? formatGroupedStats(groupStats)
+      const groupedStats = groupStats(filteredStats);
+      const statsPreview = groupedStats.length > 0
+        ? formatGroupedStats(groupedStats)
         : "No data matched for the selected segments.";
 
       const standardModePrompt = statsPreview && statsPreview.trim().length > 0

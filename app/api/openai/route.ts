@@ -1,95 +1,23 @@
-import fsPromises from "fs/promises";
-import path from "path";
-import { NextResponse } from "next/server";
-import OpenAI from "openai";
+// Route handlers for openai API endpoints
+// Delegates business logic to openaiController (to be implemented)
 
-/**
- * DEPRECATION NOTICE
- * 
- * This route is scheduled for refactoring or removal.
- * It contains significant code duplication with chat-assistant/route.ts.
- * 
- * For new development:
- * - Use chat-assistant/route.ts for assistant-related functionality
- * - This route will eventually be refactored to only handle non-assistant OpenAI operations
- *   or be completely replaced by a more modular approach
- * 
- * See documentation in app/api/documentation/api_documentation.md for more details
- * about the proposed refactoring plan.
- */
+import { NextRequest, NextResponse } from "next/server";
+import { handleOptions } from "../../../utils/shared/cors";
+import { formatErrorResponse } from "../../../utils/shared/errorHandler";
 
-export async function POST(req) {
-  // Initialize OpenAI client inside the request handler
-  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+// Placeholder for openaiController import
+import { postHandler } from "../controllers/openaiController";
 
-  const { threadId, runId, method, action, role, content, assistantId } =
-    await req.json();
-  //   console.log("body", {
-  //     threadId,
-  //     runId,
-  //     method,
-  //     action,
-  //     role,
-  //     content,
-  //     assistantId,
-  //   });
+export async function OPTIONS(request) {
+  const response = await handleOptions(request);
+  if (response) return response;
+  return new Response(null, { status: 405 });
+}
 
-  // Log deprecation warning
-  console.warn("DEPRECATED: Using /api/openai route which is scheduled for refactoring or removal");
-
-  switch (action) {
-    case "GET_LIST":
-      const list = await openai.beta.assistants.list();
-
-      return NextResponse.json(list.data);
-    case "retrieve":
-      const getRun = await openai.beta.threads[method].retrieve(
-        threadId,
-        runId
-      );
-      return NextResponse.json({
-        ...getRun,
-      });
-
-    case "list":
-      const listMessages = await openai.beta.threads[method].list(threadId);
-      return NextResponse.json({
-        ...listMessages,
-      });
-
-    case "create":
-      switch (method) {
-        case "threads":
-          const getThread = await openai.beta.threads.create();
-          console.log("getThread", getThread);
-          return NextResponse.json({
-            ...getThread,
-          });
-        case "messages":
-          const getMessages = await openai.beta.threads[method].create(
-            threadId,
-            {
-              role,
-              content,
-            }
-          );
-          return NextResponse.json({
-            ...getMessages,
-          });
-        case "runs":
-          const getRun = await openai.beta.threads[method].create(threadId, {
-            assistant_id: assistantId,
-          });
-          return NextResponse.json({
-            ...getRun,
-          });
-      }
-
-    default:
-      break;
+export async function POST(request) {
+  try {
+    return await postHandler(request);
+  } catch (error) {
+    return formatErrorResponse(error);
   }
-
-  return NextResponse.json({
-    error: "No call returned",
-  });
 }

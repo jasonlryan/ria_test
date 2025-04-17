@@ -7,18 +7,18 @@
 
 import fs from "fs";
 import path from "path";
-import logger from "../../utils/logger";
+import logger from "../../../utils/logger";
 import {
   getCachedFilesForThread,
   updateThreadCache,
-} from "../../utils/cache-utils";
+} from "../../../utils/cache-utils";
 import {
   identifyRelevantFiles,
   getPrecompiledStarterData,
   isStarterQuestion,
   processQueryWithData,
-} from "../../utils/openai/retrieval";
-import { DEFAULT_SEGMENTS } from "../../utils/data/segment_keys";
+} from "../../../utils/openai/retrieval";
+import { DEFAULT_SEGMENTS } from "../../../utils/data/segment_keys";
 
 export class DataRetrievalService {
   constructor() {}

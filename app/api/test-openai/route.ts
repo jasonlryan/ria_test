@@ -1,29 +1,21 @@
+// Route handlers for test-openai API endpoints
+// Delegates business logic to testOpenAIController
+
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
+import { handleOptions } from "../../../utils/shared/cors";
+import { formatErrorResponse } from "../../../utils/shared/errorHandler";
+import { getHandler } from "../controllers/testOpenAIController";
 
-export const runtime = "edge";
+export async function OPTIONS(request) {
+  const response = await handleOptions(request);
+  if (response) return response;
+  return new Response(null, { status: 405 });
+}
 
-export async function GET(request: NextRequest) {
+export async function GET(request) {
   try {
-    // Create OpenAI client
-    const openai = new OpenAI();
-    
-    // Try to list models as a simple API test
-    const models = await openai.models.list();
-    
-    return NextResponse.json({ 
-      success: true, 
-      message: "OpenAI API connection successful",
-      models_count: models.data.length,
-      first_few_models: models.data.slice(0, 3).map(m => m.id)
-    });
+    return await getHandler(request);
   } catch (error) {
-    console.error("OpenAI API test error:", error);
-    
-    return NextResponse.json({ 
-      success: false, 
-      message: "OpenAI API connection failed",
-      error: error.message
-    }, { status: 500 });
+    return formatErrorResponse(error);
   }
-} 
+}
