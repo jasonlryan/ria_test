@@ -8,6 +8,9 @@ export default function DataRetrievalTester() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const [processingTime, setProcessingTime] = useState(null);
+  const [threadId, setThreadId] = useState(null);
+  const [previousQuery, setPreviousQuery] = useState("");
+  const [previousResponse, setPreviousResponse] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,12 +23,20 @@ export default function DataRetrievalTester() {
 
     try {
       console.log(`Processing query: ${query}`);
+      console.log(`ThreadId: ${threadId || "New thread"}`);
+      console.log(`IsFollowUp: ${!!threadId}`);
+
       const response = await fetch("/api/query", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({
+          query,
+          threadId,
+          previousQuery,
+          previousAssistantResponse: previousResponse,
+        }),
       });
 
       if (!response.ok) {
@@ -41,6 +52,17 @@ export default function DataRetrievalTester() {
       // Use server-side processing time if available, otherwise client time
       const totalTime = data.processing_time_ms || clientTime;
 
+      // Update thread state for continuity
+      if (data.threadId && !threadId) {
+        setThreadId(data.threadId);
+      }
+
+      // Store this query and response for the next interaction
+      setPreviousQuery(query);
+      if (data.analysis) {
+        setPreviousResponse(data.analysis);
+      }
+
       setResult(data);
       setProcessingTime(totalTime);
     } catch (err) {
@@ -52,147 +74,78 @@ export default function DataRetrievalTester() {
     }
   };
 
-  return (
-    <div className="bg-white p-4 rounded-lg shadow-md">
-      <h2 className="text-xl font-bold mb-4">Data Retrieval System Tester</h2>
+  const startNewThread = () => {
+    setThreadId(null);
+    setPreviousQuery("");
+    setPreviousResponse("");
+    setResult(null);
+    setError(null);
+    console.log("Started new thread - thread continuity reset");
+  };
 
-      <form onSubmit={handleSubmit} className="mb-4">
-        <div className="mb-4">
-          <label
-            htmlFor="query"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
+  return (
+    <div className="space-y-4 p-4 border rounded-lg shadow-sm">
+      <h2 className="text-xl font-semibold mb-4">Query Data Retrieval</h2>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="query" className="block mb-2 text-sm font-medium">
             Enter your query:
           </label>
           <textarea
             id="query"
-            rows="3"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="What are the top workforce trends in 2025?"
-            disabled={loading}
-            required
+            className="w-full p-2 border rounded-md"
+            rows={3}
+            placeholder="What factors affect employee retention?"
           />
         </div>
 
-        <button
-          type="submit"
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
-          disabled={loading || !query.trim()}
-        >
-          {loading ? "Processing..." : "Submit Query"}
-        </button>
+        <div className="flex space-x-4">
+          <button
+            type="submit"
+            disabled={loading || !query.trim()}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md disabled:bg-blue-300"
+          >
+            {loading ? "Processing..." : "Submit Query"}
+          </button>
+
+          <button
+            type="button"
+            onClick={startNewThread}
+            className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md"
+          >
+            New Thread
+          </button>
+        </div>
       </form>
 
-      {processingTime && (
-        <div className="mt-2 mb-4">
-          <p className="text-sm text-gray-600">
-            Processing completed in {(processingTime / 1000).toFixed(2)} seconds
-          </p>
+      {/* Thread info */}
+      {threadId && (
+        <div className="mt-4 p-2 bg-gray-100 rounded text-sm">
+          <p>Thread: {threadId.substring(0, 10)}... (follow-up mode enabled)</p>
         </div>
       )}
 
       {error && (
-        <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-md mb-4">
-          <p className="font-bold">Error:</p>
+        <div className="mt-4 p-4 bg-red-100 text-red-700 rounded-md">
+          <h3 className="font-semibold">Error</h3>
           <p>{error}</p>
         </div>
       )}
 
       {result && (
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold mb-2">Results:</h3>
-
-          {result.matched_topics && result.matched_topics.length > 0 && (
-            <div className="bg-blue-50 p-4 rounded-md mb-4">
-              <h4 className="font-medium text-sm text-gray-700 mb-2">
-                Matched Topics:
-              </h4>
-              <ul className="list-disc pl-5 space-y-1 text-sm">
-                {result.matched_topics.map((topic, index) => (
-                  <li key={index}>{topic}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          <div className="bg-gray-50 p-4 rounded-md mb-4">
-            <h4 className="font-medium text-sm text-gray-700 mb-2">
-              Files Used:
-            </h4>
-            {result.files_used && result.files_used.length > 0 ? (
-              <ul className="list-disc pl-5 space-y-1 text-sm">
-                {result.files_used.map((file, index) => (
-                  <li key={index}>{file}</li>
-                ))}
-              </ul>
-            ) : result.metadata && result.metadata.files_used ? (
-              <ul className="list-disc pl-5 space-y-1 text-sm">
-                {result.metadata.files_used.map((file, index) => (
-                  <li key={index}>{file}</li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-sm text-gray-600">No files were used</p>
-            )}
-            <p className="mt-2 text-sm text-gray-700">
-              Total data points:{" "}
-              {(result.metadata && result.metadata.data_points) ||
-                result.data_points ||
-                0}
+        <div className="mt-4">
+          <h3 className="font-semibold mb-2">Results</h3>
+          <div className="p-4 bg-gray-50 rounded-md overflow-auto max-h-96">
+            <p className="text-sm text-gray-500 mb-2">
+              Processed in {processingTime}ms
             </p>
+            <pre className="whitespace-pre-wrap text-sm">
+              {JSON.stringify(result, null, 2)}
+            </pre>
           </div>
-
-          <div className="mb-4">
-            <h4 className="font-medium mb-2">Analysis:</h4>
-            <div className="bg-white border border-gray-200 rounded-md p-4 prose max-w-none">
-              {result.analysis ? (
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: formatMarkdown(result.analysis),
-                  }}
-                />
-              ) : (
-                <p className="text-gray-600">No analysis available</p>
-              )}
-            </div>
-          </div>
-
-          {result.validation && (
-            <div className="bg-gray-50 p-4 rounded-md">
-              <h4 className="font-medium text-sm text-gray-700 mb-2">
-                Validation:
-              </h4>
-              <p
-                className={`text-sm ${
-                  result.validation.valid ? "text-green-600" : "text-red-600"
-                }`}
-              >
-                {result.validation.valid
-                  ? `✓ Valid analysis using ${
-                      result.validation.percentagesUsed || 0
-                    } percentage values from the data.`
-                  : `⚠️ Invalid analysis: ${
-                      result.validation.fabricatedPercentages?.length || 0
-                    } fabricated percentages detected.`}
-              </p>
-
-              {result.validation.potentialIssues &&
-                result.validation.potentialIssues.length > 0 && (
-                  <div className="mt-2">
-                    <p className="text-sm font-medium text-gray-700">
-                      Potential Issues:
-                    </p>
-                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-600">
-                      {result.validation.potentialIssues.map((issue, index) => (
-                        <li key={index}>{issue}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-            </div>
-          )}
         </div>
       )}
     </div>

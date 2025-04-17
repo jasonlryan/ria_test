@@ -262,6 +262,13 @@ export async function identifyRelevantFiles(
   previousAssistantResponse = ""
 ) {
   try {
+    // Add clear logging about the isFollowUp parameter
+    logger.info("=== IDENTIFY FILES DEBUG ===");
+    logger.info(`IS FOLLOW-UP FLAG IN IDENTIFY: ${isFollowUp}`);
+    logger.info(`QUERY IN IDENTIFY: "${query.substring(0, 50)}..."`);
+    logger.info(`HAS PREV QUERY IN IDENTIFY: ${previousQuery ? "YES" : "NO"}`);
+    logger.info("============================");
+
     // No more keyword checks - rely purely on semantic analysis
 
     // Check cache first (Cache key should ideally include context for follow-ups)
@@ -278,48 +285,31 @@ export async function identifyRelevantFiles(
     // Load the canonical topic mapping for more accurate file identification
     const mapping = loadCanonicalTopicMapping();
 
-    // Extract only the minimal necessary data for file identification to reduce token usage
-    const simplifiedMapping = {
-      themes: mapping.themes.map((theme) => ({
-        name: theme.name,
-        topics: theme.topics.map((topic) => ({
-          id: topic.id,
-          canonicalQuestion: topic.canonicalQuestion,
-          // Only include first 3 alternate phrasings to reduce tokens
-          alternatePhrasings: topic.alternatePhrasings
-            ? topic.alternatePhrasings.slice(0, 3)
-            : undefined,
-          // Only include mapping info, not all details
-          mapping: topic.mapping
-            ? {
-                2024: topic.mapping["2024"]
-                  ? topic.mapping["2024"].map((m) => ({
-                      file: m.file,
-                    }))
-                  : undefined,
-                2025: topic.mapping["2025"]
-                  ? topic.mapping["2025"].map((m) => ({
-                      file: m.file,
-                    }))
-                  : undefined,
-              }
-            : undefined,
-        })),
-      })),
-    };
+    // Build the system prompt
+    const promptPath = path.join(
+      process.cwd(),
+      "utils",
+      "openai",
+      "1_data_retrieval.md"
+    );
+    let systemPrompt;
+    try {
+      systemPrompt = fs.readFileSync(promptPath, "utf8");
+    } catch (err) {
+      logger.error(`Error reading data retrieval prompt: ${err}`);
+      throw new Error("Failed to load data retrieval prompt");
+    }
 
-    // Load the file identification prompt from markdown file
-    let systemPrompt =
-      "You analyze workforce survey queries to determine relevant data files. Be precise in your JSON responses.";
-    let userPromptTemplate = loadPromptFromFile("1_data_retrieval");
-
-    // Replace template variables, including new context placeholders
-    const userPrompt = userPromptTemplate
-      .replace("{{IS_FOLLOWUP}}", String(isFollowUp))
-      .replace("{{PREVIOUS_QUERY}}", previousQuery)
-      .replace("{{PREVIOUS_ASSISTANT_RESPONSE}}", previousAssistantResponse)
+    // Build the user prompt with replacements
+    const userPrompt = systemPrompt
       .replace("{{QUERY}}", query)
-      .replace("{{MAPPING}}", JSON.stringify(simplifiedMapping, null, 2));
+      .replace("{{MAPPING}}", JSON.stringify(mapping))
+      .replace("{{IS_FOLLOWUP}}", isFollowUp ? "true" : "false")
+      .replace("{{PREVIOUS_QUERY}}", previousQuery || "")
+      .replace(
+        "{{PREVIOUS_ASSISTANT_RESPONSE}}",
+        previousAssistantResponse || ""
+      );
 
     const response = await openai.chat.completions.create({
       model: process.env.OPENAI_MODEL || DEFAULT_OPENAI_MODEL,
@@ -931,6 +921,18 @@ export async function processQueryWithData(
   previousAssistantResponseContext = ""
 ) {
   const startTime = performance.now();
+
+  // Add VERY clear logging about the isFollowUp parameter
+  logger.info("=== FOLLOW-UP DEBUG ===");
+  logger.info(`THREAD ID: ${threadId}`);
+  logger.info(`IS FOLLOW-UP FLAG: ${isFollowUpContext}`);
+  logger.info(`CACHED FILE IDS: ${JSON.stringify(cachedFileIds)}`);
+  logger.info(`HAS PREVIOUS QUERY: ${previousQueryContext ? "YES" : "NO"}`);
+  logger.info(`QUERY: "${query.substring(0, 50)}..."`);
+  if (previousQueryContext) {
+    logger.info(`PREV QUERY: "${previousQueryContext.substring(0, 50)}..."`);
+  }
+  logger.info("=======================");
 
   // DIAGNOSTIC LOGGING: Log the received query and starter check
   // logger.info(`[processQueryWithData] Received query: "${query}"`);

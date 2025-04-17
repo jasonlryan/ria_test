@@ -73,41 +73,50 @@
 - Provides confidence in system stability and performance.
 - Reduces manual testing effort and human error.
 
+### New Workstream: Lazy-Loading Additional Segments for Cached Files 🚀
+
+## Priority: High
+
 ### Tasks:
 
-- Separate Routing from Business Logic:
-  - Create controllers for POST and PUT endpoints (e.g., postController.js and putController.js).
-  - Remove heavy logic from the routes file and delegate to the service layer.
-- Standardize Request Validation and Error Handling:
-  - Use a shared error-handling mechanism that wraps asynchronous calls and uniformly returns formatted error responses.
-- Actions:
-  - In your routes directory, create a consolidated index (or per-method files) that import and invoke the dedicated controller functions.
-  - Ensure that each controller only handles the HTTP-specific elements (like parsing the JSON, setting CORS headers, and streaming responses) and hands off the core logic to services.
+- Extend Cache Structure:
 
-### Detailed Routing Plan
+  - Add metadata fields to cached files: loadedSegments and availableSegments.
+  - Parse files to extract available segments during initial load.
 
-- Define route files for each API endpoint group (e.g., chat-assistant, query, openai).
-- For each route file:
-  - Import the corresponding controller(s) (e.g., chatAssistantController).
-  - Define HTTP method handlers (e.g., POST, PUT, OPTIONS).
-  - In each handler, invoke the appropriate controller method (e.g., postHandler, putHandler).
-  - Use shared utilities for CORS, error handling, and response formatting.
-- Consolidate common route logic where possible to avoid duplication.
-- Ensure routes only handle HTTP-specific concerns and delegate business logic to controllers and services.
-- Implement middleware or utilities for request validation and authentication if needed.
-- Maintain consistent error handling and logging across all routes.
-- Gradually refactor existing routes to follow this pattern.
+- Implement Lazy-Loading Mechanism:
 
-- Benefits:
-  - Enhances readability and maintainability.
-  - Avoids duplication of request validation and common response handling.
+  - Detect missing segments in cached files based on follow-up query requests.
+  - Load only the missing segments from disk on demand.
+  - Merge newly loaded segments into cached file data and update metadata.
 
-## Benefits 🌟
+- Update Incremental Fetch Logic:
 
-- Improved maintainability and consistency
-- Centralized performance-sensitive code for easier optimization
-- Reduced code duplication and improved readability
-- Simplified testing and future enhancements
+  - Modify incremental data fetch to check for missing segments in cached files.
+  - Trigger targeted segment loading for partially cached files.
+  - Update cache with merged segment data.
+
+- Integrate with Query Intent Parser:
+
+  - Ensure query intent includes requested segments.
+  - Pass segment requests to caching layer for accurate incremental fetch decisions.
+
+- Utilities and Services Involved:
+
+  - dataRetrievalService.js: Extend to handle segment metadata and lazy-loading.
+  - cache-utils.ts: Update to support merging segment data in cache.
+  - queryProcessor.js (if applicable): Modify to include segment-level intent.
+  - Controllers handling queries: Update to pass segment info.
+
+- Routes Involved:
+  - chat-assistant/route.ts
+  - query/route.js
+
+## Benefits:
+
+- Efficient memory and data usage by loading only necessary segments.
+- Improved responsiveness to follow-up queries with additional data needs.
+- Scalable and maintainable cache management.
 
 ## Appendix: Shared Utilities and Services Implemented
 

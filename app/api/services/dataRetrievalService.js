@@ -114,7 +114,34 @@ export class DataRetrievalService {
     previousQuery = "",
     previousAssistantResponse = ""
   ) {
-    // Delegate to existing retrieval.js processQueryWithData function
+    // Step 1: Retrieve existing cache for the thread
+    const cacheEntry = await this.getCachedFiles(threadId);
+
+    // Step 2: Extract requested segments from query intent or use default
+    const requestedSegments =
+      isFollowUp && previousQuery
+        ? this.extractSegmentsFromQuery(previousQuery)
+        : DEFAULT_SEGMENTS;
+
+    // Step 3: Calculate missing segments for each cached file
+    const missingSegmentsIndex = this.calculateMissingSegments(
+      requestedSegments,
+      cacheEntry
+    );
+
+    // Step 4: For each cached file with missing segments, load additional segments
+    for (const file of cacheEntry) {
+      if (missingSegmentsIndex[file.id]) {
+        const missingSegments = missingSegmentsIndex[file.id];
+        const additionalData = await this.loadAdditionalSegments(
+          file.id,
+          missingSegments
+        );
+        this.mergeFileSegments(file, additionalData, missingSegments);
+      }
+    }
+
+    // Step 5: Proceed with existing processQueryWithData logic
     return processQueryWithData(
       query,
       context,
@@ -127,27 +154,86 @@ export class DataRetrievalService {
   }
 
   /**
-   * Retrieve precompiled starter question data.
-   * @param {string} code
-   * @returns {object|null}
+   * Extracts requested segments from a query string.
+   * @param {string} query
+   * @returns {string[]} segments
    */
-  getPrecompiledStarterData(code) {
-    return getPrecompiledStarterData(code);
+  extractSegmentsFromQuery(query) {
+    // Implement logic to parse query and extract requested segments
+    // Placeholder implementation
+    return DEFAULT_SEGMENTS;
   }
 
   /**
-   * Check if a prompt is a starter question code.
-   * @param {string} prompt
-   * @returns {boolean}
+   * Calculates missing segments for each cached file.
+   * @param {string[]} requestedSegments
+   * @param {CachedFile[]} cachedFiles
+   * @returns {Object} mapping of fileId to missing segments
    */
-  isStarterQuestion(prompt) {
-    return isStarterQuestion(prompt);
+  calculateMissingSegments(requestedSegments, cachedFiles) {
+    const missingSegments = {};
+    for (const file of cachedFiles) {
+      const loaded = file.loadedSegments || new Set();
+      const missing = requestedSegments.filter((seg) => !loaded.has(seg));
+      if (missing.length > 0) {
+        missingSegments[file.id] = missing;
+      }
+    }
+    return missingSegments;
+  }
+
+  /**
+   * Loads additional segments from disk for a specific file.
+   * @param {string} fileId
+   * @param {string[]} segments
+   * @returns {Promise<Object>} segment data
+   */
+  async loadAdditionalSegments(fileId, segments) {
+    // Implement targeted file read to extract only requested segments
+    // Placeholder: load entire file for now
+    const dataDir = path.join(process.cwd(), "scripts", "output", "split_data");
+    const fileName = fileId.endsWith(".json") ? fileId : `${fileId}.json`;
+    const filePath = path.join(dataDir, fileName);
+    const fileContent = await fs.promises.readFile(filePath, "utf8");
+    const jsonData = JSON.parse(fileContent);
+    // Extract only requested segments from jsonData
+    const segmentData = {};
+    for (const seg of segments) {
+      if (jsonData[seg]) {
+        segmentData[seg] = jsonData[seg];
+      }
+    }
+    console.log(
+      `[LazyLoad] Loaded additional segments for file ${fileId}: ${segments.join(
+        ", "
+      )}`
+    );
+    return segmentData;
+  }
+
+  /**
+   * Merges additional segment data into an existing cached file.
+   * @param {CachedFile} existingFile
+   * @param {Object} newSegmentData
+   * @param {string[]} newSegments
+   */
+  mergeFileSegments(existingFile, newSegmentData, newSegments) {
+    if (!existingFile.data) {
+      existingFile.data = {};
+    }
+    for (const seg of newSegments) {
+      existingFile.data[seg] = newSegmentData[seg];
+    }
+    if (!existingFile.loadedSegments) {
+      existingFile.loadedSegments = new Set();
+    }
+    newSegments.forEach((seg) => existingFile.loadedSegments.add(seg));
   }
 
   /**
    * Get cached file IDs for a thread.
    * @param {string} threadId
-   * @returns {Promise<string[]>}
+   * @returns {Promise<CachedFile[]>}
    */
   async getCachedFiles(threadId) {
     return getCachedFilesForThread(threadId);
@@ -156,7 +242,7 @@ export class DataRetrievalService {
   /**
    * Update cached file IDs for a thread.
    * @param {string} threadId
-   * @param {string[]} fileIds
+   * @param {CachedFile[]} fileIds
    * @returns {Promise<void>}
    */
   async updateThreadCache(threadId, fileIds) {

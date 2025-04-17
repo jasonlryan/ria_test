@@ -8,7 +8,7 @@ import { formatErrorResponse, formatBadRequestResponse } from "../../../utils/sh
 import { sanitizeOutput, isJsonContent } from "../../../utils/shared/utils";
 import { waitForNoActiveRuns } from "../../../utils/shared/polling";
 import { processQueryWithData, identifyRelevantFiles, getPrecompiledStarterData, isStarterQuestion } from "../../../utils/openai/retrieval";
-import { getCachedFilesForThread, updateThreadCache } from "../../../utils/cache-utils";
+import { getCachedFilesForThread, updateThreadCache, CachedFile } from "../../../utils/cache-utils";
 import { buildPromptWithFilteredData } from "../../../utils/openai/promptUtils";
 
 const OPENAI_TIMEOUT_MS = 90000;
@@ -83,7 +83,8 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
       return formatBadRequestResponse("Missing required field: assistantId");
     }
 
-    logger.info(`[REQUEST] New ${threadId ? "follow-up" : "initial"} request | Assistant: ${assistantId}`);
+    const isFollowUp = !!threadId; // Determine if this is a follow-up based on threadId presence
+    logger.info(`[REQUEST] New ${isFollowUp ? "follow-up" : "initial"} request | Assistant: ${assistantId}`);
 
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -98,13 +99,54 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
 
     await waitForNoActiveRuns(openai, finalThreadId);
 
-    let usedFileIds = [];
-    let cachedFileIds = [];
+    let usedFileIds: string[] = [];
+    let cachedFileIds: string[] = [];
     let originalUserContent = content;
+    
+    // Get previous message for context if this is a follow-up
+    let previousQuery = "";
+    let previousAssistantResponse = "";
+    
+    if (isFollowUp) {
+      try {
+        const messages = await openai.beta.threads.messages.list(finalThreadId, { limit: 4 });
+        // Find previous user message and assistant response
+        for (let i = 0; i < messages.data.length - 1; i++) {
+          if (messages.data[i].role === "assistant" && messages.data[i+1].role === "user") {
+            // Safely extract text content from messages
+            const assistantContent = messages.data[i].content?.[0];
+            const userContent = messages.data[i+1].content?.[0];
+            
+            if (assistantContent && 'text' in assistantContent) {
+              previousAssistantResponse = assistantContent.text.value || "";
+            }
+            
+            if (userContent && 'text' in userContent) {
+              previousQuery = userContent.text.value || "";
+            }
+            break;
+          }
+        }
+        logger.info(`[CONTEXT] Found previous query: "${previousQuery.substring(0, 50)}..."`);
+      } catch (error) {
+        logger.error(`[ERROR] Failed to retrieve previous messages: ${error.message}`);
+      }
+    }
 
     if (!isStarterQuestion(content) && !(isDirectMode && !forceStandardMode)) {
-      cachedFileIds = await getCachedFilesForThread(finalThreadId);
-      const result = await processQueryWithData(content, "all-sector", cachedFileIds, finalThreadId);
+      const cachedFiles = await getCachedFilesForThread(finalThreadId);
+      cachedFileIds = cachedFiles.map(file => file.id);
+      
+      // Pass isFollowUp flag and previous context to processQueryWithData
+      const result = await processQueryWithData(
+        content, 
+        "all-sector", 
+        cachedFileIds, 
+        finalThreadId, 
+        isFollowUp, 
+        previousQuery, 
+        previousAssistantResponse
+      );
 
       if (result && result.out_of_scope === true) {
         return NextResponse.json({
@@ -115,7 +157,14 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
 
       if (result.dataScope && result.dataScope.fileIds && result.dataScope.fileIds.size > 0) {
         usedFileIds = Array.from(result.dataScope.fileIds).map(String);
-        await updateThreadCache(finalThreadId, usedFileIds);
+        // Create proper CachedFile objects for updating the cache
+        const cachedFiles: CachedFile[] = usedFileIds.map(id => ({
+          id,
+          data: {},
+          loadedSegments: new Set(),
+          availableSegments: new Set()
+        }));
+        await updateThreadCache(finalThreadId, cachedFiles);
       }
 
       const statCount = result.filteredData?.stats?.length || 0;
