@@ -1259,47 +1259,72 @@ export async function processQueryWithData(
   // --- BEGIN: Data structure normalization and debug logging ---
   // Normalize: ensure file.data is always an object with a 'responses' array
   files = files.map((file) => {
+    // Case 1: file.data is an array - convert to { responses: [] } format
     if (Array.isArray(file.data)) {
       return { ...file, data: { responses: file.data } };
     }
+
+    // Case 2: file.data is an object but missing responses array
+    if (
+      file.data &&
+      typeof file.data === "object" &&
+      !Array.isArray(file.data.responses)
+    ) {
+      // If there's a 'data' property that's an array, use that as responses
+      if (Array.isArray(file.data.data)) {
+        return { ...file, data: { ...file.data, responses: file.data.data } };
+      }
+
+      // Create empty responses array if none exists
+      if (!file.data.responses) {
+        return { ...file, data: { ...file.data, responses: [] } };
+      }
+    }
+
+    // If no data property at all, initialize with empty structure
+    if (!file.data) {
+      return { ...file, data: { responses: [] } };
+    }
+
     return file;
   });
 
+  // Additional validation - ensure all files have the expected structure
+  const validatedFiles = files.map((file) => {
+    // Ensure the responses array exists
+    if (!file.data.responses) {
+      file.data.responses = [];
+    }
+
+    // Ensure each response has a data object
+    file.data.responses = file.data.responses.map((response) => {
+      if (!response) return { response: "", data: {} };
+      if (!response.data) return { ...response, data: {} };
+      return response;
+    });
+
+    return file;
+  });
+
+  // Overwrite files with the validated structure
+  files = validatedFiles;
+
   // Unconditional debug logging of first loaded file structure
-  // if (files.length > 0) {
-  //   const first = files[0];
-  //   if (first.data && typeof first.data === "object") {
-  //     logger.debug(
-  //       "UNCONDITIONAL LOG: file.data keys:",
-  //       Object.keys(first.data)
-  //     );
-  //     if (Array.isArray(first.data.responses)) {
-  //       const resp0 = first.data.responses[0];
-  //       if (resp0 && typeof resp0 === "object") {
-  //         logger.debug(
-  //           "UNCONDITIONAL LOG: first.data.responses[0] keys:",
-  //           Object.keys(resp0)
-  //         );
-  //         // Print a shallow preview, not the full object
-  //         const preview = JSON.stringify(resp0, null, 2);
-  //         logger.debug(
-  //           "UNCONDITIONAL LOG: first.data.responses[0] preview:",
-  //           preview.length > 200
-  //             ? preview.substring(0, 200) + " ... (truncated)"
-  //             : preview
-  //         );
-  //       } else {
-  //         logger.debug("UNCONDITIONAL LOG: first.data.responses[0]:", resp0);
-  //       }
-  //     }
-  //   } else {
-  //     logger.debug(
-  //       "UNCONDITIONAL LOG: first file data is not an object:",
-  //       typeof first.data
-  //     );
-  //   }
-  // }
+  if (files.length > 0) {
+    const first = files[0];
+    logger.debug(
+      "FILE STRUCTURE: First file data keys:",
+      first?.data ? Object.keys(first.data).join(", ") : "no data"
+    );
+    logger.debug(
+      "FILE STRUCTURE: Responses array length:",
+      Array.isArray(first?.data?.responses)
+        ? first.data.responses.length
+        : "no responses array"
+    );
+  }
   // --- END: Data structure normalization and debug logging ---
+
   // NOTE: mapIntentToDataScope is now only used for logging/monitoring, not for filtering
   const dataScope = { segments: new Set(segments) };
 

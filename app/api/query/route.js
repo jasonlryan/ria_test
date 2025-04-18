@@ -1,3 +1,10 @@
+/**
+ * Query API Route Handler
+ * Manages HTTP requests for the query endpoint, handles CORS,
+ * delegates business logic to queryController, and formats responses.
+ * Entry point for standalone query processing in the application.
+ */
+
 // Route handlers for query API endpoints
 // Delegates business logic to queryController (to be implemented)
 

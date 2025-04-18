@@ -1,3 +1,10 @@
+/**
+ * Chat Assistant Controller
+ * Handles OpenAI Assistant interactions, message processing,
+ * thread management, tool call handling, and streaming responses.
+ * Central orchestration point for the entire chat assistant flow.
+ */
+
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import fs from "fs";
@@ -172,7 +179,10 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
       const summaryText = result.filteredData?.summary || "No summary available.";
       logger.info(`[DATA] Data files used: ${Array.from(fileSet).join(", ")}`);
 
-      logger.info(`[DATA] Segments selected: ${DEFAULT_SEGMENTS.join(", ")}`);
+      const segmentsUsed = (result.segments && Array.isArray(result.segments))
+        ? result.segments.join(", ")
+        : DEFAULT_SEGMENTS.join(", ");
+      logger.info(`[DATA] Segments selected: ${segmentsUsed}`);
       logger.info(`[DATA] Summary: ${summaryText}`);
 
       let filteredStats = [];
@@ -194,10 +204,6 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
         })}`);
       }
 
-      const segmentsUsed = (result.segments && Array.isArray(result.segments))
-        ? result.segments.join(", ")
-        : DEFAULT_SEGMENTS.join(", ");
-
       const groupStats = (stats) => {
         if (!Array.isArray(stats)) {
           logger.error(`[ERROR] groupStats received non-array: ${typeof stats}`);
@@ -216,6 +222,7 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
               region: {},
               age: {},
               gender: {},
+              job_level: {},
             });
           }
           const entry = keyMap.get(key);
@@ -230,6 +237,9 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
           } else if (stat.segment.startsWith("gender:")) {
             const gender = stat.segment.split(":")[1];
             entry.gender[gender] = stat.percentage;
+          } else if (stat.segment.startsWith("job_level:")) {
+            const jobLevel = stat.segment.split(":")[1];
+            entry.job_level[jobLevel] = stat.percentage;
           }
         }
         return Array.from(keyMap.values());
@@ -261,6 +271,9 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
           if (Object.keys(entry.gender).length > 0) {
             lines.push(`- gender { ${Object.entries(entry.gender).map(([k, v]) => `${k}: ${v}%`).join(", ")} }`);
           }
+          if (Object.keys(entry.job_level).length > 0) {
+            lines.push(`- job_level { ${Object.entries(entry.job_level).map(([k, v]) => `${k}: ${v}%`).join(", ")} }`);
+          }
           return lines.join("\n");
         }).join("\n\n");
       };
@@ -291,7 +304,8 @@ No data matched for the selected segments.`;
 
       content = standardModePrompt;
     } else if (!isStarterQuestion(content) && isDirectMode && !forceStandardMode) {
-      cachedFileIds = await getCachedFilesForThread(finalThreadId);
+      const cachedFiles = await getCachedFilesForThread(finalThreadId);
+      cachedFileIds = cachedFiles.map(file => file.id);
       const relevantFilesResult = await identifyRelevantFiles(content, "all-sector");
       if (relevantFilesResult?.file_ids) {
         usedFileIds = Array.from(new Set([...(cachedFileIds || []), ...(relevantFilesResult.file_ids || [])])).map(String);
@@ -394,6 +408,14 @@ No data matched for the selected segments.`;
                           ])
                         );
 
+                        const cachedFiles: CachedFile[] = allRelevantFileIds.map(id => ({
+                          id: String(id),
+                          data: {},
+                          loadedSegments: new Set(),
+                          availableSegments: new Set()
+                        }));
+                        await updateThreadCache(finalThreadId, cachedFiles);
+
                         await openai.beta.threads.runs.submitToolOutputs(
                           finalThreadId,
                           run.id,
@@ -427,6 +449,17 @@ No data matched for the selected segments.`;
                           finalThreadId
                         );
 
+                        const fileIdsArray = Array.from(
+                          result.dataScope.fileIds
+                        ).map(String);
+                        const cachedFiles: CachedFile[] = fileIdsArray.map(id => ({
+                          id,
+                          data: {},
+                          loadedSegments: new Set(),
+                          availableSegments: new Set()
+                        }));
+                        await updateThreadCache(finalThreadId, cachedFiles);
+
                         await openai.beta.threads.runs.submitToolOutputs(
                           finalThreadId,
                           run.id,
@@ -446,19 +479,6 @@ No data matched for the selected segments.`;
                             ],
                           }
                         );
-
-                        if (
-                          result.dataScope &&
-                          result.dataScope.fileIds &&
-                          result.dataScope.fileIds.size > 0
-                        ) {
-                          const fileIdsArray = Array.from(
-                            result.dataScope.fileIds
-                          ).map(String);
-                          updateThreadCache(finalThreadId, fileIdsArray).catch(
-                            () => {}
-                          );
-                        }
                       }
                     } catch (error) {
                       logger.error("Error processing tool call:", error);
@@ -657,7 +677,13 @@ export async function putHandler(request: NextRequest) {
             ...(fileIdArray || []),
           ]));
 
-          await updateThreadCache(threadId, allRelevantFileIds);
+          const cachedFiles: CachedFile[] = allRelevantFileIds.map(id => ({
+            id: String(id),
+            data: {},
+            loadedSegments: new Set(),
+            availableSegments: new Set()
+          }));
+          await updateThreadCache(threadId, cachedFiles);
 
           await openai.beta.threads.runs.submitToolOutputs(threadId, runId, {
             tool_outputs: [
@@ -690,7 +716,13 @@ export async function putHandler(request: NextRequest) {
 
           if (result.dataScope && result.dataScope.fileIds && result.dataScope.fileIds.size > 0) {
             const fileIdsArray = Array.from(result.dataScope.fileIds).map(String);
-            await updateThreadCache(threadId, fileIdsArray);
+            const cachedFiles: CachedFile[] = fileIdsArray.map(id => ({
+              id,
+              data: {},
+              loadedSegments: new Set(),
+              availableSegments: new Set()
+            }));
+            await updateThreadCache(threadId, cachedFiles);
           }
 
           await openai.beta.threads.runs.submitToolOutputs(threadId, runId, {

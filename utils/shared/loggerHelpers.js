@@ -1,3 +1,10 @@
+/**
+ * Logger Helper Utilities
+ * Provides functions for performance metrics logging,
+ * structured logging formats, and file-based logging.
+ * Helps with monitoring and debugging application performance.
+ */
+
 import logger from "../logger";
 
 /**

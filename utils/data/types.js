@@ -1,5 +1,8 @@
 /**
- * Type definitions for smart filtering and incremental caching
+ * Data Pipeline Type Definitions
+ * Provides TypeScript interface and type definitions for
+ * the data retrieval pipeline components, ensuring type safety
+ * across the smart filtering and caching systems.
  */
 
 /**

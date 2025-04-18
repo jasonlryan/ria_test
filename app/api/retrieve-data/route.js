@@ -1,3 +1,10 @@
+/**
+ * Data Retrieval API Route Handler
+ * Manages HTTP requests for direct data file retrieval,
+ * delegates to retrieveDataController, and formats responses.
+ * Used for accessing specific data files by ID.
+ */
+
 // Route handlers for retrieve-data API endpoints
 // Delegates business logic to retrieveDataController
 

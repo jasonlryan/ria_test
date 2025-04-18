@@ -1,3 +1,10 @@
+/**
+ * Thread Service
+ * Manages OpenAI thread operations including creation, reuse,
+ * run management, tool output submissions, and thread cache interactions.
+ * Provides thread-specific utilities for the chat assistant.
+ */
+
 import OpenAI from "openai";
 import { waitForNoActiveRuns } from "../../utils/shared/polling";
 import {

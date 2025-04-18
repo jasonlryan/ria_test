@@ -134,17 +134,17 @@ function getBaseData(retrievedData, queryIntent) {
 /**
  * Return detailed data filtered by demographics, years, etc.
  * @param {any} retrievedData
- * @param {import("./types").QueryIntent} queryIntent
+ * @param {object} options - Filtering options
+ * @param {string[]} options.demographics - Demographic segments to filter by
  * @returns {any}
  */
 function getSpecificData(retrievedData, { demographics = [] }) {
-  // INITIAL DEBUG - Check what we received
-  // console.log("[getSpecificData] Called with retrievedData:", {
-  //   type: typeof retrievedData,
-  //   hasFiles: retrievedData?.files ? true : false,
-  //   filesCount: retrievedData?.files?.length || 0,
-  //   demographics: JSON.stringify(demographics),
-  // });
+  console.log("[getSpecificData] Called with retrievedData:", {
+    type: typeof retrievedData,
+    hasFiles: retrievedData?.files ? true : false,
+    filesCount: retrievedData?.files?.length || 0,
+    demographics: JSON.stringify(demographics),
+  });
 
   // Only filter by canonical segment keys as provided by the LLM
   if (
@@ -153,19 +153,18 @@ function getSpecificData(retrievedData, { demographics = [] }) {
     !retrievedData.files
   ) {
     console.error("[getSpecificData] ERROR: Invalid retrievedData format");
-    return { filteredData: { stats: [] } };
+    return { filteredData: [], stats: [] };
   }
 
-  // Count files with valid responses
-  // const filesWithResponses = retrievedData.files.filter(
-  //   (file) =>
-  //     file.data &&
-  //     Array.isArray(file.data.responses) &&
-  //     file.data.responses.length > 0
-  // ).length;
-  // console.log(
-  //   `[getSpecificData] Files with valid responses: ${filesWithResponses}/${retrievedData.files.length}`
-  // );
+  const filesWithResponses = retrievedData.files.filter(
+    (file) =>
+      file.data &&
+      Array.isArray(file.data.responses) &&
+      file.data.responses.length > 0
+  ).length;
+  console.log(
+    `[getSpecificData] Files with valid responses: ${filesWithResponses}/${retrievedData.files.length}`
+  );
 
   // If no demographics provided, use all canonical segments
   let segmentsToUse =
@@ -184,28 +183,63 @@ function getSpecificData(retrievedData, { demographics = [] }) {
     segmentsToUse = ["overall", ...segmentsToUse];
   }
 
-  // DIAGNOSTIC LOG: Print segmentsToUse
-  // console.log("[getSpecificData] segmentsToUse:", segmentsToUse);
+  console.log("[getSpecificData] segmentsToUse:", segmentsToUse);
 
   const filteredStats = [];
 
   for (const file of retrievedData.files) {
-    if (!file.data || !Array.isArray(file.data.responses)) {
+    // First, verify we have a valid file to process
+    if (!file.data) {
+      console.warn(`[getSpecificData] File ${file.id} has no data property`);
       continue;
     }
+
+    // Extract question from file
     const question =
       file.data.question ||
       (file.data.metadata && file.data.metadata.canonicalQuestion) ||
       "";
-    for (const responseObj of file.data.responses) {
+
+    // Some files might have different structures - handle both standard and nested formats
+    const responses = Array.isArray(file.data.responses)
+      ? file.data.responses
+      : Array.isArray(file.data)
+      ? file.data
+      : [];
+
+    if (responses.length === 0) {
+      console.warn(`[getSpecificData] File ${file.id} has no responses`);
+      continue;
+    }
+
+    // Process each response
+    for (const responseObj of responses) {
+      // Skip invalid responses
+      if (!responseObj || typeof responseObj !== "object") {
+        continue;
+      }
+
       const responseText = responseObj.response || "";
-      const dataObj = responseObj.data || {};
-      // For each segment in dataObj
+      // Allow for different data locations
+      const dataObj = responseObj.data || responseObj;
+
+      if (!dataObj || typeof dataObj !== "object") {
+        console.warn(
+          `[getSpecificData] Response has no valid data object in file ${file.id}`
+        );
+        continue;
+      }
+
+      // Process each segment in dataObj
       for (const segmentKey of Object.keys(dataObj)) {
-        const segmentValue = dataObj[segmentKey];
+        // Skip if this segment isn't in our target segments
         if (!segmentsToUse.includes(segmentKey)) {
           continue;
         }
+
+        const segmentValue = dataObj[segmentKey];
+
+        // Handle direct value (e.g., "overall": 0.67)
         if (typeof segmentValue === "number") {
           filteredStats.push({
             fileId: file.id,
@@ -218,8 +252,9 @@ function getSpecificData(retrievedData, { demographics = [] }) {
             percentage: Math.round(segmentValue * 100),
             formatted: `${Math.round(segmentValue * 100)}%`,
           });
-        } else if (typeof segmentValue === "object" && segmentValue !== null) {
-          // Flatten ALL sub-segments for this segmentKey
+        }
+        // Handle nested segment objects (e.g., "region": {"united_states": 0.72, ...})
+        else if (typeof segmentValue === "object" && segmentValue !== null) {
           for (const subKey of Object.keys(segmentValue)) {
             const subValue = segmentValue[subKey];
             if (typeof subValue === "number") {
@@ -241,18 +276,17 @@ function getSpecificData(retrievedData, { demographics = [] }) {
     }
   }
 
-  // DIAGNOSTIC LOG: Count stats for each segment
-  // segmentsToUse.forEach((seg) => {
-  //   const count = filteredStats.filter((stat) => stat.category === seg).length;
-  //   console.log(`[getSpecificData] ${seg} stats count:`, count);
-  // });
+  // Log count of stats for each segment for debugging
+  segmentsToUse.forEach((seg) => {
+    const count = filteredStats.filter((stat) => stat.category === seg).length;
+    console.log(`[getSpecificData] ${seg} stats count:`, count);
+  });
 
-  // Add debug summary at the end
-  // console.log(
-  //   `[getSpecificData] FINAL: Generated ${filteredStats.length} stats items`
-  // );
+  console.log(
+    `[getSpecificData] FINAL: Generated ${filteredStats.length} stats items`
+  );
 
-  // Fix: Return a consistent data structure that works with the pipeline
+  // Return a consistent data structure that works with the pipeline
   return {
     filteredData: filteredStats,
     stats: filteredStats, // Also include at top level for direct access

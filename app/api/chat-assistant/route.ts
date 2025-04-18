@@ -1,5 +1,9 @@
-// Route handlers for chat-assistant API endpoints
-// Delegates business logic to chatAssistantController
+/**
+ * Chat Assistant API Route Handler
+ * Manages HTTP requests for the chat assistant endpoint, handles CORS,
+ * delegates to chatAssistantController, and formats responses.
+ * Primary entry point for all assistant interactions.
+ */
 
 import { NextRequest, NextResponse } from "next/server";
 import { handleOptions } from "../../../utils/shared/cors";
