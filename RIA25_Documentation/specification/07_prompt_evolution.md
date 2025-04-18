@@ -133,6 +133,94 @@ The progression shows a deliberate path from initial concept testing to increasi
 
 This implementation ensures that the prompt system is not only a set of static templates but an integrated, programmatically enforced part of the RIA25 architecture.
 
+## Starter Question System
+
+### Overview
+
+To optimize performance and user experience, RIA25 implements a sophisticated starter question system that allows for predefined, high-performing queries with optimized data retrieval paths. This system was implemented in April 2024 to address latency concerns and provide consistent, high-quality responses for common workforce queries.
+
+### Precompiled Starter Questions
+
+The system supports predefined starter questions (e.g., `SQ1`, `SQ2`) through a structured approach:
+
+- **File Structure**:
+
+  - Precompiled data files stored in `/utils/openai/precompiled_starters/` directory
+  - Each starter question has a corresponding JSON file (e.g., `SQ1.json`, `SQ2.json`)
+  - Optional specialized prompt template in `/prompts/starter_prompt_template.md`
+
+- **JSON Format Example**:
+  ```json
+  {
+    "starterQuestionCode": "SQ1",
+    "question": "What factors influence employee retention?",
+    "data_files": ["2025_1_2", "2025_3_4"],
+    "segments": ["region", "age"],
+    "matched_topics": ["Remote_Work", "Work_Flexibility"],
+    "summary": "In 2025, the key factors influencing employee retention are..."
+  }
+  ```
+
+### Two-Stage Query Processing
+
+When a starter question is detected:
+
+1. **Stage 1: Optimized Data Retrieval**
+
+   - The system checks if the query matches a known starter question pattern
+   - If matched, it loads the precompiled data directly from the corresponding JSON file
+   - The precompiled data includes the exact file IDs, segments to use, and a natural language question
+   - This stage completely bypasses the expensive LLM-based file identification process
+
+2. **Stage 2: Response Generation**
+   - The natural language question and prefiltered data are sent directly to the OpenAI Assistant
+   - The assistant uses this optimized context to generate a response
+   - This approach ensures consistency and reduces token usage
+
+### Implementation Details
+
+The starter question system is implemented across several key files:
+
+1. **Frontend (`app/embed/[assistantId]/page.tsx`)**:
+
+   - Detects `?starterQuestion=SQ2` URL parameter
+   - Implements a two-stage fetch process:
+     - First fetch to `/api/query` for data retrieval and optimization
+     - Second fetch to `/api/chat-assistant` for response generation
+   - Provides accurate loading feedback during each stage
+
+2. **Backend (`utils/openai/retrieval.js`)**:
+
+   - Contains `isStarterQuestion(query)` function to detect starter question patterns
+   - Implements `getPrecompiledStarterData(code)` to load the appropriate JSON file
+   - Completely bypasses the LLM file identification step for starter questions
+   - Returns consistent data structure for both starter and standard questions
+
+3. **API Endpoints**:
+   - `/api/query/route.js`: Handles data retrieval with special logic for starter questions
+   - `/api/chat-assistant/route.ts`: Processes the optimized data and generates responses
+
+### Performance Benefits
+
+The starter question system provides significant performance improvements:
+
+- **Reduced Latency**: Bypassing the LLM file identification step saves 5-10 seconds
+- **Consistent Responses**: Precompiled data ensures high-quality, consistent answers
+- **Optimized Segment Selection**: Each starter question includes explicitly defined segments most relevant to the query
+- **Lower Token Usage**: Precompiled summaries and filtered data reduce token consumption
+- **Better User Experience**: Faster responses and consistent quality for common queries
+
+### Extensibility
+
+The starter question system is designed to be easily extended:
+
+- New starter questions can be added by creating additional JSON files
+- Existing starter questions can be updated to reflect new data or insights
+- The system supports both complete precompiled responses and data-driven responses
+- An optional script `/scripts/generate_precompiled_starters.js` can be used to batch-generate or update starter data files
+
+This approach provides an optimal balance between performance, consistency, and flexibility, particularly for frequently asked questions about workforce trends.
+
 ---
 
-_Last updated: April 13, 2025_
+_Last updated: April 30, 2024_

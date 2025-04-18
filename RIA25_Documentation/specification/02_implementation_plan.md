@@ -29,7 +29,7 @@ This document outlines the implemented architecture, development workflow, and t
   - Anti-fabrication measures
   - Result formatting
 
-* **Evolution**: Documented in `RIA25_Documentation/05_ria25_prompt_evolution.md`
+* **Evolution**: Documented in `RIA25_Documentation/07_prompt_evolution.md`
 
 ### 4. Web Interface
 
