@@ -71,7 +71,8 @@ export async function updateThreadCache(threadId: string, newFiles: CachedFile[]
     }));
 
     // Write updated meta back to KV with TTL
-    await kvClient.set(metaKey, existingMeta, { ex: TTL_SECONDS });
+    await kvClient.set(metaKey, existingMeta);
+    await kvClient.expire(metaKey, TTL_SECONDS);
 
     // Write segment slices with hset and TTL
     for (const file of newFiles) {
