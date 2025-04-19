@@ -12,11 +12,27 @@ const OPENAI_TIMEOUT_MS = 90000;
 
 export class OpenAIService {
   constructor(apiKey) {
-    this.openai = new OpenAI({
-      apiKey,
-      timeout: OPENAI_TIMEOUT_MS,
-      maxRetries: 2,
-    });
+    // VERCEL_BUILD_FIX: Commented out to prevent OpenAI client initialization during build time
+    // this.openai = new OpenAI({
+    //   apiKey,
+    //   timeout: OPENAI_TIMEOUT_MS,
+    //   maxRetries: 2,
+    // });
+
+    // Store API key for later initialization
+    this.apiKey = apiKey;
+  }
+
+  // Helper method to get OpenAI client instance when needed
+  _getOpenAIClient() {
+    if (!this.openai) {
+      this.openai = new OpenAI({
+        apiKey: this.apiKey,
+        timeout: OPENAI_TIMEOUT_MS,
+        maxRetries: 2,
+      });
+    }
+    return this.openai;
   }
 
   /**
@@ -26,7 +42,8 @@ export class OpenAIService {
    * @returns {Promise<object>} message response
    */
   async sendMessage(threadId, message) {
-    return this.openai.beta.threads.messages.create(threadId, message);
+    const openai = this._getOpenAIClient();
+    return openai.beta.threads.messages.create(threadId, message);
   }
 
   /**
@@ -37,7 +54,8 @@ export class OpenAIService {
    * @returns {Promise<object>} run object
    */
   async createRun(threadId, assistantId, instructions) {
-    const run = await this.openai.beta.threads.runs.create(threadId, {
+    const openai = this._getOpenAIClient();
+    const run = await openai.beta.threads.runs.create(threadId, {
       assistant_id: assistantId,
       instructions,
     });
@@ -53,9 +71,10 @@ export class OpenAIService {
    * @returns {Promise<object>} final run status
    */
   async pollRunStatus(threadId, runId, pollInterval = 250) {
+    const openai = this._getOpenAIClient();
     let runStatus = "queued";
     while (runStatus !== "completed" && runStatus !== "failed") {
-      const currentRun = await this.openai.beta.threads.runs.retrieve(
+      const currentRun = await openai.beta.threads.runs.retrieve(
         threadId,
         runId
       );
@@ -75,7 +94,8 @@ export class OpenAIService {
    * @returns {Promise<void>}
    */
   async submitToolOutputs(threadId, runId, toolOutputs) {
-    await this.openai.beta.threads.runs.submitToolOutputs(threadId, runId, {
+    const openai = this._getOpenAIClient();
+    await openai.beta.threads.runs.submitToolOutputs(threadId, runId, {
       tool_outputs: toolOutputs,
     });
     logger.info(
@@ -91,7 +111,8 @@ export class OpenAIService {
    * @returns {Promise<void>}
    */
   async waitForNoActiveRuns(threadId, pollInterval = 250, timeoutMs = 60000) {
-    return waitForNoActiveRuns(this.openai, threadId, pollInterval, timeoutMs);
+    const openai = this._getOpenAIClient();
+    return waitForNoActiveRuns(openai, threadId, pollInterval, timeoutMs);
   }
 }
 
