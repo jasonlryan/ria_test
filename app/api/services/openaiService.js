@@ -5,8 +5,8 @@
  */
 
 import OpenAI from "openai";
-import logger from "../../utils/logger";
-import { waitForNoActiveRuns } from "../../utils/shared/polling";
+import logger from "../../../utils/logger";
+import { waitForNoActiveRuns } from "../../../utils/shared/polling";
 
 const OPENAI_TIMEOUT_MS = 90000;
 
