@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import DataRetrievalTester from "../../components/DataRetrievalTester";
 
 export default function TestRetrievalPage() {
