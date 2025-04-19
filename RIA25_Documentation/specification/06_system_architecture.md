@@ -1,6 +1,6 @@
 # RIA25 System Architecture
 
-> **Last Updated:** April 30, 2024  
+> **Last Updated:** Sat Apr 19 2025  
 > **Target Audience:** Developers, System Architects, Technical Stakeholders  
 > **Related Documents:**
 >
@@ -30,7 +30,7 @@ graph TD
   SCRIPTS[Data Processing<br/>(scripts/process_survey_data, process_2025_data)]
   DATA[Data Files<br/>(scripts/output/, split_data/)]
   PROMPTS[Prompts<br/>(prompts/, config/)]
-  CACHE[Thread Cache<br/>(cache/)]
+  KV[Vercel KV Cache<br/>(Redis)]
 
   UI --> ROUTES
   ROUTES --> CONTROLLERS
@@ -41,8 +41,8 @@ graph TD
   UTILS --> DATA
   SCRIPTS --> DATA
   CONTROLLERS --> PROMPTS
-  SERVICES --> CACHE
-  UTILS --> CACHE
+  SERVICES --> KV
+  UTILS --> KV
 ```
 
 ## 3. Core Components
@@ -64,7 +64,7 @@ graph TD
 
 ### 3.2 API Layer
 
-The API layer follows a three-tier architecture:
+The API layer follows a controller-service architecture pattern:
 
 #### 3.2.1 API Routes
 
@@ -84,14 +84,24 @@ The API layer follows a three-tier architecture:
   - `app/api/controllers/queryController.js`: Handles direct query processing
   - `app/api/controllers/retrieveDataController.js`: Handles data file retrieval
   - Additional controllers for auxiliary functionalities
+- **Responsibilities**:
+  - Request validation and error handling
+  - Service orchestration
+  - Response formatting and status code management
+  - Logging and performance tracking
 
 #### 3.2.3 Services
 
-- **Purpose**: Provide reusable functionality for controllers
+- **Purpose**: Provide reusable business logic for controllers
 - **Key Services**:
   - `app/api/services/threadService.js`: Thread management operations
   - `app/api/services/dataRetrievalService.js`: Data retrieval and processing
   - `app/api/services/openaiService.js`: OpenAI API interactions
+- **Responsibilities**:
+  - Encapsulate core business logic
+  - Abstract data access operations
+  - Handle domain-specific functionality
+  - Maintain stateless operation when possible
 
 ### 3.3 Utility Modules
 
@@ -116,10 +126,11 @@ The API layer follows a three-tier architecture:
   - `utils/shared/loggerHelpers.js`: Performance logging
   - `utils/shared/polling.js`: OpenAI polling mechanisms
   - `utils/shared/utils.js`: Common utility functions
+  - `utils/shared/kvClient.ts`: Vercel KV client with local fallback
 
   #### 3.3.4 Caching
 
-  - `utils/cache-utils.ts`: Thread cache management
+  - `utils/cache-utils.ts`: Thread cache management with Vercel KV integration
 
 ### 3.4 File Access Modes
 
@@ -199,14 +210,17 @@ RIA25 supports two different file access modes:
 
 ### 4.2 Thread-Specific Caching
 
+- **Cache System**: Vercel KV (Redis) for production, in-memory Map for local development
+
 - **Cache Structure**:
 
-  - Thread-specific file system cache in `cache/` directory
-  - JSON files named by thread ID
-  - Tracks loaded files and segments
+  - Thread metadata: `thread:{threadId}:meta`
+  - File data: `thread:{threadId}:file:{fileId}`
+  - Redis Hash (HSET) for segment-level data storage
+  - 90-day automatic TTL with refresh on access
 
 - **Cache Operations**:
-  - File-based caching for thread continuity
+  - Thread-specific caching for context continuity
   - De-duplication of file IDs
   - Progressive enhancement as conversation evolves
   - Segment-aware caching to minimize data loading
@@ -235,130 +249,145 @@ RIA25 supports two different file access modes:
    - Request routed to appropriate API endpoint
    - Controller receives and validates the request
 
-2. **Service Delegation**
+2. **Controller Orchestration**
 
    - Controller delegates to appropriate services
    - ThreadService manages thread creation/retrieval
    - DataRetrievalService handles data identification and loading
 
-3. **Data Relevance Analysis**
+3. **Service Processing**
+
+   - Services implement core business logic
+   - Services interact with external APIs and data sources
+   - Services manage caching and data transformation
+
+4. **Data Relevance Analysis**
 
    - Query is analyzed to identify relevant data files and topics
    - Analysis uses pre-defined canonical mapping of topics to files
    - Out-of-scope detection prevents responses to irrelevant queries
 
-4. **Efficient Data Retrieval**
+5. **Efficient Data Retrieval**
 
-   - System loads only data files relevant to the current query
-   - Caches data by thread ID to enable efficient follow-up handling
-   - Incremental data loading adds new files as conversation expands in scope
+   - System retrieves only necessary data files
+   - Segment-aware retrieval minimizes data loading
+   - Cached data reused when appropriate
 
-5. **Response Generation**
-   - Raw data and analysis are injected into assistant prompt
-   - Response is generated using conversation history and data context
-   - Response is streamed back to user for immediate feedback
+6. **Context-Aware Response Generation**
 
-### 5.2 Core Functionality Flow
+   - System crafts prompt with relevant data and context
+   - OpenAI Assistant generates response
+   - Response is formatted and streamed to user
 
-1. **Request Handling**
+### 5.2 Optimized Follow-up Handling
 
-   - API route receives HTTP request
-   - Delegates to controller for business logic
-   - Controller coordinates appropriate services
+The follow-up handling process leverages both thread persistence in OpenAI and Vercel KV caching:
 
-2. **Query Parsing**
+1. **Thread Context Retrieval**
 
-   - Extracts user intent, keywords, and context markers
-   - Checks for out-of-scope conditions
-   - Identifies follow-up queries
+   - System retrieves existing thread using thread ID
+   - Thread history provides conversational context
+   - Previous data scope retrieved from Vercel KV
 
-3. **File Retrieval Based on Query**
+2. **Follow-up Detection**
 
-   - Determines needed data files using canonical mapping
-   - Accesses files from local storage or via API
-   - Returns relevant file IDs and data
+   - System analyzes query for follow-up indicators
+   - Previous context compared to current query
+   - Classification determines if this is a follow-up
 
-4. **Prompt Construction and Data Injection**
+3. **Incremental Data Loading**
 
-   - Combines user query, data, and instructions
-   - Creates prompt for assistant processing
-   - Injects relevant context from thread history
+   - System identifies additional data needs
+   - Only missing data segments are loaded
+   - Cached data reused to minimize processing
 
-5. **Response Processing**
-   - Assistant generates response from prompt and data
-   - Response is validated and formatted
-   - Result is streamed to user interface
+4. **Context-Enhanced Response**
 
-## 6. Deployment Architecture
+   - Follow-up prompt incorporates thread history
+   - OpenAI Assistant maintains conversation flow
+   - Response addresses follow-up context appropriately
 
-### 6.1 Production Environment
+## 6. Controller-Service Pattern Implementation
 
-- **Web Hosting**: Vercel platform
-- **API Access**: Direct connection to OpenAI services
-- **Environment Variables**: Securely stored in Vercel
-- **Domain**: Custom domain with SSL
-- **Cache Strategy**: Local file-based cache with future Vercel KV integration
+The system implements a controller-service pattern for clear separation of concerns and maintainable code structure:
 
-### 6.2 Development Environment
+### 6.1 Pattern Overview
 
-- **Local Development**: Next.js development server
-- **API Integration**: Same OpenAI services with development keys
-- **Environment Variables**: Local `.env` file
-- **Cache Strategy**: Local file-based cache
+```
+API Routes → Controllers → Services → Data Access & Utilities
+```
 
-## 7. Performance Optimization
+### 6.2 Controller Standards
 
-### 7.1 OpenAI API Optimization
+- **Naming Convention**: Controllers use `{Name}Controller.ts` naming format
+- **File Location**: Controllers reside in `app/api/controllers/` directory
+- **Handler Functions**: Controllers export HTTP method-specific handlers
+- **Error Handling**: All controllers implement standardized error responses
+- **Logging**: Controllers perform request/response logging
+- **Responsibility**: Request validation, orchestration, response formatting
 
-- Reduced polling interval from 1000ms to 250ms
-- Improved error handling and timeout management
-- Enhanced performance tracking and timing metrics
-- Optimized prompt structure and token usage
+### 6.3 Service Standards
 
-### 7.2 Thread and Data Caching
+- **Naming Convention**: Services use `{Name}Service.js` or `.ts` naming format
+- **File Location**: Services reside in `app/api/services/` directory
+- **Implementation**: Services are typically class-based with clear methods
+- **Documentation**: All service methods include JSDoc comments
+- **Responsibility**: Business logic, data processing, external API interactions
 
-- Thread-specific caching for efficient follow-up handling
-- Segment-aware data retrieval to minimize data loading
-- Incremental retrieval of only missing data for follow-ups
-- In-memory caching with file system persistence
+### 6.4 Benefits of the Pattern
 
-### 7.3 Starter Question Optimization
+- **Testability**: Controllers and services can be tested in isolation
+- **Maintainability**: Clear separation of HTTP concerns and business logic
+- **Reusability**: Services can be used by multiple controllers
+- **Extensibility**: New features can be added with minimal coupling
+- **Consistency**: Standardized pattern across the codebase
 
-- Pre-compiled starter question data in JSON format
-- Fast-path processing for recognized starter questions
-- Direct prompt construction from pre-compiled data
-- Segment-specific data loading
+## 7. Vercel KV Integration
+
+### 7.1 Overview
+
+The system has been migrated from file-based caching to Vercel KV (Redis) for improved reliability and performance in serverless environments.
+
+### 7.2 Key Components
+
+- **KV Client**: `utils/shared/kvClient.ts` implements a singleton client with local fallback
+- **Interface**: Type-safe interface defines standard Redis operations
+- **Cache Utilities**: `utils/cache-utils.ts` provides high-level caching operations
+- **Local Fallback**: In-memory Map implementation for local development
+
+### 7.3 Data Structures
+
+- **String Keys**: Used for simple key-value storage
+- **Hash Keys**: Used for segment-level data storage
+- **TTL Management**: All keys have 90-day TTL with automatic refresh
+
+### 7.4 Benefits
+
+- **Persistence**: Durable storage across function invocations
+- **Performance**: Low-latency operations (typical p95 < 50ms)
+- **Scalability**: Scales across regions and instances
+- **Monitoring**: Built-in metrics and alerting
 
 ## 8. Security Considerations
 
-- **API Keys**: Secure storage in environment variables
-- **User Data**: No user data persistence beyond session requirements
-- **Rate Limiting**: Implementation for stability and cost management
-- **Error Handling**: Secure error messaging without system details exposure
+The system implements several security measures:
 
-## 9. Monitoring and Logging
+- **API Key Protection**: All OpenAI API keys stored in environment variables
+- **Input Validation**: Request validation to prevent injection attacks
+- **CORS Protection**: Configured CORS policies for API endpoints
+- **Error Handling**: Sanitized error responses to prevent information leakage
+- **Authentication**: Vercel authentication for production deployments
 
-- **API Interactions**: Logging of API requests and responses
-- **Error Tracking**: Error logging in API endpoints and utility modules
-- **Performance Metrics**: Performance timing and logging
-- **Usage Statistics**: Query volume and patterns
+## 9. Performance Optimizations
 
-## 10. Future Enhancements
+Several performance optimizations have been implemented:
 
-### 10.1 Cache Storage Enhancement
-
-- Planned migration from file-based caching to Vercel KV for production
-- Redis-compatible key-value store integration
-- Environment-aware cache implementation
-- Improved cache persistence and thread continuity
-
-### 10.2 Advanced Query Classification
-
-- ML-based classification of query types
-- Enhanced follow-up detection
-- Better topic shift handling
-- Multi-topic query optimization
+- **Segment-Aware Caching**: Only retrieve necessary data segments
+- **Thread-Level Caching**: Cache data at thread level for context continuity
+- **Adaptive Polling**: Exponential backoff for OpenAI completions
+- **Streaming Responses**: Stream responses for improved perceived performance
+- **Optimized Data Loading**: Load only necessary data files and segments
 
 ---
 
-_Last updated: April 30, 2024_
+_Last updated: Sat Apr 19 2025_

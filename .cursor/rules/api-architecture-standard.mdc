@@ -1,0 +1,28 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+ ---
+description: Controller-Service Architecture Standard
+globs: app/api/**/*.ts,app/api/**/*.js,utils/shared/**/*.ts,utils/shared/**/*.js,app/api/**/route.ts
+alwaysApply: true
+---
+# Controller-Service Architecture Standard
+
+## Overview
+This document defines the architectural standards for RIA25. All new code must follow these patterns to maintain consistency and codebase quality.
+
+## Directory Structure
+- `/app/api/{endpoint}/route.ts` - API routes that delegate to controllers
+- `/app/api/controllers/{name}Controller.ts` - Business logic controllers
+- `/app/api/services/{name}Service.js` or `.ts` - Reusable service modules
+- `/utils/shared/{name}.js` or `.ts` - Shared utilities across the codebase
+
+## Controller Standards
+1. **Naming Convention**: All controllers must be named `{name}Controller.ts`
+2. **File Location**: Controllers must be placed in `/app/api/controllers/`
+3. **Handler Functions**: Controllers should export handler functions (`getHandler`, `postHandler`, `putHandler`)
+4. **Error Handling**: All controllers must use `formatErrorResponse` and `formatBadRequestResponse` from `utils/shared/errorHandler`
+5. **Logging**: All controllers must use `logger` from `utils/logger`
+6. **Service Delegation**: Controllers must delegate business logic to service modules

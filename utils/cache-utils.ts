@@ -3,37 +3,27 @@
  * Manages thread-based caching of data files and their loaded segments.
  */
 
-import * as fs from "fs";
-import * as path from "path";
+import kvClient from "./shared/kvClient";
 import logger from "./logger";
 
-const CACHE_DIR = path.join(process.cwd(), "cache");
+const TTL_SECONDS = 60 * 60 * 24 * 90; // 90 days TTL
 
-/**
- * Represents a cached file with segment metadata.
- */
 export interface CachedFile {
   id: string;
-  data: any;
+  data: Record<string, any>;
   loadedSegments: Set<string>;
   availableSegments: Set<string>;
 }
 
-/**
- * Loads the cache for a given thread.
- * @param threadId - The thread identifier.
- * @returns The cache entry containing cached files and metadata.
- */
 export async function getCachedFilesForThread(threadId: string): Promise<CachedFile[]> {
-  const cacheFilePath = path.join(CACHE_DIR, `${threadId}.json`);
   try {
-    if (!fs.existsSync(cacheFilePath)) {
+    const key = `thread:${threadId}:meta`;
+    const meta = await kvClient.get(key);
+    if (!meta || !meta.files) {
       return [];
     }
-    const content = await fs.promises.readFile(cacheFilePath, "utf8");
-    const cacheEntry = JSON.parse(content);
     // Convert loadedSegments and availableSegments to Set
-    const files = cacheEntry.files.map((file: any) => ({
+    const files = meta.files.map((file: any) => ({
       ...file,
       loadedSegments: new Set(file.loadedSegments),
       availableSegments: new Set(file.availableSegments),
@@ -45,63 +35,55 @@ export async function getCachedFilesForThread(threadId: string): Promise<CachedF
   }
 }
 
-/**
- * Updates the cache for a given thread.
- * Merges new files or updates existing files with new segment data.
- * @param threadId - The thread identifier.
- * @param newFiles - Array of new or updated cached files.
- * @returns void
- */
 export async function updateThreadCache(threadId: string, newFiles: CachedFile[]): Promise<void> {
-  const cacheFilePath = path.join(CACHE_DIR, `${threadId}.json`);
-  let cacheEntry = { files: [], scope: {} };
   try {
-    if (fs.existsSync(cacheFilePath)) {
-      const content = await fs.promises.readFile(cacheFilePath, "utf8");
-      cacheEntry = JSON.parse(content);
-      // Convert loadedSegments and availableSegments to Set
-      cacheEntry.files = cacheEntry.files.map((file: any) => ({
-        ...file,
-        loadedSegments: new Set(file.loadedSegments),
-        availableSegments: new Set(file.availableSegments),
-      }));
+    const metaKey = `thread:${threadId}:meta`;
+    const existingMeta = await kvClient.get(metaKey) || { files: [], scope: {} };
+
+    // Convert loadedSegments and availableSegments to Set for merging
+    existingMeta.files = existingMeta.files.map((file: any) => ({
+      ...file,
+      loadedSegments: new Set(file.loadedSegments),
+      availableSegments: new Set(file.availableSegments),
+    }));
+
+    // Merge newFiles into existingMeta.files
+    for (const newFile of newFiles) {
+      const existingIndex = existingMeta.files.findIndex((f: any) => f.id === newFile.id);
+      if (existingIndex === -1) {
+        existingMeta.files.push(newFile);
+      } else {
+        const existingFile = existingMeta.files[existingIndex];
+        Array.from(newFile.loadedSegments).forEach((seg: string) => existingFile.loadedSegments.add(seg));
+        Array.from(newFile.availableSegments).forEach((seg: string) => existingFile.availableSegments.add(seg));
+        Array.from(newFile.loadedSegments).forEach((seg: string) => {
+          existingFile.data[seg] = newFile.data[seg];
+        });
+        existingMeta.files[existingIndex] = existingFile;
+      }
+    }
+
+    // Convert Sets back to arrays for serialization
+    existingMeta.files = existingMeta.files.map((file: any) => ({
+      ...file,
+      loadedSegments: Array.from(file.loadedSegments),
+      availableSegments: Array.from(file.availableSegments),
+    }));
+
+    // Write updated meta back to KV with TTL
+    await kvClient.set(metaKey, existingMeta, { ex: TTL_SECONDS });
+
+    // Write segment slices with hset and TTL
+    for (const file of newFiles) {
+      const fileKey = `thread:${threadId}:file:${file.id}`;
+      const segmentData: Record<string, string> = {};
+      for (const segment of Array.from(file.loadedSegments)) {
+        segmentData[segment] = JSON.stringify(file.data[segment]);
+      }
+      await kvClient.hset(fileKey, segmentData);
+      await kvClient.expire(fileKey, TTL_SECONDS);
     }
   } catch (error) {
-    logger.error(`Error reading cache for thread ${threadId}:`, error);
-  }
-
-  // Merge newFiles into cacheEntry.files
-  for (const newFile of newFiles) {
-    const existingIndex = cacheEntry.files.findIndex((f: any) => f.id === newFile.id);
-    if (existingIndex === -1) {
-      // Add new file
-      cacheEntry.files.push(newFile);
-    } else {
-      // Merge segments and data
-      const existingFile = cacheEntry.files[existingIndex];
-      // Merge loadedSegments
-      newFile.loadedSegments.forEach((seg: string) => existingFile.loadedSegments.add(seg));
-      // Merge availableSegments
-      newFile.availableSegments.forEach((seg: string) => existingFile.availableSegments.add(seg));
-      // Merge data (assuming data is an object with segment keys)
-      Array.from(newFile.loadedSegments).forEach((seg: string) => {
-        existingFile.data[seg] = newFile.data[seg];
-      });
-      cacheEntry.files[existingIndex] = existingFile;
-    }
-  }
-
-  // Convert Sets back to arrays for JSON serialization
-  cacheEntry.files = cacheEntry.files.map((file: any) => ({
-    ...file,
-    loadedSegments: Array.from(file.loadedSegments),
-    availableSegments: Array.from(file.availableSegments),
-  }));
-
-  try {
-    await fs.promises.mkdir(CACHE_DIR, { recursive: true });
-    await fs.promises.writeFile(cacheFilePath, JSON.stringify(cacheEntry, null, 2), "utf8");
-  } catch (error) {
-    logger.error(`Error writing cache for thread ${threadId}:`, error);
+    logger.error(`Error updating cache for thread ${threadId}:`, error);
   }
 }

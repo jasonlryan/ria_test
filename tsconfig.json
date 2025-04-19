@@ -2,7 +2,7 @@
   "baseUrl": "./",
   "paths": {
     "@/*": ["./*"]
-  },  
+  },
   "compilerOptions": {
     "lib": [
       "dom",
@@ -24,7 +24,10 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "target": "es2015",
+    "downlevelIteration": true,
+    "types": ["node", "jest"]
   },
   "include": [
     "next-env.d.ts",

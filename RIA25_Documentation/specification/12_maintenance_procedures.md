@@ -1,6 +1,6 @@
 # RIA25 Maintenance Procedures
 
-> **Last Updated:** April 30, 2024  
+> **Last Updated:** Sat Apr 19 2025  
 > **Target Audience:** System Administrators, Developers, DevOps Engineers  
 > **Related Documents:**
 >
@@ -238,33 +238,57 @@ When performance issues are detected:
 
 ## Thread and Cache Management
 
-### Cache Maintenance
+### Vercel KV Cache Management
 
-1. **Cache Directory Management**
+With the migration from file-based caching to Vercel KV, cache management procedures have been updated:
 
-   - Location: `/cache/` directory contains thread-specific cache files
-   - Format: JSON files with naming pattern `thread_[threadId].json`
-   - Cleanup: Consider implementing a cache cleanup script to remove old cache files:
+1. **KV Cache Monitoring**
+
+   - Access the Vercel KV dashboard through the Vercel project interface
+   - Monitor key metrics: memory usage, command count, and response time
+   - Set up alerts for memory usage >80% or command count >75% of plan limits
+
+2. **Cache Structure**
+
+   - Thread metadata stored at keys with pattern: `thread:{threadId}:meta`
+   - File data stored at keys with pattern: `thread:{threadId}:file:{fileId}`
+   - All keys use standardized 90-day TTL
+
+3. **Cache Inspection**
+
+   For debugging purposes, you can inspect cache contents using Vercel CLI or Dashboard:
 
    ```bash
-   # Example cleanup script (remove cache files older than 30 days)
-   find ./cache -name "thread_*.json" -type f -mtime +30 -delete
+   # Install Vercel CLI if not already installed
+   npm i -g vercel
+
+   # Login to Vercel if needed
+   vercel login
+
+   # Get value of a specific cache key
+   vercel kv get "thread:thread_abc123:meta"
+
+   # List all keys with a specific prefix
+   vercel kv keys "thread:thread_abc123:*"
    ```
 
-2. **Cache Structure Verification**
+4. **Cache Cleanup**
 
-   - Each cache file should contain:
-     - A `files` array containing file IDs and segment data
-     - A `scope` object with metadata about the thread's data scope
-   - Periodic validation ensures cache integrity
+   Unlike file-based caching that required manual cleanup, Vercel KV implements automatic TTL-based expiration:
 
-3. **Cache Metrics Collection**
+   - All keys have a 90-day TTL set via `kv.expire(key, 60 * 60 * 24 * 90)`
+   - TTL is refreshed on key access and updates
+   - Manual cleanup for testing or maintenance:
 
-   - Consider implementing metrics for:
-     - Cache hit/miss ratios
-     - Average cache size
-     - Cache entry lifespan
-     - Performance impact of caching
+   ```bash
+   # Delete a specific key
+   vercel kv del "thread:thread_abc123:meta"
+
+   # Delete keys matching a pattern (use with caution)
+   for key in $(vercel kv keys "thread:thread_abc123:*"); do
+     vercel kv del "$key"
+   done
+   ```
 
 ### Thread Management
 
@@ -285,6 +309,17 @@ When performance issues are detected:
        if (lastActive < cutoffDate) {
          await openai.beta.threads.del(thread.id);
          console.log(`Deleted inactive thread: ${thread.id}`);
+
+         // Also clean up associated KV cache entries
+         const metaKey = `thread:${thread.id}:meta`;
+         await kvClient.del(metaKey);
+
+         // Get and delete all file keys for this thread
+         const filePattern = `thread:${thread.id}:file:*`;
+         const fileKeys = await listKeys(filePattern); // Implement listKeys function
+         for (const fileKey of fileKeys) {
+           await kvClient.del(fileKey);
+         }
        }
      }
    }
@@ -356,6 +391,52 @@ When performance issues are detected:
 4. Review concurrent request handling
 5. Check for any API quota limitations
 
+#### Vercel KV Issues
+
+1. **Connection Issues**
+
+   - Verify environment variables: `KV_REST_API_URL`, `KV_REST_API_TOKEN`
+   - Check Vercel KV dashboard for service status
+   - Verify network connectivity from deployment region
+   - Check for connection timeouts in logs
+
+2. **Performance Issues**
+
+   - Review response time metrics in Vercel dashboard
+   - Check for key hotspots (frequently accessed keys)
+   - Verify appropriate TTL settings
+   - Consider data structure optimizations (e.g., using HSET for related data)
+
+3. **Consistency Issues**
+
+   - Verify thread context persistence across sessions
+   - Check for race conditions in concurrent updates
+   - Review key naming patterns for consistency
+   - Ensure all operations have proper error handling
+
+4. **Quota Issues**
+
+   - Monitor daily command usage
+   - Check memory usage against plan limits
+   - Review access patterns for optimization opportunities
+   - Consider upgrading plan if consistently near limits
+
+5. **Local Development Issues**
+   - Ensure the local fallback is working correctly with `inMemoryStore`
+   - Verify environment variables are not set in local `.env` files
+   - Check browser console for KV-related warnings
+   - Verify consistent behavior between local and production environments
+
+### KV Rollback Procedure
+
+In case of critical issues with the Vercel KV implementation:
+
+1. Set the environment variable `DISABLE_KV=1` to force fallback to file-based caching
+2. Verify the system falls back correctly to file operations
+3. Address the KV issues identified in logs and monitoring
+4. Remove the environment variable when ready to re-enable KV
+5. Monitor the system closely during the transition back to KV
+
 ## Monitoring Recommendations
 
 ### Performance Monitoring
@@ -426,4 +507,4 @@ Key roles for system maintenance and support:
 
 ---
 
-_Last updated: April 30, 2024_
+_Last updated: Sat Apr 19 2025_

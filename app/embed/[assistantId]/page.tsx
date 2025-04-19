@@ -1212,37 +1212,6 @@ ${
           </div>
         </div>
       </div>
-
-      {/* Add this style section inside the component's return, before the main JSX structure */}
-      <style jsx global>{`
-        .loading-message {
-          display: inline-block;
-          position: relative;
-        }
-
-        .loading-message:after {
-          content: "";
-          animation: ellipsis 1.5s infinite;
-        }
-
-        @keyframes ellipsis {
-          0% {
-            content: "";
-          }
-          25% {
-            content: ".";
-          }
-          50% {
-            content: "..";
-          }
-          75% {
-            content: "...";
-          }
-          100% {
-            content: "";
-          }
-        }
-      `}</style>
     </div>
   );
 }

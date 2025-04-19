@@ -1,6 +1,6 @@
 # RIA25 Data Processing Workflow
 
-> **Last Updated:** April 30, 2024  
+> **Last Updated:** Sat Apr 19 2025  
 > **Target Audience:** Developers, System Architects, Technical Stakeholders  
 > **Related Documents:**
 >
@@ -456,6 +456,95 @@ To optimize performance, the system implements incremental data loading, which o
 - Implement distributed caching across functions
 - Add TTL and size management
 
+## Vercel KV Integration
+
+The system is being migrated from file-based caching to Vercel KV (Redis) for improved performance, reliability, and scalability. This migration addresses the limitations of ephemeral file storage in serverless environments.
+
+### Key Components
+
+1. **KV Client Implementation**
+
+   - Singleton pattern for connection pooling
+   - Interface-based design for type safety
+   - Local development fallback using in-memory Map
+   - Located in `utils/shared/kvClient.ts`
+
+2. **Key Schema & TTL Strategy**
+
+   - Consistent key naming: `thread:{threadId}:meta` for thread metadata
+   - File-specific keys: `thread:{threadId}:file:{fileId}` for cached file data
+   - Standardized 90-day TTL for all cached data
+   - TTL refresh on key access and updates
+
+3. **Redis Data Structures**
+   - Thread metadata stored as JSON objects
+   - File segments stored using Redis Hashes (HSET/HGETALL)
+   - Segment-level granularity for efficient incremental loading
+
+### Migration Strategy
+
+The migration from file-based caching to Vercel KV follows these steps:
+
+1. **Implementation of KV Client**
+
+   - Integration of `@vercel/kv` package
+   - Development of adapter interface with consistent types
+   - Local development fallback for testing
+
+2. **Cache Utility Refactoring**
+
+   - Replacement of `fs.readFile`/`fs.writeFile` with KV operations
+   - Implementation of read-through caching pattern
+   - Segment-level Hash operations for granular data access
+
+3. **Updating Call Sites**
+
+   - Modification of retrieval and thread management code
+   - Removal of file system fallbacks
+   - Consistent error handling and logging
+
+4. **Testing and Deployment**
+   - Unit tests for KV operations
+   - Performance benchmarking
+   - Controlled production rollout
+
+### Benefits of KV Migration
+
+1. **Enhanced Reliability**
+
+   - Persistent storage across function invocations
+   - Elimination of ephemeral filesystem limitations
+   - Consistent data availability in serverless environment
+
+2. **Performance Improvements**
+
+   - Low-latency read/write operations (typical p95 < 50ms)
+   - Reduced cold start impact
+   - Efficient follow-up query handling
+
+3. **Operational Benefits**
+
+   - Centralized cache management
+   - Built-in monitoring and alerting
+   - Simplified scaling across regions
+
+4. **Cost Efficiency**
+   - Pay-per-use pricing model
+   - Reduced computation for file operations
+   - Lower memory requirements for function instances
+
+### Observability & Monitoring
+
+The KV implementation includes comprehensive monitoring:
+
+- Response time logging for all KV operations
+- Integration with Vercel dashboard metrics
+- Alerts for memory usage exceeding 80% of capacity
+- Alerts for daily command usage above 75% of plan limit
+- Cache hit/miss ratio tracking
+
+For detailed migration steps and current status, refer to `RIA25_Documentation/plans/current/kv_migration_checklist.md`.
+
 ---
 
-_Last updated: April 30, 2024_
+_Last updated: Sat Apr 19 2025_

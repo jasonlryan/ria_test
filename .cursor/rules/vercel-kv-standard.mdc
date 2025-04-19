@@ -1,0 +1,243 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+description: Vercel KV Implementation Standard
+globs: lib/kvClient.ts,utils/cache-utils.ts,app/api/services/**/*.js,app/api/services/**/*.ts
+alwaysApply: false
+---
+# Vercel KV Implementation Standard
+
+## Overview
+This document defines standards for implementing Vercel KV storage in the RIA25 application. All code interacting with KV storage must follow these patterns to ensure consistent, resilient implementations.
+
+## Directory Structure
+- `/lib/kvClient.ts` - Singleton KV client with local fallback
+- `/utils/cache-utils.ts` - Cache utility functions using KV
+- `/app/api/services/{name}Service.js` - Services that interact with KV storage
+
+## KV Client Implementation
+- Always use a singleton client to reuse connection pool
+- Implement local development fallback
+- Handle connection errors gracefully
+
+```typescript
+// lib/kvClient.ts
+import { kv } from '@vercel/kv';
+
+// Simple in-memory fallback for local development
+const memoryStore = new Map();
+const localKv = {
+  get: async (key) => memoryStore.get(key),
+  set: async (key, value, opts) => memoryStore.set(key, value),
+  hget: async (key, field) => {
+    const hash = memoryStore.get(key) || {};
+    return hash[field];
+  },
+  hset: async (key, fieldOrObj, value) => {
+    const hash = memoryStore.get(key) || {};
+    if (typeof fieldOrObj === 'object') {
+      Object.assign(hash, fieldOrObj);
+    } else {
+      hash[fieldOrObj] = value;
+    }
+    memoryStore.set(key, hash);
+  },
+  expire: async (key, seconds) => true,
+  // Add other methods as needed
+};
+
+// Use real KV in production, fallback locally
+const isKvConfigured = !!process.env.KV_REST_API_URL || !!process.env.KV_REST_API_TOKEN;
+const kvClient = process.env.VERCEL && isKvConfigured ? kv : localKv;
+
+export default kvClient;
+```
+
+## Key Schema Standards
+1. **Key Format**: Use descriptive, hierarchical keys with colons as separators
+2. **TTL Values**: Always specify TTL for all keys to prevent unbounded growth
+   - Thread data: 90 days (7,776,000 seconds)
+   - User sessions: 24 hours (86,400 seconds)
+   - Cache data: 1 hour (3,600 seconds)
+   - Analytics data: 30 days (2,592,000 seconds)
+3. **Standard Keys**: Use predefined key functions to ensure consistency
+
+```typescript
+// Key schema example
+export const threadFileKey = (threadId, fileId) => `thread:${threadId}:file:${fileId}`;
+export const threadMetaKey = (threadId) => `thread:${threadId}:meta`;
+export const analyticsKey = (metric, date) => `analytics:${metric}:${date}`;
+export const cacheKey = (category, id) => `cache:${category}:${id}`;
+```
+
+## Cache Utility Standards
+1. **Read-Through Pattern**: Implement getOrLoad pattern for all cache access
+2. **Error Handling**: All KV operations must have proper error handling
+3. **Fallback**: Implement graceful fallback for failed KV operations
+
+```typescript
+// Read-through helper example
+import kv from "@/lib/kvClient";
+import logger from "@/utils/logger";
+
+export async function getOrLoad<T>(
+  key: string,
+  loader: () => Promise<T>,
+  ttl = 3600
+): Promise<T> {
+  try {
+    // Try to read from cache
+    const cached = await kv.get<T>(key);
+    if (cached) {
+      logger.info(`Cache hit for key: ${key}`);
+      return cached;
+    }
+    
+    // Cache miss - load fresh data
+    logger.info(`Cache miss for key: ${key}`);
+    const fresh = await loader();
+    
+    // Store in cache with TTL (fire & forget)
+    kv.set(key, fresh, { ex: ttl }).catch(err => {
+      logger.error(`Cache write error for key ${key}: ${err.message}`);
+    });
+    
+    return fresh;
+  } catch (error) {
+    // On any cache error, fall back to loader
+    logger.error(`Cache error for key ${key}: ${error.message}`);
+    return loader();
+  }
+}
+```
+
+## Hash Operation Standards
+1. **Hashes for Segments**: Use Redis hashes for segment-level data
+2. **Atomic Operations**: Use hset for atomic operations on segments
+3. **TTL Refresh**: Always refresh TTL after hash operations
+
+```typescript
+// Hash operation example
+export async function mergeSegmentSlice(
+  threadId: string,
+  fileId: string,
+  segment: string,
+  slice: unknown
+) {
+  try {
+    const key = threadFileKey(threadId, fileId);
+    await kv.hset(key, { [segment]: JSON.stringify(slice) });
+    await kv.expire(key, 60 * 60 * 24 * 90); // 90 days TTL
+    logger.info(`Merged segment ${segment} for ${threadId}/${fileId}`);
+  } catch (error) {
+    logger.error(`Error merging segment ${segment} for ${threadId}/${fileId}: ${error.message}`);
+    // Implementation-specific fallback if needed
+  }
+}
+```
+
+## Service Implementation Standards
+1. **Abstraction**: Services should abstract KV operations from controllers
+2. **Error Handling**: Implement proper error handling for all KV operations
+3. **Logging**: Log all significant KV operations for monitoring and debugging
+
+```typescript
+// Service implementation example
+import kv from "@/lib/kvClient";
+import logger from "@/utils/logger";
+import { threadFileKey, getOrLoad } from "@/utils/cache-utils";
+
+export class ThreadDataService {
+  /**
+   * Get thread data with caching
+   * @param {string} threadId - Thread identifier
+   * @param {string} fileId - File identifier
+   * @returns {Promise<object>} Thread data
+   */
+  async getThreadData(threadId: string, fileId: string): Promise<object> {
+    const key = threadFileKey(threadId, fileId);
+    
+    return getOrLoad(
+      key,
+      async () => {
+        // Loader function to fetch data if not in cache
+        logger.info(`Loading thread data for ${threadId}/${fileId}`);
+        const freshData = await this.fetchThreadDataFromSource(threadId, fileId);
+        return freshData;
+      },
+      60 * 60 * 24 * 90 // 90 days TTL
+    );
+  }
+  
+  /**
+   * Update segment in thread data
+   * @param {string} threadId - Thread identifier
+   * @param {string} fileId - File identifier 
+   * @param {string} segment - Segment identifier
+   * @param {object} data - Segment data
+   */
+  async updateSegment(threadId: string, fileId: string, segment: string, data: object): Promise<void> {
+    await mergeSegmentSlice(threadId, fileId, segment, data);
+  }
+  
+  // Private helper method
+  private async fetchThreadDataFromSource(threadId: string, fileId: string): Promise<object> {
+    // Implementation details...
+  }
+}
+```
+
+## Local Development & Testing
+1. **Local Fallback**: Always implement fallback for local development
+2. **Environment Check**: Use environment checks to determine KV availability
+3. **Unit Tests**: Include tests for both KV availability and fallback behavior
+
+```typescript
+// Testing KV availability
+export async function checkKvAvailability(): Promise<boolean> {
+  try {
+    const testKey = `test:availability:${Date.now()}`;
+    await kv.set(testKey, true, { ex: 60 });
+    const result = await kv.get(testKey);
+    return result === true;
+  } catch (error) {
+    logger.warn(`KV not available: ${error.message}`);
+    return false;
+  }
+}
+```
+
+## Monitoring & Observability
+1. **Operation Timing**: Track and log KV operation timing
+2. **Error Rates**: Monitor and alert on KV error rates
+3. **Cache Hit Ratio**: Track cache hit/miss ratio for optimization
+
+```typescript
+// Timing wrapper example
+export async function timedKvOperation<T>(
+  operation: string,
+  fn: () => Promise<T>
+): Promise<T> {
+  const startTime = performance.now();
+  try {
+    const result = await fn();
+    const duration = performance.now() - startTime;
+    
+    logger.info(`KV operation ${operation} completed in ${duration.toFixed(2)}ms`);
+    return result;
+  } catch (error) {
+    const duration = performance.now() - startTime;
+    logger.error(`KV operation ${operation} failed after ${duration.toFixed(2)}ms: ${error.message}`);
+    throw error;
+  }
+}
+```
+
+## Benefits
+- Consistent key schema and access patterns
+- Resilient implementation with proper fallbacks
+- Clear separation of concerns between caching and business logic
+- Improved performance monitoring and debugging capabilities
