@@ -21,7 +21,7 @@ import { buildPromptWithFilteredData } from "../../../utils/openai/promptUtils";
 const OPENAI_TIMEOUT_MS = 90000;
 const isDirectMode = process.env.FILE_ACCESS_MODE === "direct";
 const forceStandardMode = true;
-import { DEFAULT_SEGMENTS } from "../../../utils/data/segment_keys";
+const { DEFAULT_SEGMENTS, CANONICAL_SEGMENTS } = require("../../../utils/data/segment_keys");
 
 export async function postHandler(request: NextRequest) {
   try {
@@ -295,39 +295,53 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
           logger.error(`[ERROR] groupStats received non-array: ${typeof stats}`);
           return [];
         }
+        
         const grouped = [];
         const keyMap = new Map();
+        const segmentTypes = new Set(); // Track actual segment types in the data
+        
+        // First pass - gather all segment types and create entries
         for (const stat of stats) {
           const key = `${stat.fileId}||${stat.question}||${stat.response}`;
           if (!keyMap.has(key)) {
             keyMap.set(key, {
               fileId: stat.fileId,
-              question: stat.question,
-              response: stat.response,
-              overall: null,
-              region: {},
-              age: {},
-              gender: {},
-              job_level: {},
+              question: stat.question || "Unknown question",
+              response: stat.response || "Unknown response",
+              segments: {}, // Dynamic segments object
             });
           }
-          const entry = keyMap.get(key);
-          if (stat.segment === "overall") {
-            entry.overall = stat.percentage;
-          } else if (stat.segment.startsWith("region:")) {
-            const region = stat.segment.split(":")[1];
-            entry.region[region] = stat.percentage;
-          } else if (stat.segment.startsWith("age:")) {
-            const age = stat.segment.split(":")[1];
-            entry.age[age] = stat.percentage;
-          } else if (stat.segment.startsWith("gender:")) {
-            const gender = stat.segment.split(":")[1];
-            entry.gender[gender] = stat.percentage;
-          } else if (stat.segment.startsWith("job_level:")) {
-            const jobLevel = stat.segment.split(":")[1];
-            entry.job_level[jobLevel] = stat.percentage;
+          
+          // Extract segment type and value
+          if (stat.segment) {
+            let segmentType = "overall";
+            let segmentValue = "overall";
+            
+            if (stat.segment !== "overall" && stat.segment.includes(":")) {
+              const parts = stat.segment.split(":");
+              segmentType = parts[0];
+              segmentValue = parts[1];
+              segmentTypes.add(segmentType);
+            } else {
+              segmentTypes.add("overall");
+            }
+            
+            // Initialize segment type in entry if needed
+            const entry = keyMap.get(key);
+            if (!entry.segments[segmentType]) {
+              entry.segments[segmentType] = {};
+            }
+            
+            // Store the percentage value
+            entry.segments[segmentType][segmentValue] = stat.percentage || stat.value;
           }
         }
+        
+        // Log found segment types and compare with canonical segments
+        const missingCanonicalSegments = CANONICAL_SEGMENTS.filter(seg => !segmentTypes.has(seg));
+        logger.info(`[SEGMENTS] Found in data: ${Array.from(segmentTypes).join(", ")}`);
+        logger.info(`[SEGMENTS] Missing canonical segments: ${missingCanonicalSegments.join(", ")}`);
+        
         return Array.from(keyMap.values());
       };
 
@@ -336,30 +350,27 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
           logger.error(`[ERROR] formatGroupedStats received non-array: ${typeof grouped}`);
           return "No data matched for the selected segments.";
         }
-        // Defensive check: if grouped is a function (likely a bug), return default message
-        if (typeof grouped === "function") {
-          logger.error("[ERROR] formatGroupedStats received a function instead of array");
-          return "No data matched for the selected segments.";
-        }
+        
         return grouped.map((entry) => {
-          let lines = [];
+          const lines = [];
+          
+          // Add question and response
           lines.push(`Question: ${entry.question}`);
           lines.push(`Response: ${entry.response}`);
-          if (entry.overall !== null) {
-            lines.push(`- overall: ${entry.overall}%`);
+          
+          // Add all segment types and their values
+          if (entry.segments) {
+            Object.entries(entry.segments).forEach(([segmentType, segmentValues]) => {
+              if (Object.keys(segmentValues).length > 0) {
+                const valuesText = Object.entries(segmentValues)
+                  .map(([key, value]) => `${key}: ${value}%`)
+                  .join(", ");
+                
+                lines.push(`- ${segmentType} { ${valuesText} }`);
+              }
+            });
           }
-          if (Object.keys(entry.region).length > 0) {
-            lines.push(`- region { ${Object.entries(entry.region).map(([k, v]) => `${k}: ${v}%`).join(", ")} }`);
-          }
-          if (Object.keys(entry.age).length > 0) {
-            lines.push(`- age { ${Object.entries(entry.age).map(([k, v]) => `${k}: ${v}%`).join(", ")} }`);
-          }
-          if (Object.keys(entry.gender).length > 0) {
-            lines.push(`- gender { ${Object.entries(entry.gender).map(([k, v]) => `${k}: ${v}%`).join(", ")} }`);
-          }
-          if (Object.keys(entry.job_level).length > 0) {
-            lines.push(`- job_level { ${Object.entries(entry.job_level).map(([k, v]) => `${k}: ${v}%`).join(", ")} }`);
-          }
+          
           return lines.join("\n");
         }).join("\n\n");
       };
@@ -859,7 +870,27 @@ export async function putHandler(request: NextRequest) {
                 },
                 matched_topics: relevantFilesResult.matched_topics || [],
                 explanation: relevantFilesResult.explanation || "No explanation provided",
-                processing_time_ms: filteredData.processing_time_ms
+                processing_time_ms: filteredData.processing_time_ms,
+                // Enhanced segment diagnostics
+                segmentAnalysis: {
+                  requestedSegments: filteredData.segments || DEFAULT_SEGMENTS,
+                  canonicalSegments: CANONICAL_SEGMENTS,
+                  availableSegmentTypes: Array.from(new Set((filteredData.filteredData?.stats || [])
+                    .map(stat => stat.segment ? (stat.segment.includes(':') ? stat.segment.split(':')[0] : stat.segment) : null)
+                    .filter(Boolean))),
+                  totalStats: (filteredData.filteredData?.stats || []).length,
+                  segmentBreakdown: Object.fromEntries(
+                    Array.from(
+                      (filteredData.filteredData?.stats || []).reduce((acc, stat) => {
+                        const segType = stat.segment ? 
+                          (stat.segment.includes(':') ? stat.segment.split(':')[0] : stat.segment) : 
+                          'unknown';
+                        acc.set(segType, (acc.get(segType) || 0) + 1);
+                        return acc;
+                      }, new Map())
+                    ).map(([key, value]) => [key, value]) // Explicitly convert to [key, value] pairs
+                  )
+                }
               }),
             },
           ],

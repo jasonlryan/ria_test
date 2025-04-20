@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env OPENAI_ASSISTANT_ID=asst_D0BPAJjvg3UK6Lcb1lqIM1xS FILE_ACCESS_MODE=standard USE_KV=false next dev",
-    "dev:kv": "cross-env OPENAI_ASSISTANT_ID=asst_D0BPAJjvg3UK6Lcb1lqIM1xS FILE_ACCESS_MODE=standard USE_KV=true next dev",
+    "dev": "cross-env OPENAI_ASSISTANT_ID=asst_D0BPAJjvg3UK6Lcb1lqIM1xS FILE_ACCESS_MODE=standard USE_KV=true next dev",
+    "dev:nokv": "cross-env OPENAI_ASSISTANT_ID=asst_D0BPAJjvg3UK6Lcb1lqIM1xS FILE_ACCESS_MODE=standard USE_KV=false next dev",
     "dev:light": "cross-env OPENAI_ASSISTANT_ID=asst_D0BPAJjvg3UK6Lcb1lqIM1xS FILE_ACCESS_MODE=direct next dev",
     "dev:default": "next dev",
     "dev:test": "cross-env OPENAI_ASSISTANT_ID=asst_T8WLaYpjA8l8JGApPGx6oyKq next dev",
