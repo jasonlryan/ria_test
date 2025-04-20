@@ -140,38 +140,124 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
       }
     }
 
+    let result;
+
     if (!isStarterQuestion(content) && !(isDirectMode && !forceStandardMode)) {
-      const cachedFiles = await getCachedFilesForThread(finalThreadId);
-      cachedFileIds = cachedFiles.map(file => file.id);
-      
-      // Pass isFollowUp flag and previous context to processQueryWithData
-      const result = await processQueryWithData(
-        content, 
-        "all-sector", 
-        cachedFileIds, 
-        finalThreadId, 
-        isFollowUp, 
-        previousQuery, 
-        previousAssistantResponse
-      );
+      // For the first message in a thread, always load full data from files
+      if (!isFollowUp) {
+        // Identify relevant files for the query
+        const relevantFilesResult = await identifyRelevantFiles(content, "all-sector");
+        const fileIdArray = relevantFilesResult?.file_ids || [];
 
-      if (result && result.out_of_scope === true) {
-        return NextResponse.json({
-          out_of_scope: true,
-          message: result.out_of_scope_message || "Your query is outside the scope of workforce survey data.",
-        });
-      }
+        // Load full data from files
+        const dataDir = path.join(process.cwd(), "scripts", "output", "split_data");
+        const loadedFiles: CachedFile[] = [];
 
-      if (result.dataScope && result.dataScope.fileIds && result.dataScope.fileIds.size > 0) {
-        usedFileIds = Array.from(result.dataScope.fileIds).map(String);
-        // Create proper CachedFile objects for updating the cache
-        const cachedFiles: CachedFile[] = usedFileIds.map(id => ({
-          id,
+        for (const fileId of fileIdArray) {
+          const fileName = fileId.endsWith(".json") ? fileId : `${fileId}.json`;
+          const filePath = path.join(dataDir, fileName);
+
+          try {
+            if (!fs.existsSync(filePath)) {
+              logger.error(`[DATA LOAD] File not found: ${filePath}`);
+              continue;
+            }
+
+            const fileContent = fs.readFileSync(filePath, "utf8");
+            let jsonData;
+            try {
+              jsonData = JSON.parse(fileContent);
+            } catch (parseErr) {
+              logger.error(`[DATA LOAD] JSON parse error for file ${filePath}:`, parseErr);
+              continue;
+            }
+
+            const segments = DEFAULT_SEGMENTS;
+            const cachedFile: CachedFile = {
+              id: fileId,
+              data: {},
+              loadedSegments: new Set(segments),
+              availableSegments: new Set(segments)
+            };
+
+            for (const segment of segments) {
+              if (jsonData[segment]) {
+                cachedFile.data[segment] = jsonData[segment];
+              } else if (jsonData.responses) {
+                cachedFile.data[segment] = { responses: jsonData.responses };
+              } else {
+                cachedFile.data[segment] = jsonData;
+              }
+            }
+
+            loadedFiles.push(cachedFile);
+          } catch (error) {
+            logger.error(`[DATA LOAD] Error loading file ${filePath}:`, error);
+          }
+        }
+
+        // Update cache with loaded files metadata only
+        const cachedFilesForUpdate: CachedFile[] = loadedFiles.map(file => ({
+          id: file.id,
           data: {},
-          loadedSegments: new Set(),
-          availableSegments: new Set()
+          loadedSegments: file.loadedSegments,
+          availableSegments: file.availableSegments
         }));
-        await updateThreadCache(finalThreadId, cachedFiles);
+
+        await updateThreadCache(finalThreadId, cachedFilesForUpdate);
+
+        // Process query with loaded file IDs
+        result = await processQueryWithData(
+          content,
+          "all-sector",
+          fileIdArray,
+          finalThreadId,
+          isFollowUp,
+          previousQuery,
+          previousAssistantResponse
+        );
+
+        if (result && result.out_of_scope === true) {
+          return NextResponse.json({
+            out_of_scope: true,
+            message: result.out_of_scope_message || "Your query is outside the scope of workforce survey data.",
+          });
+        }
+
+        usedFileIds = fileIdArray;
+      } else {
+        // For follow-up messages, load additional segments from files
+        const cachedFiles = await getCachedFilesForThread(finalThreadId);
+        cachedFileIds = cachedFiles.map(file => file.id);
+
+        result = await processQueryWithData(
+          content,
+          "all-sector",
+          cachedFileIds,
+          finalThreadId,
+          isFollowUp,
+          previousQuery,
+          previousAssistantResponse
+        );
+
+        if (result && result.out_of_scope === true) {
+          return NextResponse.json({
+            out_of_scope: true,
+            message: result.out_of_scope_message || "Your query is outside the scope of workforce survey data.",
+          });
+        }
+
+        if (result.dataScope && result.dataScope.fileIds && result.dataScope.fileIds.size > 0) {
+          usedFileIds = Array.from(result.dataScope.fileIds).map(String);
+          // Create proper CachedFile objects for updating the cache
+          const cachedFiles: CachedFile[] = usedFileIds.map(id => ({
+            id,
+            data: {},
+            loadedSegments: new Set(),
+            availableSegments: new Set()
+          }));
+          await updateThreadCache(finalThreadId, cachedFiles);
+        }
       }
 
       const statCount = result.filteredData?.stats?.length || 0;
@@ -185,8 +271,8 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
       logger.info(`[DATA] Segments selected: ${segmentsUsed}`);
       logger.info(`[DATA] Summary: ${summaryText}`);
 
+      // Extract filteredStats from result
       let filteredStats = [];
-
       if (result.stats && Array.isArray(result.stats) && result.stats.length > 0) {
         filteredStats = result.stats;
       } else if (result.filteredData?.filteredData && Array.isArray(result.filteredData.filteredData) && result.filteredData.filteredData.length > 0) {
