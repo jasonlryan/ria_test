@@ -5,6 +5,10 @@
  * Wraps VercelKV methods to adapt return types for compatibility.
  * Falls back to an in-memory store if KV environment variables are missing,
  * enabling local development without KV access.
+ * 
+ * USE_KV environment variable can override behavior:
+ * - If USE_KV=false: Always use in-memory store regardless of KV credentials
+ * - If USE_KV=true or not set: Use KV if credentials available
  */
 
 import { kv } from "@vercel/kv";
@@ -19,9 +23,12 @@ interface KVClient {
 
 let kvClient: KVClient;
 
-// Check for either KV_REST_API variables OR REDIS_URL
-if ((!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) && !process.env.REDIS_URL) {
-  console.warn("KV env vars missing, using in-memory fallback for KV client.");
+// Check if KV is explicitly disabled
+const useKv = process.env.USE_KV !== 'false';
+
+// Use in-memory store if KV is disabled or credentials are missing
+if (!useKv || ((!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) && !process.env.REDIS_URL)) {
+  console.warn(`KV ${!useKv ? 'disabled by USE_KV=false' : 'env vars missing'}, using in-memory fallback for KV client.`);
 
   const inMemoryStore = new Map<string, any>();
 
@@ -53,7 +60,7 @@ if ((!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) && !process
     },
   };
 } else {
-  console.log("✅ REDIS CONNECTION ACTIVE: Using " + (process.env.REDIS_URL ? "REDIS_URL" : "KV_REST_API vars"));
+  console.log("✅ REDIS CONNECTION ACTIVE: Using " + (process.env.REDIS_URL ? "REDIS_URL" : "KV_REST_API vars") + " (USE_KV=true)");
   
   // Wrap Vercel KV to adapt return types
   kvClient = {
