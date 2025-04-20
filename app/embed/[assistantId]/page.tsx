@@ -1058,7 +1058,7 @@ ${
             </div>
             <button
               onClick={refreshChat}
-              className="inline-flex items-center bg-white hover:bg-gray-100 hover:text-secondary hover:border-secondary border border-transparent text-primary py-1.5 px-3 rounded-lg transition-all duration-200 shadow-md whitespace-nowrap min-w-[100px]"
+              className="inline-flex items-center justify-center bg-white hover:bg-gray-100 hover:text-secondary hover:border-secondary border border-transparent text-primary py-1 sm:py-1.5 px-2 sm:px-3 rounded-lg transition-all duration-200 shadow-md whitespace-nowrap w-10 h-10 sm:w-auto sm:h-auto sm:min-w-[100px]"
               aria-label="New chat"
             >
               <svg
@@ -1067,7 +1067,7 @@ ${
                 viewBox="0 0 24 24"
                 strokeWidth={2}
                 stroke="currentColor"
-                className="w-5 h-5 mr-2"
+                className="w-5 h-5 sm:mr-2"
               >
                 <path
                   strokeLinecap="round"
@@ -1075,7 +1075,9 @@ ${
                   d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
                 />
               </svg>
-              <span className="text-base font-medium">New Chat</span>
+              <span className="hidden sm:inline text-base font-medium">
+                New Chat
+              </span>
             </button>
           </div>
         </div>
