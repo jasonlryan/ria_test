@@ -472,6 +472,56 @@ async function getStarterQuestions() {
 }
 ```
 
+## Diagnostic Endpoints
+
+### 1. `/api/health` - Health Check
+
+**Purpose**: Provides basic health check for the application.
+
+**Method**: GET
+
+**Response**:
+
+```json
+{
+  "status": "ok",
+  "timestamp": "2025-01-01T00:00:00.000Z",
+  "version": "1.0.0"
+}
+```
+
+### 2. `/api/redis-test` - KV Connection Test
+
+**Purpose**: Tests connectivity and functionality of the Vercel KV (Redis) integration.
+
+**Method**: GET
+
+**Response**:
+
+```json
+{
+  "working": true,
+  "testKey": "test-redis-1234567890",
+  "original": { "timestamp": 1234567890, "test": "Redis connection test" },
+  "retrieved": { "timestamp": 1234567890, "test": "Redis connection test" }
+}
+```
+
+**Error Response** (Status 500):
+
+```json
+{
+  "working": false,
+  "error": "KV connection failed: ..."
+}
+```
+
+**Notes**:
+
+- In production, this endpoint tests actual Redis connectivity
+- With `USE_KV=false`, it tests the in-memory fallback store
+- Useful for verifying that environment variables are correctly configured
+
 ## Error Handling
 
 All API endpoints use a standardized error response format:
@@ -523,6 +573,55 @@ When rate limits are exceeded, the API returns a 429 status code with a Retry-Af
 3. **Implement Caching**
    - Cache responses on the client side when appropriate
    - Respect the Cache-Control headers
+
+### Analytics Integration
+
+1. **Track API Usage**
+
+   ```javascript
+   import { track } from "@vercel/analytics";
+
+   // When sending a query to the API
+   async function trackApiQuery(queryType, details) {
+     try {
+       // Call the API
+       const response = await fetch("/api/query", {
+         /* options */
+       });
+
+       // Track the successful API call
+       track("api_call", {
+         endpoint: "/api/query",
+         type: queryType,
+         success: true,
+         ...details,
+       });
+
+       return response;
+     } catch (error) {
+       // Track the failed API call
+       track("api_error", {
+         endpoint: "/api/query",
+         type: queryType,
+         errorCode: error.code,
+         message: error.message,
+       });
+
+       throw error;
+     }
+   }
+   ```
+
+2. **Track Important User Actions**
+
+   - Track thread creation: `track('thread_created', { source: 'user_action' })`
+   - Track complex queries: `track('complex_query', { segments: segments.length })`
+   - Track response times: `track('response_time', { time: endTime - startTime })`
+
+3. **Privacy Considerations**
+   - Never track personally identifiable information
+   - Focus on aggregated data and patterns
+   - Ensure compliance with privacy regulations
 
 ### Security
 

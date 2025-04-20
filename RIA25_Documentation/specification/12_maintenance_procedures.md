@@ -238,23 +238,39 @@ When performance issues are detected:
 
 ## Thread and Cache Management
 
-### Vercel KV Cache Management
+### Vercel KV Cache System
 
-With the migration from file-based caching to Vercel KV, cache management procedures have been updated:
+### Overview
 
-1. **KV Cache Monitoring**
+The RIA25 application uses Vercel KV (Redis) for production caching and offers an in-memory fallback for local development. This approach provides persistent caching in production while enabling development without requiring a Redis instance.
 
-   - Access the Vercel KV dashboard through the Vercel project interface
-   - Monitor key metrics: memory usage, command count, and response time
-   - Set up alerts for memory usage >80% or command count >75% of plan limits
+### Environment Variables
 
-2. **Cache Structure**
+The KV system uses the following environment variables:
 
-   - Thread metadata stored at keys with pattern: `thread:{threadId}:meta`
-   - File data stored at keys with pattern: `thread:{threadId}:file:{fileId}`
-   - All keys use standardized 90-day TTL
+| Variable            | Purpose                              | Required             | Default |
+| ------------------- | ------------------------------------ | -------------------- | ------- |
+| `KV_REST_API_URL`   | URL for the Vercel KV REST API       | Yes (for production) | None    |
+| `KV_REST_API_TOKEN` | Authentication token for KV REST API | Yes (for production) | None    |
+| `REDIS_URL`         | Alternative Redis connection string  | No (fallback)        | None    |
+| `USE_KV`            | Enable/disable KV functionality      | No                   | `true`  |
 
-3. **Cache Inspection**
+Setting `USE_KV=false` explicitly disables KV functionality and forces the use of the in-memory fallback, regardless of whether KV credentials are present.
+
+### Cache Structure
+
+1. **Key Schema**
+
+   - Thread metadata: `thread:{threadId}:meta`
+   - File data: `thread:{threadId}:file:{fileId}`
+   - Test keys: `test-redis-{timestamp}`
+
+2. **TTL Settings**
+
+   - Standard TTL: 90 days (60 _ 60 _ 24 \* 90 seconds)
+   - TTL is refreshed on key access and updates
+
+3. **Inspection**
 
    For debugging purposes, you can inspect cache contents using Vercel CLI or Dashboard:
 
@@ -290,108 +306,68 @@ With the migration from file-based caching to Vercel KV, cache management proced
    done
    ```
 
-### Thread Management
+### Local Development
 
-1. **Thread Cleanup**
+When running in a local development environment:
 
-   - OpenAI threads persist indefinitely
-   - Consider implementing a thread cleanup process for inactive threads:
+1. **In-memory Fallback**
 
-   ```javascript
-   // Example thread cleanup function
-   async function cleanupInactiveThreads(olderThanDays = 30) {
-     const threadList = await openai.beta.threads.list();
-     const cutoffDate = new Date();
-     cutoffDate.setDate(cutoffDate.getDate() - olderThanDays);
+   - The system automatically uses an in-memory Map as a fallback when:
+     - `USE_KV=false` is set in the environment
+     - Required KV environment variables are missing
+   - This allows for development without a Redis instance
 
-     for (const thread of threadList.data) {
-       const lastActive = new Date(thread.last_active_at || thread.created_at);
-       if (lastActive < cutoffDate) {
-         await openai.beta.threads.del(thread.id);
-         console.log(`Deleted inactive thread: ${thread.id}`);
+2. **Enabling Local Storage**
 
-         // Also clean up associated KV cache entries
-         const metaKey = `thread:${thread.id}:meta`;
-         await kvClient.del(metaKey);
+   - Start the application with `USE_KV=false`: `cross-env USE_KV=false npm run dev`
+   - The logs will show: `KV disabled by USE_KV=false, using in-memory fallback for KV client.`
+   - All KV operations will use the in-memory store with log prefixes like `🧠 KV CACHE [MEMORY]`
 
-         // Get and delete all file keys for this thread
-         const filePattern = `thread:${thread.id}:file:*`;
-         const fileKeys = await listKeys(filePattern); // Implement listKeys function
-         for (const fileKey of fileKeys) {
-           await kvClient.del(fileKey);
-         }
-       }
-     }
+3. **Limitations**
+   - The in-memory store is cleared when the server restarts
+   - Data is not shared between separate processes
+   - TTL functionality is simulated but limited
+
+### Testing KV Operations
+
+1. **Redis Test Endpoint**
+
+   The application includes a `/api/redis-test` endpoint that verifies KV operations:
+
+   ```bash
+   # Test KV operations through the endpoint
+   curl http://localhost:3000/api/redis-test
+   ```
+
+   A successful response indicates the KV client is working correctly:
+
+   ```json
+   {
+     "working": true,
+     "testKey": "test-redis-1234567890",
+     "original": { "timestamp": 1234567890, "test": "Redis connection test" },
+     "retrieved": { "timestamp": 1234567890, "test": "Redis connection test" }
    }
    ```
 
-2. **Thread Usage Monitoring**
+2. **Manual Testing**
 
-   - Track thread creation rates
-   - Monitor thread retention and reuse rates
-   - Analyze thread lifecycle patterns
+   For more extensive testing, you can use the Vercel CLI:
 
-## Suggested Backup Procedures
+   ```bash
+   # Set a test value
+   vercel kv set test:my-key '{"value": "test-data"}' --json
 
-### Data Backup
+   # Get the test value
+   vercel kv get test:my-key
+   ```
 
-1. **Export Assistant Configuration**
+3. **Common Issues**
+   - Connection failures: Check environment variables and network connectivity
+   - Authorization errors: Verify `KV_REST_API_TOKEN` is correct and not expired
+   - Command execution failures: Ensure the Redis command syntax is correct
 
-   - Document assistant ID and configuration settings
-   - Store configuration information securely
-
-2. **JSON Data Backup**
-
-   - Maintain copies of all processed JSON files
-   - Store original CSV data securely
-   - Document backup locations
-
-3. **Recommended Backup Schedule**
-
-   - Configuration documentation: When changed
-   - JSON data backup: After processing
-   - Code repository backup: Regular intervals
-
-4. **Backup Storage Recommendations**
-
-   - Primary: Secure cloud storage
-   - Secondary: Local storage
-   - Consider encryption for sensitive data
-
-## Troubleshooting
-
-### Suggested Diagnostic Approaches
-
-#### API Connectivity Issues
-
-1. Verify API key validity and environment variable configuration
-2. Check API status at OpenAI status page
-3. Test basic API connectivity with curl command
-4. Review API response logs for error messages
-
-#### Data Retrieval Issues
-
-1. Verify assistant configuration
-2. Check file accessibility and integrity
-3. Validate data formats and structures
-4. Review retrieval mechanisms
-
-#### Response Quality Issues
-
-1. Analyze prompt configuration
-2. Test with simplified queries
-3. Review context being provided to the model
-4. Check for changes in underlying data
-
-#### Performance Issues
-
-1. Analyze response time logs
-2. Check polling patterns
-3. Verify thread and cache operations
-4. Review concurrent request handling
-5. Check for any API quota limitations
-
-#### Vercel KV Issues
+### Troubleshooting
 
 1. **Connection Issues**
 
@@ -431,8 +407,8 @@ With the migration from file-based caching to Vercel KV, cache management proced
 
 In case of critical issues with the Vercel KV implementation:
 
-1. Set the environment variable `DISABLE_KV=1` to force fallback to file-based caching
-2. Verify the system falls back correctly to file operations
+1. Set the environment variable `USE_KV=false` to force fallback to in-memory caching
+2. Verify the system falls back correctly to in-memory operations
 3. Address the KV issues identified in logs and monitoring
 4. Remove the environment variable when ready to re-enable KV
 5. Monitor the system closely during the transition back to KV
@@ -452,6 +428,39 @@ In case of critical issues with the Vercel KV implementation:
 - **User Sessions**: Monitor session activity
 - **Feature Utilization**: Note which capabilities are most used
 - **Cache Efficiency**: Track cache hit/miss rates
+
+### Analytics Monitoring
+
+- **Traffic Trends**: Review visitor patterns and page view trends in Vercel Analytics
+- **Engagement Metrics**: Monitor bounce rates and session duration
+- **Usage Patterns**: Track which parts of the application receive the most traffic
+- **Geographic Distribution**: Monitor user location patterns for regional optimization
+- **Device Types**: Analyze desktop vs. mobile usage to optimize responsive design
+
+#### Analytics Maintenance Tasks
+
+1. **Regular Review**
+
+   - Schedule weekly or monthly reviews of analytics data
+   - Create dashboards for key metrics
+   - Document significant changes in usage patterns
+
+2. **Event Tracking Hygiene**
+
+   - Verify custom events are properly categorized
+   - Ensure event naming conventions are consistent
+   - Document all tracked events for team reference
+
+3. **Analytics Script Updates**
+
+   - Keep `@vercel/analytics` package updated
+   - Review analytics implementation when upgrading Next.js
+   - Test analytics functionality after major deployments
+
+4. **Data Quality Assurance**
+   - Check for unexpected traffic spikes or drops
+   - Verify that traffic sources are correctly attributed
+   - Investigate any analytics gaps or inconsistencies
 
 ### Alert Thresholds
 
