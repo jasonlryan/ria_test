@@ -14,6 +14,8 @@ node_modules
 /2025_DATA/**
 /2025_DATA_PROCESSING/*.csv
 /tests/data/*.csv
+RIA25_Documentation/temp_build/
+RIA25_Documentation/temp_build/**
 
 # Archive folders (ensure none make it into the repo)
 **/archive/

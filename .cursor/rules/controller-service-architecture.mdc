@@ -1,0 +1,121 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Controller-Service Architecture Standard
+
+## Overview
+This document defines the architectural standards for RIA25. All new code must follow these patterns to maintain consistency and codebase quality.
+
+## Directory Structure
+- `/app/api/{endpoint}/route.ts` - API routes that delegate to controllers
+- `/app/api/controllers/{name}Controller.ts` - Business logic controllers
+- `/app/api/services/{name}Service.js` or `.ts` - Reusable service modules
+- `/utils/shared/{name}.js` or `.ts` - Shared utilities across the codebase
+
+## Controller Standards
+1. **Naming Convention**: All controllers must be named `{name}Controller.ts`
+2. **File Location**: Controllers must be placed in `/app/api/controllers/`
+3. **Handler Functions**: Controllers should export handler functions (`getHandler`, `postHandler`, `putHandler`)
+4. **Error Handling**: All controllers must use `formatErrorResponse` and `formatBadRequestResponse` from `utils/shared/errorHandler`
+5. **Logging**: All controllers must use `logger` from `utils/logger`
+6. **Service Delegation**: Controllers must delegate business logic to service modules
+
+Example controller structure:
+```typescript
+/**
+ * Controller for example API endpoints.
+ * Handles request validation, delegates to example service,
+ * manages response formatting and error handling.
+ */
+
+import { NextResponse } from "next/server";
+import { formatBadRequestResponse, formatErrorResponse } from "../../../utils/shared/errorHandler";
+import ExampleService from "../services/exampleService";
+import logger from "../../../utils/logger";
+
+const exampleService = new ExampleService();
+
+export async function postHandler(request) {
+  try {
+    const body = await request.json();
+    // Validate request parameters
+    
+    logger.info(`[EXAMPLE] Processing request`);
+    
+    // Delegate to service
+    const result = await exampleService.processData();
+    
+    return NextResponse.json(result);
+  } catch (error) {
+    logger.error(`[ERROR] Example controller error: ${error.message}`);
+    return formatErrorResponse(error);
+  }
+}
+```
+
+## Service Standards
+1. **Naming Convention**: All services must be named `{name}Service.js` or `.ts`
+2. **File Location**: Services must be placed in `/app/api/services/`
+3. **Class-Based**: Services should be implemented as classes with clear methods
+4. **Documentation**: All service methods must have JSDoc comments
+5. **Single Responsibility**: Services should have a clear, focused responsibility
+
+Example service structure:
+```typescript
+/**
+ * Service for example functionality.
+ * Provides reusable business logic for example operations.
+ */
+
+import logger from "../../../utils/logger";
+
+export class ExampleService {
+  constructor() {}
+  
+  /**
+   * Process data for example functionality
+   * @param {string} data - Input data to process
+   * @returns {Promise<object>} Processed result
+   */
+  async processData(data) {
+    logger.info(`[EXAMPLE] Processing data`);
+    // Implementation
+    return { result: "processed" };
+  }
+}
+
+export default ExampleService;
+```
+
+## Utility Standards
+1. **Location**: Shared utilities must be placed in `/utils/shared/`
+2. **Focus**: Utilities should be focused on a single responsibility
+3. **Naming**: Use clear, descriptive names without redundant prefixes/suffixes
+
+## API Route Standards
+1. **Route Location**: All routes must be placed in `/app/api/{endpoint}/route.ts`
+2. **Controller Delegation**: Routes must delegate to controllers
+3. **HTTP Methods**: Export appropriate functions for the needed HTTP methods
+
+Example route structure:
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import { getHandler, postHandler } from "../controllers/exampleController";
+import { allowCors } from "../../../utils/shared/cors";
+
+export const GET = allowCors(getHandler);
+export const POST = allowCors(postHandler);
+```
+
+## Enforcing Standards
+- All pull requests must adhere to these standards
+- Code reviews should check for compliance with these patterns
+- Automated linting should be used when possible
+
+## Benefits
+- Clear separation of concerns
+- Improved testability and maintainability
+- Consistent code organization 
+- Easier onboarding for new developers 
