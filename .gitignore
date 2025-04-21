@@ -29,6 +29,14 @@ archive/**
 *.json.backup
 *.json.bak
 
+# Microsoft Office files (large binary files)
+*.docx
+*.xlsx
+*.pptx
+*.doc
+*.xls
+*.ppt
+
 # Explicitly include important files
 !2025_DATA_PROCESSING/generate_consolidated_csv.js
 !scripts/data/2024/2024_global_data.csv
