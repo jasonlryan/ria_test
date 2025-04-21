@@ -12,7 +12,7 @@
       "Motivation_and_Fulfillment"
     ],
     "canonicalQuestion": "How motivated and fulfilled do you feel in your role?",
-    "subQuestion": "The organization is strategically adapting to changes in the business environment.",
+    "subQuestion": "I feel motivated to do more than is required of me.",
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
@@ -23,6 +23,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -36,106 +37,155 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "Q17 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "The organization is strategically adapting to changes in the business environment.",
+      "response": "I feel motivated to do more than is required of me.",
       "data": {
+        "overall": 0.68,
         "region": {
-          "united_states": 74,
-          "united_kingdom": 66,
-          "india": 84,
-          "france": 59,
-          "germany": 67,
-          "japan": 38,
-          "united_arab_emirates": 76,
-          "brazil": 76,
-          "saudi_arabia": 79,
-          "australia": 68
+          "united_states": 0.75,
+          "united_kingdom": 0.65,
+          "australia": 0.65,
+          "india": 0.83,
+          "brazil": 0.73,
+          "saudi_arabia": 0.79,
+          "france": 0.66,
+          "germany": 0.64,
+          "japan": 0.39,
+          "united_arab_emirates": 0.76
         },
         "age": {
-          "18-24": 73,
-          "25-34": 74,
-          "35-44": 71,
-          "45-54": 63,
-          "55-65": 57,
-          "65+": 63
+          "18-24": 0.69,
+          "25-34": 0.71,
+          "35-44": 0.7,
+          "45-54": 0.65,
+          "55-65": 0.6,
+          "65+": 0.67
         },
         "gender": {
-          "male": 70,
-          "female": 67
+          "male": 0.69,
+          "female": 0.67
         },
         "org_size": {
-          "fewer_than_10": 62,
-          "10_to_49": 63,
-          "50_to_99": 67,
-          "100_to_499": 69,
-          "500_to_999": 72,
-          "1000_or_more": 67
+          "fewer_than_10": 0.63,
+          "10_to_49": 0.66,
+          "50_to_99": 0.68,
+          "100_to_499": 0.69,
+          "500_to_999": 0.71,
+          "1000_or_more": 0.66
         },
         "sector": {
-          "automotive": 68,
-          "business_administration": 71,
-          "technology": 83,
-          "construction": 73,
-          "consumer_goods": 72,
-          "education": 64,
-          "energy_utilities": 69,
-          "financial_services": 75,
-          "government": 59,
-          "healthcare": 61,
-          "manufacturing_industrial": 68,
-          "marketing_services": 69,
-          "legal_in-house": 59,
-          "legal_agency": 63,
-          "life_sciences": 64,
-          "professional_services": 66,
-          "real_estate": 67,
-          "retail": 66,
-          "sales": 68,
-          "telecommunications": 75,
-          "transport_storage": 65,
-          "travel_hospitality_leisure": 67,
-          "wholesale_distribution": 59,
-          "other": 62
+          "automotive": 0.67,
+          "business_administration": 0.74,
+          "technology": 0.81,
+          "construction": 0.73,
+          "consumer_goods": 0.66,
+          "education": 0.73,
+          "energy_utilities": 0.7,
+          "financial_services": 0.7,
+          "government": 0.61,
+          "healthcare": 0.66,
+          "manufacturing_industrial": 0.66,
+          "marketing_services": 0.73,
+          "legal_in-house": 0.62,
+          "legal_agency": 0.68,
+          "life_sciences": 0.59,
+          "professional_services": 0.62,
+          "real_estate": 0.69,
+          "retail": 0.62,
+          "sales": 0.71,
+          "telecommunications": 0.68,
+          "transport_storage": 0.6,
+          "travel_hospitality_leisure": 0.65,
+          "wholesale_distribution": 0.6,
+          "other": 0.62
         },
         "job_level": {
-          "ceo": 80,
-          "senior_executive": 83,
-          "senior_leader": 78,
-          "mid_level_leader": 69,
-          "first_level_supervisor": 69,
-          "individual_contributor": 58
+          "ceo": 0.81,
+          "senior_executive": 0.83,
+          "senior_leader": 0.77,
+          "mid_level_leader": 0.68,
+          "first_level_supervisor": 0.69,
+          "individual_contributor": 0.57
         },
         "relationship_status": {
-          "single": 63,
-          "cohabiting": 63,
-          "married": 73,
-          "divorced_separated": 58,
-          "widowed": 64
+          "single": 0.62,
+          "cohabiting": 0.64,
+          "married": 0.73,
+          "divorced_separated": 0.62,
+          "widowed": 0.71
         },
         "education": {
-          "secondary": 65,
-          "tertiary": 58,
-          "professional_certifications": 63,
-          "undergraduate": 69,
-          "postgraduate": 76,
-          "doctorate": 77
+          "secondary": 0.64,
+          "tertiary": 0.59,
+          "professional_certifications": 0.62,
+          "undergraduate": 0.68,
+          "postgraduate": 0.76,
+          "doctorate": 0.78
         },
         "generation": {
-          "gen_z": 73,
-          "millennials": 73,
-          "gen_x": 62,
-          "baby_boomers": 58,
-          "65_plus": 63
+          "gen_z": 0.71,
+          "millennials": 0.71,
+          "gen_x": 0.64,
+          "baby_boomers": 0.62
         },
         "employment_status": {
-          "full_time": 70,
-          "part_time": 63,
-          "contract": 58,
-          "freelance": 61
+          "full_time": 0.69,
+          "part_time": 0.63,
+          "contract": 0.6,
+          "freelance": 0.65
         }
       }
     }

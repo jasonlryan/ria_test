@@ -12,7 +12,7 @@
       "Employee_Wellbeing"
     ],
     "canonicalQuestion": "How supported do you feel in terms of wellbeing at work?",
-    "subQuestion": "I feel leaders in my company respect the needs of employees across generations",
+    "subQuestion": "Connection with my colleagues is one of the most important things about my job",
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
@@ -23,6 +23,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -36,106 +37,155 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "Q6 - To what extent do you agree with the following statements with regards to your workplace.",
   "responses": [
     {
-      "response": "I feel leaders in my company respect the needs of employees across generations",
+      "response": "Connection with my colleagues is one of the most important things about my job",
       "data": {
+        "overall": 0.71,
         "region": {
-          "united_states": 72,
-          "united_kingdom": 62,
-          "india": 86,
-          "france": 55,
-          "germany": 61,
-          "japan": 41,
-          "united_arab_emirates": 79,
-          "brazil": 71,
-          "saudi_arabia": 77,
-          "australia": 64
+          "united_states": 0.71,
+          "united_kingdom": 0.7,
+          "australia": 0.7,
+          "india": 0.85,
+          "brazil": 0.72,
+          "saudi_arabia": 0.81,
+          "france": 0.69,
+          "germany": 0.62,
+          "japan": 0.58,
+          "united_arab_emirates": 0.77
         },
         "age": {
-          "18-24": 68,
-          "25-34": 73,
-          "35-44": 69,
-          "45-54": 61,
-          "55-65": 53,
-          "65+": 59
+          "18-24": 0.72,
+          "25-34": 0.74,
+          "35-44": 0.72,
+          "45-54": 0.69,
+          "55-65": 0.64,
+          "65+": 0.67
         },
         "gender": {
-          "male": 68,
-          "female": 64
+          "male": 0.72,
+          "female": 0.7
         },
         "org_size": {
-          "fewer_than_10": 62,
-          "10_to_49": 64,
-          "50_to_99": 63,
-          "100_to_499": 69,
-          "500_to_999": 70,
-          "1000_or_more": 63
+          "fewer_than_10": 0.58,
+          "10_to_49": 0.69,
+          "50_to_99": 0.69,
+          "100_to_499": 0.73,
+          "500_to_999": 0.74,
+          "1000_or_more": 0.7
         },
         "sector": {
-          "automotive": 69,
-          "business_administration": 68,
-          "technology": 83,
-          "construction": 74,
-          "consumer_goods": 64,
-          "education": 63,
-          "energy_utilities": 70,
-          "financial_services": 70,
-          "government": 58,
-          "healthcare": 58,
-          "manufacturing_industrial": 65,
-          "marketing_services": 71,
-          "legal_in-house": 53,
-          "legal_agency": 61,
-          "life_sciences": 62,
-          "professional_services": 65,
-          "real_estate": 69,
-          "retail": 59,
-          "sales": 68,
-          "telecommunications": 68,
-          "transport_storage": 56,
-          "travel_hospitality_leisure": 64,
-          "wholesale_distribution": 59,
-          "other": 60
+          "automotive": 0.73,
+          "business_administration": 0.74,
+          "technology": 0.81,
+          "construction": 0.72,
+          "consumer_goods": 0.76,
+          "education": 0.71,
+          "energy_utilities": 0.7,
+          "financial_services": 0.74,
+          "government": 0.69,
+          "healthcare": 0.7,
+          "manufacturing_industrial": 0.69,
+          "marketing_services": 0.68,
+          "legal_in-house": 0.51,
+          "legal_agency": 0.68,
+          "life_sciences": 0.7,
+          "professional_services": 0.66,
+          "real_estate": 0.67,
+          "retail": 0.68,
+          "sales": 0.7,
+          "telecommunications": 0.73,
+          "transport_storage": 0.65,
+          "travel_hospitality_leisure": 0.67,
+          "wholesale_distribution": 0.63,
+          "other": 0.64
         },
         "job_level": {
-          "ceo": 79,
-          "senior_executive": 83,
-          "senior_leader": 76,
-          "mid_level_leader": 67,
-          "first_level_supervisor": 68,
-          "individual_contributor": 53
+          "ceo": 0.76,
+          "senior_executive": 0.82,
+          "senior_leader": 0.77,
+          "mid_level_leader": 0.73,
+          "first_level_supervisor": 0.72,
+          "individual_contributor": 0.62
         },
         "relationship_status": {
-          "single": 61,
-          "cohabiting": 59,
-          "married": 71,
-          "divorced_separated": 57,
-          "widowed": 62
+          "single": 0.66,
+          "cohabiting": 0.66,
+          "married": 0.75,
+          "divorced_separated": 0.64,
+          "widowed": 0.68
         },
         "education": {
-          "secondary": 62,
-          "tertiary": 54,
-          "professional_certifications": 59,
-          "undergraduate": 67,
-          "postgraduate": 74,
-          "doctorate": 75
+          "secondary": 0.67,
+          "tertiary": 0.66,
+          "professional_certifications": 0.64,
+          "undergraduate": 0.73,
+          "postgraduate": 0.77,
+          "doctorate": 0.7
         },
         "generation": {
-          "gen_z": 70,
-          "millennials": 71,
-          "gen_x": 59,
-          "baby_boomers": 54,
-          "65_plus": 59
+          "gen_z": 0.73,
+          "millennials": 0.73,
+          "gen_x": 0.68,
+          "baby_boomers": 0.64
         },
         "employment_status": {
-          "full_time": 67,
-          "part_time": 61,
-          "contract": 58,
-          "freelance": 59
+          "full_time": 0.72,
+          "part_time": 0.67,
+          "contract": 0.6,
+          "freelance": 0.58
         }
       }
     }

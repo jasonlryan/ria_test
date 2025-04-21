@@ -12,7 +12,7 @@
       "Intention_to_Leave"
     ],
     "canonicalQuestion": "Are you planning on leaving your current role in the next three months?",
-    "subQuestion": "I am open to changing industries to have better job security",
+    "subQuestion": "I feel confident I could easily find a new role if I left my current company in the next few months",
     "comparable": true,
     "userMessage": "Data based on comparable markets only.",
     "availableMarkets": [
@@ -29,6 +29,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -42,106 +43,155 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "Q7 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "I am open to changing industries to have better job security",
+      "response": "I feel confident I could easily find a new role if I left my current company in the next few months",
       "data": {
+        "overall": 0.62,
         "region": {
-          "united_states": 68,
-          "united_kingdom": 62,
-          "india": 80,
-          "france": 50,
-          "germany": 55,
-          "japan": 46,
-          "united_arab_emirates": 78,
-          "brazil": 62,
-          "saudi_arabia": 78,
-          "australia": 63
+          "united_states": 0.68,
+          "united_kingdom": 0.61,
+          "australia": 0.65,
+          "india": 0.81,
+          "brazil": 0.67,
+          "saudi_arabia": 0.66,
+          "france": 0.49,
+          "germany": 0.61,
+          "japan": 0.25,
+          "united_arab_emirates": 0.7
         },
         "age": {
-          "18-24": 69,
-          "25-34": 70,
-          "35-44": 68,
-          "45-54": 59,
-          "55-65": 44,
-          "65+": 39
+          "18-24": 0.66,
+          "25-34": 0.69,
+          "35-44": 0.67,
+          "45-54": 0.56,
+          "55-65": 0.44,
+          "65+": 0.46
         },
         "gender": {
-          "male": 64,
-          "female": 61
+          "male": 0.64,
+          "female": 0.59
         },
         "org_size": {
-          "fewer_than_10": 54,
-          "10_to_49": 56,
-          "50_to_99": 64,
-          "100_to_499": 64,
-          "500_to_999": 68,
-          "1000_or_more": 61
+          "fewer_than_10": 0.5,
+          "10_to_49": 0.54,
+          "50_to_99": 0.63,
+          "100_to_499": 0.63,
+          "500_to_999": 0.68,
+          "1000_or_more": 0.6
         },
         "sector": {
-          "automotive": 64,
-          "business_administration": 68,
-          "technology": 73,
-          "construction": 69,
-          "consumer_goods": 67,
-          "education": 58,
-          "energy_utilities": 65,
-          "financial_services": 68,
-          "government": 54,
-          "healthcare": 56,
-          "manufacturing_industrial": 63,
-          "marketing_services": 66,
-          "legal_in-house": 51,
-          "legal_agency": 53,
-          "life_sciences": 65,
-          "professional_services": 59,
-          "real_estate": 54,
-          "retail": 65,
-          "sales": 68,
-          "telecommunications": 68,
-          "transport_storage": 58,
-          "travel_hospitality_leisure": 63,
-          "wholesale_distribution": 59,
-          "other": 56
+          "automotive": 0.61,
+          "business_administration": 0.62,
+          "technology": 0.77,
+          "construction": 0.69,
+          "consumer_goods": 0.66,
+          "education": 0.58,
+          "energy_utilities": 0.61,
+          "financial_services": 0.67,
+          "government": 0.49,
+          "healthcare": 0.64,
+          "manufacturing_industrial": 0.59,
+          "marketing_services": 0.67,
+          "legal_in-house": 0.49,
+          "legal_agency": 0.65,
+          "life_sciences": 0.58,
+          "professional_services": 0.62,
+          "real_estate": 0.58,
+          "retail": 0.57,
+          "sales": 0.62,
+          "telecommunications": 0.65,
+          "transport_storage": 0.57,
+          "travel_hospitality_leisure": 0.57,
+          "wholesale_distribution": 0.54,
+          "other": 0.52
         },
         "job_level": {
-          "ceo": 69,
-          "senior_executive": 72,
-          "senior_leader": 70,
-          "mid_level_leader": 64,
-          "first_level_supervisor": 65,
-          "individual_contributor": 53
+          "ceo": 0.69,
+          "senior_executive": 0.77,
+          "senior_leader": 0.73,
+          "mid_level_leader": 0.63,
+          "first_level_supervisor": 0.63,
+          "individual_contributor": 0.5
         },
         "relationship_status": {
-          "single": 61,
-          "cohabiting": 58,
-          "married": 66,
-          "divorced_separated": 52,
-          "widowed": 50
+          "single": 0.57,
+          "cohabiting": 0.59,
+          "married": 0.67,
+          "divorced_separated": 0.48,
+          "widowed": 0.53
         },
         "education": {
-          "secondary": 57,
-          "tertiary": 57,
-          "professional_certifications": 57,
-          "undergraduate": 66,
-          "postgraduate": 67,
-          "doctorate": 63
+          "secondary": 0.54,
+          "tertiary": 0.52,
+          "professional_certifications": 0.59,
+          "undergraduate": 0.63,
+          "postgraduate": 0.69,
+          "doctorate": 0.69
         },
         "generation": {
-          "gen_z": 69,
-          "millennials": 69,
-          "gen_x": 56,
-          "baby_boomers": 40,
-          "65_plus": 39
+          "gen_z": 0.67,
+          "millennials": 0.69,
+          "gen_x": 0.54,
+          "baby_boomers": 0.43
         },
         "employment_status": {
-          "full_time": 64,
-          "part_time": 59,
-          "contract": 58,
-          "freelance": 59
+          "full_time": 0.64,
+          "part_time": 0.54,
+          "contract": 0.52,
+          "freelance": 0.51
         }
       }
     }

@@ -12,7 +12,7 @@
       "Intergenerational_Collaboration"
     ],
     "canonicalQuestion": "How effectively do different generations collaborate in your workplace?",
-    "subQuestion": "I feel that I am overlooked for promotions, pay rises, or leadership training because of my sex.",
+    "subQuestion": "I feel recent changes in senior leadership has negatively impacted the operations at our firm",
     "comparable": false,
     "userMessage": "New in 2025; no year‑on‑year comparison.",
     "availableMarkets": [],
@@ -23,6 +23,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -36,106 +37,155 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "Q8 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "I feel that I am overlooked for promotions, pay rises, or leadership training because of my sex.",
+      "response": "I feel recent changes in senior leadership has negatively impacted the operations at our firm",
       "data": {
+        "overall": 0.41,
         "region": {
-          "united_states": 37,
-          "united_kingdom": 25,
-          "india": 51,
-          "france": 37,
-          "germany": 33,
-          "japan": 20,
-          "united_arab_emirates": 39,
-          "brazil": 34,
-          "saudi_arabia": 38,
-          "australia": 34
+          "united_states": 0.43,
+          "united_kingdom": 0.35,
+          "australia": 0.41,
+          "india": 0.56,
+          "brazil": 0.37,
+          "saudi_arabia": 0.45,
+          "france": 0.39,
+          "germany": 0.37,
+          "japan": 0.22,
+          "united_arab_emirates": 0.46
         },
         "age": {
-          "18-24": 43,
-          "25-34": 41,
-          "35-44": 37,
-          "45-54": 33,
-          "55-65": 21,
-          "65+": 16
+          "18-24": 0.48,
+          "25-34": 0.45,
+          "35-44": 0.43,
+          "45-54": 0.38,
+          "55-65": 0.28,
+          "65+": 0.24
         },
         "gender": {
-          "male": 37,
-          "female": 33
+          "male": 0.43,
+          "female": 0.38
         },
         "org_size": {
-          "fewer_than_10": 27,
-          "10_to_49": 34,
-          "50_to_99": 40,
-          "100_to_499": 42,
-          "500_to_999": 42,
-          "1000_or_more": 32
+          "fewer_than_10": 0.27,
+          "10_to_49": 0.34,
+          "50_to_99": 0.45,
+          "100_to_499": 0.44,
+          "500_to_999": 0.47,
+          "1000_or_more": 0.39
         },
         "sector": {
-          "automotive": 44,
-          "business_administration": 41,
-          "technology": 48,
-          "construction": 35,
-          "consumer_goods": 36,
-          "education": 29,
-          "energy_utilities": 31,
-          "financial_services": 42,
-          "government": 27,
-          "healthcare": 30,
-          "manufacturing_industrial": 34,
-          "marketing_services": 48,
-          "legal_in-house": 22,
-          "legal_agency": 25,
-          "life_sciences": 35,
-          "professional_services": 33,
-          "real_estate": 29,
-          "retail": 31,
-          "sales": 36,
-          "telecommunications": 44,
-          "transport_storage": 28,
-          "travel_hospitality_leisure": 31,
-          "wholesale_distribution": 27,
-          "other": 31
+          "automotive": 0.51,
+          "business_administration": 0.44,
+          "technology": 0.51,
+          "construction": 0.36,
+          "consumer_goods": 0.4,
+          "education": 0.39,
+          "energy_utilities": 0.36,
+          "financial_services": 0.45,
+          "government": 0.37,
+          "healthcare": 0.38,
+          "manufacturing_industrial": 0.39,
+          "marketing_services": 0.52,
+          "legal_in-house": 0.38,
+          "legal_agency": 0.23,
+          "life_sciences": 0.42,
+          "professional_services": 0.35,
+          "real_estate": 0.34,
+          "retail": 0.36,
+          "sales": 0.46,
+          "telecommunications": 0.47,
+          "transport_storage": 0.37,
+          "travel_hospitality_leisure": 0.37,
+          "wholesale_distribution": 0.37,
+          "other": 0.33
         },
         "job_level": {
-          "ceo": 43,
-          "senior_executive": 48,
-          "senior_leader": 43,
-          "mid_level_leader": 38,
-          "first_level_supervisor": 36,
-          "individual_contributor": 25
+          "ceo": 0.47,
+          "senior_executive": 0.5,
+          "senior_leader": 0.47,
+          "mid_level_leader": 0.42,
+          "first_level_supervisor": 0.42,
+          "individual_contributor": 0.31
         },
         "relationship_status": {
-          "single": 35,
-          "cohabiting": 29,
-          "married": 38,
-          "divorced_separated": 25,
-          "widowed": 24
+          "single": 0.39,
+          "cohabiting": 0.36,
+          "married": 0.44,
+          "divorced_separated": 0.31,
+          "widowed": 0.27
         },
         "education": {
-          "secondary": 32,
-          "tertiary": 32,
-          "professional_certifications": 29,
-          "undergraduate": 34,
-          "postgraduate": 42,
-          "doctorate": 36
+          "secondary": 0.37,
+          "tertiary": 0.37,
+          "professional_certifications": 0.36,
+          "undergraduate": 0.4,
+          "postgraduate": 0.47,
+          "doctorate": 0.42
         },
         "generation": {
-          "gen_z": 43,
-          "millennials": 38,
-          "gen_x": 31,
-          "baby_boomers": 18,
-          "65_plus": 16
+          "gen_z": 0.47,
+          "millennials": 0.44,
+          "gen_x": 0.37,
+          "baby_boomers": 0.25
         },
         "employment_status": {
-          "full_time": 36,
-          "part_time": 29,
-          "contract": 37,
-          "freelance": 30
+          "full_time": 0.42,
+          "part_time": 0.36,
+          "contract": 0.34,
+          "freelance": 0.32
         }
       }
     }

@@ -12,7 +12,7 @@
       "Work_Life_Flexibility"
     ],
     "canonicalQuestion": "How important is flexibility in your work arrangements?",
-    "subQuestion": "I feel confident I could easily find a new role if I left my current company in the next few months",
+    "subQuestion": "I am concerned about a lack of jobs for my skillset",
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
@@ -23,6 +23,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -36,106 +37,155 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "Q7 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "I feel confident I could easily find a new role if I left my current company in the next few months",
+      "response": "I am concerned about a lack of jobs for my skillset",
       "data": {
+        "overall": 0.47,
         "region": {
-          "united_states": 68,
-          "united_kingdom": 61,
-          "india": 81,
-          "france": 49,
-          "germany": 61,
-          "japan": 25,
-          "united_arab_emirates": 70,
-          "brazil": 67,
-          "saudi_arabia": 66,
-          "australia": 65
+          "united_states": 0.48,
+          "united_kingdom": 0.41,
+          "australia": 0.43,
+          "india": 0.65,
+          "brazil": 0.58,
+          "saudi_arabia": 0.58,
+          "france": 0.42,
+          "germany": 0.4,
+          "japan": 0.35,
+          "united_arab_emirates": 0.61
         },
         "age": {
-          "18-24": 66,
-          "25-34": 69,
-          "35-44": 67,
-          "45-54": 56,
-          "55-65": 44,
-          "65+": 46
+          "18-24": 0.54,
+          "25-34": 0.53,
+          "35-44": 0.5,
+          "45-54": 0.45,
+          "55-65": 0.33,
+          "65+": 0.29
         },
         "gender": {
-          "male": 64,
-          "female": 59
+          "male": 0.49,
+          "female": 0.45
         },
         "org_size": {
-          "fewer_than_10": 50,
-          "10_to_49": 54,
-          "50_to_99": 63,
-          "100_to_499": 63,
-          "500_to_999": 68,
-          "1000_or_more": 60
+          "fewer_than_10": 0.45,
+          "10_to_49": 0.42,
+          "50_to_99": 0.51,
+          "100_to_499": 0.52,
+          "500_to_999": 0.51,
+          "1000_or_more": 0.44
         },
         "sector": {
-          "automotive": 61,
-          "business_administration": 62,
-          "technology": 77,
-          "construction": 69,
-          "consumer_goods": 66,
-          "education": 58,
-          "energy_utilities": 61,
-          "financial_services": 67,
-          "government": 49,
-          "healthcare": 64,
-          "manufacturing_industrial": 59,
-          "marketing_services": 67,
-          "legal_in-house": 49,
-          "legal_agency": 65,
-          "life_sciences": 58,
-          "professional_services": 62,
-          "real_estate": 58,
-          "retail": 57,
-          "sales": 62,
-          "telecommunications": 65,
-          "transport_storage": 57,
-          "travel_hospitality_leisure": 57,
-          "wholesale_distribution": 54,
-          "other": 52
+          "automotive": 0.53,
+          "business_administration": 0.5,
+          "technology": 0.59,
+          "construction": 0.47,
+          "consumer_goods": 0.44,
+          "education": 0.46,
+          "energy_utilities": 0.45,
+          "financial_services": 0.52,
+          "government": 0.41,
+          "healthcare": 0.39,
+          "manufacturing_industrial": 0.47,
+          "marketing_services": 0.57,
+          "legal_in-house": 0.29,
+          "legal_agency": 0.44,
+          "life_sciences": 0.61,
+          "professional_services": 0.43,
+          "real_estate": 0.45,
+          "retail": 0.43,
+          "sales": 0.54,
+          "telecommunications": 0.54,
+          "transport_storage": 0.41,
+          "travel_hospitality_leisure": 0.47,
+          "wholesale_distribution": 0.41,
+          "other": 0.43
         },
         "job_level": {
-          "ceo": 69,
-          "senior_executive": 77,
-          "senior_leader": 73,
-          "mid_level_leader": 63,
-          "first_level_supervisor": 63,
-          "individual_contributor": 50
+          "ceo": 0.56,
+          "senior_executive": 0.58,
+          "senior_leader": 0.52,
+          "mid_level_leader": 0.49,
+          "first_level_supervisor": 0.49,
+          "individual_contributor": 0.39
         },
         "relationship_status": {
-          "single": 57,
-          "cohabiting": 59,
-          "married": 67,
-          "divorced_separated": 48,
-          "widowed": 53
+          "single": 0.48,
+          "cohabiting": 0.4,
+          "married": 0.5,
+          "divorced_separated": 0.37,
+          "widowed": 0.33
         },
         "education": {
-          "secondary": 54,
-          "tertiary": 52,
-          "professional_certifications": 59,
-          "undergraduate": 63,
-          "postgraduate": 69,
-          "doctorate": 69
+          "secondary": 0.42,
+          "tertiary": 0.45,
+          "professional_certifications": 0.41,
+          "undergraduate": 0.49,
+          "postgraduate": 0.53,
+          "doctorate": 0.52
         },
         "generation": {
-          "gen_z": 67,
-          "millennials": 69,
-          "gen_x": 54,
-          "baby_boomers": 43,
-          "65_plus": 46
+          "gen_z": 0.54,
+          "millennials": 0.51,
+          "gen_x": 0.43,
+          "baby_boomers": 0.3
         },
         "employment_status": {
-          "full_time": 64,
-          "part_time": 54,
-          "contract": 52,
-          "freelance": 51
+          "full_time": 0.48,
+          "part_time": 0.43,
+          "contract": 0.48,
+          "freelance": 0.52
         }
       }
     }

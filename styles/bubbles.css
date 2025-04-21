@@ -3,32 +3,49 @@
 /* CSS Linter: Ignore Tailwind directives */
 
 .chat-bubble {
-  @apply rounded px-3 py-2;
+  border-radius: 0.25rem;
+  padding: 0.5rem 0.75rem;
 }
 
 .user {
-  @apply text-primary bg-white self-end border-2 border-secondary max-w-md;
+  color: #00634f; /* text-primary color */
+  background-color: white;
+  align-self: flex-end;
+  border: 2px solid #009b77; /* border-secondary color */
+  max-width: 28rem;
 }
 
 .chatbot {
-  @apply bg-primary text-white self-start max-w-2xl;
+  background-color: #00634f; /* bg-primary color */
+  color: white;
+  align-self: flex-start;
+  max-width: 42rem;
 }
 
 .chatbot h1 {
-  @apply text-2xl font-bold my-2;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .chatbot h2 {
-  @apply text-xl font-bold my-2;
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .chatbot h3 {
-  @apply text-lg font-bold my-2;
+  font-size: 1.125rem;
+  font-weight: bold;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .chatbot p,
 .user p {
-  @apply mb-2;
+  margin-bottom: 0.5rem;
   max-width: 100%;
   overflow-x: auto;
   white-space: pre-wrap;
@@ -38,28 +55,32 @@
 .chatbot ul,
 ol,
 .chatbot li {
-  @apply mb-2;
+  margin-bottom: 0.5rem;
 }
 
 .chatbot ul {
-  @apply list-disc pl-4;
+  list-style-type: disc;
+  padding-left: 1rem;
 }
 
 /* Theres got to be a better way! */
 .chatbot ul > li > ul {
-  @apply list-square;
+  list-style-type: square;
 }
 
 .chatbot ul > li > ul > li > ul > li {
-  @apply list-roman;
+  list-style-type: lower-roman;
 }
 
 .chatbot ol {
-  @apply list-decimal pl-4;
+  list-style-type: decimal;
+  padding-left: 1rem;
 }
 
 .chatbot hr {
-  @apply my-4 border border-white;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid white;
 }
 
 /* Table styling - simple and effective */
@@ -92,10 +113,10 @@ ol,
 }
 
 .user th {
-  background-color: var(--color-primary);
+  background-color: var(--color-primary, #00634f);
   color: white;
   font-weight: 600;
-  border: 1px solid var(--color-primary);
+  border: 1px solid var(--color-primary, #00634f);
 }
 
 .user td {

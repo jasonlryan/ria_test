@@ -12,7 +12,7 @@
       "Communication_and_Connection"
     ],
     "canonicalQuestion": "How comfortable are you communicating and connecting with colleagues?",
-    "subQuestion": "I feel my company provides a variety of ways to communicate and connect with colleagues",
+    "subQuestion": "My company understands the importance of the benefits that come alongside a salary",
     "comparable": false,
     "userMessage": "Compare with caution due to differences in question framing between years.",
     "availableMarkets": [],
@@ -23,6 +23,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -36,106 +37,155 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "Q6 - To what extent do you agree with the following statements with regards to your workplace.",
   "responses": [
     {
-      "response": "I feel my company provides a variety of ways to communicate and connect with colleagues",
+      "response": "My company understands the importance of the benefits that come alongside a salary",
       "data": {
+        "overall": 0.68,
         "region": {
-          "united_states": 73,
-          "united_kingdom": 68,
-          "india": 85,
-          "france": 61,
-          "germany": 64,
-          "japan": 40,
-          "united_arab_emirates": 76,
-          "brazil": 73,
-          "saudi_arabia": 79,
-          "australia": 67
+          "united_states": 0.75,
+          "united_kingdom": 0.67,
+          "australia": 0.64,
+          "india": 0.85,
+          "brazil": 0.76,
+          "saudi_arabia": 0.91,
+          "france": 0.54,
+          "germany": 0.61,
+          "japan": 0.51,
+          "united_arab_emirates": 0.87
         },
         "age": {
-          "18-24": 70,
-          "25-34": 73,
-          "35-44": 72,
-          "45-54": 65,
-          "55-65": 56,
-          "65+": 60
+          "18-24": 0.7,
+          "25-34": 0.75,
+          "35-44": 0.72,
+          "45-54": 0.63,
+          "55-65": 0.56,
+          "65+": 0.65
         },
         "gender": {
-          "male": 70,
-          "female": 67
+          "male": 0.71,
+          "female": 0.66
         },
         "org_size": {
-          "fewer_than_10": 57,
-          "10_to_49": 61,
-          "50_to_99": 65,
-          "100_to_499": 70,
-          "500_to_999": 72,
-          "1000_or_more": 68
+          "fewer_than_10": 0.59,
+          "10_to_49": 0.64,
+          "50_to_99": 0.63,
+          "100_to_499": 0.7,
+          "500_to_999": 0.73,
+          "1000_or_more": 0.67
         },
         "sector": {
-          "automotive": 70,
-          "business_administration": 72,
-          "technology": 84,
-          "construction": 73,
-          "consumer_goods": 68,
-          "education": 68,
-          "energy_utilities": 72,
-          "financial_services": 75,
-          "government": 65,
-          "healthcare": 63,
-          "manufacturing_industrial": 66,
-          "marketing_services": 70,
-          "legal_in-house": 64,
-          "legal_agency": 70,
-          "life_sciences": 70,
-          "professional_services": 67,
-          "real_estate": 70,
-          "retail": 58,
-          "sales": 66,
-          "telecommunications": 76,
-          "transport_storage": 58,
-          "travel_hospitality_leisure": 66,
-          "wholesale_distribution": 59,
-          "other": 60
+          "automotive": 0.67,
+          "business_administration": 0.72,
+          "technology": 0.85,
+          "construction": 0.75,
+          "consumer_goods": 0.68,
+          "education": 0.63,
+          "energy_utilities": 0.73,
+          "financial_services": 0.73,
+          "government": 0.6,
+          "healthcare": 0.62,
+          "manufacturing_industrial": 0.69,
+          "marketing_services": 0.7,
+          "legal_in-house": 0.56,
+          "legal_agency": 0.72,
+          "life_sciences": 0.66,
+          "professional_services": 0.65,
+          "real_estate": 0.73,
+          "retail": 0.62,
+          "sales": 0.71,
+          "telecommunications": 0.75,
+          "transport_storage": 0.62,
+          "travel_hospitality_leisure": 0.64,
+          "wholesale_distribution": 0.58,
+          "other": 0.62
         },
         "job_level": {
-          "ceo": 78,
-          "senior_executive": 83,
-          "senior_leader": 79,
-          "mid_level_leader": 70,
-          "first_level_supervisor": 71,
-          "individual_contributor": 55
+          "ceo": 0.79,
+          "senior_executive": 0.84,
+          "senior_leader": 0.79,
+          "mid_level_leader": 0.7,
+          "first_level_supervisor": 0.7,
+          "individual_contributor": 0.55
         },
         "relationship_status": {
-          "single": 63,
-          "cohabiting": 64,
-          "married": 73,
-          "divorced_separated": 57,
-          "widowed": 66
+          "single": 0.64,
+          "cohabiting": 0.59,
+          "married": 0.74,
+          "divorced_separated": 0.57,
+          "widowed": 0.67
         },
         "education": {
-          "secondary": 61,
-          "tertiary": 59,
-          "professional_certifications": 62,
-          "undergraduate": 70,
-          "postgraduate": 76,
-          "doctorate": 78
+          "secondary": 0.63,
+          "tertiary": 0.59,
+          "professional_certifications": 0.59,
+          "undergraduate": 0.72,
+          "postgraduate": 0.76,
+          "doctorate": 0.74
         },
         "generation": {
-          "gen_z": 72,
-          "millennials": 73,
-          "gen_x": 64,
-          "baby_boomers": 56,
-          "65_plus": 60
+          "gen_z": 0.72,
+          "millennials": 0.74,
+          "gen_x": 0.62,
+          "baby_boomers": 0.58
         },
         "employment_status": {
-          "full_time": 70,
-          "part_time": 60,
-          "contract": 60,
-          "freelance": 58
+          "full_time": 0.7,
+          "part_time": 0.6,
+          "contract": 0.57,
+          "freelance": 0.61
         }
       }
     }

@@ -76,63 +76,73 @@ Join the discord community https://discord.gg/3sbpBxVZyH to get support with set
 
 The project includes scripts for processing survey data located in the `scripts/` directory:
 
-### Main Processing Script
+### Data Processing Workflow
 
-`scripts/index-all.js` - Primary script for processing all survey data:
+1. **Initial Setup**
 
-- **Input**: Uses `scripts/data/merged data-Table 1.csv`
-- **Output**: Generates multiple JSON files in `scripts/output/`:
-  - Individual country data files:
-    - `global_data.json`
-    - `uk_data.json`
-    - `usa_data.json`
-    - `australia_data.json`
-    - `india_data.json`
-    - `brazil_data.json`
-    - `saudi_uae_data.json`
-  - Processing report: `processing_report_[timestamp].json`
+   - Place 2024 data in `scripts/data/2024/2024_global_data.csv`
+   - Place 2025 data in `scripts/data/2025/2025_global_data.csv`
 
-### Interactive Country Processing
+2. **Processing Script**
+   `process_survey_data.js` handles data transformation:
 
-`scripts/index-country-json.js` - Interactive script for processing individual country data:
+   - Converts CSV to JSON format
+   - Harmonizes data between years
+   - Splits into individual question files
+   - Adds metadata and categorization
 
-- Prompts for input file name
-- Processes single country CSV files from `scripts/data/`
-- Outputs timestamped JSON file in `scripts/output/`
+3. **Running the Processing**
+
+   ```bash
+   # Process 2024 data
+   node process_survey_data.js --year=2024
+
+   # Process 2025 data
+   node process_survey_data.js --year=2025
+   ```
 
 ### Directory Structure
 
 ```
 scripts/
-├── data/                           # Input CSV files
-│   ├── merged data-Table 1.csv     # Combined dataset
-│   └── [country]-Table 1.csv       # Individual country files
+├── data/                           # Survey data files
+│   ├── 2024/                      # 2024 survey data
+│   │   └── 2024_global_data.csv   # Global dataset for 2024
+│   └── 2025/                      # 2025 survey data
+│       └── 2025_global_data.csv   # Global dataset for 2025
 └── output/                         # Generated JSON files
-    ├── [country]_data.json         # Processed country data
-    └── processing_report_[timestamp].json  # Processing metadata
+    └── split_data/                # Individual question files
 ```
 
-### Processing Report
+# Workforce 2025 RIA Survey Tool
 
-Each processing run generates a report containing:
+Interactive assistant for exploring the 2025 Workforce Survey data.
 
-- Timestamp of processing
-- Input file path
-- List of generated output files
-- Record counts for each country
+_Updated: April 7, 2024 - Latest deployment with streaming improvements_
 
-To process all data at once:
+## Operation Modes
 
-```shell
-node scripts/index-all.js
-```
+The application can run in two different modes for handling survey data:
 
-To process a single country:
+### 1. Standard Mode (`npm run dev`)
 
-```shell
-node scripts/index-country-json.js
-```
+- Uses `FILE_ACCESS_MODE=standard`
+- Data is sent along with each request to the assistant
+- Better for testing and development
+- Requires more bandwidth due to data transfer
 
-## Deployment Trigger
+### 2. Light Mode (`npm run dev:light`)
 
-Last updated: March 13, 2025 - 08:36
+- Uses `FILE_ACCESS_MODE=direct`
+- Assistant retrieves data directly from files
+- More efficient for production use
+- Requires proper data file setup in `scripts/data/` directory
+
+### Data File Requirements
+
+For the assistant to work properly, ensure these files are present:
+
+- `scripts/data/2024/2024_global_data.csv`
+- `scripts/data/2025/2025_global_data.csv`
+
+## Features

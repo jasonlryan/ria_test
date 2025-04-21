@@ -27,6 +27,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -40,6 +41,55 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "6_1. To what extent is your company committed to Diversity, Equity & Inclusion (DE&I) in the workplace?",
@@ -48,9 +98,12 @@
       "response": "Not committed enough",
       "data": {
         "region": {
+          "united_kingdom": 0.26,
+          "united_states": 0.18,
+          "australia": 0.21,
           "india": 0.24,
           "brazil": 0.29,
-          "australia": 0.21
+          "saudi_arabia_uae": 0.22
         },
         "age": {
           "18-24": 0.34,
@@ -99,22 +152,37 @@
           "first_level_supervisor": 0.23,
           "individual_contributor": 0.24
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.27,
+          "married": 0.19,
+          "divorced_separated": 0.25,
+          "widowed": 0.23
+        },
+        "education": {
+          "secondary": 0.26,
+          "tertiary": 0.25,
+          "undergraduate": 0.23,
+          "postgraduate": 0.2,
+          "doctorate": 0.25
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.22,
           "part_time": 0.25
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "Too committed",
       "data": {
         "region": {
+          "united_kingdom": 0.19,
+          "united_states": 0.33,
+          "australia": 0.2,
           "india": 0.41,
           "brazil": 0.28,
-          "australia": 0.2
+          "saudi_arabia_uae": 0.39
         },
         "age": {
           "18-24": 0.24,
@@ -163,13 +231,25 @@
           "first_level_supervisor": 0.28,
           "individual_contributor": 0.14
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.21,
+          "married": 0.36,
+          "divorced_separated": 0.17,
+          "widowed": 0.26
+        },
+        "education": {
+          "secondary": 0.2,
+          "tertiary": 0.17,
+          "undergraduate": 0.26,
+          "postgraduate": 0.4,
+          "doctorate": 0.31
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.32,
           "part_time": 0.2
-        }
+        },
+        "overall": null
       }
     }
   ]

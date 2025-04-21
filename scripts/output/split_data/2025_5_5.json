@@ -17,7 +17,7 @@
       "experimentation with AI"
     ],
     "canonicalQuestion": "How ready are you to adopt and use AI in your role?",
-    "subQuestion": "I feel my company is focusing my development on the long-term goals of the company",
+    "subQuestion": "My organization offers a broad enough range of learning approaches [e.g. self-directed video/e-learning/podcasts/short modules/practical workshops] to suit my needs",
     "comparable": false,
     "userMessage": "Year‑on‑year comparisons not available due to new question additions in 2025.",
     "availableMarkets": [],
@@ -28,6 +28,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -41,106 +42,155 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "Q5 - To what extent do you agree with the following statements about AI in the workplace and skills.",
   "responses": [
     {
-      "response": "I feel my company is focusing my development on the long-term goals of the company",
+      "response": "My organization offers a broad enough range of learning approaches [e.g. self-directed video/e-learning/podcasts/short modules/practical workshops] to suit my needs",
       "data": {
+        "overall": 0.63,
         "region": {
-          "united_states": 69,
-          "united_kingdom": 58,
-          "india": 83,
-          "france": 52,
-          "germany": 56,
-          "japan": 39,
-          "united_arab_emirates": 78,
-          "brazil": 72,
-          "saudi_arabia": 78,
-          "australia": 60
+          "united_states": 0.68,
+          "united_kingdom": 0.62,
+          "australia": 0.61,
+          "india": 0.82,
+          "brazil": 0.71,
+          "saudi_arabia": 0.77,
+          "france": 0.51,
+          "germany": 0.53,
+          "japan": 0.38,
+          "united_arab_emirates": 0.74
         },
         "age": {
-          "18-24": 66,
-          "25-34": 71,
-          "35-44": 67,
-          "45-54": 57,
-          "55-65": 49,
-          "65+": 52
+          "18-24": 0.67,
+          "25-34": 0.7,
+          "35-44": 0.66,
+          "45-54": 0.57,
+          "55-65": 0.48,
+          "65+": 0.53
         },
         "gender": {
-          "male": 65,
-          "female": 61
+          "male": 0.64,
+          "female": 0.61
         },
         "org_size": {
-          "fewer_than_10": 54,
-          "10_to_49": 61,
-          "50_to_99": 64,
-          "100_to_499": 64,
-          "500_to_999": 67,
-          "1000_or_more": 61
+          "fewer_than_10": 0.52,
+          "10_to_49": 0.51,
+          "50_to_99": 0.61,
+          "100_to_499": 0.64,
+          "500_to_999": 0.67,
+          "1000_or_more": 0.62
         },
         "sector": {
-          "automotive": 65,
-          "business_administration": 69,
-          "technology": 81,
-          "construction": 66,
-          "consumer_goods": 64,
-          "education": 58,
-          "energy_utilities": 62,
-          "financial_services": 70,
-          "government": 50,
-          "healthcare": 57,
-          "manufacturing_industrial": 63,
-          "marketing_services": 70,
-          "legal_in-house": 55,
-          "legal_agency": 61,
-          "life_sciences": 61,
-          "professional_services": 60,
-          "real_estate": 71,
-          "retail": 58,
-          "sales": 65,
-          "telecommunications": 69,
-          "transport_storage": 55,
-          "travel_hospitality_leisure": 58,
-          "wholesale_distribution": 56,
-          "other": 55
+          "automotive": 0.61,
+          "business_administration": 0.68,
+          "technology": 0.81,
+          "construction": 0.65,
+          "consumer_goods": 0.66,
+          "education": 0.59,
+          "energy_utilities": 0.62,
+          "financial_services": 0.73,
+          "government": 0.54,
+          "healthcare": 0.58,
+          "manufacturing_industrial": 0.59,
+          "marketing_services": 0.67,
+          "legal_in-house": 0.49,
+          "legal_agency": 0.53,
+          "life_sciences": 0.59,
+          "professional_services": 0.58,
+          "real_estate": 0.56,
+          "retail": 0.58,
+          "sales": 0.62,
+          "telecommunications": 0.68,
+          "transport_storage": 0.52,
+          "travel_hospitality_leisure": 0.56,
+          "wholesale_distribution": 0.49,
+          "other": 0.55
         },
         "job_level": {
-          "ceo": 78,
-          "senior_executive": 81,
-          "senior_leader": 76,
-          "mid_level_leader": 64,
-          "first_level_supervisor": 65,
-          "individual_contributor": 48
+          "ceo": 0.77,
+          "senior_executive": 0.8,
+          "senior_leader": 0.74,
+          "mid_level_leader": 0.64,
+          "first_level_supervisor": 0.65,
+          "individual_contributor": 0.48
         },
         "relationship_status": {
-          "single": 58,
-          "cohabiting": 55,
-          "married": 69,
-          "divorced_separated": 52,
-          "widowed": 54
+          "single": 0.57,
+          "cohabiting": 0.54,
+          "married": 0.69,
+          "divorced_separated": 0.51,
+          "widowed": 0.54
         },
         "education": {
-          "secondary": 57,
-          "tertiary": 53,
-          "professional_certifications": 55,
-          "undergraduate": 65,
-          "postgraduate": 72,
-          "doctorate": 71
+          "secondary": 0.56,
+          "tertiary": 0.53,
+          "professional_certifications": 0.53,
+          "undergraduate": 0.65,
+          "postgraduate": 0.72,
+          "doctorate": 0.7
         },
         "generation": {
-          "gen_z": 68,
-          "millennials": 69,
-          "gen_x": 55,
-          "baby_boomers": 49,
-          "65_plus": 52
+          "gen_z": 0.68,
+          "millennials": 0.68,
+          "gen_x": 0.55,
+          "baby_boomers": 0.49
         },
         "employment_status": {
-          "full_time": 65,
-          "part_time": 55,
-          "contract": 54,
-          "freelance": 61
+          "full_time": 0.64,
+          "part_time": 0.54,
+          "contract": 0.54,
+          "freelance": 0.57
         }
       }
     }

@@ -1,0 +1,20 @@
+{
+  "starterQuestionCode": "SQ5",
+  "question": "What are the biggest challenges when it comes to working across generations?",
+  "summary": "In 2025, working across generations presents several challenges for organizations and employees. Survey data highlights issues such as differences in communication styles, varying expectations around technology use, and contrasting attitudes toward workplace flexibility and career progression. The most relevant data can be found in files 2025_6_2, 2025_6_7, 2025_6_8, 2025_8_4, 2025_8_6, 2025_14, and 2025_15, which cover intergenerational collaboration, barriers, and opportunities.",
+  "stats": {},
+  "segments": ["age", "generation"],
+  "matched_topics": [
+    "Intergenerational_Collaboration"
+  ],
+  "data_files": [
+    "2025_6_2.json",
+    "2025_6_7.json",
+    "2025_6_8.json",
+    "2025_8_4.json",
+    "2025_8_6.json",
+    "2025_14.json",
+    "2025_15.json"
+  ],
+  "notes": "For country, sector, or job-level breakdowns, refer to the metadata in each file. The above list is based on canonical mapping and topic rationale."
+}

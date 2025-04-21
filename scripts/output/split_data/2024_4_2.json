@@ -23,6 +23,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -36,6 +37,55 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "4_1. The values a company promotes are extremely important to me",
@@ -44,9 +94,12 @@
       "response": "Agree",
       "data": {
         "region": {
+          "united_kingdom": 0.68,
+          "united_states": 0.75,
+          "australia": 0.69,
           "india": 0.81,
           "brazil": 0.81,
-          "australia": 0.69
+          "saudi_arabia_uae": 0.83
         },
         "age": {
           "18-24": 0.69,
@@ -95,22 +148,37 @@
           "first_level_supervisor": 0.77,
           "individual_contributor": 0.68
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.71,
+          "married": 0.79,
+          "divorced_separated": 0.67,
+          "widowed": 0.63
+        },
+        "education": {
+          "secondary": 0.69,
+          "tertiary": 0.68,
+          "undergraduate": 0.74,
+          "postgraduate": 0.8,
+          "doctorate": 0.79
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.76,
           "part_time": 0.69
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "Disagree",
       "data": {
         "region": {
+          "united_kingdom": 0.11,
+          "united_states": 0.08,
+          "australia": 0.08,
           "india": 0.07,
           "brazil": 0.06,
-          "australia": 0.08
+          "saudi_arabia_uae": 0.05
         },
         "age": {
           "18-24": 0.11,
@@ -159,13 +227,25 @@
           "first_level_supervisor": 0.07,
           "individual_contributor": 0.1
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.09,
+          "married": 0.06,
+          "divorced_separated": 0.13,
+          "widowed": 0.17
+        },
+        "education": {
+          "secondary": 0.09,
+          "tertiary": 0.11,
+          "undergraduate": 0.08,
+          "postgraduate": 0.06,
+          "doctorate": 0.08
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.08,
           "part_time": 0.09
-        }
+        },
+        "overall": null
       }
     }
   ]

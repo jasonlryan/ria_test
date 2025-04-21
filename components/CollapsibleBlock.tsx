@@ -1,28 +1,30 @@
-import React, { useState, ReactNode } from "react";
+import React, { ReactNode } from "react";
 
 interface CollapsibleBlockProps {
   title: string;
   icon?: ReactNode;
-  defaultOpen?: boolean;
   children: ReactNode;
   className?: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  id: string;
 }
 
 export default function CollapsibleBlock({
   title,
   icon,
-  defaultOpen = true,
   children,
   className = "",
+  isOpen,
+  onToggle,
+  id,
 }: CollapsibleBlockProps) {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-
   return (
     <div
       className={`mb-4 rounded-lg overflow-hidden shadow-sm border border-secondary ${className}`}
     >
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={onToggle}
         className="w-full px-4 py-3 flex items-center justify-between bg-primary text-white hover:bg-secondary transition-colors"
       >
         <div className="flex items-center">
@@ -46,7 +48,11 @@ export default function CollapsibleBlock({
           />
         </svg>
       </button>
-      {isOpen && <div className="px-4 py-3 bg-white">{children}</div>}
+      {isOpen && (
+        <div className="px-4 py-3 bg-white md:max-h-none max-h-[40vh] md:overflow-visible overflow-y-auto">
+          {children}
+        </div>
+      )}
     </div>
   );
 }

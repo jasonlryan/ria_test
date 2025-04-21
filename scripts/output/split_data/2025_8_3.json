@@ -9,7 +9,7 @@
       "Imposter_Syndrome"
     ],
     "canonicalQuestion": "How prevalent is imposter syndrome among employees?",
-    "subQuestion": "I feel that I am overlooked for leadership roles because of my age.",
+    "subQuestion": "The ability to work flexibly and from wherever I want is critical to my mental health",
     "comparable": true,
     "userMessage": "Data based on comparable markets only.",
     "availableMarkets": [
@@ -26,6 +26,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -39,106 +40,155 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "Q8 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "I feel that I am overlooked for leadership roles because of my age.",
+      "response": "The ability to work flexibly and from wherever I want is critical to my mental health",
       "data": {
+        "overall": 0.61,
         "region": {
-          "united_states": 42,
-          "united_kingdom": 32,
-          "india": 58,
-          "france": 30,
-          "germany": 32,
-          "japan": 23,
-          "united_arab_emirates": 44,
-          "brazil": 38,
-          "saudi_arabia": 43,
-          "australia": 39
+          "united_states": 0.6,
+          "united_kingdom": 0.58,
+          "australia": 0.61,
+          "india": 0.7,
+          "brazil": 0.78,
+          "saudi_arabia": 0.82,
+          "france": 0.61,
+          "germany": 0.5,
+          "japan": 0.41,
+          "united_arab_emirates": 0.73
         },
         "age": {
-          "18-24": 52,
-          "25-34": 45,
-          "35-44": 37,
-          "45-54": 33,
-          "55-65": 28,
-          "65+": 28
+          "18-24": 0.63,
+          "25-34": 0.67,
+          "35-44": 0.65,
+          "45-54": 0.57,
+          "55-65": 0.47,
+          "65+": 0.41
         },
         "gender": {
-          "male": 41,
-          "female": 35
+          "male": 0.6,
+          "female": 0.63
         },
         "org_size": {
-          "fewer_than_10": 30,
-          "10_to_49": 35,
-          "50_to_99": 47,
-          "100_to_499": 42,
-          "500_to_999": 44,
-          "1000_or_more": 35
+          "fewer_than_10": 0.53,
+          "10_to_49": 0.51,
+          "50_to_99": 0.61,
+          "100_to_499": 0.62,
+          "500_to_999": 0.65,
+          "1000_or_more": 0.59
         },
         "sector": {
-          "automotive": 48,
-          "business_administration": 43,
-          "technology": 52,
-          "construction": 38,
-          "consumer_goods": 38,
-          "education": 35,
-          "energy_utilities": 35,
-          "financial_services": 42,
-          "government": 28,
-          "healthcare": 33,
-          "manufacturing_industrial": 36,
-          "marketing_services": 51,
-          "legal_in-house": 26,
-          "legal_agency": 28,
-          "life_sciences": 36,
-          "professional_services": 34,
-          "real_estate": 33,
-          "retail": 37,
-          "sales": 43,
-          "telecommunications": 43,
-          "transport_storage": 30,
-          "travel_hospitality_leisure": 35,
-          "wholesale_distribution": 33,
-          "other": 31
+          "automotive": 0.55,
+          "business_administration": 0.7,
+          "technology": 0.73,
+          "construction": 0.6,
+          "consumer_goods": 0.64,
+          "education": 0.6,
+          "energy_utilities": 0.58,
+          "financial_services": 0.67,
+          "government": 0.63,
+          "healthcare": 0.56,
+          "manufacturing_industrial": 0.54,
+          "marketing_services": 0.7,
+          "legal_in-house": 0.68,
+          "legal_agency": 0.56,
+          "life_sciences": 0.69,
+          "professional_services": 0.6,
+          "real_estate": 0.58,
+          "retail": 0.53,
+          "sales": 0.68,
+          "telecommunications": 0.67,
+          "transport_storage": 0.5,
+          "travel_hospitality_leisure": 0.53,
+          "wholesale_distribution": 0.57,
+          "other": 0.57
         },
         "job_level": {
-          "ceo": 44,
-          "senior_executive": 51,
-          "senior_leader": 45,
-          "mid_level_leader": 39,
-          "first_level_supervisor": 40,
-          "individual_contributor": 28
+          "ceo": 0.67,
+          "senior_executive": 0.71,
+          "senior_leader": 0.67,
+          "mid_level_leader": 0.64,
+          "first_level_supervisor": 0.61,
+          "individual_contributor": 0.52
         },
         "relationship_status": {
-          "single": 39,
-          "cohabiting": 32,
-          "married": 41,
-          "divorced_separated": 27,
-          "widowed": 30
+          "single": 0.59,
+          "cohabiting": 0.58,
+          "married": 0.64,
+          "divorced_separated": 0.51,
+          "widowed": 0.43
         },
         "education": {
-          "secondary": 34,
-          "tertiary": 31,
-          "professional_certifications": 33,
-          "undergraduate": 39,
-          "postgraduate": 45,
-          "doctorate": 39
+          "secondary": 0.55,
+          "tertiary": 0.57,
+          "professional_certifications": 0.5,
+          "undergraduate": 0.64,
+          "postgraduate": 0.68,
+          "doctorate": 0.67
         },
         "generation": {
-          "gen_z": 51,
-          "millennials": 40,
-          "gen_x": 31,
-          "baby_boomers": 29,
-          "65_plus": 28
+          "gen_z": 0.65,
+          "millennials": 0.66,
+          "gen_x": 0.55,
+          "baby_boomers": 0.44
         },
         "employment_status": {
-          "full_time": 39,
-          "part_time": 34,
-          "contract": 42,
-          "freelance": 37
+          "full_time": 0.62,
+          "part_time": 0.56,
+          "contract": 0.52,
+          "freelance": 0.67
         }
       }
     }

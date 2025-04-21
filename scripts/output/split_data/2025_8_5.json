@@ -12,7 +12,7 @@
       "Skills_Utilization"
     ],
     "canonicalQuestion": "How well are your skills utilized in your current role?",
-    "subQuestion": "I feel that I am overlooked for promotions, pay rises, or leadership training because of my race.",
+    "subQuestion": "Leaders at my organization are often not aligned",
     "comparable": true,
     "userMessage": "Data based on comparable markets only.",
     "availableMarkets": [
@@ -29,6 +29,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -42,106 +43,155 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "Q8 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "I feel that I am overlooked for promotions, pay rises, or leadership training because of my race.",
+      "response": "Leaders at my organization are often not aligned",
       "data": {
+        "overall": 0.43,
         "region": {
-          "united_states": 39,
-          "united_kingdom": 26,
-          "india": 56,
-          "france": 24,
-          "germany": 29,
-          "japan": 19,
-          "united_arab_emirates": 46,
-          "brazil": 32,
-          "saudi_arabia": 40,
-          "australia": 29
+          "united_states": 0.48,
+          "united_kingdom": 0.42,
+          "australia": 0.46,
+          "india": 0.54,
+          "brazil": 0.42,
+          "saudi_arabia": 0.37,
+          "france": 0.41,
+          "germany": 0.39,
+          "japan": 0.3,
+          "united_arab_emirates": 0.44
         },
         "age": {
-          "18-24": 42,
-          "25-34": 40,
-          "35-44": 36,
-          "45-54": 29,
-          "55-65": 17,
-          "65+": 14
+          "18-24": 0.48,
+          "25-34": 0.47,
+          "35-44": 0.46,
+          "45-54": 0.42,
+          "55-65": 0.33,
+          "65+": 0.29
         },
         "gender": {
-          "male": 38,
-          "female": 28
+          "male": 0.45,
+          "female": 0.42
         },
         "org_size": {
-          "fewer_than_10": 25,
-          "10_to_49": 31,
-          "50_to_99": 41,
-          "100_to_499": 40,
-          "500_to_999": 40,
-          "1000_or_more": 29
+          "fewer_than_10": 0.32,
+          "10_to_49": 0.4,
+          "50_to_99": 0.46,
+          "100_to_499": 0.47,
+          "500_to_999": 0.48,
+          "1000_or_more": 0.43
         },
         "sector": {
-          "automotive": 43,
-          "business_administration": 36,
-          "technology": 48,
-          "construction": 33,
-          "consumer_goods": 32,
-          "education": 29,
-          "energy_utilities": 28,
-          "financial_services": 40,
-          "government": 23,
-          "healthcare": 26,
-          "manufacturing_industrial": 32,
-          "marketing_services": 51,
-          "legal_in-house": 21,
-          "legal_agency": 23,
-          "life_sciences": 31,
-          "professional_services": 31,
-          "real_estate": 32,
-          "retail": 29,
-          "sales": 35,
-          "telecommunications": 42,
-          "transport_storage": 25,
-          "travel_hospitality_leisure": 28,
-          "wholesale_distribution": 30,
-          "other": 27
+          "automotive": 0.51,
+          "business_administration": 0.46,
+          "technology": 0.51,
+          "construction": 0.41,
+          "consumer_goods": 0.42,
+          "education": 0.42,
+          "energy_utilities": 0.39,
+          "financial_services": 0.47,
+          "government": 0.44,
+          "healthcare": 0.43,
+          "manufacturing_industrial": 0.42,
+          "marketing_services": 0.52,
+          "legal_in-house": 0.38,
+          "legal_agency": 0.37,
+          "life_sciences": 0.42,
+          "professional_services": 0.38,
+          "real_estate": 0.39,
+          "retail": 0.42,
+          "sales": 0.45,
+          "telecommunications": 0.48,
+          "transport_storage": 0.39,
+          "travel_hospitality_leisure": 0.41,
+          "wholesale_distribution": 0.37,
+          "other": 0.36
         },
         "job_level": {
-          "ceo": 42,
-          "senior_executive": 48,
-          "senior_leader": 44,
-          "mid_level_leader": 35,
-          "first_level_supervisor": 35,
-          "individual_contributor": 20
+          "ceo": 0.43,
+          "senior_executive": 0.5,
+          "senior_leader": 0.48,
+          "mid_level_leader": 0.45,
+          "first_level_supervisor": 0.46,
+          "individual_contributor": 0.37
         },
         "relationship_status": {
-          "single": 33,
-          "cohabiting": 23,
-          "married": 37,
-          "divorced_separated": 20,
-          "widowed": 18
+          "single": 0.43,
+          "cohabiting": 0.41,
+          "married": 0.45,
+          "divorced_separated": 0.36,
+          "widowed": 0.34
         },
         "education": {
-          "secondary": 28,
-          "tertiary": 26,
-          "professional_certifications": 26,
-          "undergraduate": 34,
-          "postgraduate": 42,
-          "doctorate": 34
+          "secondary": 0.41,
+          "tertiary": 0.42,
+          "professional_certifications": 0.41,
+          "undergraduate": 0.43,
+          "postgraduate": 0.48,
+          "doctorate": 0.4
         },
         "generation": {
-          "gen_z": 43,
-          "millennials": 38,
-          "gen_x": 27,
-          "baby_boomers": 14,
-          "65_plus": 14
+          "gen_z": 0.48,
+          "millennials": 0.46,
+          "gen_x": 0.41,
+          "baby_boomers": 0.3
         },
         "employment_status": {
-          "full_time": 34,
-          "part_time": 27,
-          "contract": 39,
-          "freelance": 26
+          "full_time": 0.44,
+          "part_time": 0.4,
+          "contract": 0.42,
+          "freelance": 0.36
         }
       }
     }

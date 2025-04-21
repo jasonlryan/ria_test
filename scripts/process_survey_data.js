@@ -304,10 +304,119 @@ async function processCSVToGlobal(csvFilePath) {
 
         if (currentQuestion && row[headers[1]]) {
           const response = row[headers[1]];
-          const dataObj = { region: {} };
+          const dataObj = {}; // Initialize empty object without region
 
-          // Process country data consistently using our enhanced function for ALL questions
-          processCountryData(row, dataObj);
+          // Extract Overall value (new code)
+          if (row["Overall"] !== undefined) {
+            let overallValue = row["Overall"];
+
+            // Handle percentage format
+            if (
+              typeof overallValue === "string" &&
+              overallValue.includes("%")
+            ) {
+              overallValue =
+                parseFloat(overallValue.replace("%", "").trim()) / 100;
+            } else {
+              overallValue = parseFloat(overallValue);
+            }
+
+            // Store the overall value directly in the data object
+            if (!isNaN(overallValue)) {
+              dataObj.overall = overallValue;
+
+              if (options.verbose) {
+                console.log(
+                  `Extracted Overall value: ${overallValue} for "${response}"`
+                );
+              }
+            }
+          }
+
+          // For 2025 data, "Total" column contains the overall value
+          else if (year === "2025" && row["Total"] !== undefined) {
+            let overallValue = row["Total"];
+
+            // Handle percentage format
+            if (
+              typeof overallValue === "string" &&
+              overallValue.includes("%")
+            ) {
+              overallValue =
+                parseFloat(overallValue.replace("%", "").trim()) / 100;
+            } else {
+              overallValue = parseFloat(overallValue);
+            }
+
+            // Store the overall value directly in the data object
+            if (!isNaN(overallValue)) {
+              dataObj.overall = overallValue;
+
+              if (options.verbose) {
+                console.log(
+                  `Extracted Overall value from 'Total' column: ${overallValue} for "${response}"`
+                );
+              }
+            }
+          }
+
+          // Now add region after overall is already set
+          dataObj.region = {};
+
+          // Process country data manually to ensure it works correctly
+          if (year === "2024") {
+            // For 2024, use the exact column names from the CSV
+            const countryColumns = {
+              country_UK: "united_kingdom",
+              country_USA: "united_states",
+              country_Australia: "australia",
+              country_India: "india",
+              country_Brazil: "brazil",
+              country_Saudi_Arabia_UAE: "saudi_arabia_uae",
+            };
+
+            // Process each country column
+            Object.entries(countryColumns).forEach(([csvColumn, regionKey]) => {
+              if (row[csvColumn] !== undefined) {
+                const value = parseFloat(row[csvColumn]);
+                if (!isNaN(value)) {
+                  dataObj.region[regionKey] = value;
+                }
+              }
+            });
+          } else if (year === "2025") {
+            // For 2025, use the exact column names from the CSV
+            const countryColumns = {
+              country_US: "united_states",
+              country_United_Kingdom: "united_kingdom",
+              country_Australia: "australia",
+              country_India: "india",
+              country_Brazil: "brazil",
+              country_Saudi_Arabia: "saudi_arabia",
+              country_France: "france",
+              country_Germany: "germany",
+              country_Japan: "japan",
+              country_United_Arab_Emirates: "united_arab_emirates",
+            };
+
+            // Process each country column
+            Object.entries(countryColumns).forEach(([csvColumn, regionKey]) => {
+              if (row[csvColumn] !== undefined) {
+                let value = row[csvColumn];
+
+                // Handle percentage format
+                if (typeof value === "string" && value.includes("%")) {
+                  value = parseFloat(value.replace("%", "").trim()) / 100;
+                } else {
+                  value = parseFloat(value);
+                }
+
+                if (!isNaN(value)) {
+                  dataObj.region[regionKey] = value;
+                }
+              }
+            });
+          }
 
           // Continue with demographics processing
           // Add demographic data
@@ -507,13 +616,26 @@ async function processCSVToGlobal(csvFilePath) {
           // Process both formats (relationship_status_ and marital_status_ prefixes)
           Object.entries(relationshipStatuses).forEach(
             ([csvField, jsonField]) => {
-              // Try both prefixes
-              const prefixes = ["relationship_status_", "marital_status_"];
+              // Try multiple variants of the field name
+              const variants = [
+                `relationship_status_${csvField.toLowerCase()}`,
+                `relationship_status_${csvField}`,
+                `marital_status_${csvField.toLowerCase()}`,
+                `marital_status_${csvField}`,
+              ];
 
-              for (const prefix of prefixes) {
-                const field = `${prefix}${csvField}`;
-                if (row[field] !== undefined) {
-                  const value = parseFloat(row[field]);
+              // For 2024 data, also try with underscores instead of hyphens
+              if (year === "2024") {
+                variants.push(
+                  `relationship_status_${csvField
+                    .toLowerCase()
+                    .replace(/-/g, "_")}`
+                );
+              }
+
+              for (const fieldName of variants) {
+                if (row[fieldName] !== undefined) {
+                  const value = parseFloat(row[fieldName]);
                   if (!isNaN(value)) {
                     dataObj.relationship_status[jsonField] = value;
                     break;
@@ -534,15 +656,31 @@ async function processCSVToGlobal(csvFilePath) {
             "Under-graduate_degree": "undergraduate",
             "Post-graduate_Masters_degree": "postgraduate",
             Doctorate_Phd: "doctorate",
+            undergraduate: "undergraduate",
+            postgraduate: "postgraduate",
+            doctorate: "doctorate",
           };
 
-          // Process education fields
+          // Process education fields with more variants
           Object.entries(educationLevels).forEach(([csvField, jsonField]) => {
-            const field = `education_${csvField}`;
-            if (row[field] !== undefined) {
-              const value = parseFloat(row[field]);
-              if (!isNaN(value)) {
-                dataObj.education[jsonField] = value;
+            // Try different variants of field names
+            const variants = [
+              `education_${csvField}`,
+              `education_${csvField.toLowerCase()}`,
+            ];
+
+            // For 2024 data, also try direct field names as in CSV
+            if (year === "2024") {
+              variants.push(`education_${jsonField}`);
+            }
+
+            for (const fieldName of variants) {
+              if (row[fieldName] !== undefined) {
+                const value = parseFloat(row[fieldName]);
+                if (!isNaN(value)) {
+                  dataObj.education[jsonField] = value;
+                  break;
+                }
               }
             }
           });
@@ -556,18 +694,24 @@ async function processCSVToGlobal(csvFilePath) {
             Millennials: "millennials",
             Gen_X: "gen_x",
             Baby_Boomers: "baby_boomers",
-            age_65_plus: "65_plus", // Special case for 65+ as a generation
+            "65_plus": "65_plus", // Special case for 65+ as a generation
           };
 
-          // Process generation fields
-          Object.entries(generations).forEach(([csvField, jsonField]) => {
-            if (row[csvField] !== undefined) {
-              const value = parseFloat(row[csvField]);
-              if (!isNaN(value)) {
-                dataObj.generation[jsonField] = value;
+          // Handle generation data based on year
+          if (year === "2024") {
+            // For 2024, DO NOT derive generation data from age groups
+            dataObj.generation = null;
+          } else {
+            // Process generation fields for other years
+            Object.entries(generations).forEach(([csvField, jsonField]) => {
+              if (row[csvField] !== undefined) {
+                const value = parseFloat(row[csvField]);
+                if (!isNaN(value)) {
+                  dataObj.generation[jsonField] = value;
+                }
               }
-            }
-          });
+            });
+          }
 
           // Employment status
           dataObj.employment_status = {};
@@ -590,6 +734,27 @@ async function processCSVToGlobal(csvFilePath) {
               }
             }
           });
+
+          // Before pushing to results, convert all percentage values to decimals for 2025 data
+          if (year === "2025") {
+            // Helper function to convert all numeric values that are percentages to decimals
+            const convertPercentagesToDecimals = (obj) => {
+              if (!obj || typeof obj !== "object") return;
+
+              Object.keys(obj).forEach((key) => {
+                if (typeof obj[key] === "number" && obj[key] > 1) {
+                  // Numbers > 1 are likely percentages (e.g., 85 instead of 0.85)
+                  obj[key] = obj[key] / 100;
+                } else if (typeof obj[key] === "object") {
+                  // Recursively process nested objects
+                  convertPercentagesToDecimals(obj[key]);
+                }
+              });
+            };
+
+            // Convert all percentages in dataObj
+            convertPercentagesToDecimals(dataObj);
+          }
 
           results.push({
             question: currentQuestion,
@@ -697,7 +862,7 @@ async function harmonize2025Data(inputPath, outputDir) {
 
       // Use the consistent country processing function for all questions
       // This will properly handle both raw and prefixed country names
-      processCountryData(row, harmonizedRow.data);
+      processCountryData(row, harmonizedRow.data, year);
 
       // Process other demographic segments (age, gender, etc.)
       // ... existing demographic processing logic ...
@@ -1164,6 +1329,32 @@ function createBasicCanonicalMapping() {
 }
 
 /**
+ * Create response metadata with proper segments
+ * @param {Array} segments - Array of segment names
+ * @returns {Object} - Metadata object with segments including overall
+ */
+function createResponseMetadata(segments) {
+  // Map segments to expected format for metadata
+  const formattedSegments = segments.map((segment) => {
+    return {
+      key: segment,
+      display:
+        segment.charAt(0).toUpperCase() + segment.slice(1).replace(/_/g, " "),
+    };
+  });
+
+  // Make sure 'overall' is included in the segments
+  if (!formattedSegments.some((segment) => segment.key === "overall")) {
+    formattedSegments.push({ key: "overall", display: "Overall" });
+  }
+
+  return {
+    segments: formattedSegments,
+    version: 1,
+  };
+}
+
+/**
  * Split global data into individual files with metadata
  */
 async function splitGlobalDataToFiles(params) {
@@ -1188,6 +1379,7 @@ async function splitGlobalDataToFiles(params) {
     const canonicalMappingPath = path.join(
       __dirname,
       "reference files",
+      "2025",
       "canonical_topic_mapping.json"
     );
     let canonicalMapping = null;
@@ -1553,6 +1745,7 @@ async function splitGlobalDataToFiles(params) {
             responseTextField: "response",
             dataField: "data",
             segments: [
+              "overall",
               "region",
               "age",
               "gender",
@@ -1567,13 +1760,32 @@ async function splitGlobalDataToFiles(params) {
             valueFormat: "decimal",
             sortOrder: "descending",
           },
+          responseMetadata: createResponseMetadata([
+            "overall",
+            "region",
+            "age",
+            "gender",
+            "org_size",
+            "sector",
+            "job_level",
+            "relationship_status",
+            "education",
+            "generation",
+            "employment_status",
+          ]),
         };
 
         // Create file data
         const fileData = {
           metadata,
           question: questionData,
-          responses: responseItems, // This preserves the complete data for each response
+          responses: responseItems.map((item) => {
+            // Ensure each response item has the overall field if it's missing
+            if (item.data && item.data.overall === undefined) {
+              item.data.overall = null; // Set to null if missing
+            }
+            return item;
+          }),
         };
 
         // Output file path
@@ -1867,160 +2079,442 @@ module.exports = {
 };
 
 // Replace or add this function for consistent country data processing across all questions
-function processCountryData(row, dataObj) {
-  // Enable debug mode for specific rows to diagnose issues
-  const DEBUG =
-    options.verbose &&
-    row.Response &&
-    row.Response.includes("Career advancement");
-
-  if (DEBUG) {
-    console.log("\n----- DEBUGGING COUNTRY DATA -----");
-    console.log(`Processing row: ${row.Response}`);
+function processCountryData(row, dataObj, year) {
+  // Initialize region object if not already done
+  if (!dataObj.region) {
+    dataObj.region = {};
   }
 
-  // Define the expected order of countries in the CSV
-  const expectedCountries = [
-    "Total",
-    "US",
-    "UK",
-    "India",
-    "France",
-    "Germany",
-    "Japan",
-    "UAE",
-    "Brazil",
-    "Saudi Arabia",
-    "Australia",
-  ];
-
-  // Map to standard output keys
-  const countryOutputKeys = {
-    US: "united_states",
-    UK: "united_kingdom",
-    India: "india",
-    France: "france",
-    Germany: "germany",
-    Japan: "japan",
-    UAE: "united_arab_emirates",
-    Brazil: "brazil",
-    "Saudi Arabia": "saudi_arabia",
-    Australia: "australia",
-  };
-
-  // Get all column headers
-  const headers = Object.keys(row);
-
-  // Find Total column index (usually 3rd column after Question and Response)
-  let totalColIndex = -1;
-  for (let i = 0; i < headers.length; i++) {
-    if (
-      headers[i] === "Total" ||
-      headers[i] === "Overall" ||
-      headers[i] === "Total %"
-    ) {
-      totalColIndex = i;
-      break;
-    }
-  }
-
-  // If we can't find the Total column, try to infer it from position
-  if (totalColIndex === -1 && headers.length > 2) {
-    totalColIndex = 2; // Assume it's the 3rd column (index 2)
-    if (DEBUG) {
-      console.log(
-        `Could not find Total column, assuming position 3 (index ${totalColIndex})`
+  // Process country data - use exact field names from the CSV
+  if (year === 2024 || year === "2024") {
+    // Use the exact column names from the 2024 CSV - fix the exact property access
+    if (row["country_UK"] !== undefined)
+      dataObj.region.united_kingdom = parseFloat(row["country_UK"]);
+    if (row["country_USA"] !== undefined)
+      dataObj.region.united_states = parseFloat(row["country_USA"]);
+    if (row["country_Australia"] !== undefined)
+      dataObj.region.australia = parseFloat(row["country_Australia"]);
+    if (row["country_India"] !== undefined)
+      dataObj.region.india = parseFloat(row["country_India"]);
+    if (row["country_Brazil"] !== undefined)
+      dataObj.region.brazil = parseFloat(row["country_Brazil"]);
+    if (row["country_Saudi_Arabia_UAE"] !== undefined)
+      dataObj.region.saudi_arabia_uae = parseFloat(
+        row["country_Saudi_Arabia_UAE"]
       );
-    }
-  }
 
-  if (DEBUG) {
-    console.log(`Total column found at index ${totalColIndex}`);
-    console.log(
-      `Headers: ${headers
-        .slice(totalColIndex, totalColIndex + expectedCountries.length)
-        .join(", ")}`
-    );
-  }
-
-  // Process each country based on position
-  if (totalColIndex >= 0) {
-    // Start from one position after Total
-    for (let i = 1; i < expectedCountries.length; i++) {
-      const countryName = expectedCountries[i];
-      const colIndex = totalColIndex + i;
-
-      if (colIndex < headers.length) {
-        const columnName = headers[colIndex];
-        const outputKey = countryOutputKeys[countryName];
-
-        if (outputKey && row[columnName] !== undefined) {
-          let value = row[columnName];
-
-          // Handle percentage format
-          if (typeof value === "string" && value.includes("%")) {
-            value = parseFloat(value.replace("%", "").trim());
-          } else {
-            value = parseFloat(value);
-          }
-
-          // Only add if it's a valid number
-          if (!isNaN(value)) {
-            dataObj.region[outputKey] = value;
-
-            if (DEBUG) {
-              console.log(
-                `Position ${i}: ${countryName} (${columnName}) → ${outputKey} = ${value}`
-              );
-            }
-          }
-        }
+    // For debugging purposes only
+    if (options.verbose) {
+      const countryFields = Object.keys(row).filter((key) =>
+        key.startsWith("country_")
+      );
+      if (
+        countryFields.length > 0 &&
+        Object.keys(dataObj.region).length === 0
+      ) {
+        console.log(
+          `WARNING: Found country fields (${countryFields.join(
+            ", "
+          )}) but region object is empty`
+        );
+        console.log(`First field value: ${row[countryFields[0]]}`);
       }
     }
-  } else if (DEBUG) {
-    console.log("Could not find Total column or determine country positions");
+  } else if (year === 2025) {
+    // For 2025 data
+    if ("United Kingdom" in row)
+      dataObj.region.united_kingdom = convertPercentToDecimal(
+        row["United Kingdom"]
+      );
+    if ("United States" in row)
+      dataObj.region.united_states = convertPercentToDecimal(
+        row["United States"]
+      );
+    if ("Australia" in row)
+      dataObj.region.australia = convertPercentToDecimal(row.Australia);
+    if ("India" in row)
+      dataObj.region.india = convertPercentToDecimal(row.India);
+    if ("Brazil" in row)
+      dataObj.region.brazil = convertPercentToDecimal(row.Brazil);
+    if ("Saudi Arabia/UAE" in row)
+      dataObj.region.saudi_arabia_uae = convertPercentToDecimal(
+        row["Saudi Arabia/UAE"]
+      );
   }
 
-  // Fallback: Try to find explicitly labeled country columns as before
-  const prefixedCountryColumns = {
-    country_US: "united_states",
-    country_UK: "united_kingdom",
-    country_India: "india",
-    country_France: "france",
-    country_Germany: "germany",
-    country_Japan: "japan",
-    country_UAE: "united_arab_emirates",
-    country_Brazil: "brazil",
-    country_Saudi_Arabia: "saudi_arabia",
-    country_Australia: "australia",
-  };
+  // Process age data
+  if (!dataObj.age) {
+    dataObj.age = {};
+  }
 
-  // Check for explicitly labeled country columns
-  for (const [columnName, outputKey] of Object.entries(
-    prefixedCountryColumns
-  )) {
-    if (row[columnName] !== undefined) {
-      let value = row[columnName];
+  // For both 2024 and 2025, check if the fields exist before adding
+  if (year === 2024) {
+    if ("age_18-24" in row) dataObj.age["18-24"] = parseFloat(row["age_18-24"]);
+    if ("age_25-34" in row) dataObj.age["25-34"] = parseFloat(row["age_25-34"]);
+    if ("age_35-44" in row) dataObj.age["35-44"] = parseFloat(row["age_35-44"]);
+    if ("age_45-54" in row) dataObj.age["45-54"] = parseFloat(row["age_45-54"]);
+    if ("age_55-65" in row) dataObj.age["55-65"] = parseFloat(row["age_55-65"]);
+  } else if (year === 2025) {
+    if ("18-24" in row)
+      dataObj.age["18-24"] = convertPercentToDecimal(row["18-24"]);
+    if ("25-34" in row)
+      dataObj.age["25-34"] = convertPercentToDecimal(row["25-34"]);
+    if ("35-44" in row)
+      dataObj.age["35-44"] = convertPercentToDecimal(row["35-44"]);
+    if ("45-54" in row)
+      dataObj.age["45-54"] = convertPercentToDecimal(row["45-54"]);
+    if ("55-65" in row)
+      dataObj.age["55-65"] = convertPercentToDecimal(row["55-65"]);
+    if ("65+" in row) dataObj.age["65+"] = convertPercentToDecimal(row["65+"]);
+  }
 
-      // Handle percentage format
-      if (typeof value === "string" && value.includes("%")) {
-        value = parseFloat(value.replace("%", "").trim());
-      } else {
-        value = parseFloat(value);
+  // Process gender data
+  if (!dataObj.gender) {
+    dataObj.gender = {};
+  }
+
+  if (year === 2024) {
+    if ("gender_male" in row) dataObj.gender.male = parseFloat(row.gender_male);
+    if ("gender_female" in row)
+      dataObj.gender.female = parseFloat(row.gender_female);
+  } else if (year === 2025) {
+    if ("Male" in row) dataObj.gender.male = convertPercentToDecimal(row.Male);
+    if ("Female" in row)
+      dataObj.gender.female = convertPercentToDecimal(row.Female);
+    if ("Non-binary / third gender" in row)
+      dataObj.gender.non_binary = convertPercentToDecimal(
+        row["Non-binary / third gender"]
+      );
+    if ("Prefer not to say" in row)
+      dataObj.gender.prefer_not_to_say = convertPercentToDecimal(
+        row["Prefer not to say"]
+      );
+  }
+
+  // Process organization size data
+  if (!dataObj.org_size) {
+    dataObj.org_size = {};
+  }
+
+  if (year === 2024) {
+    if ("org_size_fewer_than_10" in row)
+      dataObj.org_size.fewer_than_10 = parseFloat(
+        row["org_size_fewer_than_10"]
+      );
+    if ("org_size_10_to_49" in row)
+      dataObj.org_size["10_to_49"] = parseFloat(row["org_size_10_to_49"]);
+    if ("org_size_50_to_99" in row)
+      dataObj.org_size["50_to_99"] = parseFloat(row["org_size_50_to_99"]);
+    if ("org_size_100_to_249" in row)
+      dataObj.org_size["100_to_249"] = parseFloat(row["org_size_100_to_249"]);
+    if ("org_size_250_to_499" in row)
+      dataObj.org_size["250_to_499"] = parseFloat(row["org_size_250_to_499"]);
+    if ("org_size_500_to_999" in row)
+      dataObj.org_size["500_to_999"] = parseFloat(row["org_size_500_to_999"]);
+    if ("org_size_1000_or_more" in row)
+      dataObj.org_size["1000_or_more"] = parseFloat(
+        row["org_size_1000_or_more"]
+      );
+  } else if (year === 2025) {
+    if ("Fewer than 10" in row)
+      dataObj.org_size.fewer_than_10 = convertPercentToDecimal(
+        row["Fewer than 10"]
+      );
+    if ("10 to 49" in row)
+      dataObj.org_size["10_to_49"] = convertPercentToDecimal(row["10 to 49"]);
+    if ("50 to 99" in row)
+      dataObj.org_size["50_to_99"] = convertPercentToDecimal(row["50 to 99"]);
+    if ("100 to 249" in row)
+      dataObj.org_size["100_to_249"] = convertPercentToDecimal(
+        row["100 to 249"]
+      );
+    if ("250 to 499" in row)
+      dataObj.org_size["250_to_499"] = convertPercentToDecimal(
+        row["250 to 499"]
+      );
+    if ("500 to 999" in row)
+      dataObj.org_size["500_to_999"] = convertPercentToDecimal(
+        row["500 to 999"]
+      );
+    if ("1000 or more" in row)
+      dataObj.org_size["1000_or_more"] = convertPercentToDecimal(
+        row["1000 or more"]
+      );
+  }
+
+  // Process sector data
+  if (!dataObj.sector) {
+    dataObj.sector = {};
+  }
+
+  // There are many sectors, so we'll handle them dynamically
+  if (year === 2024) {
+    // Handle 2024 sector data
+    Object.keys(row).forEach((key) => {
+      if (key.startsWith("sector_")) {
+        const sectorName = key.replace("sector_", "");
+        dataObj.sector[sectorName] = parseFloat(row[key]);
+      }
+    });
+  } else if (year === 2025) {
+    // Map 2025 sectors to standardized format
+    const sectorMap = {
+      "Agriculture / forestry / fishing": "agriculture_forestry_fishing",
+      Automotive: "automotive",
+      "Business administration & support services":
+        "business_administration_support_services",
+      "Clean technology": "clean_technology",
+      Technology: "technology",
+      Construction: "construction",
+      Education: "education",
+      "Energy & utilities": "energy_utilities",
+      "Financial services": "financial_services",
+      "Food & drink": "food_drink",
+      Government: "government",
+      "Healthcare & life sciences": "healthcare_life_sciences",
+      "Leisure, sport, entertainment & recreation":
+        "leisure_sport_entertainment_recreation",
+      "Manufacturing & industrial": "manufacturing_industrial",
+      "Marketing services": "marketing_services",
+      "Media & entertainment": "media_entertainment",
+      "Not for profit": "not_for_profit",
+      "Real estate & property services": "real_estate_property_services",
+      Retail: "retail",
+      Sports: "sports",
+      Telecommunications: "telecommunications",
+      "Transport & storage": "transport_storage",
+      "Travel, hospitality & leisure": "travel_hospitality_leisure",
+      "Wholesale & distribution": "wholesale_distribution",
+      Other: "other",
+    };
+
+    Object.keys(sectorMap).forEach((sectorKey) => {
+      if (sectorKey in row) {
+        dataObj.sector[sectorMap[sectorKey]] = convertPercentToDecimal(
+          row[sectorKey]
+        );
+      }
+    });
+  }
+
+  // Process job level data
+  if (!dataObj.job_level) {
+    dataObj.job_level = {};
+  }
+
+  if (year === 2024) {
+    if ("job_level_CEO" in row)
+      dataObj.job_level.ceo = parseFloat(row["job_level_CEO"]);
+    if ("job_level_senior_executive" in row)
+      dataObj.job_level.senior_executive = parseFloat(
+        row["job_level_senior_executive"]
+      );
+    if ("job_level_senior_leader" in row)
+      dataObj.job_level.senior_leader = parseFloat(
+        row["job_level_senior_leader"]
+      );
+    if ("job_level_first_level_supervisor" in row)
+      dataObj.job_level.first_level_supervisor = parseFloat(
+        row["job_level_first_level_supervisor"]
+      );
+    if ("job_level_individual_contributor" in row)
+      dataObj.job_level.individual_contributor = parseFloat(
+        row["job_level_individual_contributor"]
+      );
+  } else if (year === 2025) {
+    if ("CEO" in row) dataObj.job_level.ceo = convertPercentToDecimal(row.CEO);
+    if ("Senior executive (C-suite, EVP, SVP)" in row)
+      dataObj.job_level.senior_executive = convertPercentToDecimal(
+        row["Senior executive (C-suite, EVP, SVP)"]
+      );
+    if ("Senior leader (VP, Department Head)" in row)
+      dataObj.job_level.senior_leader = convertPercentToDecimal(
+        row["Senior leader (VP, Department Head)"]
+      );
+    if ("Mid-level leader (Director, Senior Manager)" in row)
+      dataObj.job_level.mid_level_leader = convertPercentToDecimal(
+        row["Mid-level leader (Director, Senior Manager)"]
+      );
+    if ("First-level supervisor" in row)
+      dataObj.job_level.first_level_supervisor = convertPercentToDecimal(
+        row["First-level supervisor"]
+      );
+    if ("Individual contributor" in row)
+      dataObj.job_level.individual_contributor = convertPercentToDecimal(
+        row["Individual contributor"]
+      );
+  }
+
+  // Process relationship status data - only add if columns exist
+  if (year === 2024) {
+    if (
+      row.hasOwnProperty("relationship_status_single") ||
+      row.hasOwnProperty("relationship_status_cohabiting") ||
+      row.hasOwnProperty("relationship_status_married") ||
+      row.hasOwnProperty("relationship_status_divorced_separated") ||
+      row.hasOwnProperty("relationship_status_widowed")
+    ) {
+      if (!dataObj.relationship_status) {
+        dataObj.relationship_status = {};
       }
 
-      // Only add if it's a valid number
-      if (!isNaN(value)) {
-        dataObj.region[outputKey] = value;
-
-        if (DEBUG) {
-          console.log(
-            `Explicit column ${columnName} → ${outputKey} = ${value}`
-          );
-        }
-      }
+      if ("relationship_status_single" in row)
+        dataObj.relationship_status.single = parseFloat(
+          row["relationship_status_single"]
+        );
+      if ("relationship_status_cohabiting" in row)
+        dataObj.relationship_status.cohabiting = parseFloat(
+          row["relationship_status_cohabiting"]
+        );
+      if ("relationship_status_married" in row)
+        dataObj.relationship_status.married = parseFloat(
+          row["relationship_status_married"]
+        );
+      if ("relationship_status_divorced_separated" in row)
+        dataObj.relationship_status.divorced_separated = parseFloat(
+          row["relationship_status_divorced_separated"]
+        );
+      if ("relationship_status_widowed" in row)
+        dataObj.relationship_status.widowed = parseFloat(
+          row["relationship_status_widowed"]
+        );
     }
+  } else if (year === 2025) {
+    if (!dataObj.relationship_status) {
+      dataObj.relationship_status = {};
+    }
+
+    if ("Single" in row)
+      dataObj.relationship_status.single = convertPercentToDecimal(row.Single);
+    if ("Cohabiting" in row)
+      dataObj.relationship_status.cohabiting = convertPercentToDecimal(
+        row.Cohabiting
+      );
+    if ("Married" in row)
+      dataObj.relationship_status.married = convertPercentToDecimal(
+        row.Married
+      );
+    if ("Divorced/Separated" in row)
+      dataObj.relationship_status.divorced_separated = convertPercentToDecimal(
+        row["Divorced/Separated"]
+      );
+    if ("Widowed" in row)
+      dataObj.relationship_status.widowed = convertPercentToDecimal(
+        row.Widowed
+      );
   }
 
-  return dataObj;
+  // Process education data - only add if columns exist
+  if (year === 2024) {
+    if (
+      row.hasOwnProperty("education_secondary") ||
+      row.hasOwnProperty("education_tertiary") ||
+      row.hasOwnProperty("education_undergraduate") ||
+      row.hasOwnProperty("education_postgraduate") ||
+      row.hasOwnProperty("education_doctorate")
+    ) {
+      if (!dataObj.education) {
+        dataObj.education = {};
+      }
+
+      if ("education_secondary" in row)
+        dataObj.education.secondary = parseFloat(row["education_secondary"]);
+      if ("education_tertiary" in row)
+        dataObj.education.tertiary = parseFloat(row["education_tertiary"]);
+      if ("education_undergraduate" in row)
+        dataObj.education.undergraduate = parseFloat(
+          row["education_undergraduate"]
+        );
+      if ("education_postgraduate" in row)
+        dataObj.education.postgraduate = parseFloat(
+          row["education_postgraduate"]
+        );
+      if ("education_doctorate" in row)
+        dataObj.education.doctorate = parseFloat(row["education_doctorate"]);
+    }
+  } else if (year === 2025) {
+    if (!dataObj.education) {
+      dataObj.education = {};
+    }
+
+    if ("Secondary school" in row)
+      dataObj.education.secondary = convertPercentToDecimal(
+        row["Secondary school"]
+      );
+    if ("Tertiary school" in row)
+      dataObj.education.tertiary = convertPercentToDecimal(
+        row["Tertiary school"]
+      );
+    if ("Undergraduate degree" in row)
+      dataObj.education.undergraduate = convertPercentToDecimal(
+        row["Undergraduate degree"]
+      );
+    if ("Postgraduate degree" in row)
+      dataObj.education.postgraduate = convertPercentToDecimal(
+        row["Postgraduate degree"]
+      );
+    if ("Doctorate" in row)
+      dataObj.education.doctorate = convertPercentToDecimal(row.Doctorate);
+  }
+
+  // Generation - REMOVED ALL DERIVATION FOR 2024
+  // Process generation data - ONLY for 2025 data
+  if (year === 2025) {
+    if (
+      "Gen_Z" in row ||
+      "Millennials" in row ||
+      "Gen_X" in row ||
+      "Baby_Boomers" in row
+    ) {
+      if (!dataObj.generation) {
+        dataObj.generation = {};
+      }
+
+      if ("Gen_Z" in row)
+        dataObj.generation.gen_z = convertPercentToDecimal(row["Gen_Z"]);
+      if ("Millennials" in row)
+        dataObj.generation.millennials = convertPercentToDecimal(
+          row["Millennials"]
+        );
+      if ("Gen_X" in row)
+        dataObj.generation.gen_x = convertPercentToDecimal(row["Gen_X"]);
+      if ("Baby_Boomers" in row)
+        dataObj.generation.baby_boomers = convertPercentToDecimal(
+          row["Baby_Boomers"]
+        );
+    }
+  } else {
+    // For 2024 and other years, set generation to null (NO DERIVATION)
+    dataObj.generation = null;
+  }
+
+  // Process employment status data
+  if (!dataObj.employment_status) {
+    dataObj.employment_status = {};
+  }
+
+  if (year === 2024) {
+    if ("employment_status_full-time" in row)
+      dataObj.employment_status.full_time = parseFloat(
+        row["employment_status_full-time"]
+      );
+    if ("employment_status_part-time" in row)
+      dataObj.employment_status.part_time = parseFloat(
+        row["employment_status_part-time"]
+      );
+    // Only add self-employed if present
+    if ("employment_status_self-employed" in row)
+      dataObj.employment_status.self_employed = parseFloat(
+        row["employment_status_self-employed"]
+      );
+  } else if (year === 2025) {
+    if ("Full-time" in row)
+      dataObj.employment_status.full_time = convertPercentToDecimal(
+        row["Full-time"]
+      );
+    if ("Part-time" in row)
+      dataObj.employment_status.part_time = convertPercentToDecimal(
+        row["Part-time"]
+      );
+  }
 }

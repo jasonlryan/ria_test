@@ -29,6 +29,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -42,6 +43,55 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "18. Motivation - I feel motivated to do more than is required of me.",
@@ -50,9 +100,12 @@
       "response": "Disagree",
       "data": {
         "region": {
+          "united_kingdom": 0.18,
+          "united_states": 0.1,
+          "australia": 0.16,
           "india": 0.04,
           "brazil": 0.13,
-          "australia": 0.16
+          "saudi_arabia_uae": 0.08
         },
         "age": {
           "18-24": 0.12,
@@ -101,13 +154,25 @@
           "first_level_supervisor": 0.11,
           "individual_contributor": 0.2
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.14,
+          "married": 0.09,
+          "divorced_separated": 0.22,
+          "widowed": 0.28
+        },
+        "education": {
+          "secondary": 0.14,
+          "tertiary": 0.17,
+          "undergraduate": 0.14,
+          "postgraduate": 0.08,
+          "doctorate": 0.1
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.12,
           "part_time": 0.12
-        }
+        },
+        "overall": null
       }
     }
   ]

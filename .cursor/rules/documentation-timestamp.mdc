@@ -1,0 +1,47 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Documentation Timestamp Standard
+
+## Overview
+This rule defines the standard for timestamps in all RIA25 documentation files. Accurate and consistent timestamps are critical for tracking document currency and maintaining version control.
+
+## Timestamp Requirements
+
+### 1. Source of Truth
+- **ALWAYS** use the actual system date (`date` command) when updating timestamps
+- **NEVER** fabricate, estimate, or "future-date" documentation
+- Run `date` in the terminal to get the current timestamp before updating docs
+
+### 2. Format and Placement
+- Include timestamps in two locations:
+  1. At the document header: `**Last Updated:** <timestamp>`
+  2. At the document footer: `_Last updated: <timestamp>_`
+- Use the format: `Day Month DD YYYY` (e.g., "Sat Apr 19 2025")
+
+### 3. Verification
+- Verify timestamp accuracy before committing documentation changes
+- All document timestamps should reflect the actual date of the last edit
+
+## Common Violations to Avoid
+- Copying dates from other documents
+- Using placeholder dates to be updated later
+- Manually typing dates instead of using the system date
+- Using different date formats across documents
+
+## Implementation Process
+1. Run the system date command: `date`
+2. Copy the output exactly
+3. Update both header and footer timestamps
+4. Commit the changes with a message indicating documentation update
+
+## Rationale
+Accurate timestamps are essential for:
+- Tracking documentation currency
+- Ensuring information reliability
+- Facilitating proper version control
+- Maintaining user trust in the documentation
+
+Fabricated dates undermine documentation integrity and create confusion about the current state of the system. 

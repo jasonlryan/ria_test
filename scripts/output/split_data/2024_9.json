@@ -29,6 +29,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -42,6 +43,55 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "9. Are you planning on leaving your current role in the next three months?",
@@ -50,9 +100,12 @@
       "response": "No",
       "data": {
         "region": {
+          "united_kingdom": 0.42,
+          "united_states": 0.39,
+          "australia": 0.47,
           "india": 0.34,
           "brazil": 0.45,
-          "australia": 0.47
+          "saudi_arabia_uae": 0.38
         },
         "age": {
           "18-24": 0.37,
@@ -101,22 +154,37 @@
           "first_level_supervisor": 0.43,
           "individual_contributor": 0.48
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.4,
+          "married": 0.4,
+          "divorced_separated": 0.51,
+          "widowed": 0.4
+        },
+        "education": {
+          "secondary": 0.45,
+          "tertiary": 0.47,
+          "undergraduate": 0.4,
+          "postgraduate": 0.38,
+          "doctorate": 0.43
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.4,
           "part_time": 0.41
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "Considering",
       "data": {
         "region": {
+          "united_kingdom": 0.46,
+          "united_states": 0.39,
+          "australia": 0.41,
           "india": 0.51,
           "brazil": 0.46,
-          "australia": 0.41
+          "saudi_arabia_uae": 0.48
         },
         "age": {
           "18-24": 0.51,
@@ -165,22 +233,37 @@
           "first_level_supervisor": 0.44,
           "individual_contributor": 0.41
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.47,
+          "married": 0.44,
+          "divorced_separated": 0.37,
+          "widowed": 0.32
+        },
+        "education": {
+          "secondary": 0.44,
+          "tertiary": 0.41,
+          "undergraduate": 0.48,
+          "postgraduate": 0.44,
+          "doctorate": 0.36
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.45,
           "part_time": 0.47
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "Applying and interviewing",
       "data": {
         "region": {
+          "united_kingdom": 0.1,
+          "united_states": 0.21,
+          "australia": 0.11,
           "india": 0.14,
           "brazil": 0.09,
-          "australia": 0.11
+          "saudi_arabia_uae": 0.13
         },
         "age": {
           "18-24": 0.12,
@@ -229,22 +312,37 @@
           "first_level_supervisor": 0.12,
           "individual_contributor": 0.1
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.12,
+          "married": 0.15,
+          "divorced_separated": 0.1,
+          "widowed": 0.27
+        },
+        "education": {
+          "secondary": 0.1,
+          "tertiary": 0.11,
+          "undergraduate": 0.11,
+          "postgraduate": 0.17,
+          "doctorate": 0.2
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.14,
           "part_time": 0.11
-        }
+        },
+        "overall": null
       }
     },
     {
       "response": "Preparing to retire",
       "data": {
         "region": {
+          "united_kingdom": 0.01,
+          "united_states": 0.01,
+          "australia": 0.01,
           "india": 0.01,
           "brazil": 0.01,
-          "australia": 0.01
+          "saudi_arabia_uae": 0
         },
         "age": {
           "45-54": 0.03,
@@ -288,13 +386,25 @@
           "first_level_supervisor": 0.01,
           "individual_contributor": 0.01
         },
-        "relationship_status": {},
-        "education": {},
-        "generation": {},
+        "relationship_status": {
+          "single": 0.01,
+          "married": 0.01,
+          "divorced_separated": 0.02,
+          "widowed": 0.01
+        },
+        "education": {
+          "secondary": 0.02,
+          "tertiary": 0.01,
+          "undergraduate": 0.01,
+          "postgraduate": 0.01,
+          "doctorate": 0
+        },
+        "generation": null,
         "employment_status": {
           "full_time": 0.01,
           "part_time": 0.01
-        }
+        },
+        "overall": null
       }
     }
   ]

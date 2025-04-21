@@ -1,0 +1,15 @@
+{
+  "starterQuestionCode": "SQ2",
+  "question": "How is the cost of living affecting different workers across industries?",
+  "summary": "Survey data on compensation fairness in 2025 reveals significant variation across industries. Sectors such as technology and legal report higher satisfaction with compensation, while sectors like education, healthcare, and retail show lower satisfaction. This suggests that the impact of cost of living pressures is uneven, with some industries better able to support their workers than others.",
+  "stats": {
+    "highest_satisfaction_sectors": ["technology", "legal_agency", "real_estate"],
+    "lowest_satisfaction_sectors": ["education", "healthcare", "retail"]
+  },
+  "matched_topics": ["Pay_and_Reward"],
+  "segments": ["sector"],
+  "data_files": [
+    "2025_11.json"
+  ],
+  "notes": "Industry breakdowns are available in the 'sector' field of 2025_11.json. For more granular analysis, refer to other demographic segments in the same file. If year-on-year comparison is needed, see 2024_8.json."
+}

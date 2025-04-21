@@ -1,34 +1,21 @@
+// Route handlers for test-assistant API endpoints
+// Delegates business logic to testAssistantController
+
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
+import { handleOptions } from "../../../utils/shared/cors";
+import { formatErrorResponse } from "../../../utils/shared/errorHandler";
+import { getHandler } from "../controllers/testAssistantController";
 
-export const runtime = "edge";
+export async function OPTIONS(request) {
+  const response = await handleOptions(request);
+  if (response) return response;
+  return new Response(null, { status: 405 });
+}
 
-export async function GET(request: NextRequest) {
+export async function GET(request) {
   try {
-    // Create OpenAI client
-    const openai = new OpenAI();
-    
-    // Get the assistant ID from environment variable
-    const assistantId = process.env.OPENAI_ASSISTANT_ID;
-    
-    // Try to retrieve the assistant
-    const assistant = await openai.beta.assistants.retrieve(assistantId);
-    
-    return NextResponse.json({ 
-      success: true, 
-      message: "Assistant API connection successful",
-      assistant_id: assistant.id,
-      assistant_name: assistant.name,
-      assistant_model: assistant.model
-    });
+    return await getHandler(request);
   } catch (error) {
-    console.error("Assistant API test error:", error);
-    
-    return NextResponse.json({ 
-      success: false, 
-      message: "Assistant API connection failed",
-      error: error.message,
-      assistant_id: process.env.OPENAI_ASSISTANT_ID
-    }, { status: 500 });
+    return formatErrorResponse(error);
   }
-} 
+}

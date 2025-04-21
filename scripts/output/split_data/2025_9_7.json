@@ -12,7 +12,7 @@
       "Manager_Capability"
     ],
     "canonicalQuestion": "How effective is your direct manager?",
-    "subQuestion": "My manager appears overwhelmed at work",
+    "subQuestion": "If a problem in my personal life is affecting my work/performance, I feel comfortable telling my manager about it",
     "comparable": false,
     "userMessage": "New in 2025; no year‑on‑year comparison.",
     "availableMarkets": [],
@@ -23,6 +23,7 @@
       "responseTextField": "response",
       "dataField": "data",
       "segments": [
+        "overall",
         "region",
         "age",
         "gender",
@@ -36,106 +37,155 @@
       ],
       "valueFormat": "decimal",
       "sortOrder": "descending"
+    },
+    "responseMetadata": {
+      "segments": [
+        {
+          "key": "overall",
+          "display": "Overall"
+        },
+        {
+          "key": "region",
+          "display": "Region"
+        },
+        {
+          "key": "age",
+          "display": "Age"
+        },
+        {
+          "key": "gender",
+          "display": "Gender"
+        },
+        {
+          "key": "org_size",
+          "display": "Org size"
+        },
+        {
+          "key": "sector",
+          "display": "Sector"
+        },
+        {
+          "key": "job_level",
+          "display": "Job level"
+        },
+        {
+          "key": "relationship_status",
+          "display": "Relationship status"
+        },
+        {
+          "key": "education",
+          "display": "Education"
+        },
+        {
+          "key": "generation",
+          "display": "Generation"
+        },
+        {
+          "key": "employment_status",
+          "display": "Employment status"
+        }
+      ],
+      "version": 1
     }
   },
   "question": "Q9 - To what extent do you agree with the following statements.",
   "responses": [
     {
-      "response": "My manager appears overwhelmed at work",
+      "response": "If a problem in my personal life is affecting my work/performance, I feel comfortable telling my manager about it",
       "data": {
+        "overall": 0.6,
         "region": {
-          "united_states": 50,
-          "united_kingdom": 43,
-          "india": 68,
-          "france": 39,
-          "germany": 37,
-          "japan": 27,
-          "united_arab_emirates": 39,
-          "brazil": 47,
-          "saudi_arabia": 37,
-          "australia": 48
+          "united_states": 0.65,
+          "united_kingdom": 0.61,
+          "australia": 0.62,
+          "india": 0.73,
+          "brazil": 0.63,
+          "saudi_arabia": 0.58,
+          "france": 0.57,
+          "germany": 0.53,
+          "japan": 0.36,
+          "united_arab_emirates": 0.56
         },
         "age": {
-          "18-24": 53,
-          "25-34": 50,
-          "35-44": 48,
-          "45-54": 43,
-          "55-65": 32,
-          "65+": 31
+          "18-24": 0.59,
+          "25-34": 0.63,
+          "35-44": 0.63,
+          "45-54": 0.57,
+          "55-65": 0.52,
+          "65+": 0.5
         },
         "gender": {
-          "male": 47,
-          "female": 44
+          "male": 0.6,
+          "female": 0.59
         },
         "org_size": {
-          "fewer_than_10": 35,
-          "10_to_49": 41,
-          "50_to_99": 51,
-          "100_to_499": 49,
-          "500_to_999": 51,
-          "1000_or_more": 44
+          "fewer_than_10": 0.5,
+          "10_to_49": 0.56,
+          "50_to_99": 0.59,
+          "100_to_499": 0.6,
+          "500_to_999": 0.63,
+          "1000_or_more": 0.59
         },
         "sector": {
-          "automotive": 50,
-          "business_administration": 46,
-          "technology": 59,
-          "construction": 41,
-          "consumer_goods": 44,
-          "education": 44,
-          "energy_utilities": 43,
-          "financial_services": 50,
-          "government": 39,
-          "healthcare": 46,
-          "manufacturing_industrial": 43,
-          "marketing_services": 56,
-          "legal_in-house": 38,
-          "legal_agency": 42,
-          "life_sciences": 49,
-          "professional_services": 41,
-          "real_estate": 44,
-          "retail": 44,
-          "sales": 45,
-          "telecommunications": 51,
-          "transport_storage": 36,
-          "travel_hospitality_leisure": 42,
-          "wholesale_distribution": 34,
-          "other": 37
+          "automotive": 0.6,
+          "business_administration": 0.63,
+          "technology": 0.71,
+          "construction": 0.61,
+          "consumer_goods": 0.6,
+          "education": 0.6,
+          "energy_utilities": 0.58,
+          "financial_services": 0.63,
+          "government": 0.58,
+          "healthcare": 0.56,
+          "manufacturing_industrial": 0.56,
+          "marketing_services": 0.66,
+          "legal_in-house": 0.48,
+          "legal_agency": 0.49,
+          "life_sciences": 0.53,
+          "professional_services": 0.54,
+          "real_estate": 0.62,
+          "retail": 0.56,
+          "sales": 0.62,
+          "telecommunications": 0.63,
+          "transport_storage": 0.57,
+          "travel_hospitality_leisure": 0.55,
+          "wholesale_distribution": 0.53,
+          "other": 0.53
         },
         "job_level": {
-          "ceo": 46,
-          "senior_executive": 57,
-          "senior_leader": 54,
-          "mid_level_leader": 45,
-          "first_level_supervisor": 48,
-          "individual_contributor": 37
+          "ceo": 0.65,
+          "senior_executive": 0.71,
+          "senior_leader": 0.67,
+          "mid_level_leader": 0.59,
+          "first_level_supervisor": 0.6,
+          "individual_contributor": 0.52
         },
         "relationship_status": {
-          "single": 44,
-          "cohabiting": 40,
-          "married": 49,
-          "divorced_separated": 34,
-          "widowed": 34
+          "single": 0.54,
+          "cohabiting": 0.57,
+          "married": 0.64,
+          "divorced_separated": 0.52,
+          "widowed": 0.61
         },
         "education": {
-          "secondary": 41,
-          "tertiary": 40,
-          "professional_certifications": 40,
-          "undergraduate": 45,
-          "postgraduate": 54,
-          "doctorate": 47
+          "secondary": 0.56,
+          "tertiary": 0.52,
+          "professional_certifications": 0.54,
+          "undergraduate": 0.6,
+          "postgraduate": 0.66,
+          "doctorate": 0.67
         },
         "generation": {
-          "gen_z": 52,
-          "millennials": 49,
-          "gen_x": 42,
-          "baby_boomers": 29,
-          "65_plus": 31
+          "gen_z": 0.6,
+          "millennials": 0.63,
+          "gen_x": 0.56,
+          "baby_boomers": 0.51
         },
         "employment_status": {
-          "full_time": 46,
-          "part_time": 43,
-          "contract": 44,
-          "freelance": 33
+          "full_time": 0.61,
+          "part_time": 0.55,
+          "contract": 0.56,
+          "freelance": 0.47
         }
       }
     }
