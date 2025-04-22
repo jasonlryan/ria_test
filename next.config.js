@@ -8,10 +8,11 @@ const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
   distDir: ".next",
+  outputFileTracingIncludes: {
+    "/**": ["utils/openai/*.md", "scripts/output/split_data/*.json"],
+  },
   experimental: {
-    outputFileTracingIncludes: {
-      "/**": ["utils/openai/*.md", "scripts/output/split_data/*.json"],
-    },
+    // outputFileTracingIncludes has been moved to the top level
   },
 };
 

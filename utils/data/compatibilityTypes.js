@@ -1,0 +1,78 @@
+/**
+ * Data Compatibility Type Definitions
+ *
+ * This file defines the TypeScript interfaces for data compatibility
+ * metadata used throughout the RIA25 system to track and enforce
+ * data compatibility rules for cross-year and cross-segment comparisons.
+ */
+
+/**
+ * @typedef {Object} TopicCompatibility
+ * @property {boolean} comparable - Whether this topic can be compared across years
+ * @property {string[]} availableYears - Years for which data is available
+ * @property {string[]} availableMarkets - Markets for which data is available
+ * @property {string} userMessage - Explanation message for users about compatibility
+ */
+
+/**
+ * @typedef {Object} SegmentCompatibility
+ * @property {boolean} comparable - Whether this segment can be compared across years
+ * @property {string[]} comparableValues - Specific segment values that can be compared
+ * @property {string} userMessage - Explanation message for users about compatibility
+ */
+
+/**
+ * @typedef {Object} CompatibilityError
+ * @property {string} type - Error type (e.g., 'TECHNICAL', 'DATA_LIMITATION')
+ * @property {string} message - User-friendly error message
+ * @property {string} [details] - Technical details for logging
+ */
+
+/**
+ * @typedef {Object} CompatibilityMetadata
+ * @property {boolean} isFullyCompatible - Whether all requested data is fully compatible
+ * @property {Object.<string, TopicCompatibility>} topicCompatibility - Per-topic compatibility information
+ * @property {Object.<string, SegmentCompatibility>} segmentCompatibility - Per-segment compatibility information
+ * @property {string} mappingVersion - Version of the canonical mapping used for assessment
+ * @property {number} assessedAt - Timestamp of when compatibility was assessed
+ * @property {CompatibilityError} [error] - Error information if compatibility assessment failed
+ */
+
+// For actual TypeScript, this would be:
+/*
+export interface TopicCompatibility {
+  comparable: boolean;
+  availableYears: string[];
+  availableMarkets: string[];
+  userMessage: string;
+}
+
+export interface SegmentCompatibility {
+  comparable: boolean;
+  comparableValues: string[];
+  userMessage: string;
+}
+
+export interface CompatibilityError {
+  type: string;
+  message: string;
+  details?: string;
+}
+
+export interface CompatibilityMetadata {
+  isFullyCompatible: boolean;
+  topicCompatibility: {
+    [topicId: string]: TopicCompatibility;
+  };
+  segmentCompatibility: {
+    [segmentType: string]: SegmentCompatibility;
+  };
+  mappingVersion: string;
+  assessedAt: number;
+  error?: CompatibilityError;
+}
+*/
+
+module.exports = {
+  // These are just the type definitions, no actual code is exported
+};

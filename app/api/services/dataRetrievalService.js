@@ -11,6 +11,8 @@ import logger from "../../../utils/logger";
 import {
   getCachedFilesForThread,
   updateThreadCache,
+  getThreadCompatibilityMetadata,
+  isCompatibilityMetadataValid,
 } from "../../../utils/cache-utils";
 import {
   identifyRelevantFiles,
@@ -19,6 +21,16 @@ import {
   processQueryWithData,
 } from "../../../utils/openai/retrieval";
 import { DEFAULT_SEGMENTS } from "../../../utils/data/segment_keys";
+import {
+  logCompatibilityAssessment,
+  logCompatibilityCache,
+  logCompatibilityToFile,
+  logCompatibilityInPrompt,
+} from "../../../utils/shared/compatibilityLogger";
+
+// Import compatibility types (using JS comment format since we're in a .js file)
+// @ts-check
+// const { CompatibilityMetadata } = require("../../../utils/data/compatibilityTypes");
 
 export class DataRetrievalService {
   constructor() {}
@@ -30,7 +42,7 @@ export class DataRetrievalService {
    * @param {boolean} isFollowUp
    * @param {string} previousQuery
    * @param {string} previousAssistantResponse
-   * @returns {Promise<object>} file IDs, matched topics, explanation
+   * @returns {Promise<object>} file IDs, matched topics, explanation, and compatibility metadata
    */
   async identifyRelevantFiles(
     query,
@@ -39,13 +51,183 @@ export class DataRetrievalService {
     previousQuery = "",
     previousAssistantResponse = ""
   ) {
-    return identifyRelevantFiles(
+    // Get the file identification result from the existing function
+    const fileIdentificationResult = await identifyRelevantFiles(
       query,
       context,
       isFollowUp,
       previousQuery,
       previousAssistantResponse
     );
+
+    // Extract topics and segments for compatibility assessment
+    const relevantTopics = fileIdentificationResult.matched_topics || [];
+    const requestedSegments =
+      fileIdentificationResult.segments || DEFAULT_SEGMENTS;
+
+    // Assess compatibility for the identified topics and segments
+    const compatibilityMetadata = this.assessCompatibility(
+      relevantTopics,
+      requestedSegments
+    );
+
+    // Log compatibility assessment results
+    logCompatibilityAssessment(
+      query,
+      compatibilityMetadata,
+      relevantTopics,
+      requestedSegments
+    );
+
+    // Add compatibility metadata to the result
+    return {
+      ...fileIdentificationResult,
+      compatibilityMetadata,
+    };
+  }
+
+  /**
+   * Assess data compatibility for the given topics and segments
+   * @param {string[]} topics - Topic IDs to check for compatibility
+   * @param {string[]} segments - Segment types to check for compatibility
+   * @returns {object} Compatibility metadata
+   */
+  assessCompatibility(topics, segments) {
+    try {
+      const mappingPath = path.join(
+        process.cwd(),
+        "scripts",
+        "reference files",
+        "2025",
+        "canonical_topic_mapping.json"
+      );
+
+      const mappingData = fs.readFileSync(mappingPath, "utf8");
+      const mapping = JSON.parse(mappingData);
+      const mappingVersion = mapping.metadata?.version || "1.0";
+
+      // Initialize compatibility metadata
+      const compatibilityMetadata = {
+        isFullyCompatible: true,
+        topicCompatibility: {},
+        segmentCompatibility: {},
+        mappingVersion,
+        assessedAt: Date.now(),
+      };
+
+      // Check topic compatibility
+      for (const topicId of topics) {
+        let foundTopic = null;
+
+        // Find the topic in the mapping
+        for (const theme of mapping.themes || []) {
+          for (const topic of theme.topics || []) {
+            if (topic.id === topicId) {
+              foundTopic = topic;
+              break;
+            }
+          }
+          if (foundTopic) break;
+        }
+
+        if (!foundTopic) {
+          // Topic not found in mapping
+          compatibilityMetadata.topicCompatibility[topicId] = {
+            comparable: false,
+            availableYears: [],
+            availableMarkets: [],
+            userMessage:
+              "This topic is not available in the canonical mapping.",
+          };
+          compatibilityMetadata.isFullyCompatible = false;
+          continue;
+        }
+
+        // Get topic compatibility information
+        const isComparable = foundTopic.comparable || false;
+        const availableYears = [];
+        if (foundTopic.mapping?.["2024"]) availableYears.push("2024");
+        if (foundTopic.mapping?.["2025"]) availableYears.push("2025");
+
+        const availableMarkets = foundTopic.availableMarkets || [];
+        const userMessage =
+          foundTopic.userMessage ||
+          (isComparable
+            ? "Data can be compared across years."
+            : "Year‑on‑year comparisons not available for this topic.");
+
+        compatibilityMetadata.topicCompatibility[topicId] = {
+          comparable: isComparable,
+          availableYears,
+          availableMarkets,
+          userMessage,
+        };
+
+        // Update overall compatibility flag
+        if (!isComparable && availableYears.length > 1) {
+          compatibilityMetadata.isFullyCompatible = false;
+        }
+      }
+
+      // Check segment compatibility
+      for (const segmentType of segments) {
+        let isSegmentCompatible = true;
+        let comparableValues = [];
+        let userMessage = "";
+
+        // Check segment compatibility based on mapping rules
+        switch (segmentType) {
+          case "country":
+            // Only comparable markets can be compared across years
+            comparableValues = mapping.dataAccess?.comparableMarkets || [];
+            isSegmentCompatible = comparableValues.length > 0;
+            userMessage = isSegmentCompatible
+              ? "Country data can be compared across years for these markets: " +
+                comparableValues.join(", ")
+              : "No comparable country data available across years.";
+            break;
+
+          case "age":
+          case "gender":
+            // These are generally comparable
+            isSegmentCompatible = true;
+            userMessage = `${segmentType} data can be compared across years.`;
+            break;
+
+          default:
+            // Other segments may not be comparable
+            isSegmentCompatible = false;
+            userMessage = `${segmentType} data cannot be reliably compared across years due to methodology changes.`;
+        }
+
+        compatibilityMetadata.segmentCompatibility[segmentType] = {
+          comparable: isSegmentCompatible,
+          comparableValues,
+          userMessage,
+        };
+
+        // Update overall compatibility flag
+        if (!isSegmentCompatible) {
+          compatibilityMetadata.isFullyCompatible = false;
+        }
+      }
+
+      return compatibilityMetadata;
+    } catch (error) {
+      logger.error(`Compatibility assessment error: ${error.message}`);
+      return {
+        isFullyCompatible: false,
+        error: {
+          type: "TECHNICAL",
+          message: "Unable to assess compatibility due to a technical issue",
+          details: error.message,
+        },
+        topicCompatibility: {},
+        segmentCompatibility: {},
+        mappingVersion: "unknown",
+        assessedAt: Date.now(),
+      };
+    }
   }
 
   /**
@@ -117,19 +299,58 @@ export class DataRetrievalService {
     // Step 1: Retrieve existing cache for the thread
     const cacheEntry = await this.getCachedFiles(threadId);
 
-    // Step 2: Extract requested segments from query intent or use default
+    // Step 2: Check for existing compatibility metadata
+    const cachedCompatibilityMetadata = await getThreadCompatibilityMetadata(
+      threadId
+    );
+
+    // Log cache read operation
+    if (cachedCompatibilityMetadata) {
+      logCompatibilityCache(
+        "read",
+        threadId,
+        true,
+        `Found cached compatibility metadata version ${cachedCompatibilityMetadata.mappingVersion}`
+      );
+    } else {
+      logCompatibilityCache(
+        "read",
+        threadId,
+        false,
+        "No cached compatibility metadata found"
+      );
+    }
+
+    // Step 3: Identify relevant files and assess compatibility
+    const fileIdentificationResult = await this.identifyRelevantFiles(
+      query,
+      context,
+      isFollowUp,
+      previousQuery,
+      previousAssistantResponse
+    );
+
+    // Step 4: Extract relevant information
+    const fileIds = fileIdentificationResult.file_ids || [];
+    const relevantTopics = fileIdentificationResult.matched_topics || [];
     const requestedSegments =
+      fileIdentificationResult.segments || DEFAULT_SEGMENTS;
+    const compatibilityMetadata =
+      fileIdentificationResult.compatibilityMetadata;
+
+    // Step 5: Extract requested segments from query intent or use default
+    const intendedSegments =
       isFollowUp && previousQuery
         ? this.extractSegmentsFromQuery(previousQuery)
         : DEFAULT_SEGMENTS;
 
-    // Step 3: Calculate missing segments for each cached file
+    // Step 6: Calculate missing segments for each cached file
     const missingSegmentsIndex = this.calculateMissingSegments(
       requestedSegments,
       cacheEntry
     );
 
-    // Step 4: For each cached file with missing segments, load additional segments
+    // Step 7: For each cached file with missing segments, load additional segments
     for (const file of cacheEntry) {
       if (missingSegmentsIndex[file.id]) {
         const missingSegments = missingSegmentsIndex[file.id];
@@ -138,19 +359,136 @@ export class DataRetrievalService {
           missingSegments
         );
         this.mergeFileSegments(file, additionalData, missingSegments);
+
+        // Log newly loaded segments
+        logger.info(
+          `[SEGMENTS] Loaded additional segments for file ${
+            file.id
+          }: ${missingSegments.join(", ")}`
+        );
       }
     }
 
-    // Step 5: Proceed with existing processQueryWithData logic
+    // Step 8: Update thread cache with compatibility metadata
+    await updateThreadCache(threadId, cacheEntry, compatibilityMetadata);
+
+    // Log cache update operation
+    logCompatibilityCache(
+      "write",
+      threadId,
+      true,
+      `Updated cache with compatibility metadata, isFullyCompatible: ${compatibilityMetadata.isFullyCompatible}`
+    );
+
+    // Log detailed compatibility information to file for analysis
+    logCompatibilityToFile(query, threadId, compatibilityMetadata);
+
+    // Step 9: Check if the query is asking for a comparison between years
+    const isComparisonQuery = this.isComparisonQuery(query);
+
+    // If this is a comparison query and some topics are not comparable,
+    // use detailed compatibility information to make the warning more prominent
+    let compatibilityVerbosity = "standard";
+    if (isComparisonQuery && !compatibilityMetadata.isFullyCompatible) {
+      compatibilityVerbosity = "detailed";
+      logger.info(
+        `[COMPATIBILITY] Using detailed verbosity for comparison query with incompatible topics`
+      );
+    }
+
+    // Step 10: Create an enhanced context with compatibility information
+    const enhancedContext = {
+      ...context,
+      compatibilityMetadata,
+      compatibilityVerbosity,
+    };
+
+    // Log that we're including compatibility information in the prompt
+    logCompatibilityInPrompt(
+      compatibilityVerbosity,
+      query,
+      compatibilityMetadata.isFullyCompatible
+    );
+
+    // Step 11: Proceed with existing processQueryWithData logic
     return processQueryWithData(
       query,
-      context,
+      enhancedContext,
       cachedFileIds,
       threadId,
       isFollowUp,
       previousQuery,
       previousAssistantResponse
     );
+  }
+
+  /**
+   * Checks if a query is asking for a comparison between years
+   * @param {string} query - The user query
+   * @returns {boolean} - Whether the query is asking for a comparison
+   */
+  isComparisonQuery(query) {
+    if (!query) return false;
+
+    // Normalize the query
+    const normalizedQuery = query.toLowerCase();
+
+    // Patterns that indicate a comparison query
+    const comparisonPatterns = [
+      // Year-specific patterns
+      /compare.*2024.*2025/i,
+      /compare.*2025.*2024/i,
+      /comparison.*2024.*2025/i,
+      /comparison.*2025.*2024/i,
+      /2024.*compared to.*2025/i,
+      /2025.*compared to.*2024/i,
+      /2024.*vs\.?.*2025/i,
+      /2025.*vs\.?.*2024/i,
+      /2024.*versus.*2025/i,
+      /2025.*versus.*2024/i,
+
+      // Direct comparison requests
+      /\bcompare with 2024\b/i,
+      /\bcompare to 2024\b/i,
+      /\bcompare with previous year\b/i,
+      /\bcompare to previous year\b/i,
+      /\bcompare with last year\b/i,
+      /\bcompare to last year\b/i,
+
+      // Evolution/between patterns
+      /\bbetween 2024 and 2025\b/i,
+      /\bbetween 2025 and 2024\b/i,
+      /\bfrom 2024 to 2025\b/i,
+      /\bfrom 2025 to 2024\b/i,
+      /\b2024 to 2025\b/i,
+      /\b2025 to 2024\b/i,
+      /\bevolution.*between/i,
+
+      // Generic time comparison patterns
+      /change(d|s)? (from|since|over|between)/i,
+      /difference(s)? (from|since|over|between)/i,
+      /trend(s)? (from|since|over|between)/i,
+      /evolution (from|since|over|between)/i,
+      /compare (\w+ )?(year|time)/i,
+      /comparison (\w+ )?(year|time)/i,
+      /previous (year|time)/i,
+      /year[\s-]on[\s-]year/i,
+      /year[\s-]over[\s-]year/i,
+      /over time/i,
+      /across years/i,
+      /across time/i,
+
+      // Follow-up comparison queries
+      /^can you compare/i,
+      /^compare with/i,
+      /^compare to/i,
+      /^how does this compare/i,
+      /^what about (in )?2024/i,
+      /^what about (the )?(previous|last) year/i,
+    ];
+
+    // Check if any comparison pattern matches
+    return comparisonPatterns.some((pattern) => pattern.test(normalizedQuery));
   }
 
   /**
@@ -203,7 +541,7 @@ export class DataRetrievalService {
         segmentData[seg] = jsonData[seg];
       }
     }
-    console.log(
+    logger.info(
       `[LazyLoad] Loaded additional segments for file ${fileId}: ${segments.join(
         ", "
       )}`

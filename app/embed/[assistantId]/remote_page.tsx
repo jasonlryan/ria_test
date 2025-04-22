@@ -159,10 +159,7 @@ function StreamingMarkdown({ content }: StreamingMarkdownProps) {
   );
 }
 
-function Embed(props) {
-  // Access assistantId through props.params to avoid Next.js 15 error
-  const assistantId = props.params.assistantId;
-
+function Embed({ params: { assistantId } }) {
   const title = "WORKFORCE 2025";
   const description =
     "Explore insights from our comprehensive workforce survey with RIA, your AI research assistant";
@@ -539,6 +536,7 @@ function Embed(props) {
         clearInterval(intervalRef.current);
         return;
       }
+
       // Check for errors in the data retrieval response
       if (dataResult.error) {
         setStreamingMessage((prev) => ({

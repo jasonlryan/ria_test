@@ -15,6 +15,41 @@ export interface CachedFile {
   availableSegments: Set<string>;
 }
 
+// Define compatibility metadata interface
+export interface TopicCompatibility {
+  comparable: boolean;
+  availableYears: string[];
+  availableMarkets: string[];
+  userMessage: string;
+}
+
+export interface SegmentCompatibility {
+  comparable: boolean;
+  comparableValues: string[];
+  userMessage: string;
+}
+
+export interface CompatibilityError {
+  type: string;
+  message: string;
+  details?: string;
+}
+
+export interface CompatibilityMetadata {
+  isFullyCompatible: boolean;
+  topicCompatibility: Record<string, TopicCompatibility>;
+  segmentCompatibility: Record<string, SegmentCompatibility>;
+  mappingVersion: string;
+  assessedAt: number;
+  error?: CompatibilityError;
+}
+
+export interface ThreadCache {
+  files: CachedFile[];
+  compatibilityMetadata?: CompatibilityMetadata;
+  lastUpdated: number;
+}
+
 export async function getCachedFilesForThread(threadId: string): Promise<CachedFile[]> {
   try {
     const key = `thread:${threadId}:meta`;
@@ -35,10 +70,32 @@ export async function getCachedFilesForThread(threadId: string): Promise<CachedF
   }
 }
 
-export async function updateThreadCache(threadId: string, newFiles: CachedFile[]): Promise<void> {
+export async function getThreadCompatibilityMetadata(threadId: string): Promise<CompatibilityMetadata | null> {
+  try {
+    const key = `thread:${threadId}:meta`;
+    const meta = await kvClient.get(key);
+    if (!meta || !meta.compatibilityMetadata) {
+      return null;
+    }
+    return meta.compatibilityMetadata as CompatibilityMetadata;
+  } catch (error) {
+    logger.error(`Error reading compatibility metadata for thread ${threadId}:`, error);
+    return null;
+  }
+}
+
+export async function updateThreadCache(
+  threadId: string, 
+  newFiles: CachedFile[],
+  compatibilityMetadata?: CompatibilityMetadata
+): Promise<void> {
   try {
     const metaKey = `thread:${threadId}:meta`;
-    const existingMeta = await kvClient.get(metaKey) || { files: [], scope: {} };
+    const existingMeta = await kvClient.get(metaKey) || { 
+      files: [], 
+      compatibilityMetadata: null,
+      lastUpdated: Date.now()
+    };
 
     // Convert loadedSegments and availableSegments to Set for merging
     existingMeta.files = existingMeta.files.map((file: any) => ({
@@ -63,6 +120,14 @@ export async function updateThreadCache(threadId: string, newFiles: CachedFile[]
       }
     }
 
+    // Update compatibility metadata if provided
+    if (compatibilityMetadata) {
+      existingMeta.compatibilityMetadata = compatibilityMetadata;
+    }
+    
+    // Update timestamp
+    existingMeta.lastUpdated = Date.now();
+
     // Convert Sets back to arrays for serialization
     existingMeta.files = existingMeta.files.map((file: any) => ({
       ...file,
@@ -86,5 +151,33 @@ export async function updateThreadCache(threadId: string, newFiles: CachedFile[]
     }
   } catch (error) {
     logger.error(`Error updating cache for thread ${threadId}:`, error);
+  }
+}
+
+/**
+ * Checks if the cached compatibility metadata is still valid
+ * @param threadId Thread identifier
+ * @param currentMappingVersion Current version of the canonical mapping
+ * @returns Whether the cached compatibility metadata is still valid
+ */
+export async function isCompatibilityMetadataValid(
+  threadId: string, 
+  currentMappingVersion: string
+): Promise<boolean> {
+  try {
+    const metadata = await getThreadCompatibilityMetadata(threadId);
+    
+    if (!metadata) {
+      return false;
+    }
+    
+    // Check if mapping version matches and assessment is recent enough
+    const isValid = metadata.mappingVersion === currentMappingVersion &&
+      (Date.now() - metadata.assessedAt) < (7 * 24 * 60 * 60 * 1000); // 7 days max age
+    
+    return isValid;
+  } catch (error) {
+    logger.error(`Error validating compatibility metadata: ${error.message}`);
+    return false;
   }
 }
