@@ -17,6 +17,9 @@ The following plans have been fully implemented:
 4. **OpenAI API Optimization** - Improved performance and response time
 5. **Smart Filtering Implementation** - Demographic segment detection and data filtering
 6. **Starter Question Optimization** - Fast-path processing for starter questions
+7. **Data Compatibility Implementation** - Blocking incompatible year-on-year comparisons
+8. **Data Comparison Fix** - Filtering logic for incomparable data in comparisons
+9. **Data Compatibility Integration** - Integration of compatibility checks throughout the system
 
 ## Current Plans (⚠️ or ❌)
 
@@ -27,6 +30,7 @@ The following plans are in progress or pending implementation:
 3. **Shared Utilities Library** (⚠️ Partially Implemented) - Centralized utility functions
 4. **Smart Filtering and Segment-Aware Caching** (⚠️ Partially Implemented) - Enhanced caching
 5. **Vercel KV Cache Migration** (❌ Not Implemented) - Production-ready persistent caching
+6. **Compatibility Enhancements** (❌ Not Implemented) - Advanced features for compatibility handling
 
 ## Implementation Priority
 
@@ -42,6 +46,7 @@ The following plans are in progress or pending implementation:
 3. **Medium Priority**:
    - Complete Shared Utilities Library
    - Finish Logging Migration
+   - Implement Compatibility Enhancements
 
 ## Reference
 
