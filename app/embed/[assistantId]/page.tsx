@@ -737,202 +737,244 @@ ${
           );
         }
 
-        if (!assistantResponse.body) {
-          throw new Error("No response body received");
-        }
+        // --- START NEW LOGIC: Check Content-Type before assuming stream ---
+        const contentType = assistantResponse.headers.get("content-type");
 
-        // Add more detailed logging
-        console.log("Got response body, starting stream processing");
+        if (contentType && contentType.includes("application/json")) {
+          console.log(
+            "[FRONTEND] Received JSON response from /api/chat-assistant"
+          );
+          try {
+            const data = await assistantResponse.json();
+            // console.log("[FRONTEND] Parsed JSON data:", data); // Removed verbose log
 
-        // Use a manual event source approach instead of AssistantStream
-        const reader = assistantResponse.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = "";
-
-        // Reset accumulated text at the start of streaming
-        accumulatedText.current = "";
-
-        // Function to process SSE events
-        const processEvents = async (chunk) => {
-          // Add the new chunk to our buffer
-          buffer += chunk;
-
-          // Log raw buffer for debugging
-          console.log(`Raw chunk received (${chunk.length} chars)`);
-
-          // First look for text delta events and accumulate them
-          const textDeltaRegex = /event: textDelta\ndata: ({.*?})\n\n/g;
-          let match;
-
-          while ((match = textDeltaRegex.exec(buffer)) !== null) {
-            try {
-              const eventData = JSON.parse(match[1]);
-
-              if (eventData.value) {
-                console.log(
-                  `📝 Accumulating text delta: ${eventData.value.substring(
-                    0,
-                    20
-                  )}...`
-                );
-
-                // CRITICAL: Accumulate text in the ref first
-                accumulatedText.current += eventData.value;
-
-                // Then update React state once with the complete accumulated text
-                setStreamingMessage({
-                  id: "streaming",
-                  role: "assistant",
-                  content: accumulatedText.current,
-                  createdAt: new Date(),
-                });
-              }
-            } catch (e) {
-              console.error("Error processing text delta:", e);
-            }
-          }
-
-          // Look for message done events
-          const messageDoneRegex = /event: messageDone\ndata: ({.*?})\n\n/g;
-          let doneMatch;
-
-          while ((doneMatch = messageDoneRegex.exec(buffer)) !== null) {
-            try {
-              const eventData = JSON.parse(doneMatch[1]);
-              console.log("✅ Message completed, adding to chat");
-
-              // Set the thread ID if available
-              if (eventData.threadId) {
-                setThreadId(eventData.threadId);
-              }
-
-              // Use the accumulated text for the final message
-              const finalContent =
-                eventData.content || accumulatedText.current || "";
-
-              // *** ADDED FOR DEBUGGING ***
+            // Check for specific direct message flags
+            if (
+              data.incompatible_comparison === true ||
+              data.out_of_scope === true
+            ) {
+              const messageContent =
+                data.message ||
+                (data.incompatible_comparison
+                  ? "Comparison not possible due to data limitations."
+                  : "Query is outside the scope of available data.");
               console.log(
-                "DEBUG: Final content being added to messages:",
-                JSON.stringify(finalContent)
+                "[FRONTEND] Direct message flag detected. Displaying message:",
+                messageContent
               );
-              // *** END DEBUGGING ***
 
-              // Add the final message
-              messageId.current++;
+              // Safely add the complete message to the chat display
+              messageId.current++; // Increment message ID for unique key
               setMessages((prevMessages) => [
                 ...prevMessages,
                 {
-                  id: messageId.current.toString(),
+                  id: messageId.current.toString(), // Use incremented ID
                   role: "assistant",
-                  content: finalContent,
-                  createdAt: new Date(eventData.createdAt || Date.now()),
+                  content: messageContent, // Use the message from JSON
+                  createdAt: new Date(),
                 },
               ]);
 
-              // Reset states
+              // Reset loading/streaming states
               setLoading(false);
               setStreamingMessage(null);
               accumulatedText.current = "";
-
-              // Clear loading interval
               if (intervalRef.current) {
                 clearInterval(intervalRef.current);
               }
 
-              // Scroll to bottom
-              setTimeout(scrollToBottom, 100);
-            } catch (e) {
-              console.error("Error processing message done:", e);
-            }
-          }
-
-          // Check for error events
-          const errorRegex = /event: error\ndata: ({.*?})\n\n/g;
-          let errorMatch;
-
-          while ((errorMatch = errorRegex.exec(buffer)) !== null) {
-            try {
-              const eventData = JSON.parse(errorMatch[1]);
-              console.error(
-                "🛑 Error event:",
-                eventData.message || eventData.error
+              // IMPORTANT: Stop further processing for this response
+              return;
+            } else {
+              // Handle unexpected JSON structure
+              console.warn(
+                "[FRONTEND] Received unexpected JSON structure:",
+                data
               );
-
-              // Add error message
-              messageId.current++;
-              setMessages((prevMessages) => [
-                ...prevMessages,
-                {
-                  id: messageId.current.toString(),
-                  role: "assistant",
-                  content: `I apologize, but I encountered an error: ${
-                    eventData.message || eventData.error || "Unknown error"
-                  }`,
-                  createdAt: new Date(),
-                },
-              ]);
-
-              // Reset states
-              setLoading(false);
-              setStreamingMessage(null);
-
-              // Clear loading interval
-              if (intervalRef.current) {
-                clearInterval(intervalRef.current);
-              }
-
-              // Scroll to bottom
-              setTimeout(scrollToBottom, 100);
-            } catch (e) {
-              console.error("Error processing error event:", e);
+              throw new Error("Received an unexpected response format."); // Throw error to be caught below
             }
+          } catch (jsonError) {
+            console.error("[FRONTEND] Error parsing JSON response:", jsonError);
+            // Handle JSON parsing error by throwing it to the main catch block
+            throw new Error(`Failed to process response: ${jsonError.message}`);
+          }
+        }
+        // --- END NEW LOGIC ---
+        // --- EXISTING STREAM LOGIC MOVED INTO ELSE IF ---
+        else if (contentType && contentType.includes("text/event-stream")) {
+          console.log(
+            "[FRONTEND] Received stream response. Starting stream processing."
+          );
+          if (!assistantResponse.body) {
+            throw new Error("No response body received for stream");
           }
 
-          // Trim buffer to avoid memory issues
-          const lastCompleteEvent = buffer.lastIndexOf("\n\n");
-          if (lastCompleteEvent > 0) {
-            buffer = buffer.substring(lastCompleteEvent + 2);
-          }
-        };
+          // Use a manual event source approach instead of AssistantStream
+          const reader = assistantResponse.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = "";
 
-        // Start reading the stream
-        try {
+          // Reset accumulated text at the start of streaming
+          accumulatedText.current = "";
+
+          // Function to process SSE events
+          const processEvents = async (chunk) => {
+            // Add the new chunk to our buffer
+            buffer += chunk;
+
+            // Log raw buffer for debugging - REMOVED
+            // console.log(`Raw chunk received (${chunk.length} chars)`);
+
+            // First look for text delta events and accumulate them
+            const textDeltaRegex = /event: textDelta\ndata: ({.*?})\n\n/g;
+            let match;
+
+            while ((match = textDeltaRegex.exec(buffer)) !== null) {
+              try {
+                const eventData = JSON.parse(match[1]);
+
+                if (eventData.value) {
+                  // console.log( // Removed verbose log
+                  //  `📝 Accumulating text delta: ${eventData.value.substring(
+                  //    0,
+                  //    20
+                  //  )}...`
+                  // );
+
+                  // CRITICAL: Accumulate text in the ref first
+                  accumulatedText.current += eventData.value;
+
+                  // Then update React state once with the complete accumulated text
+                  setStreamingMessage({
+                    id: "streaming",
+                    role: "assistant",
+                    content: accumulatedText.current,
+                    createdAt: new Date(),
+                  });
+                }
+              } catch (e) {
+                console.error("Error processing text delta:", e);
+              }
+            }
+
+            // Look for message done events
+            const messageDoneRegex = /event: messageDone\ndata: ({.*?})\n\n/g;
+            let doneMatch;
+
+            while ((doneMatch = messageDoneRegex.exec(buffer)) !== null) {
+              try {
+                const eventData = JSON.parse(doneMatch[1]);
+                console.log("✅ Message completed, adding to chat");
+
+                // Set the thread ID if available
+                if (eventData.threadId) {
+                  setThreadId(eventData.threadId);
+                }
+
+                // Use the accumulated text for the final message
+                const finalContent =
+                  eventData.content || accumulatedText.current || "";
+
+                // *** ADDED FOR DEBUGGING *** - REMOVED
+                // console.log(
+                //  "DEBUG: Final content being added to messages:",
+                //  JSON.stringify(finalContent)
+                // );
+                // *** END DEBUGGING ***
+
+                // Add the final message
+                messageId.current++;
+                setMessages((prevMessages) => [
+                  ...prevMessages,
+                  {
+                    id: messageId.current.toString(),
+                    role: "assistant",
+                    content: finalContent,
+                    createdAt: new Date(eventData.createdAt || Date.now()),
+                  },
+                ]);
+
+                // Reset states
+                setLoading(false);
+                setStreamingMessage(null);
+                accumulatedText.current = "";
+
+                // Clear loading interval
+                if (intervalRef.current) {
+                  clearInterval(intervalRef.current);
+                }
+
+                // Scroll to bottom
+                setTimeout(scrollToBottom, 100);
+              } catch (e) {
+                console.error("Error processing message done:", e);
+              }
+            }
+
+            // Check for error events
+            const errorRegex = /event: error\ndata: ({.*?})\n\n/g;
+            let errorMatch;
+
+            while ((errorMatch = errorRegex.exec(buffer)) !== null) {
+              try {
+                const eventData = JSON.parse(errorMatch[1]);
+                console.error(
+                  "🛑 Error event:",
+                  eventData.message || eventData.error
+                );
+
+                // Add error message
+                messageId.current++;
+                setMessages((prevMessages) => [
+                  ...prevMessages,
+                  {
+                    id: messageId.current.toString(),
+                    role: "assistant",
+                    content: `I apologize, but I encountered an error: ${
+                      eventData.message || eventData.error || "Unknown error"
+                    }`,
+                    createdAt: new Date(),
+                  },
+                ]);
+
+                // Reset states
+                setLoading(false);
+                setStreamingMessage(null);
+
+                // Clear loading interval
+                if (intervalRef.current) {
+                  clearInterval(intervalRef.current);
+                }
+
+                // Scroll to bottom
+                setTimeout(scrollToBottom, 100);
+              } catch (e) {
+                console.error("Error processing error event:", e);
+              }
+            }
+
+            // Trim buffer to avoid memory issues
+            const lastCompleteEvent = buffer.lastIndexOf("\n\n");
+            if (lastCompleteEvent > 0) {
+              buffer = buffer.substring(lastCompleteEvent + 2);
+            }
+          };
+
+          // Start reading the stream
+          // Removed try/catch here, moved to outer block
           while (true) {
             const { done, value } = await reader.read();
-
             if (done) {
               console.log("Stream complete");
               break;
             }
-
-            // Process this chunk
             await processEvents(decoder.decode(value, { stream: true }));
           }
-        } catch (streamError) {
-          console.error("Error reading stream:", streamError);
-
-          // Add error message to chat
-          messageId.current++;
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            {
-              id: messageId.current.toString(),
-              role: "assistant",
-              content:
-                "I apologize, but I encountered an issue with the connection. Please try again.",
-              createdAt: new Date(),
-            },
-          ]);
-
-          // Reset states
-          setLoading(false);
-          setStreamingMessage(null);
-
-          // Clear loading interval if it's still running
-          if (intervalRef.current) clearInterval(intervalRef.current);
-
-          // Scroll to bottom
-          setTimeout(scrollToBottom, 100);
+          // --- END EXISTING STREAM LOGIC ---
+        } else {
+          // Handle unexpected Content-Type
+          console.error("[FRONTEND] Unexpected Content-Type:", contentType);
+          throw new Error("Received an unexpected response type from server.");
         }
       } catch (error) {
         console.error("Error processing assistant response:", error);

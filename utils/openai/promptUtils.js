@@ -103,11 +103,63 @@ export function buildPromptWithFilteredData(
       ? formatGroupedStats(groupedStats)
       : "No data matched for the selected segments.";
 
-  let prompt = originalUserContent + "\n\n" + statsPreview;
+  // Initialize the prompt - we'll build it in pieces
+  let promptParts = {
+    userQuery: originalUserContent,
+    incomparableTopicNotice: "",
+    compatibilityInfo: "",
+    data: statsPreview,
+  };
+
+  // Add specific incomparable topic messages if any topics were filtered out - do this FIRST
+  if (
+    options.incomparableTopicMessages ||
+    (options.context && options.context.incomparableTopicMessages) ||
+    (options.context && options.context.hasIncomparableTopics)
+  ) {
+    const incomparableTopics =
+      options.incomparableTopicMessages ||
+      (options.context && options.context.incomparableTopicMessages) ||
+      {};
+
+    if (Object.keys(incomparableTopics).length > 0) {
+      promptParts.incomparableTopicNotice =
+        "\n\n### ⚠️ IMPORTANT NOTICE ON INCOMPARABLE TOPICS ⚠️\n" +
+        "The following topics cannot be compared between years:\n\n";
+
+      for (const [topic, message] of Object.entries(incomparableTopics)) {
+        promptParts.incomparableTopicNotice += `⚠️ **${topic}**: ${message}\n\n`;
+      }
+
+      promptParts.incomparableTopicNotice +=
+        "For the above topics, you MUST NOT attempt to make year-on-year comparisons. " +
+        "Instead, present only the available data and explicitly state the limitation. " +
+        "The data for these topics has been intentionally excluded from this response.";
+
+      logger.info(
+        `[COMPATIBILITY] Added prominent incomparable topics notice for ${
+          Object.keys(incomparableTopics).length
+        } topics`
+      );
+    }
+  }
 
   // Add compatibility information if provided
   if (options.compatibilityMetadata) {
     const compatibilityVerbosity = options.compatibilityVerbosity || "standard";
+
+    // If we have incomparable topics and this is a comparison query,
+    // promote verbosity to at least "standard" to ensure clear warnings
+    if (
+      options.context &&
+      options.context.hasIncomparableTopics &&
+      compatibilityVerbosity === "minimal"
+    ) {
+      logger.info(
+        "[COMPATIBILITY] Upgrading verbosity from minimal to standard due to incomparable topics"
+      );
+      compatibilityVerbosity = "standard";
+    }
 
     // Log that we're adding compatibility info to the prompt
     logCompatibilityInPrompt(
@@ -122,10 +174,26 @@ export function buildPromptWithFilteredData(
     );
 
     if (compatibilitySection) {
-      prompt +=
+      promptParts.compatibilityInfo =
         "\n\n### Data Compatibility Information\n" + compatibilitySection;
     }
   }
+
+  // Assemble the prompt - putting incomparable topics warning FIRST for prominence
+  let prompt = promptParts.userQuery;
+
+  // Add incomparable topic notice FIRST if present
+  if (promptParts.incomparableTopicNotice) {
+    prompt += promptParts.incomparableTopicNotice;
+  }
+
+  // Add compatibility information next
+  if (promptParts.compatibilityInfo) {
+    prompt += promptParts.compatibilityInfo;
+  }
+
+  // Finally add the data preview
+  prompt += "\n\n" + promptParts.data;
 
   return prompt;
 }

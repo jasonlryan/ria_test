@@ -14,8 +14,19 @@ import { logPerformanceMetrics, logPerformanceToFile } from "../../../utils/shar
 import { formatErrorResponse, formatBadRequestResponse } from "../../../utils/shared/errorHandler";
 import { sanitizeOutput, isJsonContent } from "../../../utils/shared/utils";
 import { waitForNoActiveRuns } from "../../../utils/shared/polling";
-import { processQueryWithData, identifyRelevantFiles, getPrecompiledStarterData, isStarterQuestion } from "../../../utils/openai/retrieval";
-import { getCachedFilesForThread, updateThreadCache, CachedFile } from "../../../utils/cache-utils";
+import {
+  processQueryWithData,
+  identifyRelevantFiles,
+  getPrecompiledStarterData,
+  isStarterQuestion,
+  detectComparisonQuery,
+  fileCompatibilityData,
+} from "../../../utils/openai/retrieval";
+import {
+  getCachedFilesForThread,
+  updateThreadCache,
+  CachedFile,
+} from "../../../utils/cache-utils";
 import { buildPromptWithFilteredData } from "../../../utils/openai/promptUtils";
 
 const OPENAI_TIMEOUT_MS = 90000;
@@ -103,6 +114,155 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
     } else {
       logger.info(`[THREAD] Reusing existing thread: ${finalThreadId}`);
     }
+
+    // Flag and variable for early return
+    let earlyResponse: NextResponse | null = null;
+
+    // ===== START: Follow-up Comparison Incompatibility Check (Using 2_data_incomparable.md) =====
+    if (isFollowUp && finalThreadId) {
+      const isComparison = detectComparisonQuery(content); // Check current query content
+
+      if (isComparison) {
+        logger.warn(
+          `[CONTROLLER_COMPAT_CHECK] Detected follow-up comparison query for thread: ${finalThreadId}`
+        );
+        try { // Outer try for the whole check process
+          const cachedFiles = await getCachedFilesForThread(finalThreadId);
+          const cachedFileIds = Array.isArray(cachedFiles) ? cachedFiles.map((f) => f.id) : [];
+          logger.info(
+            `[CONTROLLER_COMPAT_CHECK] Found ${
+              cachedFileIds.length
+            } cached files: ${cachedFileIds.join(", ")}`
+          );
+          const incompatibleFilesInfo = [];
+          let checkPerformed = false;
+          if (
+            cachedFileIds.length > 0 &&
+            fileCompatibilityData?.fileCompatibility
+          ) {
+            checkPerformed = true;
+            for (const fileId of cachedFileIds) {
+              const normalizedId = String(fileId).replace(/\.json$/, "");
+              const compatInfo =
+                fileCompatibilityData.fileCompatibility[normalizedId];
+              if (compatInfo && compatInfo.comparable === false) {
+                 if (
+                  compatInfo.topic &&
+                  !incompatibleFilesInfo.some(
+                    (item) => item.topic === compatInfo.topic
+                  )
+                ) {
+                  incompatibleFilesInfo.push({
+                    topic: compatInfo.topic,
+                    message: compatInfo.userMessage || "Comparison not available due to methodology changes.",
+                  });
+                }
+              }
+            }
+          } else {
+             if (cachedFileIds.length === 0) {
+                logger.warn(`[CONTROLLER_COMPAT_CHECK] Skipping check: No cached files found for thread ${finalThreadId}.`);
+             } else {
+                logger.error(`[CONTROLLER_COMPAT_CHECK] Skipping check: fileCompatibilityData not loaded or invalid!`);
+             }
+          }
+          // --- END: existing check logic ---
+
+          // --- If incompatible files were found, FORK to use 2_data_incomparable.md --- 
+          if (checkPerformed && incompatibleFilesInfo.length > 0) {
+            const incompatibleTopics = incompatibleFilesInfo.map((f) => f.topic);
+            logger.warn(
+              `[CONTROLLER_COMPAT_GATE] Incompatible topics found: ${incompatibleTopics.join(", ")}. Using 2_data_incomparable.md prompt.`
+            );
+
+            try { // Inner try for LLM call and prompt loading
+              // 1. Load the new prompt file
+              const promptPath = path.join(process.cwd(), "utils", "openai", "2_data_incomparable.md");
+              let promptTemplate = "";
+              try {
+                 promptTemplate = fs.readFileSync(promptPath, "utf8");
+              } catch (promptReadError) {
+                  logger.error(`[CONTROLLER_COMPAT_GATE] CRITICAL: Failed to read prompt file ${promptPath}: ${promptReadError.message}`);
+                  // Fallback message if prompt file fails to load
+                  const fallbackMessage = `Comparison cannot be performed for topics: ${incompatibleTopics.join(', ')}. Data methodology has changed. [Error: Prompt file missing]`;
+                  // Assign to earlyResponse instead of returning
+                  earlyResponse = NextResponse.json({
+                      incompatible_comparison: true,
+                      message: fallbackMessage
+                  }, { status: 200 });
+                  logger.info(`[CONTROLLER_COMPAT_GATE] Prepared early JSON response (prompt read error).`);
+              }
+              
+              // Only proceed if prompt loaded and earlyResponse wasn't set by prompt error
+              if (promptTemplate && !earlyResponse) {
+                // 2. Format the list of topics
+                const topicsListString = incompatibleTopics.map(topic => `- ${topic}`).join("\n");
+                const formattedPrompt = promptTemplate.replace("{{INCOMPATIBLE_TOPICS_LIST}}", topicsListString);
+
+                // 3. Call Chat Completions API
+                logger.info(`[CONTROLLER_COMPAT_GATE] Calling Chat Completions with 2_data_incomparable prompt.`);
+                const completion = await openai.chat.completions.create({
+                  model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+                  messages: [
+                      {"role": "system", "content": "You are an AI assistant explaining data limitations."},
+                      {"role": "user", "content": formattedPrompt}
+                  ],
+                  temperature: 0.2, 
+                  max_tokens: 150 
+                });
+
+                // 4. Extract the generated message
+                const generatedMessage = completion.choices[0]?.message?.content?.trim() || 
+                                        "Comparison cannot be performed for the requested topics due to data methodology changes. [Error: Could not generate message]";
+                logger.info(`[CONTROLLER_COMPAT_GATE] LLM generated warning: "${generatedMessage.substring(0,100)}..."`);
+
+                // 5. Assign the response to the earlyResponse variable
+                earlyResponse = NextResponse.json({
+                    incompatible_comparison: true, 
+                    message: generatedMessage
+                }, { status: 200 });
+                logger.info(`[CONTROLLER_COMPAT_GATE] Prepared early JSON response (LLM success).`);
+              }
+
+            } catch (llmError) {
+               logger.error(`[CONTROLLER_COMPAT_GATE] Error during LLM call for incompatibility message: ${llmError.message}`);
+               // Fallback message if LLM call fails - Assign to earlyResponse
+               const fallbackMessage = `Comparison cannot be performed for topics: ${incompatibleTopics.join(', ')}. Data methodology has changed. [Error: Failed to generate explanation]`;
+               earlyResponse = NextResponse.json({
+                  incompatible_comparison: true,
+                  message: fallbackMessage
+               }, { status: 200 });
+               logger.info(`[CONTROLLER_COMPAT_GATE] Prepared early JSON response (LLM error).`);
+            }
+          
+          } else {
+            // Log if check ran but found no incompatible files, or if check was skipped
+            logger.info(
+              `[CONTROLLER_COMPAT_CHECK] Check ran: ${checkPerformed}. Incompatible files found: ${incompatibleFilesInfo.length}. Proceeding with normal flow.`
+            );
+          }
+
+        } catch (error) {
+          // Log error during the check itself (outer try block), but allow normal flow to continue
+          // Do NOT set earlyResponse here, as we want the main flow to handle this type of error
+          logger.error(
+            `[CONTROLLER_COMPAT_CHECK] Error during follow-up compatibility check logic: ${error.message}`,
+            error
+          );
+        }
+      } // end if(isComparison)
+    } // end if(isFollowUp && finalThreadId)
+    // ===== END: Follow-up Comparison Incompatibility Check =====
+
+    // ===== ADD EXPLICIT RETURN CHECK =====
+    // Explicit check to return if the fork logic prepared a response
+    if (earlyResponse) {
+      logger.info(`[CONTROLLER_FLOW] Executing early return due to compatibility gate.`);
+      return earlyResponse;
+    }
+    // If earlyResponse is null, execution continues normally below
+    logger.info(`[CONTROLLER_FLOW] Compatibility check passed or not applicable, proceeding to main flow.`);
+    // ======================================
 
     await waitForNoActiveRuns(openai, finalThreadId);
 

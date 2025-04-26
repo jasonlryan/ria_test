@@ -397,11 +397,28 @@ export class DataRetrievalService {
     }
 
     // Step 10: Create an enhanced context with compatibility information
+    // Check if there are any incomparable topics to highlight
+    const hasIncomparableTopics =
+      !compatibilityMetadata.isFullyCompatible &&
+      Object.entries(compatibilityMetadata.topicCompatibility || {}).some(
+        ([_, info]) => !info.comparable && info.availableYears.length > 1
+      );
+
+    // Add flag directly to context to simplify prompt building decisions
     const enhancedContext = {
       ...context,
       compatibilityMetadata,
       compatibilityVerbosity,
+      hasIncomparableTopics,
     };
+
+    // Log if incomparable topics were detected
+    if (hasIncomparableTopics) {
+      logger.info(
+        `[COMPATIBILITY] Detected incomparable topics in compatibility metadata. ` +
+          `Setting hasIncomparableTopics flag to true.`
+      );
+    }
 
     // Log that we're including compatibility information in the prompt
     logCompatibilityInPrompt(
@@ -418,7 +435,8 @@ export class DataRetrievalService {
       threadId,
       isFollowUp,
       previousQuery,
-      previousAssistantResponse
+      previousAssistantResponse,
+      fileIdentificationResult
     );
   }
 

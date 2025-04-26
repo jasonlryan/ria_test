@@ -59,6 +59,55 @@ let canonicalTopicMapping = null;
 // Cache for query results to avoid repeated OpenAI calls for similar queries
 const queryCache = new Map();
 
+// Load file compatibility data once at module level
+export const fileCompatibilityData = (() => {
+  try {
+    const compatibilityPath = path.join(
+      process.cwd(),
+      "scripts",
+      "reference files",
+      "file_compatibility.json"
+    );
+    const data = fs.readFileSync(compatibilityPath, "utf8");
+    const parsedData = JSON.parse(data);
+    // Add logging here
+    const fileCompatKeys = parsedData.fileCompatibility
+      ? Object.keys(parsedData.fileCompatibility)
+      : [];
+    const keysLoaded = fileCompatKeys.length;
+    logger.info(
+      `[COMPATIBILITY_LOAD] Successfully loaded file_compatibility.json. Found ${keysLoaded} file entries.`
+    );
+    if (keysLoaded > 0) {
+      logger.info(
+        `[COMPATIBILITY_LOAD] First 5 keys: ${fileCompatKeys
+          .slice(0, 5)
+          .join(", ")}`
+      );
+    } else {
+      logger.error(
+        "[COMPATIBILITY_LOAD] CRITICAL: fileCompatibilityData loaded but fileCompatibility object is empty or missing!"
+      );
+    }
+    // Log structure confirmation
+    logger.info(
+      `[COMPATIBILITY_LOAD] Data structure confirmed: Keys found - metadata: ${!!parsedData.metadata}, fileCompatibility: ${!!parsedData.fileCompatibility}, compatibleTopics: ${!!parsedData.compatibleTopics}, nonComparableTopics: ${!!parsedData.nonComparableTopics}`
+    );
+    return parsedData;
+  } catch (error) {
+    logger.error(
+      `[COMPATIBILITY_LOAD] Error loading file compatibility data: ${error.message}`
+    );
+    // Ensure a default structure is returned even on error
+    return {
+      metadata: { error: `Failed to load: ${error.message}` },
+      fileCompatibility: {},
+      compatibleTopics: [],
+      nonComparableTopics: [],
+    };
+  }
+})();
+
 /**
  * Load a prompt from a markdown file
  * @param {string} promptName - The name of the prompt file without extension
@@ -896,18 +945,15 @@ export async function retrieveDataFiles(fileIds) {
 }
 
 /**
- * Process a query using the two-step retrieval approach
- * @param {string} query - The user's query
- * @param {string} context - The context for filtering data (e.g., 'sectors', 'all')
- * @param {Array} cachedFileIds - Optional array of file IDs that are already cached
- * @returns {Promise<object>} - The processed result
- */
-/**
  * Process a query using smart filtering and incremental caching
  * @param {string} query - The user's query
  * @param {string} context - The context for filtering data (e.g., 'sectors', 'all')
  * @param {Array} cachedFileIds - Optional array of file IDs that are already cached
  * @param {string} threadId - Optional thread ID for cache (to be integrated with API)
+ * @param {boolean} isFollowUpContext - Whether the query is a follow-up
+ * @param {string} previousQueryContext - The previous query
+ * @param {string} previousAssistantResponseContext - The previous assistant response
+ * @param {object} precomputedIdentification - Optional precomputed file identification result
  * @returns {Promise<object>} - The processed result
  */
 export async function processQueryWithData(
@@ -918,7 +964,8 @@ export async function processQueryWithData(
   // Add parameters to receive context from caller
   isFollowUpContext = false,
   previousQueryContext = "",
-  previousAssistantResponseContext = ""
+  previousAssistantResponseContext = "",
+  precomputedIdentification = null
 ) {
   const startTime = performance.now();
 
@@ -1080,15 +1127,16 @@ export async function processQueryWithData(
 
   // === NORMAL QUESTION HANDLING ===
 
-  // 1. Use OpenAI to identify relevant files (semantic mapping)
-  // Pass the received context down to identifyRelevantFiles
-  const fileIdResult = await identifyRelevantFiles(
-    query,
-    context,
-    isFollowUpContext,
-    previousQueryContext,
-    previousAssistantResponseContext
-  );
+  // 1. Use OpenAI to identify relevant files (semantic mapping) or use precomputedIdentification if provided
+  const fileIdResult =
+    precomputedIdentification ??
+    (await identifyRelevantFiles(
+      query,
+      context,
+      isFollowUpContext,
+      previousQueryContext,
+      previousAssistantResponseContext
+    ));
 
   // --- START DEBUG LOGGING ---
   logger.info("--- Retrieval Step Analysis ---");
@@ -1133,6 +1181,147 @@ export async function processQueryWithData(
   const fileIds = fileIdResult.file_ids || [];
   const matchedTopics = fileIdResult.matched_topics || [];
   const explanation = fileIdResult.explanation || "";
+
+  // ===== FILE COMPATIBILITY CHECK (NEW - Based on Plan) =====
+  // Hard gate: Check if this is a comparison query with incomparable files
+  const isComparisonQuery = detectComparisonQuery(query);
+
+  if (isComparisonQuery) {
+    logger.info(
+      `[COMPATIBILITY] Detected comparison query: "${query.substring(
+        0,
+        100
+      )}..."`
+    );
+    logger.info(
+      `[COMPATIBILITY] Checking ${fileIds.length} files for compatibility using loaded data...`
+    );
+
+    const incompatibleFiles = [];
+    const compatibleFiles = []; // Keep track of compatible ones too for logging
+
+    // Check each file ID against pre-loaded compatibility data
+    for (const fileId of fileIds) {
+      const normalizedId = fileId.replace(/\.json$/, "");
+      // *** Log the exact normalizedId being checked ***
+      logger.info(
+        `[COMPATIBILITY_CHECK] Checking normalizedId: "${normalizedId}"`
+      );
+
+      // *** THE CRITICAL LOOKUP ***
+      const compatInfo = fileCompatibilityData.fileCompatibility[normalizedId];
+
+      // *** VERIFICATION LOGGING ***
+      logger.info(
+        `[COMPATIBILITY_CHECK] Result for "${normalizedId}": Found Compat Info: ${!!compatInfo}, Comparable: ${
+          compatInfo?.comparable ?? "N/A"
+        }, Topic: ${compatInfo?.topic ?? "N/A"}`
+      );
+
+      if (!compatInfo) {
+        logger.warn(
+          `[COMPATIBILITY_CHECK] No compatibility info found for file: ${normalizedId}. Assuming comparable.`
+        );
+        // Decide how to handle missing info - currently assuming comparable
+        compatibleFiles.push(normalizedId);
+        // NOTE: Do not 'continue' here if you want files missing info to potentially trigger other logic later.
+        // For now, we treat them as compatible for the purpose of the gate.
+      } else {
+        // *** THE COMPARISON CHECK ***
+        if (compatInfo.comparable === false) {
+          logger.warn(
+            `[COMPATIBILITY_CHECK] INCOMPARABLE file detected: ${normalizedId} (Topic: ${compatInfo.topic})`
+          );
+          incompatibleFiles.push({
+            id: normalizedId,
+            topic: compatInfo.topic,
+            message: compatInfo.userMessage, // Use the specific message
+          });
+        } else {
+          compatibleFiles.push(normalizedId);
+        }
+      }
+    }
+
+    // Summary logging
+    logger.info(
+      `[COMPATIBILITY_CHECK] Analysis Complete: ${incompatibleFiles.length} incomparable, ${compatibleFiles.length} compatible/unknown.`
+    );
+
+    // *** THE EARLY RETURN GATE ***
+    if (incompatibleFiles.length > 0) {
+      logger.warn(
+        `[COMPATIBILITY_GATE] Blocking retrieval due to ${incompatibleFiles.length} incomparable files.`
+      );
+      // Group messages by topic for cleaner output
+      const topicMessages = {};
+      incompatibleFiles.forEach((file) => {
+        if (!topicMessages[file.topic]) {
+          topicMessages[file.topic] = file.message; // Use the specific message from compat data
+        }
+      });
+
+      const incomparableTopics = Object.keys(topicMessages);
+      logger.warn(
+        `[COMPATIBILITY_GATE] Incomparable topics triggering block: ${incomparableTopics.join(
+          ", "
+        )}`
+      );
+      logger.warn(
+        `[COMPATIBILITY_GATE] Returning messages object: ${JSON.stringify(
+          topicMessages
+        )}` // Log the object
+      );
+
+      // EARLY RETURN - prevent all file retrieval
+      const returnValue = {
+        analysis: "Incomparable data detected for year-on-year comparison",
+        matchedTopics, // Include matched topics even when blocking
+        hasIncomparableTopics: true,
+        incomparableTopicMessages: topicMessages, // Return the object { topic: message }
+        incomparableTopics: incomparableTopics,
+        skipFileRetrieval: true, // Explicit flag
+        explanation: `Year-on-year comparisons not available for topics: ${incomparableTopics.join(
+          ", "
+        )}. Due to methodology changes between 2024 and 2025, these topics cannot be directly compared.`,
+        processing_time_ms: Math.round(performance.now() - startTime),
+      };
+
+      logger.warn(
+        `[COMPATIBILITY_GATE] EARLY RETURN VALUE: ${JSON.stringify(
+          returnValue
+        )}`
+      );
+      return returnValue;
+    }
+  }
+  // ===== END FILE COMPATIBILITY CHECK =====
+
+  // Derive compatibility metadata (still useful for non-comparison cases or logging)
+  const compatibilityMetadata =
+    context?.compatibilityMetadata ?? fileIdResult?.compatibilityMetadata;
+
+  /* --- REMOVE/COMMENT OUT OLD FILTERING LOGIC --- 
+  // Filter file IDs for incomparable topics when a comparison is requested
+  if (isComparisonQuery && compatibilityMetadata) { ... old block ... }
+  
+  // Filter any cached files to match the filtered fileIds when comparison is requested
+  if (
+    isComparisonQuery &&
+    compatibilityMetadata &&
+    cachedFileIds &&
+    cachedFileIds.length > 0
+  ) { ... old block ... }
+  */
+
+  // Recompute validFileIds... (This part is still needed after the gate)
+  const validFileIds = fileIds.filter(
+    (id) => id && typeof id === "string" && id.trim() !== ""
+  );
+
+  if (validFileIds.length === 0) {
+    logger.warn("[RETRIEVAL] No valid file IDs to process after filtering.");
+  }
 
   // Use segments from LLM response if present, otherwise fallback to default
   let segments = [];
@@ -1186,15 +1375,6 @@ export async function processQueryWithData(
   //   logger.debug("=== DEBUG: File loading step ===");
   //   logger.debug("File IDs returned by LLM:", fileIds);
   // }
-
-  // Ensure we have valid file IDs - validate before attempting to load
-  const validFileIds = fileIds.filter(
-    (id) => id && typeof id === "string" && id.trim() !== ""
-  );
-
-  if (validFileIds.length === 0) {
-    logger.warn("[RETRIEVAL] No valid file IDs to process.");
-  }
 
   // Process each valid file ID
   for (const fileId of validFileIds) {
@@ -1450,3 +1630,168 @@ export async function handleQueryAPI(req, res) {
     return res.status(500).json({ error: error.message });
   }
 }
+
+/**
+ * Checks if a query is asking for a comparison between years
+ * @param {string} query - The user query
+ * @returns {boolean} - Whether the query is asking for a comparison
+ */
+function detectComparisonQuery(query) {
+  if (!query) return false;
+
+  // Normalize the query
+  const normalizedQuery = query.toLowerCase();
+
+  // Patterns that indicate a comparison query
+  const comparisonPatterns = [
+    // Year-specific patterns
+    /compare.*2024.*2025/i,
+    /compare.*2025.*2024/i,
+    /comparison.*2024.*2025/i,
+    /comparison.*2025.*2024/i,
+    /2024.*compared to.*2025/i,
+    /2025.*compared to.*2024/i,
+    /2024.*vs\.?.*2025/i,
+    /2025.*vs\.?.*2024/i,
+    /2024.*versus.*2025/i,
+    /2025.*versus.*2024/i,
+
+    // Direct comparison requests
+    /\bcompare with 2024\b/i,
+    /\bcompare to 2024\b/i,
+    /\bcompare with previous year\b/i,
+    /\bcompare to previous year\b/i,
+    /\bcompare with last year\b/i,
+    /\bcompare to last year\b/i,
+
+    // Evolution/between patterns
+    /\bbetween 2024 and 2025\b/i,
+    /\bbetween 2025 and 2024\b/i,
+    /\bfrom 2024 to 2025\b/i,
+    /\bfrom 2025 to 2024\b/i,
+    /\b2024 to 2025\b/i,
+    /\b2025 to 2024\b/i,
+    /\bevolution.*between/i,
+
+    // Generic time comparison patterns
+    /change(d|s)? (from|since|over|between)/i,
+    /difference(s)? (from|since|over|between)/i,
+    /trend(s)? (from|since|over|between)/i,
+    /evolution (from|since|over|between)/i,
+    /compare (\w+ )?(year|time)/i,
+    /comparison (\w+ )?(year|time)/i,
+    /previous (year|time)/i,
+    /year[\s-]on[\s-]year/i,
+    /year[\s-]over[\s-]year/i,
+    /over time/i,
+    /across years/i,
+    /across time/i,
+
+    // Follow-up comparison queries
+    /^can you compare/i,
+    /^compare with/i,
+    /^compare to/i,
+    /^how does this compare/i,
+    /^what about (in )?2024/i,
+    /^what about (the )?(previous|last) year/i,
+  ];
+
+  // Check if any comparison pattern matches
+  return comparisonPatterns.some((pattern) => pattern.test(normalizedQuery));
+}
+
+/**
+ * Helper to determine all files associated with a specific topic
+ * @param {string} topicId - The topic ID to find files for
+ * @param {object} topicFileMapping - Mapping of topics to file IDs
+ * @returns {string[]} Array of file IDs associated with the topic
+ */
+function getFilesForTopic(topicId, topicFileMapping) {
+  // If we have a direct mapping, use it
+  if (topicFileMapping && topicFileMapping[topicId]) {
+    return topicFileMapping[topicId];
+  }
+
+  // Fallback: Attempt to use canonical mapping
+  try {
+    const mapping = loadCanonicalTopicMapping();
+    const fileIds = [];
+
+    // Locate the topic in the canonical mapping
+    for (const theme of mapping.themes || []) {
+      for (const topic of theme.topics || []) {
+        if (topic.id === topicId) {
+          // Found the topic, collect file IDs from its mapping
+          if (topic.mapping) {
+            for (const year in topic.mapping) {
+              for (const entry of topic.mapping[year]) {
+                if (entry.file) {
+                  fileIds.push(entry.file);
+                }
+              }
+            }
+          }
+          break;
+        }
+      }
+    }
+
+    if (fileIds.length > 0) {
+      logger.info(
+        `[COMPATIBILITY] Found ${fileIds.length} files for topic ${topicId} using canonical mapping`
+      );
+      return fileIds;
+    }
+
+    // If no files found, log a warning
+    logger.warn(
+      `[COMPATIBILITY] No files found for topic ${topicId} in canonical mapping`
+    );
+  } catch (error) {
+    logger.error(
+      `[COMPATIBILITY] Error finding files for topic ${topicId}: ${error.message}`
+    );
+  }
+
+  // Last resort: Use naming convention heuristic
+  // This is a very simple heuristic based on file naming patterns
+  const yearPrefixes = ["2024_", "2025_"];
+  let heuristicFileIds = [];
+
+  // Define topic-specific file patterns based on canonical mapping structure
+  const topicPatterns = {
+    Attraction_Factors: ["_1.json"],
+    Retention_Factors: ["_2.json"],
+    Attrition_Factors: ["_3.json"],
+    Intention_to_Leave: ["_9.json", "_12.json"],
+    Leadership_Confidence: ["_7.json", "_8_1.json", "_8_2.json"],
+    AI_Attitudes: [
+      "_4_9.json",
+      "_4_10.json",
+      "_4_11.json",
+      "_5_2.json",
+      "_5_3.json",
+    ],
+  };
+
+  // Check if we have patterns for this topic
+  if (topicPatterns[topicId]) {
+    for (const yearPrefix of yearPrefixes) {
+      for (const pattern of topicPatterns[topicId]) {
+        heuristicFileIds.push(yearPrefix + pattern.replace(".json", ""));
+      }
+    }
+    logger.info(
+      `[COMPATIBILITY] Using heuristic to find files for topic ${topicId}: ${heuristicFileIds.join(
+        ", "
+      )}`
+    );
+    return heuristicFileIds;
+  }
+
+  // If all else fails, return empty array
+  logger.warn(`[COMPATIBILITY] No file mapping available for topic ${topicId}`);
+  return [];
+}
+
+export { detectComparisonQuery };

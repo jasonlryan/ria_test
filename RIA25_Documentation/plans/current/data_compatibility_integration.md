@@ -312,6 +312,82 @@ function formatCompatibilityMetadataForPrompt(metadata, verbosity) {
 }
 ```
 
+#### 4.3 Filter Data Retrieval for Incomparable Topics
+
+Modify `utils/openai/retrieval.js` to prevent fetching incomparable data when a comparison is requested:
+
+```javascript
+async function processQueryWithData(
+  query,
+  context,
+  cachedFileIds,
+  threadId,
+  isFollowUpContext,
+  previousQueryContext,
+  previousAssistantResponseContext
+) {
+  // Existing implementation...
+
+  // Check if this is a comparison query
+  const isComparisonQuery = this.isComparisonQuery(query);
+
+  // Filter file IDs for incomparable topics when a comparison is requested
+  if (isComparisonQuery && fileIdentificationResult.compatibilityMetadata) {
+    const compatibilityMetadata =
+      fileIdentificationResult.compatibilityMetadata;
+    const removedTopics = {};
+    const originalFileIds = [...fileIds]; // Make a copy of the original file IDs
+
+    // For each topic marked as not comparable in the metadata
+    for (const topicId in compatibilityMetadata.topicCompatibility) {
+      const info = compatibilityMetadata.topicCompatibility[topicId];
+
+      // If topic is not comparable and has multiple years of data
+      if (!info.comparable && info.availableYears.length > 1) {
+        // Store userMessages for incomparable topics to include in response
+        removedTopics[topicId] = info.userMessage;
+
+        // Remove associated file IDs for this topic
+        const topicFiles = getFilesForTopic(
+          topicId,
+          fileIdentificationResult.topic_file_mapping
+        );
+        fileIds = fileIds.filter((fileId) => !topicFiles.includes(fileId));
+
+        logger.info(
+          `[COMPATIBILITY] Removed files for incomparable topic ${topicId}: ${topicFiles.join(
+            ", "
+          )}`
+        );
+      }
+    }
+
+    // Add incomparable topics' userMessages to context for prompt inclusion
+    context.incomparableTopicMessages = removedTopics;
+
+    // Log the filtering action
+    if (Object.keys(removedTopics).length > 0) {
+      logger.info(
+        `[COMPATIBILITY] Comparison query detected. Filtered out ${
+          originalFileIds.length - fileIds.length
+        } files for ${Object.keys(removedTopics).length} incomparable topics.`
+      );
+    }
+  }
+
+  // Proceed with loading only the filtered files
+  const loadedData = await loadDataFiles(fileIds);
+
+  // Rest of implementation...
+}
+
+// Helper to determine all files associated with a specific topic
+function getFilesForTopic(topicId, topicFileMapping) {
+  if (!topicFileMapping || !topicFileMapping[topicId]) return [];
+  return topicFileMapping[topicId] || [];
+}
+```
+
 ### 5. Assistant Prompt Enhancements
 
 Update `prompts/assistant_prompt.md` to include specific instructions for handling compatibility information:
@@ -563,6 +639,13 @@ To minimize impact on response times:
 
 ### In Progress Components
 
+🔄 **Data Filtering for Incomparable Topics**
+
+- CRITICAL PRIORITY: Implement filtering logic to prevent data retrieval for non-comparable topics when comparison is requested
+- Ensure userMessages from canonical mapping are displayed instead of retrieving incomparable data
+- Add prompt enhancements for clear communication of incomparability reasons
+- Update documentation to emphasize importance of not presenting incomparable data
+
 🔄 **Enhanced User Experience**
 
 - Completed: Tiered messaging system implementation
@@ -612,6 +695,7 @@ To minimize impact on response times:
 1. Extended processing time observed for queries with many topics (~15-20ms overhead)
 2. Occasional false positives in comparison query detection for complex queries
 3. Need to update some older test scripts to work with new compatibility structures
+4. **CRITICAL:** The system currently identifies incomparable topics but still retrieves their data instead of only displaying the userMessage. This must be fixed by implementing the filtering logic in section 4.3.
 
 ---
 
