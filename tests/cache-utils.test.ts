@@ -1,9 +1,9 @@
 import { jest } from '@jest/globals';
-import kvClient from '../utils/shared/kvClient';
-import { getCachedFilesForThread, updateThreadCache, CachedFile } from '../utils/cache-utils';
+import kvClient from '../utils/cache/kvClient';
+import { getCachedFilesForThread, updateThreadCache, CachedFile } from '../utils/cache/cache-utils';
 
 // Simple mock approach
-jest.mock('../utils/shared/kvClient', () => ({
+jest.mock('../utils/cache/kvClient', () => ({
   __esModule: true,
   default: {
     get: jest.fn(),

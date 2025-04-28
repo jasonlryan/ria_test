@@ -1,0 +1,20 @@
+/**
+ * iframe-resizer.ts - Adapter File
+ *
+ * ADAPTER FILE: This file has been moved to utils/shared/iframe/iframe-resizer.ts
+ * This adapter is maintained for backward compatibility during migration.
+ * New code should import directly from utils/shared/iframe/iframe-resizer.ts
+ *
+ * @deprecated Please import from utils/shared/iframe/iframe-resizer.ts instead
+ */
+
+import { sendHeightToParent } from './shared/iframe/iframe-resizer';
+
+// Log a warning when this module is imported in development
+if (process.env.NODE_ENV === "development") {
+  console.warn(
+    "DEPRECATED LOCATION: utils/iframe-resizer.ts should now be imported from utils/shared/iframe/iframe-resizer.ts"
+  );
+}
+
+export { sendHeightToParent }; 

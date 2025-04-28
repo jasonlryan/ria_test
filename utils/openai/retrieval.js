@@ -6,21 +6,21 @@
 import OpenAI from "openai";
 const fs = require("fs");
 const path = require("path");
-const logger = require("../../utils/logger").default;
+const logger = require("../../utils/shared/logger").default;
 const {
   logPerformanceMetrics,
   logPerformanceToFile,
 } = require("../../utils/shared/loggerHelpers");
 
-const { DEFAULT_SEGMENTS } = require("../data/segment_keys");
+const { DEFAULT_SEGMENTS } = require("../../utils/cache/segment_keys");
 // Import smart filtering and incremental cache modules
 const {
   parseQueryIntent,
   mapIntentToDataScope,
   getBaseData,
   getSpecificData,
-} = require("../data/smart_filtering");
-const { UnifiedCache } = require("../cache-utils");
+} = require("../../utils/data/smart_filtering");
+const { UnifiedCache } = require("../../utils/cache/cache-utils");
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -305,18 +305,32 @@ export async function identifyRelevantFiles(
   previousAssistantResponse = ""
 ) {
   try {
+    // Import query normalization utility if not already at the top of the file
+    const { normalizeQueryText } = require("../shared/queryUtils");
+
+    // Ensure all queries are normalized
+    const normalizedQuery = normalizeQueryText(query);
+    const normalizedPreviousQuery = previousQuery
+      ? normalizeQueryText(previousQuery)
+      : "";
+
     // Add clear logging about the isFollowUp parameter
     logger.info("=== IDENTIFY FILES DEBUG ===");
     logger.info(`IS FOLLOW-UP FLAG IN IDENTIFY: ${isFollowUp}`);
-    logger.info(`QUERY IN IDENTIFY: "${query.substring(0, 50)}..."`);
-    logger.info(`HAS PREV QUERY IN IDENTIFY: ${previousQuery ? "YES" : "NO"}`);
+    logger.info(`QUERY IN IDENTIFY: "${normalizedQuery.substring(0, 50)}..."`);
+    logger.info(
+      `HAS PREV QUERY IN IDENTIFY: ${normalizedPreviousQuery ? "YES" : "NO"}`
+    );
     logger.info("============================");
 
     // No more keyword checks - rely purely on semantic analysis
 
     // Check cache first (Cache key should ideally include context for follow-ups)
     const cacheKey = generateCacheKey(
-      query + (isFollowUp ? `_followup_${previousQuery.substring(0, 50)}` : "")
+      normalizedQuery +
+        (isFollowUp
+          ? `_followup_${normalizedPreviousQuery.substring(0, 50)}`
+          : "")
     );
     if (queryCache.has(cacheKey)) {
       // if (process.env.DEBUG) {
@@ -345,10 +359,10 @@ export async function identifyRelevantFiles(
 
     // Build the user prompt with replacements
     const userPrompt = systemPrompt
-      .replace("{{QUERY}}", query)
+      .replace("{{QUERY}}", normalizedQuery)
       .replace("{{MAPPING}}", JSON.stringify(mapping))
       .replace("{{IS_FOLLOWUP}}", isFollowUp ? "true" : "false")
-      .replace("{{PREVIOUS_QUERY}}", previousQuery || "")
+      .replace("{{PREVIOUS_QUERY}}", normalizedPreviousQuery || "")
       .replace(
         "{{PREVIOUS_ASSISTANT_RESPONSE}}",
         previousAssistantResponse || ""
@@ -579,6 +593,13 @@ function formatDataForAnalysis(dataFiles) {
 export async function generateAnalysis(query, dataFiles, matchedTopics) {
   try {
     const startTime = Date.now();
+
+    // Import query normalization utility if not already at the top of the file
+    const { normalizeQueryText } = require("../shared/queryUtils");
+
+    // Normalize the query
+    const normalizedQuery = normalizeQueryText(query);
+
     // if (process.env.DEBUG) {
     //   logger.debug(
     //     "Starting direct data extraction at " +
@@ -606,7 +627,7 @@ export async function generateAnalysis(query, dataFiles, matchedTopics) {
 
     // Build a structured text representation of the data
     let analysisText = `# Workforce Survey Data Analysis\\n\\n`;
-    analysisText += `## Analysis for Query: "${query}"\\n\\n`;
+    analysisText += `## Analysis for Query: "${normalizedQuery}"\\n\\n`;
 
     // Add topics section
     analysisText += `### Topics Analyzed\\n`;
@@ -753,7 +774,9 @@ export async function generateAnalysis(query, dataFiles, matchedTopics) {
 
     // Add metadata
     analysisText += `### Analysis Metadata\\n`;
-    analysisText += `- Total data points: ${dataFiles.metadata.total_data_points}\\n`;
+    const totalDataPoints =
+      dataFiles.metadata?.total_data_points || percentageStats.length;
+    analysisText += `- Total data points: ${totalDataPoints}\\n`;
     analysisText += `- Total percentage values: ${percentageStats.length}\\n`;
     analysisText += `- Files analyzed: ${fileStats.length}\\n`;
     analysisText += `- Topics covered: ${matchedTopics.join(", ")}\\n`;
@@ -963,15 +986,24 @@ export async function processQueryWithData(
 ) {
   const startTime = performance.now();
 
+  // Import query normalization utility if not already at the top of the file
+  const { normalizeQueryText } = require("../shared/queryUtils");
+
+  // Ensure all queries are normalized
+  const normalizedQuery = normalizeQueryText(query);
+  const normalizedPreviousQuery = previousQueryContext
+    ? normalizeQueryText(previousQueryContext)
+    : "";
+
   // Add VERY clear logging about the isFollowUp parameter
   logger.info("=== FOLLOW-UP DEBUG ===");
   logger.info(`THREAD ID: ${threadId}`);
   logger.info(`IS FOLLOW-UP FLAG: ${isFollowUpContext}`);
   logger.info(`CACHED FILE IDS: ${JSON.stringify(cachedFileIds)}`);
-  logger.info(`HAS PREVIOUS QUERY: ${previousQueryContext ? "YES" : "NO"}`);
-  logger.info(`QUERY: "${query.substring(0, 50)}..."`);
-  if (previousQueryContext) {
-    logger.info(`PREV QUERY: "${previousQueryContext.substring(0, 50)}..."`);
+  logger.info(`HAS PREVIOUS QUERY: ${normalizedPreviousQuery ? "YES" : "NO"}`);
+  logger.info(`QUERY: "${normalizedQuery.substring(0, 50)}..."`);
+  if (normalizedPreviousQuery) {
+    logger.info(`PREV QUERY: "${normalizedPreviousQuery.substring(0, 50)}..."`);
   }
   logger.info("=======================");
 
@@ -982,7 +1014,7 @@ export async function processQueryWithData(
   // );
 
   // Early return for empty queries
-  if (!query || query.trim().length === 0) {
+  if (!normalizedQuery || normalizedQuery.trim().length === 0) {
     return {
       analysis: "No query provided",
       matched_topics: [],
@@ -995,13 +1027,13 @@ export async function processQueryWithData(
   }
 
   // === STARTER QUESTION HANDLING ===
-  if (isStarterQuestion(query)) {
+  if (isStarterQuestion(normalizedQuery)) {
     // Refactored per starter_question_plan.md
     // 1. Load the starter data
-    const starterData = getPrecompiledStarterData(query);
+    const starterData = getPrecompiledStarterData(normalizedQuery);
     if (!starterData) {
       return {
-        error: `Starter question data not found for code: ${query}`,
+        error: `Starter question data not found for code: ${normalizedQuery}`,
         status: "error_starter_not_found",
         processing_time_ms: Math.round(performance.now() - startTime),
       };
@@ -1016,7 +1048,7 @@ export async function processQueryWithData(
       !starterData.question
     ) {
       return {
-        error: `Starter data for ${query} is missing required fields (data_files, segments, question)`,
+        error: `Starter data for ${normalizedQuery} is missing required fields (data_files, segments, question)`,
         status: "error_starter_invalid",
         processing_time_ms: Math.round(performance.now() - startTime),
       };
@@ -1125,16 +1157,16 @@ export async function processQueryWithData(
   const fileIdResult =
     precomputedIdentification ??
     (await identifyRelevantFiles(
-      query,
+      normalizedQuery,
       context,
       isFollowUpContext,
-      previousQueryContext,
+      normalizedPreviousQuery,
       previousAssistantResponseContext
     ));
 
   // --- START DEBUG LOGGING ---
   logger.info("--- Retrieval Step Analysis ---");
-  logger.info(`Query: "${query.substring(0, 100)}..."`);
+  logger.info(`Query: "${normalizedQuery.substring(0, 100)}..."`);
   logger.info(`isFollowUp: ${isFollowUpContext}`); // Use the actual variable name
   logger.info(`Cached File IDs: [${(cachedFileIds || []).join(", ")}]`);
   logger.info(`LLM Result - out_of_scope: ${fileIdResult?.out_of_scope}`);
@@ -1178,11 +1210,11 @@ export async function processQueryWithData(
 
   // ===== FILE COMPATIBILITY CHECK (NEW - Based on Plan) =====
   // Hard gate: Check if this is a comparison query with incomparable files
-  const isComparisonQuery = detectComparisonQuery(query);
+  const isComparisonQuery = detectComparisonQuery(normalizedQuery);
 
   if (isComparisonQuery) {
     logger.info(
-      `[COMPATIBILITY] Detected comparison query: "${query.substring(
+      `[COMPATIBILITY] Detected comparison query: "${normalizedQuery.substring(
         0,
         100
       )}..."`
@@ -1590,18 +1622,43 @@ export async function processQueryWithData(
     );
   }
 
-  return {
-    analysis: "LLM-driven file identification and smart filtering result",
-    filteredData,
-    stats: filteredData.stats, // Include stats directly at the top level
-    segments,
-    dataScope,
+  // 10. Use our OpenAI analysis function
+  // Pass the original loaded data (with files) instead of filteredData to generateAnalysis
+  const nlpResult = await generateAnalysis(
+    normalizedQuery,
+    loadedData,
+    fileIdResult.matched_topics
+  );
+
+  // 11. Combine everything to create a coherent result
+  const result = {
+    analysis: nlpResult || fileIdResult?.analysis,
+    filteredData: {
+      summary: "", // Clear summary to avoid confusion
+      stats: filteredData.stats,
+      filteredData: filteredData.filteredData,
+    },
+    segments: segments,
+    dataScope: {
+      fileIds: new Set(validFileIds),
+      segments: new Set(segments),
+    },
     fileIds: validFileIds,
-    matchedTopics,
-    explanation,
+    fileDetails: files,
+    matchedTopics: fileIdResult.matched_topics,
+    explanation: fileIdResult.explanation,
     data_points: filteredData.stats.length,
-    processing_time_ms: Math.round(endTime - startTime),
+    processing_time_ms: Math.round(performance.now() - startTime),
   };
+
+  // DEBUG: Log the type of nlpResult to verify it's a string as expected
+  if (typeof nlpResult !== "string") {
+    logger.error(
+      `[DEBUG] generateAnalysis returned unexpected type: ${typeof nlpResult}`
+    );
+  }
+
+  return result;
 }
 
 /**
@@ -1617,7 +1674,13 @@ export async function handleQueryAPI(req, res) {
       return res.status(400).json({ error: "Invalid query parameter" });
     }
 
-    const result = await processQueryWithData(query);
+    // Import query normalization utility if not already at the top of the file
+    const { normalizeQueryText } = require("../shared/queryUtils");
+
+    // Normalize the query
+    const normalizedQuery = normalizeQueryText(query);
+
+    const result = await processQueryWithData(normalizedQuery);
     return res.status(200).json(result);
   } catch (error) {
     logger.error("Error processing query:", error);
@@ -1633,8 +1696,11 @@ export async function handleQueryAPI(req, res) {
 function detectComparisonQuery(query) {
   if (!query) return false;
 
-  // Normalize the query
-  const normalizedQuery = query.toLowerCase();
+  // Import query normalization utility if not already at the top of the file
+  const { normalizeQueryText } = require("../shared/queryUtils");
+
+  // Normalize the query using our standard function first
+  const normalizedQuery = normalizeQueryText(query).toLowerCase();
 
   // Patterns that indicate a comparison query
   const comparisonPatterns = [

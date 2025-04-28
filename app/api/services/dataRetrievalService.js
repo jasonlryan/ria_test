@@ -7,25 +7,25 @@
 
 import fs from "fs";
 import path from "path";
-import logger from "../../../utils/logger";
-import { UnifiedCache } from "../../../utils/cache-utils";
+import logger from "../../../utils/shared/logger";
+import { UnifiedCache } from "../../../utils/cache/cache-utils";
 import {
   identifyRelevantFiles,
   getPrecompiledStarterData,
   isStarterQuestion,
   processQueryWithData,
 } from "../../../utils/openai/retrieval";
-import { DEFAULT_SEGMENTS } from "../../../utils/data/segment_keys";
+import { DEFAULT_SEGMENTS } from "../../../utils/cache/segment_keys";
 import {
   logCompatibilityAssessment,
   logCompatibilityCache,
   logCompatibilityToFile,
   logCompatibilityInPrompt,
-} from "../../../utils/shared/compatibilityLogger";
+} from "../../../utils/compatibility/compatibilityLogger";
 
 // Import compatibility types (using JS comment format since we're in a .js file)
 // @ts-check
-// const { CompatibilityMetadata } = require("../../../utils/data/compatibilityTypes");
+// const { CompatibilityMetadata } = require("../../../utils/compatibility/compatibilityTypes");
 
 export class DataRetrievalService {
   constructor() {}

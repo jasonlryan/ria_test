@@ -10,7 +10,7 @@ import {
   formatErrorResponse,
 } from "../../../utils/shared/errorHandler";
 import CompatibilityService from "../services/compatibilityService";
-import logger from "../../../utils/logger";
+import logger from "../../../utils/shared/logger";
 
 const compatibilityService = new CompatibilityService();
 

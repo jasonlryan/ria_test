@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-import kvClient from '../../../utils/shared/kvClient';
-import { getCachedFilesForThread, updateThreadCache, CachedFile } from '../../../utils/cache-utils';
-import logger from '../../../utils/logger';
+import kvClient from '../../../utils/cache/kvClient';
+import { getCachedFilesForThread, updateThreadCache, CachedFile } from '../../../utils/cache/cache-utils';
+import logger from '../../../utils/shared/logger';
 
 export async function GET(req: Request) {
   const results = {

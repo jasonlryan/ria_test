@@ -1,0 +1,19 @@
+/**
+ * General Helper Utilities - Adapter File
+ *
+ * ADAPTER FILE: This file has been moved to utils/shared/helpers.tsx
+ * This adapter is maintained for backward compatibility during migration.
+ * New code should import directly from utils/shared/helpers.tsx
+ *
+ * @deprecated Please import from utils/shared/helpers.tsx instead
+ */
+
+// Log a warning when this module is imported in development
+if (process.env.NODE_ENV === "development") {
+  console.warn(
+    "DEPRECATED LOCATION: utils/helpers.tsx should now be imported from utils/shared/helpers.tsx"
+  );
+}
+
+// Re-export all functionality from the new location
+export * from "./shared/helpers";

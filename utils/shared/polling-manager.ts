@@ -4,7 +4,7 @@
  * retry logic, timeouts, and backoff strategies.
  */
 
-import logger from '../logger';
+import logger from './logger';
 import { isFeatureEnabled } from '../feature-flags';
 
 /**

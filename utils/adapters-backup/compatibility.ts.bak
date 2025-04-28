@@ -1,0 +1,21 @@
+/**
+ * Unified compatibility module for checking dataset comparability across years.
+ * Provides functions to load compatibility data, check if files and topics are comparable,
+ * and filter incomparable files from retrieval.
+ * 
+ * ADAPTER FILE: Original implementation moved to utils/compatibility/compatibility.ts
+ * This adapter is maintained for backward compatibility during migration.
+ * 
+ * Last Updated: Mon Apr 28 2025
+ */
+
+import logger from './logger';
+
+// Log a warning when this module is imported
+logger.warn(
+  "DEPRECATED LOCATION: utils/compatibility.ts should now be imported from utils/compatibility/compatibility.ts"
+);
+
+// Re-export all functionality from the new location
+export * from './compatibility/compatibility';
+export { default } from './compatibility/compatibility'; 

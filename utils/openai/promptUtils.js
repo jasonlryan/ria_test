@@ -9,8 +9,8 @@
  * @returns {string} - The constructed prompt string.
  */
 
-import { logCompatibilityInPrompt } from "../shared/compatibilityLogger";
-import logger from "../logger";
+import { logCompatibilityInPrompt } from "../compatibility/compatibilityLogger";
+import logger from "../shared/logger";
 
 export function buildPromptWithFilteredData(
   originalUserContent,

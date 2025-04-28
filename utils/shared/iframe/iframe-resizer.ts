@@ -1,4 +1,14 @@
-// Script to handle iframe resizing
+/**
+ * iframe-resizer.ts
+ * Script to handle dynamic iframe resizing for embedded content.
+ * 
+ * @module iframe-resizer
+ */
+
+/**
+ * Sends the current document height to the parent window.
+ * Should be called whenever the content size changes.
+ */
 export function sendHeightToParent(): void {
   const height = document.documentElement.scrollHeight;
   if (window.parent && window.parent !== window) {

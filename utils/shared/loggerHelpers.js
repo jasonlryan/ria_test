@@ -5,7 +5,7 @@
  * Helps with monitoring and debugging application performance.
  */
 
-import logger from "../logger";
+import logger from "./logger";
 
 /**
  * Logs performance metrics in a consistent format for testing

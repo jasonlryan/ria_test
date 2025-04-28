@@ -7,10 +7,10 @@ import { AssistantStream } from "openai/lib/AssistantStream";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import PromptInput from "../../../components/PromptInput";
-import { parseResponse } from "../../../utils/helpers";
+import { parseResponse } from "../../../utils/shared/helpers";
 import chatConfig from "../../../config/chat.config.json";
 import CollapsibleContent from "../../../components/CollapsibleContent";
-import { sendHeightToParent } from "../../../utils/iframe-resizer";
+import { sendHeightToParent } from "../../../utils/shared/iframe/iframe-resizer";
 
 // Error boundary for markdown rendering during streaming
 class MarkdownErrorBoundary extends React.Component<

@@ -1,6 +1,6 @@
 # RIA25 File and Function Reference
 
-> **Last Updated:** April 30, 2024  
+> **Last Updated:** Mon Apr 28 2025  
 > **Target Audience:** Developers, System Architects  
 > **Related Documents:**
 >
@@ -104,14 +104,21 @@ This document provides a comprehensive mapping of all major files and functions 
 
 - `app/api/services/unifiedOpenAIService.ts`
 
-  - OpenAI API Operations:
+  - **Purpose**: Provides a centralized interface for all OpenAI API interactions with consistent error handling, monitoring, and retry mechanisms.
+
+  - **Singleton Pattern**:
+
+    - `getInstance()`: Get or create the singleton instance
+    - `unifiedOpenAIService`: Exported singleton instance for easy imports
+
+  - **OpenAI API Operations**:
 
     - `createChatCompletion(messages, options)`: Create chat completions with retry and streaming support
     - `createAsyncCompletion(messages, options)`: Create async completions with polling
     - `createEmbeddings(input, options)`: Create embeddings with retry support
     - `createImage(prompt, options)`: Create images with retry support
 
-  - Thread Management:
+  - **Thread Management**:
 
     - `createThread()`: Creates a new OpenAI thread
     - `listMessages(threadId, options)`: Lists messages in a thread
@@ -121,12 +128,13 @@ This document provides a comprehensive mapping of all major files and functions 
     - `submitToolOutputs(threadId, runId, toolOutputs)`: Submits tool call outputs
     - `waitForNoActiveRuns(threadId, pollInterval, timeoutMs)`: Waits for thread run completion
 
-  - Error Handling & Monitoring:
+  - **Error Handling & Monitoring**:
+    - `executeWithMonitoring(method, fn)`: Executes a method with performance tracking and error handling
     - Built-in retry mechanism
     - Consistent error formatting
-    - Performance monitoring
-    - Feature flag support
-    - Graceful degradation
+    - Performance monitoring integration
+    - Feature flag support for API version selection
+    - Graceful degradation with automatic rollback
 
 - `app/api/services/dataRetrievalService.js`
   - `identifyRelevantFiles(query, context, isFollowUp, previousQuery, previousResponse)`: Identifies relevant data files
@@ -190,6 +198,85 @@ This document provides a comprehensive mapping of all major files and functions 
   - `updateThreadCache(threadId, newFiles)`: Updates thread cache
   - Interface `CachedFile`: Structure for cached file data
 
+### Feature Flag System
+
+- `utils/shared/feature-flags.ts`
+
+  - **Purpose**: Manages feature toggles for gradual rollout of new functionality and service migrations.
+
+  - **Core Types**:
+
+    - `FeatureFlagConfig`: Configuration for a feature flag (enabled status, env override, description)
+    - `FeatureFlags`: Type-safe feature flag definitions
+    - `FeatureFlagName`: Union type of all valid feature flag names
+
+  - **Flag Management**:
+    - `featureFlags`: Default feature flag definitions with descriptions
+    - `FeatureFlagService`: Singleton service for managing feature flags
+      - `getInstance()`: Get the singleton instance
+      - `isEnabled(flagName)`: Check if a feature flag is enabled
+      - `getFeatureStates()`: Get current state of all feature flags
+      - `logFeatureStates()`: Log the current state of all feature flags
+  - **Helper Functions**:
+    - `isFeatureEnabled(flagName)`: Convenience function to check flag status
+    - `featureFlagService`: Exported singleton instance
+
+### Polling System
+
+- `utils/shared/polling-manager.ts`
+
+  - **Purpose**: Provides a centralized, type-safe polling mechanism with configurable retry logic, timeouts, and backoff strategies.
+
+  - **Core Types**:
+
+    - `PollingConfig`: Configuration options for a polling operation
+    - `PollingTimeoutError`: Error thrown when polling times out
+    - `PollingRetryError`: Error thrown when polling fails after too many retries
+
+  - **Polling Management**:
+    - `PollingManager`: Singleton service for managing polling operations
+      - `getInstance()`: Get the singleton instance
+      - `poll<T>(pollingFn, config)`: Execute a polling operation with retries and backoff
+      - `pollAll<T>(pollingOperations, config)`: Execute multiple polling operations in parallel
+  - **Helper Functions**:
+    - `pollOperation<T>(operation, config)`: Convenience function for polling
+    - `pollingManager`: Exported singleton instance
+
+### Monitoring System
+
+- `utils/shared/monitoring.ts`
+
+  - **Purpose**: Tracks usage patterns, performance, and issues during the OpenAI service migration.
+
+  - **Core Types**:
+
+    - `MigrationMetrics`: Structure for tracking service metrics
+
+  - **Monitoring Operations**:
+    - `MigrationMonitor`: Singleton service for monitoring service migrations
+      - `getInstance()`: Get the singleton instance
+      - `trackCall(service, method, startTime)`: Track a service call with performance metrics
+      - `trackError(service, method, error)`: Track an error in a service
+      - `hasIssues()`: Check if there are any issues that warrant rollback
+      - `getMetrics()`: Get current migration metrics
+      - `logStatus()`: Log current migration status
+  - **Helper Functions**:
+    - `migrationMonitor`: Exported singleton instance
+
+### Rollback System
+
+- `utils/shared/rollback.ts`
+
+  - **Purpose**: Handles rollback procedures if issues are detected during migration.
+
+  - **Rollback Management**:
+    - `RollbackManager`: Singleton service for managing rollbacks
+      - `getInstance()`: Get the singleton instance
+      - `checkAndRollbackIfNeeded()`: Check if rollback is needed and execute if necessary
+      - `isInRollback()`: Check if system is currently rolling back
+  - **Helper Functions**:
+    - `rollbackManager`: Exported singleton instance
+
 ### Shared Utilities
 
 - `utils/shared/cors.js`
@@ -211,8 +298,9 @@ This document provides a comprehensive mapping of all major files and functions 
   - `sanitizeOutput(text)`: Cleans OpenAI output
   - `isJsonContent(content)`: Validates JSON content
 
-- `utils/shared/polling.js`
-  - `waitForNoActiveRuns(openai, threadId, pollInterval, timeoutMs)`: Polls for run completion
+- `utils/shared/queryUtils.ts`
+  - `normalizeQueryText(query)`: Normalizes query text for consistent processing
+  - `createThreadContext(query, previousQuery, previousResponse)`: Creates a thread context object
 
 ### Logging
 

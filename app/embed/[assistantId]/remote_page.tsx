@@ -23,11 +23,11 @@ import remarkGfm from "remark-gfm";
 // Components
 import PromptInput from "../../../components/PromptInput";
 // Helpers
-import { parseResponse } from "../../../utils/helpers";
+import { parseResponse } from "../../../utils/shared/helpers";
 import chatConfig from "../../../config/chat.config.json";
 import CollapsibleContent from "../../../components/CollapsibleContent";
 // Add the new AssistantSelector component
-import { sendHeightToParent } from "../../../utils/iframe-resizer";
+import { sendHeightToParent } from "../../../utils/shared/iframe/iframe-resizer";
 
 // Define interface for MarkdownErrorBoundary props and state
 interface MarkdownErrorBoundaryProps {

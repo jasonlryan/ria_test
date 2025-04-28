@@ -1,0 +1,51 @@
+# Adapter Files in Utils Directory
+
+This document lists all adapter files in the utils directory that redirect imports to their new canonical locations. These adapters are maintained for backward compatibility during the codebase migration.
+
+## Root Utils Directory Adapters
+
+| Original Location (Adapter)              | Target Location                                 |
+| ---------------------------------------- | ----------------------------------------------- |
+| `utils/cache-utils.ts`                   | `utils/cache/cache-utils.ts`                    |
+| `utils/compatibility.ts`                 | `utils/compatibility/compatibility.ts`          |
+| `utils/feature-flags.ts`                 | `utils/shared/feature-flags.ts`                 |
+| `utils/helpers.tsx`                      | `utils/shared/helpers.tsx`                      |
+| `utils/iframe-resizer.ts`                | `utils/shared/iframe/iframe-resizer.ts`         |
+| `utils/iframe-parent-resizer-snippet.js` | `utils/shared/iframe/parent-resizer-snippet.js` |
+| `utils/logger.js`                        | `utils/shared/logger.js`                        |
+| `utils/monitoring.ts`                    | `utils/shared/monitoring.ts`                    |
+| `utils/rollback.ts`                      | `utils/shared/rollback.ts`                      |
+
+## Data Directory Adapters
+
+| Original Location (Adapter)        | Target Location                             |
+| ---------------------------------- | ------------------------------------------- |
+| `utils/data/incremental_cache.js`  | `utils/cache/incremental_cache.js`          |
+| `utils/data/segment_keys.js`       | `utils/cache/segment_keys.js`               |
+| `utils/data/compatibilityTypes.js` | `utils/compatibility/compatibilityTypes.js` |
+
+## Shared Directory Adapters
+
+| Original Location (Adapter)           | Target Location                              |
+| ------------------------------------- | -------------------------------------------- |
+| `utils/shared/compatibility.js`       | `utils/compatibility/compatibility.js`       |
+| `utils/shared/compatibilityLogger.js` | `utils/compatibility/compatibilityLogger.js` |
+| `utils/shared/compatibilityUtils.js`  | `utils/compatibility/compatibilityUtils.js`  |
+| `utils/shared/key-schema.ts`          | `utils/cache/key-schema.ts`                  |
+| `utils/shared/kvClient.ts`            | `utils/cache/kvClient.ts`                    |
+
+## Migration Status
+
+The codebase is currently undergoing a reorganization of utility modules to improve maintainability and organization. Adapter files are temporarily in place to ensure backward compatibility during this transition.
+
+All adapters follow a similar pattern:
+
+1. They are marked with comments indicating they are adapter files
+2. They contain export statements that re-export from the new canonical location
+3. They will emit deprecation warnings when imported directly
+
+## Guidelines
+
+- Do not modify adapter files directly
+- Update imports to use the new canonical locations where possible
+- Adapters will be removed once all imports throughout the codebase have been updated

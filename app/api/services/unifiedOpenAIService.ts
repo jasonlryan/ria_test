@@ -9,11 +9,11 @@ import { ChatCompletion, ChatCompletionChunk } from 'openai/resources/chat';
 import { Thread } from 'openai/resources/beta/threads/threads';
 import { Message, MessageContent } from 'openai/resources/beta/threads/messages';
 import { Run } from 'openai/resources/beta/threads/runs';
-import { isFeatureEnabled } from '../../../utils/feature-flags';
+import { isFeatureEnabled } from '../../../utils/shared/feature-flags';
 import { pollingManager } from '../../../utils/shared/polling-manager';
-import logger from '../../../utils/logger';
-import { migrationMonitor } from '../../../utils/monitoring';
-import { rollbackManager } from '../../../utils/rollback';
+import logger from '../../../utils/shared/logger';
+import { migrationMonitor } from '../../../utils/shared/monitoring';
+import { rollbackManager } from '../../../utils/shared/rollback';
 
 // OpenAI API configuration
 const OPENAI_CONFIG = {

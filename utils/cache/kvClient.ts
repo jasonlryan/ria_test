@@ -12,7 +12,7 @@
  */
 
 import { kv } from "@vercel/kv";
-import logger from "../logger";
+import logger from "../shared/logger";
 import { performance } from "perf_hooks";
 
 // Define options interface based on Redis options

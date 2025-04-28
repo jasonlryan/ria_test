@@ -5,7 +5,7 @@
  * compatibility information, file IDs, and segments for monitoring and debugging.
  */
 
-import logger from "../logger";
+import logger from "../shared/logger";
 
 /**
  * Logs the result of a compatibility assessment

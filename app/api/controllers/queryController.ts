@@ -7,7 +7,8 @@
 import { NextResponse } from "next/server";
 import { formatBadRequestResponse, formatErrorResponse } from "../../../utils/shared/errorHandler";
 import DataRetrievalService from "../services/dataRetrievalService";
-import logger from "../../../utils/logger";
+import logger from "../../../utils/shared/logger";
+import { normalizeQueryText } from "../../../utils/shared/queryUtils";
 
 const dataRetrievalService = new DataRetrievalService();
 
@@ -20,19 +21,27 @@ export async function postHandler(request) {
       return formatBadRequestResponse("Missing or invalid 'query' field");
     }
 
+    // Normalize queries
+    const normalizedQuery = normalizeQueryText(query);
+    const normalizedPreviousQuery = previousQuery 
+      ? normalizeQueryText(previousQuery) 
+      : "";
+
     // Determine if this is a follow-up query based on threadId presence
     const isFollowUp = !!threadId;
     
-    logger.info(`[QUERY] Processing query: "${query.substring(0, 50)}..." | ThreadId: ${threadId || 'none'} | IsFollowUp: ${isFollowUp}`);
+    logger.info(`[QUERY] Raw query: "${query.substring(0, 50)}..."`);
+    logger.info(`[QUERY] Normalized query: "${normalizedQuery.substring(0, 50)}..."`);
+    logger.info(`[QUERY] Processing normalized query: "${normalizedQuery.substring(0, 50)}..." | ThreadId: ${threadId || 'none'} | IsFollowUp: ${isFollowUp}`);
 
-    // Pass all context to the data retrieval service
+    // Pass normalized context to the data retrieval service
     const result = await dataRetrievalService.processQueryWithData(
-      query,
+      normalizedQuery,
       "all-sector",
       [], // We don't have cached file IDs here, this should be fixed
       threadId || "default",
       isFollowUp,
-      previousQuery || "",
+      normalizedPreviousQuery,
       previousAssistantResponse || ""
     );
 

@@ -4,8 +4,8 @@
 
 ### staging_dev
 
-**Status**: 🟢 Active Development
-**Description**: Current development branch for staging environment with latest features and fixes. Includes YoY comparison
+**Status**: 🟢 ActMost Recent Development
+**Description**: Current development branch for staging environment with latest features and fixes. Includes YoY comparison. Will wait to push to live after Responses API has been refactored in.
 **Last Updated**: 2025-04-28
 
 ### production
@@ -31,7 +31,7 @@
 ### bin_refactor
 
 **Status**: 🟠 Refactoring
-**Description**: Ongoing refactoring of utility functions.
+**Description**: Ongoing refactoring of utility functions. This is where we will attempt to switch to Responses API.
 **Last Updated**: TBD
 
 ## Environment Branches

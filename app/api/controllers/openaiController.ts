@@ -10,8 +10,8 @@
 import { NextResponse } from "next/server";
 import { formatBadRequestResponse, formatErrorResponse } from "../../../utils/shared/errorHandler";
 import { unifiedOpenAIService } from "../services/unifiedOpenAIService";
-import { isFeatureEnabled } from "../../../utils/feature-flags";
-import { migrationMonitor } from "../../../utils/monitoring";
+import { isFeatureEnabled } from "../../../utils/shared/feature-flags";
+import { migrationMonitor } from "../../../utils/shared/monitoring";
 
 export async function postHandler(request) {
   try {

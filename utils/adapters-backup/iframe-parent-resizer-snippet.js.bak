@@ -1,0 +1,17 @@
+/**
+ * iframe-parent-resizer-snippet.js - Adapter File
+ *
+ * ADAPTER FILE: This file has been moved to utils/shared/iframe/parent-resizer-snippet.js
+ * This adapter is maintained for backward compatibility during migration.
+ * New code should import directly from utils/shared/iframe/parent-resizer-snippet.js
+ *
+ * @deprecated Please import from utils/shared/iframe/parent-resizer-snippet.js instead
+ */
+
+// Log a warning when this module is imported
+console.warn(
+  "DEPRECATED LOCATION: utils/iframe-parent-resizer-snippet.js should now be imported from utils/shared/iframe/parent-resizer-snippet.js"
+);
+
+// Re-export from new location
+module.exports = require("./shared/iframe/parent-resizer-snippet.js");

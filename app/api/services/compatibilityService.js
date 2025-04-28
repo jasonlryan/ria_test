@@ -6,8 +6,8 @@
  * Last Updated: Fri Apr 25 2025
  */
 
-import logger from "../../../utils/logger";
-import compatibility from "../../../utils/compatibility";
+import logger from "../../../utils/shared/logger";
+import compatibility from "../../../utils/compatibility/compatibility";
 
 export class CompatibilityService {
   constructor() {}

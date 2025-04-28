@@ -98,9 +98,12 @@ The API layer follows a controller-service architecture pattern:
   - `app/api/services/unifiedOpenAIService.ts`: Centralized OpenAI API interactions
     - Unified interface for all OpenAI operations
     - Thread management and message handling
-    - Built-in error handling and retries
+    - Built-in error handling, retries, and timeouts
     - Feature flag support for gradual rollout
     - Performance monitoring and metrics
+    - Graceful degradation with automatic rollback
+    - Singleton instance pattern for efficient client management
+    - Type-safe interfaces for all operations
   - `app/api/services/dataRetrievalService.js`: Data retrieval and processing
 - **Responsibilities**:
   - Encapsulate core business logic
@@ -120,6 +123,12 @@ The API layer follows a controller-service architecture pattern:
 
   - `utils/openai/retrieval.js`: File identification, analysis generation, prompt handling
   - `utils/openai/promptUtils.js`: Prompt construction and formatting
+  - **Supporting Infrastructure**:
+    - `utils/shared/feature-flags.ts`: Feature flag management for gradual rollout
+    - `utils/shared/polling-manager.ts`: Centralized polling with configurable retry and backoff
+    - `utils/shared/monitoring.ts`: Performance monitoring and issue detection
+    - `utils/shared/rollback.ts`: Automatic rollback capability for service migrations
+    - `utils/shared/queryUtils.ts`: Query normalization and context management
 
   #### 3.3.2 Data Processing
 
@@ -132,7 +141,6 @@ The API layer follows a controller-service architecture pattern:
   - `utils/shared/cors.js`: CORS and preflight handling
   - `utils/shared/errorHandler.js`: Standardized error responses
   - `utils/shared/loggerHelpers.js`: Performance logging
-  - `utils/shared/polling.js`: OpenAI polling mechanisms
   - `utils/shared/utils.js`: Common utility functions
   - `utils/shared/kvClient.ts`: Vercel KV client with local fallback
 

@@ -12,7 +12,7 @@
 const path = require("path");
 const tsCompatibilityPath = path.resolve(
   __dirname,
-  "../../utils/compatibility.ts"
+  "../../utils/compatibility/compatibility.ts"
 );
 
 // Mock logger to prevent errors

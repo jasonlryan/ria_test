@@ -4,7 +4,7 @@
  */
 
 import kvClient from "./kvClient";
-import logger from "../logger";
+import logger from "../../utils/shared/logger";
 import { performance } from "perf_hooks";
 import { threadFileKey, threadMetaKey, TTL } from "./key-schema";
 
@@ -49,6 +49,10 @@ export interface ThreadCache {
   files: CachedFile[];
   compatibilityMetadata?: CompatibilityMetadata;
   lastUpdated: number;
+  previousQueries?: string[];
+  rawQueries?: string[];
+  isFollowUp?: boolean;
+  lastQueryTime?: number;
   metadata?: {
     cacheErrors?: Array<{
       timestamp: string;
@@ -469,6 +473,74 @@ export class UnifiedCache {
       logger.error(`Failed to update thread ${threadId} in cache: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
+
+  /**
+   * Update thread with query context
+   * @param threadId Thread ID
+   * @param contextData Context data to update
+   * @returns Success status
+   */
+  static async updateThreadWithContext(
+    threadId: string,
+    contextData: {
+      previousQueries?: string[];
+      rawQueries?: string[];
+      isFollowUp?: boolean;
+      lastQueryTime?: number;
+    }
+  ): Promise<boolean> {
+    try {
+      const key = threadMetaKey(threadId);
+      const existing = await this.get<ThreadCache>(key) || {
+        files: [],
+        lastUpdated: Date.now()
+      };
+
+      // Merge with existing data
+      const updated: ThreadCache = {
+        ...existing,
+        previousQueries: contextData.previousQueries || existing.previousQueries || [],
+        rawQueries: contextData.rawQueries || existing.rawQueries || [],
+        isFollowUp: contextData.isFollowUp ?? existing.isFollowUp,
+        lastQueryTime: contextData.lastQueryTime || Date.now(),
+        lastUpdated: Date.now()
+      };
+
+      return this.set(key, updated, TTL.THREAD_DATA);
+    } catch (error) {
+      logger.error(`Error updating thread context for ${threadId}: ${(error as Error).message}`);
+      return false;
+    }
+  }
+
+  /**
+   * Get thread context data
+   * @param threadId Thread ID
+   * @returns Thread context or default values if not found
+   */
+  static async getThreadContext(
+    threadId: string
+  ): Promise<{
+    previousQueries: string[];
+    rawQueries: string[];
+    isFollowUp: boolean;
+    lastQueryTime?: number;
+  }> {
+    try {
+      const key = threadMetaKey(threadId);
+      const data = await this.get<ThreadCache>(key);
+      
+      return {
+        previousQueries: data?.previousQueries || [],
+        rawQueries: data?.rawQueries || [],
+        isFollowUp: Array.isArray(data?.previousQueries) && data.previousQueries.length > 0,
+        lastQueryTime: data?.lastQueryTime
+      };
+    } catch (error) {
+      logger.error(`Error getting thread context for ${threadId}: ${(error as Error).message}`);
+      return { previousQueries: [], rawQueries: [], isFollowUp: false };
+    }
+  }
 }
 
 // Export both class and convenience methods
@@ -477,4 +549,6 @@ export const updateThreadCache = UnifiedCache.updateThreadCache.bind(UnifiedCach
 export const getCachedFilesForThread = UnifiedCache.getCachedFilesForThread.bind(UnifiedCache);
 export const getThreadCompatibilityMetadata = UnifiedCache.getThreadCompatibilityMetadata.bind(UnifiedCache);
 export const isCompatibilityMetadataValid = UnifiedCache.isCompatibilityMetadataValid.bind(UnifiedCache);
-export const updateThreadWithFiles = UnifiedCache.updateThreadWithFiles.bind(UnifiedCache); 
+export const updateThreadWithFiles = UnifiedCache.updateThreadWithFiles.bind(UnifiedCache);
+export const updateThreadWithContext = UnifiedCache.updateThreadWithContext.bind(UnifiedCache);
+export const getThreadContext = UnifiedCache.getThreadContext.bind(UnifiedCache); 

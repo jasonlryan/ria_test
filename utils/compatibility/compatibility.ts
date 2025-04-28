@@ -8,7 +8,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import logger from './logger';
+import logger from "../shared/logger";
 
 // In-memory cache with TTL
 let compatibilityCache: CompatibilityMapping | null = null;

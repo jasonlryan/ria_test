@@ -7,14 +7,14 @@ import { Stream } from "openai/streaming";
 import readline from "readline";
 import fs from 'fs';
 import path from 'path';
-import logger from "../../../utils/logger";
+import logger from "../../../utils/shared/logger";
 
-import { DEFAULT_SEGMENTS } from "../../../utils/data/segment_keys";
+import { DEFAULT_SEGMENTS } from "../../../utils/cache/segment_keys";
 // Add import for retrieval system
 import { processQueryWithData, identifyRelevantFiles, getPrecompiledStarterData, isStarterQuestion } from "../../../utils/openai/retrieval";
 
 // Add import for cache utilities
-import { getCachedFilesForThread, updateThreadCache } from "../../../utils/cache-utils";
+import { getCachedFilesForThread, updateThreadCache } from "../../../utils/cache/cache-utils";
 
 
 // Centralized mode check

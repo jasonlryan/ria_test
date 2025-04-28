@@ -17,7 +17,7 @@ console.warn(
 
 import fs from "fs";
 import path from "path";
-import logger from "../../utils/logger";
+import logger from "../shared/logger";
 
 // Path to compatibility mapping file
 const COMPATIBILITY_FILE_PATH = path.join(
@@ -245,7 +245,6 @@ export function getNonComparableTopics() {
     return [];
   }
 }
-
 export default {
   loadCompatibilityMapping,
   getFileCompatibility,
@@ -254,5 +253,4 @@ export default {
   getCompatibleTopics,
   getNonComparableTopics,
 };
-
 // Last updated: Fri Apr 25 2025

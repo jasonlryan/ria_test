@@ -8,7 +8,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
-import logger from "../../../utils/logger";
+import logger from "../../../utils/shared/logger";
 import { logPerformanceMetrics, logPerformanceToFile } from "../../../utils/shared/loggerHelpers";
 import { formatErrorResponse, formatBadRequestResponse } from "../../../utils/shared/errorHandler";
 import { sanitizeOutput, isJsonContent } from "../../../utils/shared/utils";
@@ -24,16 +24,21 @@ import {
   getCachedFilesForThread,
   updateThreadCache,
   CachedFile,
-} from "../../../utils/cache-utils";
+  updateThreadWithContext,
+  getThreadContext
+} from "../../../utils/cache/cache-utils";
 import { buildPromptWithFilteredData } from "../../../utils/openai/promptUtils";
 import { unifiedOpenAIService, RunStatus } from "../services/unifiedOpenAIService";
-import { isFeatureEnabled } from "../../../utils/feature-flags";
-import { migrationMonitor } from "../../../utils/monitoring";
+import { isFeatureEnabled } from "../../../utils/shared/feature-flags";
+import { migrationMonitor } from "../../../utils/shared/monitoring";
+import { threadMetaKey } from "../../../utils/cache/key-schema";
+import kvClient from "../../../utils/cache/kvClient";
+import { normalizeQueryText, createThreadContext } from "../../../utils/shared/queryUtils";
 
 const OPENAI_TIMEOUT_MS = 90000;
 const isDirectMode = process.env.FILE_ACCESS_MODE === "direct";
 const forceStandardMode = true;
-const { DEFAULT_SEGMENTS, CANONICAL_SEGMENTS } = require("../../../utils/data/segment_keys");
+const { DEFAULT_SEGMENTS, CANONICAL_SEGMENTS } = require("../../../utils/cache/segment_keys");
 
 /**
  * Log starter question invocations to a file
@@ -80,7 +85,39 @@ function isTerminalStatus(status: RunStatus): boolean {
 }
 
 function shouldContinuePolling(status: RunStatus, messageReceived: boolean): boolean {
-  return !messageReceived && status !== "completed" && status !== "failed" && status !== "cancelled" && status !== "expired";
+  const terminalStatuses: RunStatus[] = ["completed", "failed", "cancelled", "expired"];
+  return !messageReceived && !terminalStatuses.includes(status);
+}
+
+/**
+ * Determines if a query represents a completely new topic
+ * rather than a follow-up on the existing topic
+ * @param currentQuery Current user query
+ * @param previousQuery Previous user query
+ * @returns True if this is likely a new topic
+ */
+function isNewTopicQuery(currentQuery: string, previousQuery: string): boolean {
+  if (!previousQuery || previousQuery.trim().length === 0) {
+    return true;
+  }
+  
+  // Simple semantic similarity check - if queries share very few words, likely new topic
+  const currentWords = new Set(currentQuery.toLowerCase().split(/\s+/).filter(w => w.length > 3));
+  const previousWords = new Set(previousQuery.toLowerCase().split(/\s+/).filter(w => w.length > 3));
+  
+  // Count overlap
+  let overlap = 0;
+  for (const word of currentWords) {
+    if (previousWords.has(word)) {
+      overlap++;
+    }
+  }
+  
+  // If very low word overlap ratio, it's likely a new topic
+  const overlapRatio = overlap / Math.max(currentWords.size, 1);
+  logger.info(`[TOPIC_CHECK] Query overlap ratio: ${overlapRatio.toFixed(2)} (${overlap}/${currentWords.size} words)`);
+  
+  return overlapRatio < 0.15; // Threshold for new topic
 }
 
 export async function postHandler(request: NextRequest) {
@@ -103,6 +140,54 @@ export async function postHandler(request: NextRequest) {
     if (!content) {
       return formatBadRequestResponse("Missing required field: content");
     }
+
+    let previousQuery = "";
+
+    // Initialize context object
+    let context = {
+      normalizedCurrentQuery: normalizeQueryText(content),
+      normalizedPreviousQuery: "",
+      previousResponse: "",
+      isFollowUp: !!threadId
+    };
+
+    // Retrieve messages for context when this is a follow-up
+    if (context.isFollowUp) {
+      try {
+        const messagesResponse = await unifiedOpenAIService.listMessages(
+          threadId,
+          { limit: 4 }
+        );
+        const messages = messagesResponse.data.data;
+
+        // Extract previous query and response
+        for (let i = 0; i < messages.length - 1; i++) {
+          if (messages[i].role === "assistant" && messages[i + 1].role === "user") {
+            const assistantContent = messages[i].content?.[0];
+            const userContent = messages[i + 1].content?.[0];
+
+            if (assistantContent?.type === "text" && userContent?.type === "text") {
+              context.previousResponse = assistantContent.text.value;
+              const rawPreviousQuery = userContent.text.value;
+              context.normalizedPreviousQuery = normalizeQueryText(rawPreviousQuery);
+              previousQuery = context.normalizedPreviousQuery; // For compatibility with existing code
+              
+              logger.info(`[CONTEXT] Raw previous query: "${rawPreviousQuery.substring(0, 50)}..."`);
+              logger.info(`[CONTEXT] Normalized previous query: "${context.normalizedPreviousQuery.substring(0, 50)}..."`);
+              break;
+            }
+          }
+        }
+        
+        logger.info(`[CONTEXT] Raw current query: "${content.substring(0, 50)}..."`);
+        logger.info(`[CONTEXT] Normalized current query: "${context.normalizedCurrentQuery.substring(0, 50)}..."`);
+      } catch (error) {
+        logger.error("Error retrieving and normalizing context:", error);
+      }
+    }
+
+    logger.info(`[QUERY] Raw query: "${content.substring(0, 50)}..."`);
+    logger.info(`[QUERY] Normalized: "${context.normalizedCurrentQuery.substring(0, 50)}..."`);
 
     const isDirectStarterQuestion = typeof content === "string" && /^SQ\d+$/i.test(content.trim());
 
@@ -160,8 +245,25 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
       finalThreadId = result.data.id;
       logger.info(`[THREAD] Created new thread: ${finalThreadId}`);
       migrationMonitor.trackCall('unified', 'createThread', startTime);
+      
+      // Initialize thread context for new threads with both raw and normalized queries
+      await updateThreadWithContext(finalThreadId, {
+        previousQueries: [context.normalizedCurrentQuery],
+        rawQueries: [content],
+        isFollowUp: false,
+        lastQueryTime: Date.now()
+      });
+      logger.info(`[THREAD] Initialized thread context with first query`);
     } else {
       logger.info(`[THREAD] Reusing existing thread: ${finalThreadId}`);
+      
+      // Get existing thread context
+      const existingContext = await getThreadContext(finalThreadId);
+      // Don't override context.isFollowUp if there are previous queries
+      if (existingContext.previousQueries.length > 0) {
+        context.isFollowUp = true;
+      }
+      logger.info(`[THREAD] Existing context - isFollowUp: ${context.isFollowUp}, previousQueries: ${existingContext.previousQueries.length}`);
     }
 
     // Flag and variable for early return
@@ -169,12 +271,18 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
 
     // ===== START: Follow-up Comparison Incompatibility Check =====
     if (isFollowUp && finalThreadId) {
-      const isComparison = detectComparisonQuery(content);
-
+      // Check if this is a comparison query or a new topic
+      const isComparison = detectComparisonQuery(context.normalizedCurrentQuery);
+      const isNewTopic = isNewTopicQuery(context.normalizedCurrentQuery, context.normalizedPreviousQuery);
+      
       if (isComparison) {
         logger.warn(
           `[CONTROLLER_COMPAT_CHECK] Detected follow-up comparison query for thread: ${finalThreadId}`
         );
+        
+        // Clear the thread compatibility metadata for comparison queries to force fresh check
+        await clearThreadCacheForComparison(finalThreadId);
+        
         try {
           const cachedFiles = await getCachedFilesForThread(finalThreadId);
           const cachedFileIds = Array.isArray(cachedFiles) ? cachedFiles.map((f) => f.id) : [];
@@ -285,6 +393,11 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
             error
           );
         }
+      } else if (isNewTopic) {
+        // For new topics, we should reset the compatibility metadata but preserve files
+        // This allows for a fresh topic assessment without breaking early returns
+        logger.info(`[CONTROLLER_COMPAT_CHECK] Detected new topic query in existing thread: ${finalThreadId}`);
+        await clearThreadCacheForComparison(finalThreadId);
       }
     }
 
@@ -300,35 +413,17 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
     let cachedFileIds: string[] = [];
     let originalUserContent = content;
     
-    let previousQuery = "";
-    let previousAssistantResponse = "";
-    
-    if (isFollowUp) {
-      try {
-        const messagesResponse = await unifiedOpenAIService.listMessages(finalThreadId, { limit: 4 });
-        const messages = messagesResponse.data.data;
-        for (let i = 0; i < messages.length - 1; i++) {
-          if (messages[i].role === "assistant" && messages[i+1].role === "user") {
-            const assistantContent = messages[i].content?.[0];
-            const userContent = messages[i+1].content?.[0];
-            if (assistantContent?.type === 'text' && userContent?.type === 'text') {
-              previousAssistantResponse = assistantContent.text.value;
-              previousQuery = userContent.text.value;
-              break;
-            }
-          }
-        }
-        logger.info(`[CONTEXT] Found previous query: "${previousQuery.substring(0, 50)}..."`);
-      } catch (error) {
-        logger.error("Error retrieving message history:", error);
-      }
-    }
-
     let result;
 
     if (!isStarterQuestion(content) && !(isDirectMode && !forceStandardMode)) {
       if (!isFollowUp) {
-        const relevantFilesResult = await identifyRelevantFiles(content, "all-sector");
+        const relevantFilesResult = await identifyRelevantFiles(
+          context.normalizedCurrentQuery,
+          "all-sector",
+          context.isFollowUp,
+          context.normalizedPreviousQuery,
+          context.previousResponse
+        );
         const fileIdArray = relevantFilesResult?.file_ids || [];
 
         const dataDir = path.join(process.cwd(), "scripts", "output", "split_data");
@@ -387,13 +482,13 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
         await updateThreadCache(finalThreadId, cachedFilesForUpdate);
 
         result = await processQueryWithData(
-          content,
+          context.normalizedCurrentQuery,
           "all-sector",
           fileIdArray,
           finalThreadId,
-          isFollowUp,
-          previousQuery,
-          previousAssistantResponse
+          context.isFollowUp,
+          context.normalizedPreviousQuery,
+          context.previousResponse
         );
 
         if (result && result.out_of_scope === true) {
@@ -405,17 +500,46 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
 
         usedFileIds = fileIdArray;
       } else {
+        // Critical fix: Get cached files but ensure we actually have their IDs
         const cachedFiles = await getCachedFilesForThread(finalThreadId);
         cachedFileIds = cachedFiles.map(file => file.id);
+        
+        logger.info(`[FOLLOW-UP] Retrieved ${cachedFileIds.length} cached file IDs for thread ${finalThreadId}: ${cachedFileIds.join(', ')}`);
+        
+        // If no cached files, we need to identify them again - this is likely the root cause of follow-up failures
+        if (cachedFileIds.length === 0) {
+          logger.warn(`[FOLLOW-UP] No cached files found for thread ${finalThreadId}, re-identifying files`);
+          const relevantFilesResult = await identifyRelevantFiles(
+            context.normalizedCurrentQuery,
+            "all-sector",
+            true, // Force isFollowUp to true
+            context.normalizedPreviousQuery,
+            context.previousResponse
+          );
+          cachedFileIds = relevantFilesResult?.file_ids || [];
+          logger.info(`[FOLLOW-UP] Re-identified ${cachedFileIds.length} files: ${cachedFileIds.join(', ')}`);
+          
+          // Add these files to the thread cache
+          if (cachedFileIds.length > 0) {
+            const cachedFilesForUpdate: CachedFile[] = cachedFileIds.map(id => ({
+              id,
+              data: {},
+              loadedSegments: new Set(),
+              availableSegments: new Set()
+            }));
+            await updateThreadCache(finalThreadId, cachedFilesForUpdate);
+            logger.info(`[FOLLOW-UP] Updated thread cache with ${cachedFileIds.length} files`);
+          }
+        }
 
         result = await processQueryWithData(
-          content,
+          context.normalizedCurrentQuery,
           "all-sector",
           cachedFileIds,
           finalThreadId,
-          isFollowUp,
-          previousQuery,
-          previousAssistantResponse
+          true, // Force isFollowUp to true
+          context.normalizedPreviousQuery,
+          context.previousResponse
         );
 
         if (result && result.out_of_scope === true) {
@@ -572,16 +696,61 @@ No data matched for the selected segments.`;
     } else if (!isStarterQuestion(content) && isDirectMode && !forceStandardMode) {
       const cachedFiles = await getCachedFilesForThread(finalThreadId);
       cachedFileIds = cachedFiles.map(file => file.id);
-      const relevantFilesResult = await identifyRelevantFiles(content, "all-sector");
+      const relevantFilesResult = await identifyRelevantFiles(
+        context.normalizedCurrentQuery,
+        "all-sector",
+        context.isFollowUp,
+        context.normalizedPreviousQuery,
+        context.previousResponse
+      );
       if (relevantFilesResult?.file_ids) {
         usedFileIds = Array.from(new Set([...(cachedFileIds || []), ...(relevantFilesResult.file_ids || [])])).map(String);
       }
     }
 
+    // Add debug info for follow-up queries
+    logger.info(`=== FOLLOW-UP DEBUG ===`);
+    logger.info(`THREAD ID: ${finalThreadId}`);
+    logger.info(`IS FOLLOW-UP FLAG: ${isFollowUp}`);
+    logger.info(`CACHED FILE IDS: ${JSON.stringify(cachedFileIds)}`);
+    logger.info(`HAS PREVIOUS QUERY: ${context.normalizedPreviousQuery ? 'YES' : 'NO'}`);
+    logger.info(`QUERY: "${context.normalizedCurrentQuery.substring(0, 50)}..."`);
+    if (context.normalizedPreviousQuery) {
+      logger.info(`PREV QUERY: "${context.normalizedPreviousQuery.substring(0, 50)}..."`);
+    }
+    logger.info(`=======================`);
+
     const createMessageResponse = await unifiedOpenAIService.createMessage(finalThreadId, {
       role: "user",
       content: content,
     });
+
+    // Track context for all threads right after message creation
+    // Store both the raw and normalized queries for future reference
+    const queryContext = {
+      rawQuery: content,
+      normalizedQuery: context.normalizedCurrentQuery,
+      timestamp: Date.now(),
+    };
+
+    // Ensure we store query context in thread metadata
+    try {
+      // Get existing thread context
+      const threadContext = await getThreadContext(finalThreadId);
+      const existingQueries = threadContext.previousQueries || [];
+      
+      // Store both current normalized query and raw query for future reference
+      await updateThreadWithContext(finalThreadId, {
+        previousQueries: [context.normalizedCurrentQuery, ...existingQueries].slice(0, 5),
+        rawQueries: [content, ...(threadContext.rawQueries || [])].slice(0, 5),
+        isFollowUp: true,
+        lastQueryTime: Date.now()
+      });
+      
+      logger.info(`[THREAD] Updated thread ${finalThreadId} with query context (total queries: ${existingQueries.length + 1})`);
+    } catch (err) {
+      logger.error(`[THREAD] Failed to update thread context: ${err.message}`);
+    }
 
     const createRunResponse = await unifiedOpenAIService.createRun(finalThreadId, {
       assistant_id: assistantId,
@@ -626,10 +795,14 @@ No data matched for the selected segments.`;
                     const toolStartTime = performance.now();
 
                     const args = JSON.parse(toolCall.function.arguments);
-                    const query = args.query;
+                    const rawQuery = args.query;
+                    const normalizedToolQuery = normalizeQueryText(rawQuery);
 
-                    if (!query)
+                    if (!normalizedToolQuery)
                       throw new Error("Missing query parameter");
+
+                    logger.info(`[TOOL] Raw tool query: "${rawQuery.substring(0, 50)}..."`);
+                    logger.info(`[TOOL] Normalized tool query: "${normalizedToolQuery.substring(0, 50)}..."`);
 
                     const cachedFileIds = await getCachedFilesForThread(
                       finalThreadId
@@ -637,8 +810,11 @@ No data matched for the selected segments.`;
 
                     if (isDirectMode && !forceStandardMode) {
                       const relevantFilesResult = await identifyRelevantFiles(
-                        query,
-                        "all-sector"
+                        normalizedToolQuery,
+                        "all-sector",
+                        context.isFollowUp,
+                        context.normalizedPreviousQuery,
+                        context.previousResponse
                       );
                       const fileIdArray =
                         relevantFilesResult?.file_ids || [];
@@ -666,7 +842,7 @@ No data matched for the selected segments.`;
                             {
                               tool_call_id: toolCall.id,
                               output: JSON.stringify({
-                                prompt: query,
+                                prompt: normalizedToolQuery,
                                 file_ids: allRelevantFileIds,
                                 matched_topics:
                                   relevantFilesResult.matched_topics || [],
@@ -684,23 +860,56 @@ No data matched for the selected segments.`;
                       const identificationTime =
                         performance.now() - toolStartTime;
                     } else {
-                      const result = await processQueryWithData(
-                        query,
-                        "all-sector",
-                        cachedFileIds,
+                      const cachedFileIds = await getCachedFilesForThread(
                         finalThreadId
                       );
+                      
+                      logger.info(`[TOOL] Retrieved ${cachedFileIds.length} cached file IDs for tool call: ${cachedFileIds.join(', ')}`);
+                      
+                      let filesToUse = cachedFileIds;
+                      
+                      // If no cached files, reidentify them
+                      if (filesToUse.length === 0) {
+                        logger.warn(`[TOOL] No cached files for tool call, re-identifying files`);
+                        const tempIdentification = await identifyRelevantFiles(
+                          normalizedToolQuery,
+                          "all-sector",
+                          true, // Force follow-up to true for tools
+                          context.normalizedPreviousQuery,
+                          context.previousResponse
+                        );
+                        filesToUse = tempIdentification?.file_ids || [];
+                        logger.info(`[TOOL] Re-identified ${filesToUse.length} files for tool call: ${filesToUse.join(', ')}`);
+                      }
+                      
+                      const result = await processQueryWithData(
+                        normalizedToolQuery,
+                        "all-sector",
+                        filesToUse,
+                        finalThreadId,
+                        true, // Always treat tool calls as follow-ups
+                        context.normalizedPreviousQuery,
+                        context.previousResponse
+                      );
 
-                      const fileIdsArray = Array.from(
-                        result.dataScope.fileIds
-                      ).map(String);
-                      const cachedFiles: CachedFile[] = fileIdsArray.map(id => ({
-                        id,
-                        data: {},
-                        loadedSegments: new Set(),
-                        availableSegments: new Set()
-                      }));
-                      await updateThreadCache(finalThreadId, cachedFiles);
+                      // Ensure we always update the cache with any new file IDs
+                      if (result.dataScope && result.dataScope.fileIds) {
+                        const fileIdsArray = Array.from(
+                          result.dataScope.fileIds
+                        ).map(String);
+                        
+                        // Only update if we have files
+                        if (fileIdsArray.length > 0) {
+                          const cachedFiles: CachedFile[] = fileIdsArray.map(id => ({
+                            id,
+                            data: {},
+                            loadedSegments: new Set(),
+                            availableSegments: new Set()
+                          }));
+                          await updateThreadCache(finalThreadId, cachedFiles);
+                          logger.info(`[TOOL] Updated thread cache with ${fileIdsArray.length} files: ${fileIdsArray.join(', ')}`);
+                        }
+                      }
 
                       await unifiedOpenAIService.submitToolOutputs(
                         finalThreadId,
@@ -805,7 +1014,7 @@ No data matched for the selected segments.`;
                 break;
               }
 
-              if (!messageReceived && runStatus !== "failed") {
+              if (shouldContinuePolling(runStatus, messageReceived)) {
                 await new Promise((resolve) => setTimeout(resolve, perfTimings.pollingInterval));
               }
             } catch (error) {
@@ -866,5 +1075,39 @@ export async function putHandler(request: NextRequest) {
   } catch (error) {
     logger.error('[CHAT_ASSISTANT] Error in putHandler:', error);
     return formatErrorResponse(error);
+  }
+}
+
+/**
+ * Resets thread compatibility metadata for comparison queries or new topics
+ * This preserves cached files but forces a fresh compatibility check
+ * @param threadId Thread ID to reset compatibility metadata for
+ */
+async function clearThreadCacheForComparison(threadId: string): Promise<void> {
+  try {
+    logger.info(`[COMPAT_CACHE] Resetting thread compatibility metadata for thread ${threadId}`);
+    
+    // Get existing thread cache
+    const metaKey = threadMetaKey(threadId);
+    const existingCache = await kvClient.get(metaKey);
+    
+    if (!existingCache) {
+      logger.info(`[COMPAT_CACHE] No existing cache found for thread ${threadId}`);
+      return;
+    }
+    
+    // Reset only compatibility metadata, preserve files
+    const updatedCache = {
+      ...existingCache,
+      compatibilityMetadata: undefined,
+      lastUpdated: Date.now()
+    };
+    
+    // Update the thread cache with reset compatibility metadata
+    await kvClient.set(metaKey, updatedCache, { ex: 60 * 60 * 24 }); // 24 hour TTL
+    
+    logger.info(`[COMPAT_CACHE] Successfully reset compatibility metadata while preserving cached files for thread ${threadId}`);
+  } catch (error) {
+    logger.error(`[COMPAT_CACHE] Error resetting compatibility metadata: ${error.message}`);
   }
 }

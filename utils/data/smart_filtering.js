@@ -1,9 +1,9 @@
 /**
  * Smart filtering module for query intent parsing and data filtering
  *
- * Segment keys are imported from utils/data/segment_keys.js
+ * Segment keys are imported from utils/cache/segment_keys.js
  */
-const { CANONICAL_SEGMENTS } = require("./segment_keys");
+const { CANONICAL_SEGMENTS } = require("../cache/segment_keys");
 
 /**
  * Parse the user query and conversation history to extract intent.

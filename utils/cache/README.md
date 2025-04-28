@@ -43,7 +43,7 @@ Defines the standardized key schema for all cached data to ensure consistent and
 Old code:
 
 ```typescript
-import { UnifiedCache } from "../utils/cache-utils";
+import { UnifiedCache } from "../utils/cache/cache-utils";
 ```
 
 New code:
