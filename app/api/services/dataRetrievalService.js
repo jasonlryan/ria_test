@@ -189,15 +189,24 @@ export class DataRetrievalService {
 
           case "age":
           case "gender":
-            // These are generally comparable
+          case "sector":
+          case "org_size":
+          case "job_level":
+          case "relationship_status":
+          case "education":
+          case "generation":
+          case "employment_status":
+            // These demographics are accessible within a single data file
+            // and generally comparable across years unless specified otherwise
             isSegmentCompatible = true;
-            userMessage = `${segmentType} data can be compared across years.`;
+            userMessage = `${segmentType} data is available for analysis and can typically be compared across years.`;
             break;
 
           default:
-            // Other segments may not be comparable
-            isSegmentCompatible = false;
-            userMessage = `${segmentType} data cannot be reliably compared across years due to methodology changes.`;
+            // For any unknown segments, default to allowing access
+            // but with a note about potential cross-year comparison issues
+            isSegmentCompatible = true;
+            userMessage = `${segmentType} data is available, but cross-year comparisons should be made with caution.`;
         }
 
         compatibilityMetadata.segmentCompatibility[segmentType] = {
@@ -206,8 +215,11 @@ export class DataRetrievalService {
           userMessage,
         };
 
-        // Update overall compatibility flag
-        if (!isSegmentCompatible) {
+        // Only update isFullyCompatible for cross-year compatibility issues when they actually matter
+        // A segment being potentially incomparable across years shouldn't block access to that segment
+        // within a single year's data file
+        if (!isSegmentCompatible && segmentType === "country") {
+          // Country is the only segment where incompatibility might legitimately prevent access
           compatibilityMetadata.isFullyCompatible = false;
         }
       }
@@ -527,6 +539,10 @@ export class DataRetrievalService {
    * @returns {Object} mapping of fileId to missing segments
    */
   calculateMissingSegments(requestedSegments, cachedFiles) {
+    // NOTE: All segments should be accessible within a single file regardless of cross-year
+    // compatibility concerns. Segment compatibility should only affect cross-year comparisons,
+    // not whether a segment can be retrieved from an individual file.
+
     const missingSegments = {};
     for (const file of cachedFiles) {
       const loaded = file.loadedSegments || new Set();
