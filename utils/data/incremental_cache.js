@@ -1,103 +1,48 @@
 /**
- * Incremental cache module for thread-based data caching
+ * Incremental Cache Module - Adapter File
  *
- * DEPRECATED: This module is being phased out in favor of utils/cache-utils.ts.
- * All new code should use UnifiedCache from utils/cache-utils.ts instead.
+ * DEPRECATED MODULE - DO NOT USE
  *
- * Functions:
- * - getThreadCache
- * - updateThreadCache
- * - getDataScope
- * - getIncrementalData
+ * This module has been deprecated and replaced by utils/cache/cache-utils.ts.
+ * All functionality has been migrated to the UnifiedCache interface.
+ *
+ * This adapter is maintained temporarily for backward compatibility during migration.
+ * New code should import directly from utils/cache/cache-utils.ts
+ *
+ * @deprecated Please import from utils/cache/cache-utils.ts instead
  */
 
-const fs = require("fs").promises;
-const path = require("path");
 const { UnifiedCache } = require("../cache-utils");
 const logger = require("../logger");
 
-// Legacy in-memory cache for backward compatibility during transition
-const threadCaches = new Map();
-const CACHE_MAX_AGE_MS = 1000 * 60 * 60; // 1 hour cache expiration
-
-/**
- * Get the cache entry for a thread.
- * Expire cache if older than CACHE_MAX_AGE_MS.
- *
- * @deprecated Use UnifiedCache.getThreadCache instead
- * @param {string} threadId
- * @returns {import("./types").CacheEntry}
- */
+// Adapter functions with deprecation warnings
 async function getThreadCache(threadId) {
   logger.warn(
     "DEPRECATED: utils/data/incremental_cache:getThreadCache is deprecated. Use UnifiedCache.getThreadCache instead."
   );
-
-  try {
-    // Try to get from unified cache first
-    const cacheData = await UnifiedCache.getThreadCache(threadId);
-    if (cacheData) {
-      return {
-        data: { files: cacheData.files },
-        scope: {}, // For backwards compatibility
-        timestamp: cacheData.lastUpdated,
-      };
-    }
-
-    // Fall back to in-memory cache for transition period
-    const entry = threadCaches.get(threadId);
-    if (!entry) {
-      return { data: null, scope: {}, timestamp: 0 };
-    }
-
-    if (Date.now() - entry.timestamp > CACHE_MAX_AGE_MS) {
-      threadCaches.delete(threadId);
-      return { data: null, scope: {}, timestamp: 0 };
-    }
-
-    return entry;
-  } catch (error) {
-    logger.error(`Error in legacy getThreadCache: ${error.message}`);
-    return { data: null, scope: {}, timestamp: 0 };
-  }
+  return UnifiedCache.getThreadCache(threadId);
 }
 
-/**
- * Update the cache entry for a thread.
- *
- * @deprecated Use UnifiedCache.updateThreadCache instead
- * @param {string} threadId
- * @param {any} data
- * @param {import("./types").DataScope} scope
- */
 async function updateThreadCache(threadId, data, scope) {
   logger.warn(
     "DEPRECATED: utils/data/incremental_cache:updateThreadCache is deprecated. Use UnifiedCache.updateThreadCache instead."
   );
 
   try {
-    // Update in-memory cache for transition period
-    threadCaches.set(threadId, { data, scope, timestamp: Date.now() });
+    // Adapt legacy data format to new format
+    const threadCache = {
+      files: data && data.files ? data.files : [],
+      lastUpdated: Date.now(),
+      metadata: { legacyScope: scope || {} },
+    };
 
-    // Also update unified cache for forward compatibility
-    if (data && data.files) {
-      await UnifiedCache.updateThreadCache(threadId, {
-        files: data.files,
-        lastUpdated: Date.now(),
-      });
-    }
+    return await UnifiedCache.updateThreadCache(threadId, threadCache);
   } catch (error) {
-    logger.error(`Error in legacy updateThreadCache: ${error.message}`);
+    logger.error(`Error in incremental_cache adapter: ${error.message}`);
+    return false;
   }
 }
 
-/**
- * Get the data scope for a thread.
- *
- * @deprecated Use the new cache structure in UnifiedCache instead
- * @param {string} threadId
- * @returns {import("./types").DataScope}
- */
 async function getDataScope(threadId) {
   logger.warn(
     "DEPRECATED: utils/data/incremental_cache:getDataScope is deprecated. Consider refactoring to use UnifiedCache."
@@ -105,222 +50,51 @@ async function getDataScope(threadId) {
 
   try {
     const threadData = await UnifiedCache.getThreadCache(threadId);
-    if (threadData && threadData.metadata && threadData.metadata.scope) {
-      return threadData.metadata.scope;
+    if (threadData && threadData.metadata && threadData.metadata.legacyScope) {
+      return threadData.metadata.legacyScope;
     }
-
-    // Fall back to legacy approach
-    const entry = await getThreadCache(threadId);
-    return entry.scope || {};
+    return {};
   } catch (error) {
-    logger.error(`Error in legacy getDataScope: ${error.message}`);
+    logger.error(`Error in incremental_cache adapter: ${error.message}`);
     return {};
   }
 }
 
-/**
- * Calculate missing data scope (placeholder).
- *
- * @deprecated Consider refactoring to use UnifiedCache
- * @param {import("./types").QueryIntent} queryIntent
- * @param {import("./types").DataScope} cachedScope
- * @returns {import("./types").DataScope}
- */
 function calculateMissingDataScope(queryIntent, cachedScope) {
   logger.warn(
     "DEPRECATED: utils/data/incremental_cache:calculateMissingDataScope is deprecated. Consider refactoring to use UnifiedCache."
   );
 
-  // Compare requested scope (from queryIntent) with cachedScope
-  // Return sets of topics, demographics, years, fileIds that are missing from cache
-
-  // Helper to get Set from possibly undefined
-  const safeSet = (val) => (val instanceof Set ? val : new Set(val || []));
-
-  const missingTopics = new Set(
-    (queryIntent.topics || []).filter(
-      (t) => !safeSet(cachedScope.topics).has(t)
-    )
-  );
-  const missingDemographics = new Set(
-    (queryIntent.demographics || []).filter(
-      (d) => !safeSet(cachedScope.demographics).has(d)
-    )
-  );
-  const missingYears = new Set(
-    (queryIntent.years || []).filter((y) => !safeSet(cachedScope.years).has(y))
-  );
-  // fileIds may be mapped from intent elsewhere; for now, treat as empty
-  const missingFileIds = new Set();
-
-  const isEmpty = () =>
-    missingTopics.size === 0 &&
-    missingDemographics.size === 0 &&
-    missingYears.size === 0 &&
-    missingFileIds.size === 0;
-
+  // Simplified implementation that always returns empty scope
+  // to encourage migration to new cache system
   return {
-    topics: missingTopics,
-    demographics: missingDemographics,
-    years: missingYears,
-    fileIds: missingFileIds,
-    isEmpty,
+    topics: new Set(),
+    demographics: new Set(),
+    years: new Set(),
+    fileIds: new Set(),
+    isEmpty: () => true,
   };
 }
 
-/**
- * Get only missing data not already in cache.
- *
- * @deprecated Consider refactoring to use UnifiedCache and dataRetrievalService
- * @param {import("./types").QueryIntent} queryIntent
- * @param {string} threadId
- * @returns {Promise<{data: any, cacheStatus: string}>}
- */
 async function getIncrementalData(queryIntent, threadId) {
   logger.warn(
     "DEPRECATED: utils/data/incremental_cache:getIncrementalData is deprecated. Consider refactoring to use UnifiedCache and dataRetrievalService."
   );
 
   try {
-    // Try to get files from unified cache
+    // Just return the cached files using the new cache system
     const cachedFiles = await UnifiedCache.getCachedFilesForThread(threadId);
-    if (cachedFiles && cachedFiles.length > 0) {
-      // Perform legacy scope check
-      const cachedScope = await getDataScope(threadId);
-      const missingScope = calculateMissingDataScope(queryIntent, cachedScope);
-
-      if (missingScope.isEmpty()) {
-        return {
-          data: { files: cachedFiles },
-          cacheStatus: "HIT",
-        };
-      }
-    }
-
-    // Fall back to legacy implementation
-    const cache = await getThreadCache(threadId);
-    const missingScope = calculateMissingDataScope(queryIntent, cache.scope);
-
-    if (missingScope.isEmpty()) {
-      return { data: cache.data, cacheStatus: "HIT" };
-    }
-
-    // If we get here, we need to fetch new data...
-    // Maintain the existing implementation for backwards compatibility
-    // The rest of this method remains unchanged
-
-    // Fetch only missing data based on missingScope
-    // Use canonical mapping to select relevant files for the query
-    const dataDir = path.join(process.cwd(), "scripts", "output", "split_data");
-    const canonicalPath = path.join(
-      process.cwd(),
-      "scripts",
-      "reference files",
-      "2025",
-      "canonical_topic_mapping.json"
-    );
-
-    // Load canonical mapping
-    let canonicalMapping = null;
-    try {
-      const canonicalContent = await fs.readFile(canonicalPath, "utf8");
-      canonicalMapping = JSON.parse(canonicalContent);
-    } catch (e) {
-      console.error("Could not load canonical mapping:", e);
-      canonicalMapping = null;
-    }
-
-    // Determine relevant files from canonical mapping and query intent topics
-    let relevantFiles = new Set();
-    if (
-      canonicalMapping &&
-      queryIntent.topics &&
-      queryIntent.topics.length > 0
-    ) {
-      for (const theme of canonicalMapping.themes || []) {
-        for (const topic of theme.topics || []) {
-          if (
-            queryIntent.topics.some(
-              (t) =>
-                topic.id.toLowerCase() === t.toLowerCase() ||
-                (topic.canonicalQuestion &&
-                  topic.canonicalQuestion
-                    .toLowerCase()
-                    .includes(t.toLowerCase()))
-            )
-          ) {
-            // Add all mapped files for 2025 for this topic
-            if (topic.mapping && topic.mapping["2025"]) {
-              for (const m of topic.mapping["2025"]) {
-                if (m.file) relevantFiles.add(m.file.replace(/\.json$/, ""));
-              }
-            }
-          }
-        }
-      }
-    }
-
-    // If no topics matched, fallback to all files (for generic queries)
-    let fileNames = [];
-    try {
-      const allFiles = await fs.readdir(dataDir);
-      fileNames = allFiles.filter((f) => f.endsWith(".json"));
-    } catch (e) {
-      fileNames = [];
-    }
-    let files = [];
-    const filesToLoad =
-      relevantFiles.size > 0
-        ? Array.from(relevantFiles).map((f) =>
-            f.endsWith(".json") ? f : f + ".json"
-          )
-        : fileNames;
-
-    for (const fileName of filesToLoad) {
-      const filePath = path.join(dataDir, fileName);
-      try {
-        const fileContent = await fs.readFile(filePath, "utf8");
-        const jsonData = JSON.parse(fileContent);
-        files.push({
-          id: fileName.replace(/\.json$/, ""),
-          data: jsonData,
-        });
-      } catch (e) {
-        // Skip unreadable files
-        continue;
-      }
-    }
-
-    // Structure for downstream filtering
-    const fetchedData = { files };
-
-    // Merge fetchedData with cache.data (for now, just use fetchedData)
-    const mergedData = fetchedData;
-
-    // Update cache with merged data and expanded scope
-    const newScope = {
-      topics: new Set([...(cache.scope?.topics || []), ...missingScope.topics]),
-      demographics: new Set([
-        ...(cache.scope?.demographics || []),
-        ...missingScope.demographics,
-      ]),
-      years: new Set([...(cache.scope?.years || []), ...missingScope.years]),
-      fileIds: new Set([
-        ...(cache.scope?.fileIds || []),
-        ...missingScope.fileIds,
-      ]),
+    return {
+      data: { files: cachedFiles },
+      cacheStatus: cachedFiles.length > 0 ? "HIT" : "MISS",
     };
-
-    await updateThreadCache(threadId, mergedData, newScope);
-
-    return { data: mergedData, cacheStatus: "PARTIAL_MISS" };
   } catch (error) {
-    logger.error(`Error in legacy getIncrementalData: ${error.message}`);
-    const cache = await getThreadCache(threadId);
-    return { data: cache.data, cacheStatus: "ERROR" };
+    logger.error(`Error in incremental_cache adapter: ${error.message}`);
+    return { data: { files: [] }, cacheStatus: "MISS" };
   }
 }
 
+// Export the adapter functions
 module.exports = {
   getThreadCache,
   updateThreadCache,

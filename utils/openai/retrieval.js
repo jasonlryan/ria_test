@@ -20,13 +20,7 @@ const {
   getBaseData,
   getSpecificData,
 } = require("../data/smart_filtering");
-const {
-  getThreadCache,
-  updateThreadCache,
-  getDataScope,
-  getIncrementalData,
-  calculateMissingDataScope,
-} = require("../data/incremental_cache");
+const { UnifiedCache } = require("../cache-utils");
 
 // Initialize OpenAI client
 const openai = new OpenAI({
