@@ -7,10 +7,7 @@
 
 import OpenAI from "openai";
 import { waitForNoActiveRuns } from "../../utils/shared/polling";
-import {
-  getCachedFilesForThread,
-  updateThreadCache,
-} from "../../utils/cache-utils";
+import { UnifiedCache } from "../../utils/cache-utils";
 import logger from "../../utils/logger";
 
 const OPENAI_TIMEOUT_MS = 90000;
@@ -74,14 +71,14 @@ export class ThreadService {
   }
 
   async updateThreadCache(threadId, fileIds) {
-    await updateThreadCache(threadId, fileIds);
+    await UnifiedCache.updateThreadWithFiles(threadId, fileIds);
     logger.info(
       `[CACHE] Updated thread cache for thread ${threadId} with ${fileIds.length} files`
     );
   }
 
   async getCachedFiles(threadId) {
-    return getCachedFilesForThread(threadId);
+    return UnifiedCache.getCachedFilesForThread(threadId);
   }
 }
 

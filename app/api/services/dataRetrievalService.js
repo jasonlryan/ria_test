@@ -8,12 +8,7 @@
 import fs from "fs";
 import path from "path";
 import logger from "../../../utils/logger";
-import {
-  getCachedFilesForThread,
-  updateThreadCache,
-  getThreadCompatibilityMetadata,
-  isCompatibilityMetadataValid,
-} from "../../../utils/cache-utils";
+import { UnifiedCache } from "../../../utils/cache-utils";
 import {
   identifyRelevantFiles,
   getPrecompiledStarterData,
@@ -312,9 +307,8 @@ export class DataRetrievalService {
     const cacheEntry = await this.getCachedFiles(threadId);
 
     // Step 2: Check for existing compatibility metadata
-    const cachedCompatibilityMetadata = await getThreadCompatibilityMetadata(
-      threadId
-    );
+    const cachedCompatibilityMetadata =
+      await UnifiedCache.getThreadCompatibilityMetadata(threadId);
 
     // Log cache read operation
     if (cachedCompatibilityMetadata) {
@@ -382,7 +376,11 @@ export class DataRetrievalService {
     }
 
     // Step 8: Update thread cache with compatibility metadata
-    await updateThreadCache(threadId, cacheEntry, compatibilityMetadata);
+    await UnifiedCache.updateThreadWithFiles(
+      threadId,
+      cacheEntry,
+      compatibilityMetadata
+    );
 
     // Log cache update operation
     logCompatibilityCache(
@@ -603,22 +601,22 @@ export class DataRetrievalService {
   }
 
   /**
-   * Get cached file IDs for a thread.
-   * @param {string} threadId
-   * @returns {Promise<CachedFile[]>}
+   * Get cached files for a thread
+   * @param {string} threadId - Thread ID
+   * @returns {Promise<Array>} Array of cached files
    */
   async getCachedFiles(threadId) {
-    return getCachedFilesForThread(threadId);
+    return UnifiedCache.getCachedFilesForThread(threadId);
   }
 
   /**
-   * Update cached file IDs for a thread.
-   * @param {string} threadId
-   * @param {CachedFile[]} fileIds
-   * @returns {Promise<void>}
+   * Update thread cache with files
+   * @param {string} threadId - Thread ID
+   * @param {Array} files - Files to cache
+   * @returns {Promise<boolean>} Success status
    */
-  async updateThreadCache(threadId, fileIds) {
-    return updateThreadCache(threadId, fileIds);
+  async updateThreadCache(threadId, files) {
+    return UnifiedCache.updateThreadWithFiles(threadId, files);
   }
 }
 
