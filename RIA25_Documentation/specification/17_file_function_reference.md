@@ -102,19 +102,33 @@ This document provides a comprehensive mapping of all major files and functions 
 
 ## Services
 
-- `app/api/services/threadService.js`
+- `app/api/services/unifiedOpenAIService.ts`
 
-  - `createThread()`: Creates a new OpenAI thread
-  - `reuseThread(threadId)`: Validates and reuses an existing thread
-  - `waitForNoActiveRuns(threadId, pollInterval, timeoutMs)`: Waits for thread run completion
-  - `createRun(threadId, assistantId, instructions)`: Creates a new run on a thread
-  - `pollRunStatus(threadId, runId, pollInterval)`: Polls run status
-  - `submitToolOutputs(threadId, runId, toolOutputs)`: Submits tool call outputs
-  - `updateThreadCache(threadId, fileIds)`: Updates cached file IDs
-  - `getCachedFiles(threadId)`: Retrieves cached file IDs
+  - OpenAI API Operations:
+
+    - `createChatCompletion(messages, options)`: Create chat completions with retry and streaming support
+    - `createAsyncCompletion(messages, options)`: Create async completions with polling
+    - `createEmbeddings(input, options)`: Create embeddings with retry support
+    - `createImage(prompt, options)`: Create images with retry support
+
+  - Thread Management:
+
+    - `createThread()`: Creates a new OpenAI thread
+    - `listMessages(threadId, options)`: Lists messages in a thread
+    - `createMessage(threadId, message)`: Creates a message in a thread
+    - `createRun(threadId, options)`: Creates a new run on a thread
+    - `retrieveRun(threadId, runId)`: Retrieves a run's status
+    - `submitToolOutputs(threadId, runId, toolOutputs)`: Submits tool call outputs
+    - `waitForNoActiveRuns(threadId, pollInterval, timeoutMs)`: Waits for thread run completion
+
+  - Error Handling & Monitoring:
+    - Built-in retry mechanism
+    - Consistent error formatting
+    - Performance monitoring
+    - Feature flag support
+    - Graceful degradation
 
 - `app/api/services/dataRetrievalService.js`
-
   - `identifyRelevantFiles(query, context, isFollowUp, previousQuery, previousResponse)`: Identifies relevant data files
   - `loadDataFiles(fileIds)`: Loads data files
   - `filterDataBySegments(loadedData, segments)`: Filters data by segments
@@ -123,13 +137,6 @@ This document provides a comprehensive mapping of all major files and functions 
   - `isStarterQuestion(prompt)`: Detects starter question codes
   - `getCachedFiles(threadId)`: Gets cached files
   - `updateThreadCache(threadId, fileIds)`: Updates cached files
-
-- `app/api/services/openaiService.js`
-  - `sendMessage(threadId, message)`: Sends a message to a thread
-  - `createRun(threadId, assistantId, instructions)`: Creates a thread run
-  - `pollRunStatus(threadId, runId, pollInterval)`: Polls run status
-  - `submitToolOutputs(threadId, runId, toolOutputs)`: Submits tool outputs
-  - `waitForNoActiveRuns(threadId, pollInterval, timeoutMs)`: Waits for thread availability
 
 ## Utilities
 

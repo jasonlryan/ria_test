@@ -6,14 +6,12 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
 import fs from "fs";
 import path from "path";
 import logger from "../../../utils/logger";
 import { logPerformanceMetrics, logPerformanceToFile } from "../../../utils/shared/loggerHelpers";
 import { formatErrorResponse, formatBadRequestResponse } from "../../../utils/shared/errorHandler";
 import { sanitizeOutput, isJsonContent } from "../../../utils/shared/utils";
-import { waitForNoActiveRuns } from "../../../utils/shared/polling";
 import {
   processQueryWithData,
   identifyRelevantFiles,
@@ -28,15 +26,67 @@ import {
   CachedFile,
 } from "../../../utils/cache-utils";
 import { buildPromptWithFilteredData } from "../../../utils/openai/promptUtils";
+import { unifiedOpenAIService, RunStatus } from "../services/unifiedOpenAIService";
+import { isFeatureEnabled } from "../../../utils/feature-flags";
+import { migrationMonitor } from "../../../utils/monitoring";
 
 const OPENAI_TIMEOUT_MS = 90000;
 const isDirectMode = process.env.FILE_ACCESS_MODE === "direct";
 const forceStandardMode = true;
 const { DEFAULT_SEGMENTS, CANONICAL_SEGMENTS } = require("../../../utils/data/segment_keys");
 
-export async function postHandler(request: NextRequest) {
+/**
+ * Log starter question invocations to a file
+ */
+async function logStarterQuestionInvocation({
+  starterQuestionCode,
+  question,
+  assistantId,
+  threadId,
+  dataFiles,
+  stats,
+  timestamp = new Date().toISOString()
+}: {
+  starterQuestionCode: string;
+  question: string;
+  assistantId: string;
+  threadId: string;
+  dataFiles: string[];
+  stats: any;
+  timestamp?: string;
+}) {
+  if (process.env.VERCEL) return;
   try {
-    const apiStartTime = Date.now();
+    const logDir = path.join(process.cwd(), 'logs');
+    const logFile = path.join(logDir, 'starter_question_invocations.log');
+    const logEntry = JSON.stringify({
+      timestamp,
+      starterQuestionCode,
+      question,
+      assistantId,
+      threadId,
+      dataFiles,
+      stats
+    }) + '\n';
+    await fs.promises.mkdir(logDir, { recursive: true });
+    await fs.promises.appendFile(logFile, logEntry, 'utf8');
+  } catch (err) {
+    logger.error('Error writing starter question invocation log:', err);
+  }
+}
+
+function isTerminalStatus(status: RunStatus): boolean {
+  return status === "completed" || status === "failed" || status === "cancelled" || status === "expired";
+}
+
+function shouldContinuePolling(status: RunStatus, messageReceived: boolean): boolean {
+  return !messageReceived && status !== "completed" && status !== "failed" && status !== "cancelled" && status !== "expired";
+}
+
+export async function postHandler(request: NextRequest) {
+  const startTime = Date.now();
+  const apiStartTime = Date.now();
+  try {
     let perfTimings = {
       requestStart: apiStartTime,
       runCreated: 0,
@@ -104,13 +154,12 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
     const isFollowUp = !!threadId; // Determine if this is a follow-up based on threadId presence
     logger.info(`[REQUEST] New ${isFollowUp ? "follow-up" : "initial"} request | Assistant: ${assistantId}`);
 
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
     let finalThreadId = threadId;
     if (!finalThreadId) {
-      const thread = await openai.beta.threads.create();
-      finalThreadId = thread.id;
+      const result = await unifiedOpenAIService.createThread();
+      finalThreadId = result.data.id;
       logger.info(`[THREAD] Created new thread: ${finalThreadId}`);
+      migrationMonitor.trackCall('unified', 'createThread', startTime);
     } else {
       logger.info(`[THREAD] Reusing existing thread: ${finalThreadId}`);
     }
@@ -118,15 +167,15 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
     // Flag and variable for early return
     let earlyResponse: NextResponse | null = null;
 
-    // ===== START: Follow-up Comparison Incompatibility Check (Using 2_data_incomparable.md) =====
+    // ===== START: Follow-up Comparison Incompatibility Check =====
     if (isFollowUp && finalThreadId) {
-      const isComparison = detectComparisonQuery(content); // Check current query content
+      const isComparison = detectComparisonQuery(content);
 
       if (isComparison) {
         logger.warn(
           `[CONTROLLER_COMPAT_CHECK] Detected follow-up comparison query for thread: ${finalThreadId}`
         );
-        try { // Outer try for the whole check process
+        try {
           const cachedFiles = await getCachedFilesForThread(finalThreadId);
           const cachedFileIds = Array.isArray(cachedFiles) ? cachedFiles.map((f) => f.id) : [];
           logger.info(
@@ -166,150 +215,122 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
                 logger.error(`[CONTROLLER_COMPAT_CHECK] Skipping check: fileCompatibilityData not loaded or invalid!`);
              }
           }
-          // --- END: existing check logic ---
 
-          // --- If incompatible files were found, FORK to use 2_data_incomparable.md --- 
           if (checkPerformed && incompatibleFilesInfo.length > 0) {
             const incompatibleTopics = incompatibleFilesInfo.map((f) => f.topic);
             logger.warn(
               `[CONTROLLER_COMPAT_GATE] Incompatible topics found: ${incompatibleTopics.join(", ")}. Using 2_data_incomparable.md prompt.`
             );
 
-            try { // Inner try for LLM call and prompt loading
-              // 1. Load the new prompt file
+            try {
               const promptPath = path.join(process.cwd(), "utils", "openai", "2_data_incomparable.md");
               let promptTemplate = "";
               try {
-                 promptTemplate = fs.readFileSync(promptPath, "utf8");
+                promptTemplate = fs.readFileSync(promptPath, "utf8");
               } catch (promptReadError) {
-                  logger.error(`[CONTROLLER_COMPAT_GATE] CRITICAL: Failed to read prompt file ${promptPath}: ${promptReadError.message}`);
-                  // Fallback message if prompt file fails to load
-                  const fallbackMessage = `Comparison cannot be performed for topics: ${incompatibleTopics.join(', ')}. Data methodology has changed. [Error: Prompt file missing]`;
-                  // Assign to earlyResponse instead of returning
-                  earlyResponse = NextResponse.json({
-                      incompatible_comparison: true,
-                      message: fallbackMessage
-                  }, { status: 200 });
-                  logger.info(`[CONTROLLER_COMPAT_GATE] Prepared early JSON response (prompt read error).`);
+                logger.error(`[CONTROLLER_COMPAT_GATE] CRITICAL: Failed to read prompt file ${promptPath}: ${promptReadError.message}`);
+                const fallbackMessage = `Comparison cannot be performed for topics: ${incompatibleTopics.join(', ')}. Data methodology has changed. [Error: Prompt file missing]`;
+                earlyResponse = NextResponse.json({
+                  incompatible_comparison: true,
+                  message: fallbackMessage
+                }, { status: 200 });
+                logger.info(`[CONTROLLER_COMPAT_GATE] Prepared early JSON response (prompt read error).`);
               }
               
-              // Only proceed if prompt loaded and earlyResponse wasn't set by prompt error
               if (promptTemplate && !earlyResponse) {
-                // 2. Format the list of topics
                 const topicsListString = incompatibleTopics.map(topic => `- ${topic}`).join("\n");
                 const formattedPrompt = promptTemplate.replace("{{INCOMPATIBLE_TOPICS_LIST}}", topicsListString);
 
-                // 3. Call Chat Completions API
                 logger.info(`[CONTROLLER_COMPAT_GATE] Calling Chat Completions with 2_data_incomparable prompt.`);
-                const completion = await openai.chat.completions.create({
-                  model: process.env.OPENAI_MODEL || "gpt-4o-mini",
-                  messages: [
-                      {"role": "system", "content": "You are an AI assistant explaining data limitations."},
-                      {"role": "user", "content": formattedPrompt}
-                  ],
-                  temperature: 0.2, 
-                  max_tokens: 150 
+                
+                const completion = await unifiedOpenAIService.createChatCompletion([
+                  {"role": "system", "content": "You are an AI assistant explaining data limitations."},
+                  {"role": "user", "content": formattedPrompt}
+                ], {
+                  temperature: 0.2,
+                  max_tokens: 150
                 });
 
-                // 4. Extract the generated message
-                const generatedMessage = completion.choices[0]?.message?.content?.trim() || 
-                                        "Comparison cannot be performed for the requested topics due to data methodology changes. [Error: Could not generate message]";
+                const generatedMessage = completion.data.content?.trim() || 
+                  "Comparison cannot be performed for the requested topics due to data methodology changes. [Error: Could not generate message]";
+                
                 logger.info(`[CONTROLLER_COMPAT_GATE] LLM generated warning: "${generatedMessage.substring(0,100)}..."`);
 
-                // 5. Assign the response to the earlyResponse variable
                 earlyResponse = NextResponse.json({
-                    incompatible_comparison: true, 
-                    message: generatedMessage
+                  incompatible_comparison: true, 
+                  message: generatedMessage
                 }, { status: 200 });
+                
                 logger.info(`[CONTROLLER_COMPAT_GATE] Prepared early JSON response (LLM success).`);
               }
 
             } catch (llmError) {
-               logger.error(`[CONTROLLER_COMPAT_GATE] Error during LLM call for incompatibility message: ${llmError.message}`);
-               // Fallback message if LLM call fails - Assign to earlyResponse
-               const fallbackMessage = `Comparison cannot be performed for topics: ${incompatibleTopics.join(', ')}. Data methodology has changed. [Error: Failed to generate explanation]`;
-               earlyResponse = NextResponse.json({
-                  incompatible_comparison: true,
-                  message: fallbackMessage
-               }, { status: 200 });
-               logger.info(`[CONTROLLER_COMPAT_GATE] Prepared early JSON response (LLM error).`);
+              logger.error(`[CONTROLLER_COMPAT_GATE] Error during LLM call for incompatibility message: ${llmError.message}`);
+              const fallbackMessage = `Comparison cannot be performed for topics: ${incompatibleTopics.join(', ')}. Data methodology has changed. [Error: Failed to generate explanation]`;
+              earlyResponse = NextResponse.json({
+                incompatible_comparison: true,
+                message: fallbackMessage
+              }, { status: 200 });
+              logger.info(`[CONTROLLER_COMPAT_GATE] Prepared early JSON response (LLM error).`);
             }
-          
           } else {
-            // Log if check ran but found no incompatible files, or if check was skipped
             logger.info(
               `[CONTROLLER_COMPAT_CHECK] Check ran: ${checkPerformed}. Incompatible files found: ${incompatibleFilesInfo.length}. Proceeding with normal flow.`
             );
           }
 
         } catch (error) {
-          // Log error during the check itself (outer try block), but allow normal flow to continue
-          // Do NOT set earlyResponse here, as we want the main flow to handle this type of error
           logger.error(
             `[CONTROLLER_COMPAT_CHECK] Error during follow-up compatibility check logic: ${error.message}`,
             error
           );
         }
-      } // end if(isComparison)
-    } // end if(isFollowUp && finalThreadId)
-    // ===== END: Follow-up Comparison Incompatibility Check =====
+      }
+    }
 
-    // ===== ADD EXPLICIT RETURN CHECK =====
-    // Explicit check to return if the fork logic prepared a response
     if (earlyResponse) {
       logger.info(`[CONTROLLER_FLOW] Executing early return due to compatibility gate.`);
       return earlyResponse;
     }
-    // If earlyResponse is null, execution continues normally below
     logger.info(`[CONTROLLER_FLOW] Compatibility check passed or not applicable, proceeding to main flow.`);
-    // ======================================
 
-    await waitForNoActiveRuns(openai, finalThreadId);
+    await unifiedOpenAIService.waitForNoActiveRuns(finalThreadId);
 
     let usedFileIds: string[] = [];
     let cachedFileIds: string[] = [];
     let originalUserContent = content;
     
-    // Get previous message for context if this is a follow-up
     let previousQuery = "";
     let previousAssistantResponse = "";
     
     if (isFollowUp) {
       try {
-        const messages = await openai.beta.threads.messages.list(finalThreadId, { limit: 4 });
-        // Find previous user message and assistant response
-        for (let i = 0; i < messages.data.length - 1; i++) {
-          if (messages.data[i].role === "assistant" && messages.data[i+1].role === "user") {
-            // Safely extract text content from messages
-            const assistantContent = messages.data[i].content?.[0];
-            const userContent = messages.data[i+1].content?.[0];
-            
-            if (assistantContent && 'text' in assistantContent) {
-              previousAssistantResponse = assistantContent.text.value || "";
+        const messagesResponse = await unifiedOpenAIService.listMessages(finalThreadId, { limit: 4 });
+        const messages = messagesResponse.data.data;
+        for (let i = 0; i < messages.length - 1; i++) {
+          if (messages[i].role === "assistant" && messages[i+1].role === "user") {
+            const assistantContent = messages[i].content?.[0];
+            const userContent = messages[i+1].content?.[0];
+            if (assistantContent?.type === 'text' && userContent?.type === 'text') {
+              previousAssistantResponse = assistantContent.text.value;
+              previousQuery = userContent.text.value;
+              break;
             }
-            
-            if (userContent && 'text' in userContent) {
-              previousQuery = userContent.text.value || "";
-            }
-            break;
           }
         }
         logger.info(`[CONTEXT] Found previous query: "${previousQuery.substring(0, 50)}..."`);
       } catch (error) {
-        logger.error(`[ERROR] Failed to retrieve previous messages: ${error.message}`);
+        logger.error("Error retrieving message history:", error);
       }
     }
 
     let result;
 
     if (!isStarterQuestion(content) && !(isDirectMode && !forceStandardMode)) {
-      // For the first message in a thread, always load full data from files
       if (!isFollowUp) {
-        // Identify relevant files for the query
         const relevantFilesResult = await identifyRelevantFiles(content, "all-sector");
         const fileIdArray = relevantFilesResult?.file_ids || [];
 
-        // Load full data from files
         const dataDir = path.join(process.cwd(), "scripts", "output", "split_data");
         const loadedFiles: CachedFile[] = [];
 
@@ -356,7 +377,6 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
           }
         }
 
-        // Update cache with loaded files metadata only
         const cachedFilesForUpdate: CachedFile[] = loadedFiles.map(file => ({
           id: file.id,
           data: {},
@@ -366,7 +386,6 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
 
         await updateThreadCache(finalThreadId, cachedFilesForUpdate);
 
-        // Process query with loaded file IDs
         result = await processQueryWithData(
           content,
           "all-sector",
@@ -386,7 +405,6 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
 
         usedFileIds = fileIdArray;
       } else {
-        // For follow-up messages, load additional segments from files
         const cachedFiles = await getCachedFilesForThread(finalThreadId);
         cachedFileIds = cachedFiles.map(file => file.id);
 
@@ -409,7 +427,6 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
 
         if (result.dataScope && result.dataScope.fileIds && result.dataScope.fileIds.size > 0) {
           usedFileIds = Array.from(result.dataScope.fileIds).map(String);
-          // Create proper CachedFile objects for updating the cache
           const cachedFiles: CachedFile[] = usedFileIds.map(id => ({
             id,
             data: {},
@@ -431,7 +448,6 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
       logger.info(`[DATA] Segments selected: ${segmentsUsed}`);
       logger.info(`[DATA] Summary: ${summaryText}`);
 
-      // Extract filteredStats from result
       let filteredStats = [];
       if (result.stats && Array.isArray(result.stats) && result.stats.length > 0) {
         filteredStats = result.stats;
@@ -458,9 +474,8 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
         
         const grouped = [];
         const keyMap = new Map();
-        const segmentTypes = new Set(); // Track actual segment types in the data
+        const segmentTypes = new Set();
         
-        // First pass - gather all segment types and create entries
         for (const stat of stats) {
           const key = `${stat.fileId}||${stat.question}||${stat.response}`;
           if (!keyMap.has(key)) {
@@ -468,11 +483,10 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
               fileId: stat.fileId,
               question: stat.question || "Unknown question",
               response: stat.response || "Unknown response",
-              segments: {}, // Dynamic segments object
+              segments: {},
             });
           }
           
-          // Extract segment type and value
           if (stat.segment) {
             let segmentType = "overall";
             let segmentValue = "overall";
@@ -486,18 +500,15 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
               segmentTypes.add("overall");
             }
             
-            // Initialize segment type in entry if needed
             const entry = keyMap.get(key);
             if (!entry.segments[segmentType]) {
               entry.segments[segmentType] = {};
             }
             
-            // Store the percentage value
             entry.segments[segmentType][segmentValue] = stat.percentage || stat.value;
           }
         }
         
-        // Log found segment types and compare with canonical segments
         const missingCanonicalSegments = CANONICAL_SEGMENTS.filter(seg => !segmentTypes.has(seg));
         logger.info(`[SEGMENTS] Found in data: ${Array.from(segmentTypes).join(", ")}`);
         logger.info(`[SEGMENTS] Missing canonical segments: ${missingCanonicalSegments.join(", ")}`);
@@ -514,11 +525,9 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
         return grouped.map((entry) => {
           const lines = [];
           
-          // Add question and response
           lines.push(`Question: ${entry.question}`);
           lines.push(`Response: ${entry.response}`);
           
-          // Add all segment types and their values
           if (entry.segments) {
             Object.entries(entry.segments).forEach(([segmentType, segmentValues]) => {
               if (Object.keys(segmentValues).length > 0) {
@@ -569,17 +578,18 @@ No data matched for the selected segments.`;
       }
     }
 
-    await openai.beta.threads.messages.create(finalThreadId, {
+    const createMessageResponse = await unifiedOpenAIService.createMessage(finalThreadId, {
       role: "user",
       content: content,
     });
-    logger.info(`[ASSISTANT] Message sent to thread: ${finalThreadId}`);
 
-    const startTime = Date.now();
-    const run = await openai.beta.threads.runs.create(finalThreadId, {
+    const createRunResponse = await unifiedOpenAIService.createRun(finalThreadId, {
       assistant_id: assistantId,
       instructions: (isDirectMode && !forceStandardMode) ? "OPERATING MODE: DIRECT" : "OPERATING MODE: STANDARD",
     });
+
+    const run = createRunResponse.data;
+    let runStatus: RunStatus = run.status;
 
     perfTimings.runCreated = Date.now();
 
@@ -587,159 +597,68 @@ No data matched for the selected segments.`;
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          perfTimings.pollStart = Date.now();
-
-          controller.enqueue(
-            encoder.encode(
-              `event: run\ndata: ${JSON.stringify({
-                id: run.id,
-                status: "created",
-                event: "created",
-              })}\n\n`
-            )
-          );
-
-          let runStatus = "queued";
           let messageReceived = false;
           let pollCount = 0;
+          perfTimings.pollStart = Date.now();
 
-          while (!messageReceived && runStatus !== "failed") {
+          while (shouldContinuePolling(runStatus, messageReceived)) {
             try {
-              pollCount++;
-
-              if (pollCount === 1) {
+              if (pollCount === 0) {
                 perfTimings.firstPoll = Date.now();
               }
+              pollCount++;
 
-              const currentRun = await openai.beta.threads.runs.retrieve(
-                finalThreadId,
-                run.id
-              );
+              const currentRunResponse = await unifiedOpenAIService.retrieveRun(finalThreadId, run.id);
+              const currentRun = currentRunResponse.data;
               runStatus = currentRun.status;
 
               controller.enqueue(
                 encoder.encode(
-                  `event: run\ndata: ${JSON.stringify({
-                    id: run.id,
-                    status: runStatus,
-                    event: runStatus,
-                  })}\n\n`
+                  `event: status\ndata: ${JSON.stringify({ status: runStatus })}\n\n`
                 )
               );
 
-              if (
-                runStatus === "requires_action" &&
-                currentRun.required_action?.type === "submit_tool_outputs" &&
-                currentRun.required_action.submit_tool_outputs?.tool_calls
-              ) {
-                const toolCalls =
-                  currentRun.required_action.submit_tool_outputs.tool_calls;
+              if (runStatus === "requires_action" && currentRun.required_action?.type === "submit_tool_outputs") {
+                const toolCalls = currentRun.required_action.submit_tool_outputs.tool_calls;
 
                 for (const toolCall of toolCalls) {
-                  if (toolCall.function.name === "retrieve_workforce_data") {
-                    try {
-                      const toolStartTime = performance.now();
+                  try {
+                    const toolStartTime = performance.now();
 
-                      const args = JSON.parse(toolCall.function.arguments);
-                      const query = args.query;
+                    const args = JSON.parse(toolCall.function.arguments);
+                    const query = args.query;
 
-                      if (!query)
-                        throw new Error("Missing query parameter");
+                    if (!query)
+                      throw new Error("Missing query parameter");
 
-                      const cachedFileIds = await getCachedFilesForThread(
-                        finalThreadId
+                    const cachedFileIds = await getCachedFilesForThread(
+                      finalThreadId
+                    );
+
+                    if (isDirectMode && !forceStandardMode) {
+                      const relevantFilesResult = await identifyRelevantFiles(
+                        query,
+                        "all-sector"
+                      );
+                      const fileIdArray =
+                        relevantFilesResult?.file_ids || [];
+
+                      const allRelevantFileIds = Array.from(
+                        new Set([
+                          ...(cachedFileIds || []),
+                          ...(fileIdArray || []),
+                        ])
                       );
 
-                      if (isDirectMode && !forceStandardMode) {
-                        const relevantFilesResult = await identifyRelevantFiles(
-                          query,
-                          "all-sector"
-                        );
-                        const fileIdArray =
-                          relevantFilesResult?.file_ids || [];
+                      const cachedFiles: CachedFile[] = allRelevantFileIds.map(id => ({
+                        id: String(id),
+                        data: {},
+                        loadedSegments: new Set(),
+                        availableSegments: new Set()
+                      }));
+                      await updateThreadCache(finalThreadId, cachedFiles);
 
-                        const allRelevantFileIds = Array.from(
-                          new Set([
-                            ...(cachedFileIds || []),
-                            ...(fileIdArray || []),
-                          ])
-                        );
-
-                        const cachedFiles: CachedFile[] = allRelevantFileIds.map(id => ({
-                          id: String(id),
-                          data: {},
-                          loadedSegments: new Set(),
-                          availableSegments: new Set()
-                        }));
-                        await updateThreadCache(finalThreadId, cachedFiles);
-
-                        await openai.beta.threads.runs.submitToolOutputs(
-                          finalThreadId,
-                          run.id,
-                          {
-                            tool_outputs: [
-                              {
-                                tool_call_id: toolCall.id,
-                                output: JSON.stringify({
-                                  prompt: query,
-                                  file_ids: allRelevantFileIds,
-                                  matched_topics:
-                                    relevantFilesResult.matched_topics || [],
-                                  is_followup_query:
-                                    cachedFileIds.length > 0,
-                                  explanation:
-                                    relevantFilesResult.explanation ||
-                                    "No explanation provided",
-                                }),
-                              },
-                            ],
-                          }
-                        );
-
-                        const identificationTime =
-                          performance.now() - toolStartTime;
-                      } else {
-                        const result = await processQueryWithData(
-                          query,
-                          "all-sector",
-                          cachedFileIds,
-                          finalThreadId
-                        );
-
-                        const fileIdsArray = Array.from(
-                          result.dataScope.fileIds
-                        ).map(String);
-                        const cachedFiles: CachedFile[] = fileIdsArray.map(id => ({
-                          id,
-                          data: {},
-                          loadedSegments: new Set(),
-                          availableSegments: new Set()
-                        }));
-                        await updateThreadCache(finalThreadId, cachedFiles);
-
-                        await openai.beta.threads.runs.submitToolOutputs(
-                          finalThreadId,
-                          run.id,
-                          {
-                            tool_outputs: [
-                              {
-                                tool_call_id: toolCall.id,
-                                output: JSON.stringify({
-                                  filteredData: result.filteredData,
-                                  queryIntent: result.queryIntent,
-                                  dataScope: result.dataScope,
-                                  cacheStatus: result.cacheStatus,
-                                  processing_time_ms:
-                                    result.processing_time_ms,
-                                }),
-                              },
-                            ],
-                          }
-                        );
-                      }
-                    } catch (error) {
-                      logger.error("Error processing tool call:", error);
-                      await openai.beta.threads.runs.submitToolOutputs(
+                      await unifiedOpenAIService.submitToolOutputs(
                         finalThreadId,
                         run.id,
                         {
@@ -747,26 +666,88 @@ No data matched for the selected segments.`;
                             {
                               tool_call_id: toolCall.id,
                               output: JSON.stringify({
-                                error: error.message,
+                                prompt: query,
+                                file_ids: allRelevantFileIds,
+                                matched_topics:
+                                  relevantFilesResult.matched_topics || [],
+                                is_followup_query:
+                                  cachedFileIds.length > 0,
+                                explanation:
+                                  relevantFilesResult.explanation ||
+                                  "No explanation provided",
+                              }),
+                            },
+                          ],
+                        }
+                      );
+
+                      const identificationTime =
+                        performance.now() - toolStartTime;
+                    } else {
+                      const result = await processQueryWithData(
+                        query,
+                        "all-sector",
+                        cachedFileIds,
+                        finalThreadId
+                      );
+
+                      const fileIdsArray = Array.from(
+                        result.dataScope.fileIds
+                      ).map(String);
+                      const cachedFiles: CachedFile[] = fileIdsArray.map(id => ({
+                        id,
+                        data: {},
+                        loadedSegments: new Set(),
+                        availableSegments: new Set()
+                      }));
+                      await updateThreadCache(finalThreadId, cachedFiles);
+
+                      await unifiedOpenAIService.submitToolOutputs(
+                        finalThreadId,
+                        run.id,
+                        {
+                          tool_outputs: [
+                            {
+                              tool_call_id: toolCall.id,
+                              output: JSON.stringify({
+                                filteredData: result.filteredData,
+                                queryIntent: result.queryIntent,
+                                dataScope: result.dataScope,
+                                cacheStatus: result.cacheStatus,
+                                processing_time_ms:
+                                  result.processing_time_ms,
                               }),
                             },
                           ],
                         }
                       );
                     }
+                  } catch (error) {
+                    logger.error("Error processing tool call:", error);
+                    await unifiedOpenAIService.submitToolOutputs(
+                      finalThreadId,
+                      run.id,
+                      {
+                        tool_outputs: [
+                          {
+                            tool_call_id: toolCall.id,
+                            output: JSON.stringify({ error: error.message }),
+                          },
+                        ],
+                      }
+                    );
                   }
                 }
               }
 
               if (runStatus === "completed") {
-                const messages = await openai.beta.threads.messages.list(
-                  finalThreadId
-                );
-
-                if (messages.data && messages.data.length > 0) {
+                const messagesResponse = await unifiedOpenAIService.listMessages(finalThreadId);
+                const messages = messagesResponse.data.data;
+                if (messages && messages.length > 0) {
+                  messageReceived = true;
                   perfTimings.messageReceived = Date.now();
 
-                  const message = messages.data[0];
+                  const message = messages[0];
                   let fullText = "";
 
                   for (const content of message.content) {
@@ -806,8 +787,6 @@ No data matched for the selected segments.`;
                       })}\n\n`
                     )
                   );
-
-                  messageReceived = true;
                 }
               }
 
@@ -823,12 +802,11 @@ No data matched for the selected segments.`;
                     })}\n\n`
                   )
                 );
+                break;
               }
 
               if (!messageReceived && runStatus !== "failed") {
-                await new Promise((resolve) =>
-                  setTimeout(resolve, perfTimings.pollingInterval)
-                );
+                await new Promise((resolve) => setTimeout(resolve, perfTimings.pollingInterval));
               }
             } catch (error) {
               logger.error("Error in polling loop:", error);
@@ -842,10 +820,8 @@ No data matched for the selected segments.`;
               break;
             }
           }
-          
-          // Log performance data
+
           perfTimings.totalTime = Date.now() - apiStartTime;
-          
         } catch (error) {
           logger.error("Stream start error:", error);
           controller.enqueue(
@@ -858,10 +834,9 @@ No data matched for the selected segments.`;
         } finally {
           controller.close();
         }
-      }
+      },
     });
 
-    // Return the stream
     return new Response(stream, {
       headers: {
         "Content-Type": "text/event-stream",
@@ -870,257 +845,26 @@ No data matched for the selected segments.`;
       },
     });
   } catch (error) {
-    logger.error("Error in chat-assistant API:", error);
-    return NextResponse.json(
-      { error: `Internal server error: ${error.message}` },
-      { status: 500 }
-    );
+    logger.error("Error processing request:", error);
+    return formatErrorResponse("An error occurred while processing the request.");
   }
 }
 
-// Update the PUT handler to handle errors better and validate input
 export async function putHandler(request: NextRequest) {
   const apiStartTime = Date.now();
   try {
-    let requestBody;
-    try {
-      requestBody = await request.json();
-    } catch (parseError) {
-      return formatErrorResponse(parseError, 400);
+    const body = await request.json();
+    const { threadId, runId, toolOutputs } = body;
+
+    if (!threadId || !runId || !toolOutputs) {
+      return formatBadRequestResponse("Missing required fields");
     }
 
-    const { threadId, runId, toolCall } = requestBody;
+    await unifiedOpenAIService.submitToolOutputs(threadId, runId, { tool_outputs: toolOutputs });
 
-    const missingFields = [];
-    if (!threadId) missingFields.push("threadId");
-    if (!runId) missingFields.push("runId");
-    if (!toolCall) missingFields.push("toolCall");
-    else {
-      if (!toolCall.id) missingFields.push("toolCall.id");
-      if (!toolCall.function) missingFields.push("toolCall.function");
-      else if (!toolCall.function.name) missingFields.push("toolCall.function.name");
-    }
-
-    if (missingFields.length > 0) {
-      return formatBadRequestResponse("Missing required fields", missingFields);
-    }
-
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-      timeout: OPENAI_TIMEOUT_MS,
-      maxRetries: 2,
-    });
-
-    if (toolCall.function.name === "retrieve_workforce_data") {
-      let args;
-      try {
-        args = JSON.parse(toolCall.function.arguments);
-      } catch {
-        args = {};
-      }
-
-      const query = args.query || "workforce trends";
-      logger.info(`[TOOL] Processing retrieval for query: "${query}" | Thread: ${threadId}`);
-
-      try {
-        // Get any existing cached file IDs for this thread
-        const cachedFiles = await getCachedFilesForThread(threadId);
-        const cachedFileIds = cachedFiles.map(file => file.id);
-        logger.info(`[TOOL] Existing cached files for thread ${threadId}: ${cachedFileIds.length ? cachedFileIds.join(', ') : 'none'}`);
-
-        // First identify relevant files using LLM
-        const relevantFilesResult = await identifyRelevantFiles(query, "all-sector", 
-          cachedFileIds.length > 0, // isFollowUp 
-          "", // previousQuery - could improve by retrieving from history
-          ""); // previousAssistantResponse
-          
-        const fileIdArray = relevantFilesResult?.file_ids || [];
-        logger.info(`[TOOL] Identified relevant files: ${fileIdArray.join(', ')}`);
-
-        // Combine new files with existing cached files
-        const allRelevantFileIds = Array.from(new Set([
-          ...cachedFileIds,
-          ...fileIdArray,
-        ]));
-
-        // HYBRID APPROACH: Directly load files while also caching them
-        // This ensures data is always available for the assistant
-        const dataDir = path.join(process.cwd(), "scripts", "output", "split_data");
-        const loadedFiles: CachedFile[] = [];
-        
-        for (const fileId of allRelevantFileIds) {
-          const fileName = fileId.endsWith(".json") ? fileId : `${fileId}.json`;
-          const filePath = path.join(dataDir, fileName);
-          
-          try {
-            if (!fs.existsSync(filePath)) {
-              logger.error(`[TOOL] File not found: ${filePath}`);
-              continue;
-            }
-            
-            const fileContent = fs.readFileSync(filePath, "utf8");
-            let jsonData;
-            try {
-              jsonData = JSON.parse(fileContent);
-            } catch (parseErr) {
-              logger.error(`[TOOL] JSON parse error for file ${filePath}:`, parseErr);
-              continue;
-            }
-            
-            // Create a properly formatted CachedFile object
-            const segments = DEFAULT_SEGMENTS;
-            const cachedFile: CachedFile = {
-              id: fileId,
-              data: {},
-              loadedSegments: new Set(segments),
-              availableSegments: new Set(segments)
-            };
-            
-            // Add data for each segment
-            for (const segment of segments) {
-              if (jsonData[segment]) {
-                cachedFile.data[segment] = jsonData[segment];
-              } else if (jsonData.responses) {
-                // Handle different file structures
-                cachedFile.data[segment] = { responses: jsonData.responses };
-              } else {
-                // Fallback for any other structure
-                cachedFile.data[segment] = jsonData;
-              }
-            }
-            
-            loadedFiles.push(cachedFile);
-          } catch (error) {
-            logger.error(`[TOOL] Error loading file ${filePath}:`, error);
-          }
-        }
-        
-        // Update thread cache with loaded files - fire and forget
-        updateThreadCache(threadId, loadedFiles).catch(err => {
-          logger.error(`[TOOL] Error updating thread cache:`, err);
-        });
-        
-        // Process the data to extract relevant information
-        const filteredData = await processQueryWithData(
-          query, 
-          "all-sector", 
-          allRelevantFileIds, 
-          threadId,
-          cachedFileIds.length > 0, // isFollowUp
-          "", // previousQuery 
-          ""); // previousAssistantResponse
-        
-        // Send the processed data to the assistant
-        await openai.beta.threads.runs.submitToolOutputs(threadId, runId, {
-          tool_outputs: [
-            {
-              tool_call_id: toolCall.id,
-              output: JSON.stringify({
-                filteredData: filteredData.filteredData,
-                queryIntent: filteredData.queryIntent,
-                dataScope: {
-                  fileIds: allRelevantFileIds,
-                  segments: filteredData.segments || DEFAULT_SEGMENTS,
-                  topics: relevantFilesResult.matched_topics || []
-                },
-                cacheStatus: {
-                  cached: cachedFileIds.length,
-                  new: fileIdArray.length,
-                  total: allRelevantFileIds.length
-                },
-                matched_topics: relevantFilesResult.matched_topics || [],
-                explanation: relevantFilesResult.explanation || "No explanation provided",
-                processing_time_ms: filteredData.processing_time_ms,
-                // Enhanced segment diagnostics
-                segmentAnalysis: {
-                  requestedSegments: filteredData.segments || DEFAULT_SEGMENTS,
-                  canonicalSegments: CANONICAL_SEGMENTS,
-                  availableSegmentTypes: Array.from(new Set((filteredData.filteredData?.stats || [])
-                    .map(stat => stat.segment ? (stat.segment.includes(':') ? stat.segment.split(':')[0] : stat.segment) : null)
-                    .filter(Boolean))),
-                  totalStats: (filteredData.filteredData?.stats || []).length,
-                  segmentBreakdown: Object.fromEntries(
-                    Array.from(
-                      (filteredData.filteredData?.stats || []).reduce((acc, stat) => {
-                        const segType = stat.segment ? 
-                          (stat.segment.includes(':') ? stat.segment.split(':')[0] : stat.segment) : 
-                          'unknown';
-                        acc.set(segType, (acc.get(segType) || 0) + 1);
-                        return acc;
-                      }, new Map())
-                    ).map(([key, value]) => [key, value]) // Explicitly convert to [key, value] pairs
-                  )
-                }
-              }),
-            },
-          ],
-        });
-
-        return new Response(JSON.stringify({
-          status: "success",
-          file_ids: allRelevantFileIds.length,
-          fileList: allRelevantFileIds,
-          cacheStatus: {
-            cached: cachedFileIds.length,
-            new: fileIdArray.length,
-            total: allRelevantFileIds.length
-          },
-          processing_time_ms: Math.round(performance.now() - apiStartTime),
-        }), {
-          status: 200,
-          headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-          },
-        });
-      } catch (error) {
-        logger.error("Error processing tool call:", error);
-        await openai.beta.threads.runs.submitToolOutputs(threadId, runId, {
-          tool_outputs: [
-            {
-              tool_call_id: toolCall.id,
-              output: JSON.stringify({ error: error.message }),
-            },
-          ],
-        });
-        return formatErrorResponse(error);
-      }
-    }
-
-    return formatBadRequestResponse("Unsupported function");
+    return NextResponse.json({ success: true });
   } catch (error) {
+    logger.error('[CHAT_ASSISTANT] Error in putHandler:', error);
     return formatErrorResponse(error);
-  }
-}
-
-/**
- * Logs starter question invocations to a log file asynchronously.
- */
-async function logStarterQuestionInvocation({
-  starterQuestionCode,
-  question,
-  assistantId,
-  threadId,
-  dataFiles,
-  stats,
-  timestamp = new Date().toISOString()
-}) {
-  if (process.env.VERCEL) return; // Skip file logging on Vercel
-  try {
-    const logDir = path.join(process.cwd(), 'logs');
-    const logFile = path.join(logDir, 'starter_question_invocations.log');
-    const logEntry = JSON.stringify({
-      timestamp,
-      starterQuestionCode,
-      question,
-      assistantId,
-      threadId,
-      dataFiles,
-      stats
-    }) + '\n';
-    await fs.promises.mkdir(logDir, { recursive: true });
-    await fs.promises.appendFile(logFile, logEntry, 'utf8');
-  } catch (err) {
-    logger.error('Error writing starter question invocation log:', err);
   }
 }

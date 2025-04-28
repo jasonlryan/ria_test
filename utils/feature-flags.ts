@@ -26,6 +26,9 @@ export interface FeatureFlags {
   UNIFIED_OPENAI_SERVICE: FeatureFlagConfig;
   UNIFIED_POLLING: FeatureFlagConfig;
   ENHANCED_ERROR_HANDLING: FeatureFlagConfig;
+  ENABLE_GRADUAL_MIGRATION: FeatureFlagConfig;
+  FALLBACK_TO_LEGACY: FeatureFlagConfig;
+  MONITOR_MIGRATION: FeatureFlagConfig;
 }
 
 /**
@@ -51,6 +54,21 @@ export const featureFlags: FeatureFlags = {
     enabled: true,
     envKey: 'ENHANCED_ERROR_HANDLING',
     description: 'Controls whether to use enhanced error handling and fallback mechanisms',
+  },
+  ENABLE_GRADUAL_MIGRATION: {
+    enabled: true,
+    envKey: 'ENABLE_GRADUAL_MIGRATION',
+    description: 'Controls whether to enable gradual migration to unified service',
+  },
+  FALLBACK_TO_LEGACY: {
+    enabled: true,
+    envKey: 'FALLBACK_TO_LEGACY',
+    description: 'Controls whether to fall back to legacy services if unified service fails',
+  },
+  MONITOR_MIGRATION: {
+    enabled: true,
+    envKey: 'MONITOR_MIGRATION',
+    description: 'Controls whether to monitor migration progress and performance',
   },
 };
 

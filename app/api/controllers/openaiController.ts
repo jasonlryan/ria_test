@@ -1,6 +1,6 @@
 /**
  * Controller for OpenAI API endpoints.
- * Handles request validation, delegates to OpenAI service,
+ * Handles request validation, delegates to unified OpenAI service,
  * manages response formatting and error handling.
  * 
  * This controller currently provides a placeholder POST handler.
@@ -9,9 +9,9 @@
 
 import { NextResponse } from "next/server";
 import { formatBadRequestResponse, formatErrorResponse } from "../../../utils/shared/errorHandler";
-import OpenAIService from "../services/openaiService";
-
-const openaiService = new OpenAIService(process.env.OPENAI_API_KEY);
+import { unifiedOpenAIService } from "../services/unifiedOpenAIService";
+import { isFeatureEnabled } from "../../../utils/feature-flags";
+import { migrationMonitor } from "../../../utils/monitoring";
 
 export async function postHandler(request) {
   try {
