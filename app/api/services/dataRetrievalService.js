@@ -22,6 +22,7 @@ import {
   logCompatibilityToFile,
   logCompatibilityInPrompt,
 } from "../../../utils/compatibility/compatibilityLogger";
+import { getSpecificData } from "../../../utils/data/smart_filtering";
 
 // Import compatibility types (using JS comment format since we're in a .js file)
 // @ts-check
@@ -272,15 +273,25 @@ export class DataRetrievalService {
 
   /**
    * Filter loaded data by demographic segments.
-   * @param {object} loadedData
-   * @param {string[]} segments
+   * @param {object} loadedData - The data to filter
+   * @param {string[]} segments - The segments to filter by
    * @returns {object} filtered data and stats
    */
   filterDataBySegments(loadedData, segments) {
-    // This function can call getSpecificData or similar filtering logic
-    // For now, delegate to processQueryWithData or implement filtering here
-    // Placeholder: return loadedData as-is
-    return loadedData;
+    // Use getSpecificData from smart_filtering.js to do the actual filtering
+    // Convert segments array to the demographics format expected by getSpecificData
+    const options = {
+      demographics: segments || [],
+    };
+
+    logger.info(
+      `[FILTER] Filtering data by segments: ${
+        segments ? segments.join(", ") : "none"
+      }`
+    );
+
+    // Call getSpecificData to perform the actual filtering
+    return getSpecificData(loadedData, options);
   }
 
   /**
