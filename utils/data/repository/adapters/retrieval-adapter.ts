@@ -56,7 +56,7 @@ export async function identifyRelevantFiles(
   };
   
   // Call repository method
-  return repository.identifyRelevantFiles(query, context);
+  return repository.getFilesByQuery(context);
 }
 
 /**
@@ -76,7 +76,7 @@ export async function retrieveDataFiles(
     : getDefaultImplementations();
   
   // Call repository method
-  return repository.loadFileData(fileIds);
+  return repository.getFilesByIds(fileIds);
 }
 
 /**
@@ -108,15 +108,7 @@ export async function processQueryWithData(
   };
   
   // Call processor method
-  return processor.processQueryWithData(
-    query,
-    context,
-    options.cachedFileIds || [],
-    options.threadId || '',
-    options.isFollowUp || false,
-    options.previousQuery || '',
-    options.previousResponse || ''
-  );
+  return processor.processQueryWithData(context);
 }
 
 export default {
