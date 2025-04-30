@@ -57,6 +57,8 @@ This document tracks outstanding work items, technical debt, and future improvem
 
 **Status:** 🟠 Not Started - Highest priority to unblock other work
 
+**Implementation Plan:** See [Testing-Implementation-Plan.md](./Testing-Implementation-Plan.md) for detailed approach
+
 ### 3. Implement Adapter Layer
 
 **Problem:** The new repository pattern implementation isn't connected to existing services, preventing usage and validation.
@@ -378,7 +380,7 @@ This document tracks outstanding work items, technical debt, and future improvem
 
 **Source:** Created directly in backlog
 
-**Status:** �� Not Started
+**Status:** 🟠 Not Started
 
 ### 16. Query Context Validation
 
