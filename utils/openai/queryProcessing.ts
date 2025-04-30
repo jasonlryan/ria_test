@@ -16,11 +16,11 @@
  */
 
 import { normalizeQuery, isComparisonQuery, isStarterQuestion } from '../shared/queryUtils';
-import logger from '../logger';
-import * as fileUtils from '../fileUtils';
+import logger from '../shared/logger';
+import * as fileUtils from './retrieval';
 import { identifyRelevantFiles } from './retrieval';
-import { filterRelevantSegments } from '../data/dataFiltering';
-import { updateFileWithFilteredData } from '../data/fileProcessing';
+import { processQueryWithData as processQueryAdapter } from '../data/repository/adapters/retrieval-adapter';
+import { QueryContext } from '../data/repository/interfaces';
 
 /**
  * Core processing logic for handling queries and retrieving relevant data
@@ -93,42 +93,34 @@ export async function processQueryDataCore(
     };
   }
 
-  // Identify relevant files
-  const relevantFiles = isFollowUp && cachedFileIds.length > 0
-    ? await fileUtils.loadFilesById(cachedFileIds)
-    : await identifyRelevantFiles(normalizedQuery, threadId);
+  // Create context for adapter
+  const queryContext: QueryContext = {
+    query: normalizedQuery,
+    threadId,
+    isFollowUp,
+    cachedFileIds,
+    cachedSegmentLabels,
+    userMetadata
+  };
 
-  if (!relevantFiles || relevantFiles.length === 0) {
-    logger.warn('[processQueryDataCore] No relevant files identified');
-    return {
-      context: [],
-      normalizedQuery,
-      noRelevantFiles: true
-    };
-  }
+  // Use the repository pattern adapter to process the query
+  // This will handle file identification, segment filtering, and data preparation
+  const result = await processQueryAdapter(normalizedQuery, queryContext);
 
-  // Filter segments for each file
-  const processedFiles = await Promise.all(
-    relevantFiles.map(async (file) => {
-      const filteredSegments = await filterRelevantSegments(file, normalizedQuery, {
-        cachedSegmentLabels: isFollowUp ? cachedSegmentLabels : [],
-        isComparisonQuery: isComparison,
-        threadId,
-        userData: userMetadata
-      });
-
-      return updateFileWithFilteredData(file, filteredSegments);
-    })
-  );
+  // Extract data from the result according to the ProcessedQueryResult interface
+  const fileIds = result.relevantFiles ? result.relevantFiles.map(file => file.id) : [];
+  const segmentLabels = result.relevantFiles 
+    ? result.relevantFiles.flatMap(file => 
+        file.segments ? file.segments.map(segment => segment.label) : []
+      ) 
+    : [];
 
   // Return processed data
   return {
-    context: processedFiles,
+    context: result.processedData || [],
     normalizedQuery,
-    fileIds: processedFiles.map(file => file.id),
-    segmentLabels: processedFiles.flatMap(file => 
-      file.segments.map(segment => segment.label)
-    ),
-    isComparisonQuery: isComparison
+    fileIds: fileIds,
+    segmentLabels: segmentLabels,
+    isComparisonQuery: result.isComparison || isComparison
   };
 } 
