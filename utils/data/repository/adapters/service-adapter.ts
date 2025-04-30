@@ -61,7 +61,7 @@ export async function identifyRelevantFiles(
   };
   
   // Call repository method
-  return repository.identifyRelevantFiles(query, context);
+  return repository.getFilesByQuery(context);
 }
 
 /**
@@ -83,7 +83,7 @@ export async function loadDataFiles(
     : getDefaultImplementations();
   
   // Call repository method
-  return repository.loadFileData(fileIds, segments);
+  return repository.getFilesByIds(fileIds);
 }
 
 /**
@@ -124,15 +124,7 @@ export async function processQueryWithData(
   };
   
   // Call processor method
-  return processor.processQueryWithData(
-    query,
-    context,
-    options.cachedFileIds || [],
-    options.threadId || '',
-    options.isFollowUp || false,
-    options.previousQuery || '',
-    options.previousResponse || ''
-  );
+  return processor.processQueryWithData(context);
 }
 
 /**
@@ -148,13 +140,9 @@ export async function cacheFilesForThread(
   fileIds: string[],
   customRepository?: FileRepository
 ) {
-  // Create or use repository
-  const { repository } = customRepository 
-    ? { repository: customRepository } 
-    : getDefaultImplementations();
-  
-  // Call repository method
-  return repository.cacheFilesForThread(threadId, fileIds);
+  // TODO: Implement this functionality in the repository pattern
+  console.warn('cacheFilesForThread is not yet implemented in the repository pattern');
+  return true;
 }
 
 /**
@@ -168,13 +156,9 @@ export async function getCachedFilesForThread(
   threadId: string,
   customRepository?: FileRepository
 ) {
-  // Create or use repository
-  const { repository } = customRepository 
-    ? { repository: customRepository } 
-    : getDefaultImplementations();
-  
-  // Call repository method
-  return repository.getCachedFilesForThread(threadId);
+  // TODO: Implement this functionality in the repository pattern
+  console.warn('getCachedFilesForThread is not yet implemented in the repository pattern');
+  return [];
 }
 
 export default {
