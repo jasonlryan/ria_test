@@ -1,6 +1,6 @@
 # Repository Pattern Implementation Plan
 
-**Last Updated:** Tue Apr 29 2025
+**Last Updated:** Wed Apr 30 2025
 
 <!--
 LLM-GUIDANCE
@@ -67,22 +67,13 @@ Based on the dependency analysis in [Consolidated-Analysis.md § Implementation 
    - `createThreadContext()`
    - `createCompatibilityContext()`
 
-**Documentation Template:**
+**Status:** ✅ Completed
 
-```typescript
-/**
- * QueryContext Interface
- *
- * Defines the standard context object passed between query processing components.
- * Standardizes context information needed for query processing across implementations.
- *
- * References:
- * - Implementation Plan: ../analysis/IMPLEMENTATION_PLAN.md#querycontext-interface
- * - Analysis: ../analysis/QueryContext-Analysis.md#context-object-analysis
- *
- * Last Updated: [EXACT SYSTEM DATE]
- */
-```
+**Implementation Notes:**
+
+- Added `clone()` method to support non-destructive context manipulation
+- Modified interface to ensure thread data is properly typed
+- Implementation matches requirements from the analysis document
 
 ### 1.2 FileRepository Interface {#filerepository-interface}
 
@@ -110,24 +101,13 @@ Based on the dependency analysis in [Consolidated-Analysis.md § Implementation 
    - `getFilesByQuery()` - Identify files based on a query
    - `loadSegments()` - Load specific segments for a file
 
-**Documentation Template:**
+**Status:** ✅ Completed
 
-```typescript
-/**
- * FileRepository Interface
- *
- * Defines the contract for components that provide access to data files.
- * Consolidates the file identification and data loading operations from
- * multiple implementations into a unified interface.
- *
- * References:
- * - Implementation Plan: ../analysis/IMPLEMENTATION_PLAN.md#filerepository-interface
- * - Analysis: ../analysis/FileRepository-Analysis.md#1-identifyrelevantfiles
- * - Related Interface: ./QueryContext.ts
- *
- * Last Updated: [EXACT SYSTEM DATE]
- */
-```
+**Implementation Notes:**
+
+- Added `FileRetrievalOptions` interface to support advanced retrieval options
+- Included cache strategy options to optimize performance
+- Added segment compatibility checking for better query-file matching
 
 ### 1.3 QueryProcessor Interface {#queryprocessor-interface}
 
@@ -152,24 +132,13 @@ Based on the dependency analysis in [Consolidated-Analysis.md § Implementation 
    - `isStarterQuestion()` - Detect starter questions
    - `extractSegmentsFromQuery()` - Extract segments from queries
 
-**Documentation Template:**
+**Status:** ✅ Completed
 
-```typescript
-/**
- * QueryProcessor Interface
- *
- * Defines the contract for processing queries against data files.
- * Handles the core logic of query analysis, data retrieval, and response formatting.
- *
- * References:
- * - Implementation Plan: ../analysis/IMPLEMENTATION_PLAN.md#queryprocessor-interface
- * - Analysis: ../analysis/QueryProcessor-Analysis.md#1-processquerywithdata
- * - Related Interface: ./QueryContext.ts
- * - Related Interface: ./FileRepository.ts
- *
- * Last Updated: [EXACT SYSTEM DATE]
- */
-```
+**Implementation Notes:**
+
+- Added `QueryProcessingOptions` interface with comprehensive configuration options
+- Implemented metrics tracking in the result type
+- Added explicit handling for comparison queries and starter questions
 
 ### 1.4 SegmentManager Interface {#segmentmanager-interface}
 
@@ -195,23 +164,13 @@ Based on the dependency analysis in [Consolidated-Analysis.md § Implementation 
    - `filterDataBySegments()` - Filter data with segments
    - `filterRelevantSegments()` - Identify relevant segments
 
-**Documentation Template:**
+**Status:** 🟡 Deferred - Deferred to future implementation
 
-```typescript
-/**
- * SegmentManager Interface
- *
- * Defines the contract for components that manage data segmentation.
- * Handles identification, loading, and filtering of segments within data files.
- *
- * References:
- * - Implementation Plan: ../analysis/IMPLEMENTATION_PLAN.md#segmentmanager-interface
- * - Analysis: ../analysis/Consolidated-Analysis.md#dependencies-analysis
- * - Related Interface: ./FileRepository.ts
- *
- * Last Updated: [EXACT SYSTEM DATE]
- */
-```
+**Implementation Notes:**
+
+- This interface may be refactored into FileRepository or implemented later
+- Current implementation handles segments directly in QueryProcessor
+- Will revisit if more complex segment handling is needed
 
 ### 1.5 CacheManager Interface {#cachemanager-interface}
 
@@ -233,23 +192,13 @@ Based on the dependency analysis in [Consolidated-Analysis.md § Implementation 
    - `getCacheMetadata()` - Get metadata about cached content
    - `invalidateCache()` - Clear specific cache entries
 
-**Documentation Template:**
+**Status:** 🟡 Deferred - Deferred to future implementation
 
-```typescript
-/**
- * CacheManager Interface
- *
- * Defines the contract for components that handle caching operations.
- * Provides a unified approach to file caching across implementations.
- *
- * References:
- * - Implementation Plan: ../analysis/IMPLEMENTATION_PLAN.md#cachemanager-interface
- * - Analysis: ../analysis/Consolidated-Analysis.md#dependencies-analysis
- * - Related Interface: ./FileRepository.ts
- *
- * Last Updated: [EXACT SYSTEM DATE]
- */
-```
+**Implementation Notes:**
+
+- Caching currently handled within the FileRepository implementation
+- Will implement as a separate concern if caching complexity increases
+- Current approach provides simpler integration with fewer dependencies
 
 ## Phase 2: Component Implementation
 
@@ -279,23 +228,14 @@ Based on the dependency analysis in [Consolidated-Analysis.md § Implementation 
 
 2. Create unit tests for all helper functions
 
-**Documentation Template:**
+**Status:** ✅ Completed
 
-```typescript
-/**
- * QueryProcessor Implementation
- *
- * Implements helper functions for the QueryProcessor interface.
- * Provides utility functions for query analysis and processing.
- *
- * References:
- * - Implementation Plan: ../analysis/IMPLEMENTATION_PLAN.md#queryprocessor-helper-functions
- * - Analysis: ../analysis/QueryProcessor-Analysis.md#2-iscomparisonquery
- * - Interface: ../interfaces/QueryProcessor.ts
- *
- * Last Updated: [EXACT SYSTEM DATE]
- */
-```
+**Implementation Notes:**
+
+- Implemented robust pattern matching for all helper functions
+- Extended comparison detection with year-specific patterns
+- Enhanced segment extraction with comprehensive segment types
+- Tests deferred due to TypeScript module compatibility issues
 
 ### 2.2 FileRepository Core Functions {#filerepository-core-functions}
 
@@ -324,23 +264,14 @@ Based on the dependency analysis in [Consolidated-Analysis.md § Implementation 
 2. Implement file identification method:
    - `getFilesByQuery()` - Identify files based on query context
 
-**Documentation Template:**
+**Status:** ✅ Completed
 
-```typescript
-/**
- * FileSystemRepository Implementation
- *
- * Concrete implementation of the FileRepository interface.
- * Provides file system access to data files with caching support.
- *
- * References:
- * - Implementation Plan: ../analysis/IMPLEMENTATION_PLAN.md#filerepository-core-functions
- * - Analysis: ../analysis/FileRepository-Analysis.md#2-loaddatafiles--retrievedatafiles
- * - Interface: ../interfaces/FileRepository.ts
- *
- * Last Updated: [EXACT SYSTEM DATE]
- */
-```
+**Implementation Notes:**
+
+- Added built-in caching for file operations
+- Implemented compatibility scoring for better file matching
+- Optimized segment loading to minimize unnecessary data retrieval
+- Tests deferred due to TypeScript module compatibility issues
 
 ### 2.3 QueryProcessor Core Function {#queryprocessor-core-function}
 
@@ -368,24 +299,15 @@ Based on the dependency analysis in [Consolidated-Analysis.md § Implementation 
 
 2. Create comprehensive tests for the query processor
 
-**Documentation Template:**
+**Status:** ✅ Completed
 
-```typescript
-/**
- * QueryProcessor Core Implementation
- *
- * Implements the core query processing logic.
- * Handles the complete flow from query analysis to data retrieval and formatting.
- *
- * References:
- * - Implementation Plan: ../analysis/IMPLEMENTATION_PLAN.md#queryprocessor-core-function
- * - Analysis: ../analysis/QueryProcessor-Analysis.md#1-processquerywithdata
- * - Interface: ../interfaces/QueryProcessor.ts
- * - Related: ./FileSystemRepository.ts
- *
- * Last Updated: [EXACT SYSTEM DATE]
- */
-```
+**Implementation Notes:**
+
+- Implemented comprehensive error handling with detailed error results
+- Added performance metrics tracking for monitoring
+- Created specialized processing paths for starter questions and comparisons
+- Added support for context cloning to prevent unexpected side effects
+- Tests deferred due to TypeScript module compatibility issues
 
 ## Phase 3: Adapter Implementation
 
@@ -412,24 +334,13 @@ Based on the dependency analysis in [Consolidated-Analysis.md § Implementation 
 
 2. Add deprecation warnings to indicate future migration
 
-**Documentation Template:**
+**Status:** 🟠 Not Started - Blocked on testing infrastructure
 
-```typescript
-/**
- * Retrieval Adapter
- *
- * Provides adapters for retrieval.js to use the repository pattern.
- * Maintains backward compatibility with existing function signatures.
- *
- * References:
- * - Implementation Plan: ../analysis/IMPLEMENTATION_PLAN.md#retrieval-adapter
- * - Analysis: ../analysis/Consolidated-Analysis.md#3-adapter-implementation
- * - Related: ../implementations/FileSystemRepository.ts
- * - Related: ../implementations/QueryProcessorImpl.ts
- *
- * Last Updated: [EXACT SYSTEM DATE]
- */
-```
+**Implementation Notes:**
+
+- Will implement after testing infrastructure is set up
+- Needs careful verification to maintain backward compatibility
+- Will include comprehensive logging for debugging during transition
 
 ### 3.2 Service Adapter {#service-adapter}
 
@@ -456,24 +367,13 @@ Based on the dependency analysis in [Consolidated-Analysis.md § Implementation 
 
 2. Maintain compatibility with thread context handling
 
-**Documentation Template:**
+**Status:** 🟠 Not Started - Blocked on testing infrastructure
 
-```typescript
-/**
- * Service Adapter
- *
- * Provides adapters for dataRetrievalService.js to use the repository pattern.
- * Maintains backward compatibility with existing service methods.
- *
- * References:
- * - Implementation Plan: ../analysis/IMPLEMENTATION_PLAN.md#service-adapter
- * - Analysis: ../analysis/Consolidated-Analysis.md#3-adapter-implementation
- * - Related: ../implementations/FileSystemRepository.ts
- * - Related: ../implementations/QueryProcessorImpl.ts
- *
- * Last Updated: [EXACT SYSTEM DATE]
- */
-```
+**Implementation Notes:**
+
+- Will implement after testing infrastructure is set up
+- Will include comprehensive thread context compatibility
+- Needs careful verification with existing controllers
 
 ## Phase 4: Circular Dependency Resolution
 
@@ -499,22 +399,13 @@ Based on the dependency analysis in [Consolidated-Analysis.md § Implementation 
 
 2. Update original implementations to use this core function
 
-**Documentation Template:**
+**Status:** 🟠 Not Started - Blocked on adapter implementation
 
-```typescript
-/**
- * Core Query Processing Logic
- *
- * Contains shared processing logic extracted from both retrieval.js
- * and dataRetrievalService.js to resolve circular dependencies.
- *
- * References:
- * - Implementation Plan: ../data/repository/analysis/IMPLEMENTATION_PLAN.md#core-query-processing-function
- * - Analysis: ../data/repository/analysis/Consolidated-Analysis.md#circular-dependency-resolution
- *
- * Last Updated: [EXACT SYSTEM DATE]
- */
-```
+**Implementation Notes:**
+
+- Will implement after adapters are in place and tested
+- Will include feature flags for gradual rollout
+- Needs comprehensive regression testing
 
 ### 4.2 Dependency Resolution Testing {#dependency-resolution-testing}
 
@@ -535,22 +426,13 @@ Based on the dependency analysis in [Consolidated-Analysis.md § Implementation 
    - Both services can operate independently
    - Functionality is preserved in both implementations
 
-**Documentation Template:**
+**Status:** 🟠 Not Started - Blocked on dependency work
 
-```typescript
-/**
- * Dependency Resolution Tests
- *
- * Verifies that circular dependencies have been resolved.
- * Tests the independence of retrieval.js and dataRetrievalService.js.
- *
- * References:
- * - Implementation Plan: ../repository/analysis/IMPLEMENTATION_PLAN.md#dependency-resolution-testing
- * - Analysis: ../repository/analysis/Consolidated-Analysis.md#risk-analysis
- *
- * Last Updated: [EXACT SYSTEM DATE]
- */
-```
+**Implementation Notes:**
+
+- Deferred due to TypeScript module compatibility issues
+- May use JavaScript tests with TypeScript types for compatibility
+- Will implement after adapters and dependency resolution
 
 ## Phase 5: Service Migration
 
@@ -573,23 +455,13 @@ Based on the dependency analysis in [Consolidated-Analysis.md § Implementation 
 3. Maintain backward compatibility for APIs
 4. Add deprecation notices for direct usage
 
+**Status:** 🟠 Not Started - Blocked on adapter implementation
+
 **Implementation Notes:**
 
-```javascript
-/**
- * Retrieval Service Migration
- *
- * Updates retrieval.js to use the repository pattern through adapters.
- * Maintains backward compatibility while enabling future migration.
- *
- * References:
- * - Implementation Plan: ../data/repository/analysis/IMPLEMENTATION_PLAN.md#retrievaljs-migration
- * - Analysis: ../data/repository/analysis/Consolidated-Analysis.md#7-service-migration
- * - Adapters: ../data/repository/adapters/retrieval-adapter.ts
- *
- * Last Updated: [EXACT SYSTEM DATE]
- */
-```
+- Will implement with feature flags for granular rollout
+- Will include comprehensive logging during transition
+- Plan to implement alongside service adapter migration for consistency
 
 ### 5.2 DataRetrievalService.js Migration {#dataretrievalservicejs-migration}
 
@@ -610,53 +482,50 @@ Based on the dependency analysis in [Consolidated-Analysis.md § Implementation 
 3. Ensure thread context and compatibility handling
 4. Add deprecation notices for direct usage
 
+**Status:** 🟠 Not Started - Blocked on adapter implementation
+
 **Implementation Notes:**
 
-```javascript
-/**
- * Data Retrieval Service Migration
- *
- * Updates dataRetrievalService.js to use the repository pattern.
- * Maintains backward compatibility while enabling future migration.
- *
- * References:
- * - Implementation Plan: ../utils/data/repository/analysis/IMPLEMENTATION_PLAN.md#dataretrievalservicejs-migration
- * - Analysis: ../utils/data/repository/analysis/Consolidated-Analysis.md#7-service-migration
- * - Adapters: ../utils/data/repository/adapters/service-adapter.ts
- *
- * Last Updated: [EXACT SYSTEM DATE]
- */
-```
+- Will implement with feature flags for granular rollout
+- Will include comprehensive logging during transition
+- Plan to implement alongside retrieval adapter migration for consistency
 
 ## Implementation Checklist
 
-| Phase | Task                              | Status      | Dependencies                          | Analysis Reference                                                                                              |
-| ----- | --------------------------------- | ----------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| 1.1   | QueryContext Interface            | Not Started | None                                  | [QueryContext-Analysis.md § Context Object Analysis](./QueryContext-Analysis.md#context-object-analysis)        |
-| 1.2   | FileRepository Interface          | Not Started | 1.1                                   | [FileRepository-Analysis.md § identifyRelevantFiles()](./FileRepository-Analysis.md#1-identifyrelevantfiles)    |
-| 1.3   | QueryProcessor Interface          | Not Started | 1.1, 1.2                              | [QueryProcessor-Analysis.md § processQueryWithData()](./QueryProcessor-Analysis.md#1-processquerywithdata)      |
-| 1.4   | SegmentManager Interface          | Not Started | 1.2                                   | [Consolidated-Analysis.md § Dependency Analysis](./Consolidated-Analysis.md#dependencies-analysis)              |
-| 1.5   | CacheManager Interface            | Not Started | 1.2                                   | [Consolidated-Analysis.md § Dependency Analysis](./Consolidated-Analysis.md#dependencies-analysis)              |
-| 2.1   | QueryProcessor Helper Functions   | Not Started | 1.3                                   | [QueryProcessor-Analysis.md § isComparisonQuery()](./QueryProcessor-Analysis.md#2-iscomparisonquery)            |
-| 2.2   | FileRepository Core Functions     | Not Started | 1.2                                   | [FileRepository-Analysis.md § loadDataFiles()](./FileRepository-Analysis.md#2-loaddatafiles--retrievedatafiles) |
-| 2.3   | QueryProcessor Core Function      | Not Started | 2.1, 2.2                              | [QueryProcessor-Analysis.md § processQueryWithData()](./QueryProcessor-Analysis.md#1-processquerywithdata)      |
-| 3.1   | Retrieval Adapter                 | Not Started | 2.2, 2.3                              | [Consolidated-Analysis.md § Adapter Implementation](./Consolidated-Analysis.md#3-adapter-implementation)        |
-| 3.2   | Service Adapter                   | Not Started | 2.2, 2.3                              | [Consolidated-Analysis.md § Adapter Implementation](./Consolidated-Analysis.md#3-adapter-implementation)        |
-| 4.1   | Core Query Processing Function    | Not Started | Understanding of both implementations | [Consolidated-Analysis.md § Circular Dependency](./Consolidated-Analysis.md#circular-dependency-resolution)     |
-| 4.2   | Dependency Resolution Testing     | Not Started | 4.1                                   | [Consolidated-Analysis.md § Risk Analysis](./Consolidated-Analysis.md#risk-analysis)                            |
-| 5.1   | Retrieval.js Migration            | Not Started | 3.1, 4.1                              | [Consolidated-Analysis.md § Service Migration](./Consolidated-Analysis.md#7-service-migration)                  |
-| 5.2   | DataRetrievalService.js Migration | Not Started | 3.2, 4.1                              | [Consolidated-Analysis.md § Service Migration](./Consolidated-Analysis.md#7-service-migration)                  |
+| Phase | Task                              | Status                                      | Dependencies                          | Analysis Reference                                                                                              |
+| ----- | --------------------------------- | ------------------------------------------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| 1.1   | QueryContext Interface            | ✅ Completed                                | None                                  | [QueryContext-Analysis.md § Context Object Analysis](./QueryContext-Analysis.md#context-object-analysis)        |
+| 1.2   | FileRepository Interface          | ✅ Completed                                | 1.1                                   | [FileRepository-Analysis.md § identifyRelevantFiles()](./FileRepository-Analysis.md#1-identifyrelevantfiles)    |
+| 1.3   | QueryProcessor Interface          | ✅ Completed                                | 1.1, 1.2                              | [QueryProcessor-Analysis.md § processQueryWithData()](./QueryProcessor-Analysis.md#1-processquerywithdata)      |
+| 1.4   | SegmentManager Interface          | 🟡 Deferred                                 | 1.2                                   | [Consolidated-Analysis.md § Dependency Analysis](./Consolidated-Analysis.md#dependencies-analysis)              |
+| 1.5   | CacheManager Interface            | 🟡 Deferred                                 | 1.2                                   | [Consolidated-Analysis.md § Dependency Analysis](./Consolidated-Analysis.md#dependencies-analysis)              |
+| 2.1   | QueryProcessor Helper Functions   | ✅ Completed                                | 1.3                                   | [QueryProcessor-Analysis.md § isComparisonQuery()](./QueryProcessor-Analysis.md#2-iscomparisonquery)            |
+| 2.2   | FileRepository Core Functions     | ✅ Completed                                | 1.2                                   | [FileRepository-Analysis.md § loadDataFiles()](./FileRepository-Analysis.md#2-loaddatafiles--retrievedatafiles) |
+| 2.3   | QueryProcessor Core Function      | ✅ Completed                                | 2.1, 2.2                              | [QueryProcessor-Analysis.md § processQueryWithData()](./QueryProcessor-Analysis.md#1-processquerywithdata)      |
+| 3.1   | Retrieval Adapter                 | 🟠 Not Started - Blocked on testing         | 2.2, 2.3                              | [Consolidated-Analysis.md § Adapter Implementation](./Consolidated-Analysis.md#3-adapter-implementation)        |
+| 3.2   | Service Adapter                   | 🟠 Not Started - Blocked on testing         | 2.2, 2.3                              | [Consolidated-Analysis.md § Adapter Implementation](./Consolidated-Analysis.md#3-adapter-implementation)        |
+| 4.1   | Core Query Processing Function    | 🟠 Not Started - Blocked on adapters        | Understanding of both implementations | [Consolidated-Analysis.md § Circular Dependency](./Consolidated-Analysis.md#circular-dependency-resolution)     |
+| 4.2   | Dependency Resolution Testing     | 🟠 Not Started - Blocked on dependency work | 4.1                                   | [Consolidated-Analysis.md § Risk Analysis](./Consolidated-Analysis.md#risk-analysis)                            |
+| 5.1   | Retrieval.js Migration            | 🟠 Not Started - Blocked on adapters        | 3.1, 4.1                              | [Consolidated-Analysis.md § Service Migration](./Consolidated-Analysis.md#7-service-migration)                  |
+| 5.2   | DataRetrievalService.js Migration | 🟠 Not Started - Blocked on adapters        | 3.2, 4.1                              | [Consolidated-Analysis.md § Service Migration](./Consolidated-Analysis.md#7-service-migration)                  |
+
+## Outstanding Issues and Technical Debt
+
+1. **Testing Infrastructure**: Need to resolve TypeScript module compatibility issues affecting test creation
+2. **Documentation**: Need to add comprehensive API documentation for all interfaces and implementations
+3. **Integration Testing**: Need end-to-end integration tests before phase 5 migrations
+4. **Performance Monitoring**: Should implement performance benchmarking before/after migration
 
 ## Risk Analysis and Mitigation
 
-| Risk Area         | Specific Risk                                | Mitigation Strategy                               |
-| ----------------- | -------------------------------------------- | ------------------------------------------------- |
-| **Compatibility** | Breaking changes in function signatures      | Comprehensive adapter testing with shadow testing |
-| **Performance**   | Slower operation with additional abstraction | Performance benchmarking at each stage            |
-| **Functionality** | Loss of thread context handling              | Careful preservation of thread state              |
-| **Circular Deps** | Breaking the dependency chain causes errors  | Implement adapters first, then gradually migrate  |
-| **Adoption**      | Resistance to new pattern                    | Gradual adoption with feature flags               |
-| **Testing**       | Missing edge cases                           | Shadow testing with real-world queries            |
+| Risk Area         | Specific Risk                                | Mitigation Strategy                               | Status                                 |
+| ----------------- | -------------------------------------------- | ------------------------------------------------- | -------------------------------------- |
+| **Compatibility** | Breaking changes in function signatures      | Comprehensive adapter testing with shadow testing | 🟡 Pending adapter implementation      |
+| **Performance**   | Slower operation with additional abstraction | Performance benchmarking at each stage            | 🟡 Pending benchmark implementation    |
+| **Functionality** | Loss of thread context handling              | Careful preservation of thread state              | ✅ Addressed in QueryContext interface |
+| **Circular Deps** | Breaking the dependency chain causes errors  | Implement adapters first, then gradually migrate  | 🟡 Pending adapter implementation      |
+| **Adoption**      | Resistance to new pattern                    | Gradual adoption with feature flags               | 🟡 Pending service migration           |
+| **Testing**       | Missing edge cases                           | Shadow testing with real-world queries            | 🟡 Pending testing infrastructure      |
 
 ## Success Criteria
 
@@ -668,4 +537,12 @@ Based on the dependency analysis in [Consolidated-Analysis.md § Implementation 
 6. Performance equivalent to or better than the original implementation
 7. Comprehensive documentation of the repository pattern
 
-_Last updated: Tue Apr 29 2025_
+## Next Steps
+
+1. Resolve TypeScript testing infrastructure issues
+2. Implement adapter layer for both services
+3. Create validation tests with real-world queries
+4. Implement core query processing function
+5. Begin gradual migration of both services
+
+_Last updated: Wed Apr 30 2025_

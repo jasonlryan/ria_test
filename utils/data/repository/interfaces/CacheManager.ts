@@ -12,95 +12,85 @@
  * Last Updated: Wed May 1 2024
  */
 
-import { FileData } from './FileRepository';
+import { DataFile } from './FileRepository';
+
+/**
+ * Cache control options
+ */
+export interface CacheOptions {
+  /** Time-to-live in seconds */
+  ttl?: number;
+  /** Whether to force refresh the cache */
+  forceRefresh?: boolean;
+  /** Cache key prefix for namespace separation */
+  keyPrefix?: string;
+  /** Strategy for cache misses */
+  missStrategy?: 'load' | 'return-null' | 'throw';
+}
 
 /**
  * Cache metadata information
  */
 export interface CacheMetadata {
-  lastUpdated: string;
-  expiresAt?: string;
-  size?: number;
-  hits?: number;
-  misses?: number;
+  /** When the cache entry was created */
+  createdAt: Date;
+  /** When the cache entry expires */
+  expiresAt: Date;
+  /** Number of times the cache entry has been accessed */
+  accessCount: number;
+  /** Size in bytes of the cached data */
+  sizeBytes?: number;
+  /** Additional metadata specific to the cache entry */
   [key: string]: any;
 }
 
 /**
- * Manager for cache operations
+ * Cache Manager Interface
+ * 
+ * Provides operations for caching file data
  */
 export interface CacheManager {
   /**
-   * Retrieve files from cache
-   *
-   * @param threadId Thread identifier
-   * @returns Array of cached file data objects
+   * Get cached files for a thread
+   * 
+   * @param threadId - Thread identifier
+   * @param options - Cache options
+   * @returns Promise resolving to cached file IDs, or empty array if not found
    */
-  getCachedFiles(threadId: string): Promise<FileData[]>;
+  getCachedFiles(threadId: string, options?: CacheOptions): Promise<string[]>;
 
   /**
    * Update cache with new files
-   *
-   * @param threadId Thread identifier
-   * @param fileData Array of file data objects to cache
-   * @param ttl Optional time-to-live in seconds
-   * @returns Success indicator
+   * 
+   * @param threadId - Thread identifier
+   * @param fileIds - File identifiers to cache
+   * @param files - Optional file data to cache
+   * @param options - Cache options
+   * @returns Promise resolving to success indicator
    */
   updateCache(
     threadId: string,
-    fileData: FileData[],
-    ttl?: number
+    fileIds: string[],
+    files?: DataFile[],
+    options?: CacheOptions
   ): Promise<boolean>;
 
   /**
    * Get metadata about cached content
-   *
-   * @param threadId Thread identifier
-   * @returns Cache metadata
+   * 
+   * @param threadId - Thread identifier
+   * @returns Promise resolving to cache metadata
    */
   getCacheMetadata(threadId: string): Promise<CacheMetadata>;
 
   /**
-   * Clear specific cache entries
-   *
-   * @param threadId Thread identifier
-   * @param fileIds Optional array of file identifiers to invalidate
-   * @returns Success indicator
+   * Invalidate specific cache entries
+   * 
+   * @param threadId - Thread identifier to invalidate
+   * @param fileIds - Optional specific file IDs to invalidate
+   * @returns Promise resolving to success indicator
    */
-  invalidateCache(
-    threadId: string,
-    fileIds?: string[]
-  ): Promise<boolean>;
-  
-  /**
-   * Check if files are cached for a thread
-   *
-   * @param threadId Thread identifier
-   * @returns Boolean indicating if cache exists
-   */
-  hasCachedFiles(threadId: string): Promise<boolean>;
-  
-  /**
-   * Cache file IDs for a thread
-   *
-   * @param threadId Thread identifier
-   * @param fileIds Array of file identifiers to cache
-   * @param ttl Optional time-to-live in seconds
-   * @returns Success indicator
-   */
-  cacheFileIds(
-    threadId: string,
-    fileIds: string[],
-    ttl?: number
-  ): Promise<boolean>;
-  
-  /**
-   * Get cached file IDs for a thread
-   *
-   * @param threadId Thread identifier
-   * @returns Array of cached file identifiers
-   */
-  getCachedFileIds(threadId: string): Promise<string[]>;
+  invalidateCache(threadId: string, fileIds?: string[]): Promise<boolean>;
 }
 
 export default CacheManager; 

@@ -6,5 +6,7 @@
  * Last Updated: Wed May 1 2024
  */
 
+// Export implementations
+export { QueryContext } from './QueryContext';
 export { default as FileSystemRepository } from './FileSystemRepository';
 export { default as QueryProcessorImpl } from './QueryProcessorImpl'; 

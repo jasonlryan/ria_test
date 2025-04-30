@@ -16,120 +16,94 @@
 import { QueryContext } from './QueryContext';
 
 /**
- * File metadata structure
+ * Represents a data file with metadata and segments
  */
-export interface FileMetadata {
-  title?: string;
-  description?: string;
-  version?: string;
-  createdAt?: string;
-  updatedAt?: string;
-  segments?: string[];
-  years?: string[];
-  properties?: Record<string, any>;
+export interface DataFile {
+  id: string;
+  filepath: string;
+  metadata: Record<string, any>;
+  segments: Record<string, any>;
+  contentType?: string;
+  lastModified?: Date;
+  isLoaded?: boolean;
+  error?: string;
 }
 
 /**
- * File data structure returned by repository
- */
-export interface FileData {
-  fileId: string;
-  metadata: FileMetadata;
-  content: any;
-}
-
-/**
- * Result of a file identification operation
+ * File identification result structure
  */
 export interface FileIdentificationResult {
-  file_ids: string[];
-  matched_topics?: string[];
-  segments?: string[];
-  explanation?: string;
+  relevantFiles: string[];
+  relevanceScores?: Record<string, number>;
+  matchedPatterns?: Record<string, string[]>;
+  detectedYears?: string[];
+  detectedSegments?: string[];
 }
 
 /**
- * Repository for managing data files and their contents
+ * Segment data structure
+ */
+export interface SegmentData {
+  id: string;
+  data: any;
+  metadata?: Record<string, any>;
+}
+
+/**
+ * Options for file retrieval operations
+ */
+export interface FileRetrievalOptions {
+  includeMetadataOnly?: boolean;
+  requiredSegments?: string[];
+  cacheStrategy?: 'use-cache' | 'refresh' | 'no-cache';
+  compatibility?: {
+    years?: string[];
+    segments?: string[];
+  };
+}
+
+/**
+ * File Repository Interface
+ * 
+ * Provides access to data files and file identification operations
  */
 export interface FileRepository {
   /**
-   * Find files relevant to the given query
+   * Get a single file by ID
    *
-   * @param query User query text
-   * @param context QueryContext with processing context
-   * @returns Array of file identifiers
+   * @param fileId - Unique identifier for the file
+   * @param options - Retrieval options
+   * @returns Promise resolving to the requested data file or null if not found
    */
-  identifyRelevantFiles(
-    query: string,
-    context: QueryContext
-  ): Promise<string[]>;
+  getFileById(fileId: string, options?: FileRetrievalOptions): Promise<DataFile | null>;
 
-  /**
-   * Load data from the specified files
-   *
-   * @param fileIds Array of file identifiers to load
-   * @param segments Optional segments to filter by
-   * @param context QueryContext with processing context
-   * @returns Array of file data objects
-   */
-  loadFileData(
-    fileIds: string[],
-    segments?: string[],
-    context?: QueryContext
-  ): Promise<FileData[]>;
-
-  /**
-   * Get all available segments across the given files
-   *
-   * @param fileIds Array of file identifiers to check
-   * @returns Array of segment identifiers
-   */
-  getAvailableSegments(fileIds: string[]): Promise<string[]>;
-
-  /**
-   * Cache file associations for a thread
-   *
-   * @param threadId Thread identifier
-   * @param fileIds File identifiers to cache
-   * @returns Success indicator
-   */
-  cacheFilesForThread(threadId: string, fileIds: string[]): Promise<boolean>;
-
-  /**
-   * Get cached file associations for a thread
-   *
-   * @param threadId Thread identifier
-   * @returns Array of cached file identifiers
-   */
-  getCachedFilesForThread(threadId: string): Promise<string[]>;
-  
-  /**
-   * Get a single file by its ID
-   *
-   * @param fileId File identifier
-   * @returns File data object
-   */
-  getFileById(fileId: string): Promise<FileData>;
-  
   /**
    * Get multiple files by their IDs
    *
-   * @param fileIds Array of file identifiers
-   * @returns Array of file data objects
+   * @param fileIds - Array of file identifiers
+   * @param options - Retrieval options
+   * @returns Promise resolving to an array of data files
    */
-  getFilesByIds(fileIds: string[]): Promise<FileData[]>;
-  
+  getFilesByIds(fileIds: string[], options?: FileRetrievalOptions): Promise<DataFile[]>;
+
   /**
-   * Get files based on a query
+   * Identify and retrieve files based on a query context
    *
-   * @param query User query
-   * @param context Query context
-   * @returns File identification result with loaded data
+   * @param context - Query context containing query information
+   * @param options - Retrieval options
+   * @returns Promise resolving to file identification results
    */
-  getFilesByQuery(
-    query: string,
-    context: QueryContext
-  ): Promise<FileIdentificationResult>;
+  getFilesByQuery(context: QueryContext, options?: FileRetrievalOptions): Promise<FileIdentificationResult>;
+
+  /**
+   * Load specific segments for a file
+   *
+   * @param fileId - Unique identifier for the file
+   * @param segments - Array of segment identifiers to load
+   * @param options - Retrieval options
+   * @returns Promise resolving to an updated data file with requested segments
+   */
+  loadSegments(fileId: string, segments: string[], options?: FileRetrievalOptions): Promise<DataFile>;
 }
 
 export default FileRepository; 

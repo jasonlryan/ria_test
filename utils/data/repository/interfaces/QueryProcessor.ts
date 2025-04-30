@@ -14,162 +14,90 @@
  */
 
 import { QueryContext } from './QueryContext';
-import { FileData, FileIdentificationResult } from './FileRepository';
+import { DataFile } from './FileRepository';
 
 /**
- * Classification of query type
+ * Processing options for queries
  */
-export interface QueryClassification {
-  isStarterQuestion: boolean;
-  isComparisonQuery: boolean;
-  isSegmentSpecific: boolean;
-  targetSegments?: string[];
-  targetYears?: string[];
-  queryIntent?: string;
+export interface QueryProcessingOptions {
+  /** Enable detailed pattern detection for specialized queries */
+  enablePatternDetection?: boolean;
+  /** Strategy for handling starter questions */
+  starterQuestionStrategy?: 'auto' | 'always' | 'never';
+  /** Strategy for handling comparison questions */
+  comparisonStrategy?: 'enhanced' | 'basic' | 'disabled';
+  /** Maximum number of files to process */
+  maxFiles?: number;
+  /** Maximum segments to include in context */
+  maxSegments?: number;
+  /** List of segments to prioritize in processing */
+  prioritySegments?: string[];
 }
 
 /**
- * Result of data processing
+ * Result of a processed query
  */
-export interface ProcessedResult {
-  data: any;
-  insights?: any[];
-  metrics?: Record<string, any>;
-}
-
-/**
- * Final response format
- */
-export interface QueryResponse {
-  data: any;
-  insights?: any[];
-  metadata: {
-    query: string;
-    timestamp: string;
-    processingTime?: number;
-    compatibility?: Record<string, any>;
-    [key: string]: any;
+export interface ProcessedQueryResult {
+  /** Processed data ready for response generation */
+  processedData: any;
+  /** Files that contributed to the final result */
+  relevantFiles: DataFile[];
+  /** Original query context with processing metadata */
+  enhancedContext: QueryContext;
+  /** Whether the processing involved a comparison */
+  isComparison?: boolean;
+  /** Whether the processing involved a starter question */
+  isStarterQuestion?: boolean;
+  /** Data version of the processing result */
+  dataVersion: string;
+  /** Performance metrics from processing */
+  metrics?: {
+    processingTimeMs: number;
+    fileCount: number;
+    segmentCount: number;
+    dataSize?: number;
   };
 }
 
 /**
- * Result of query processing operation
- */
-export interface ProcessedQueryResult {
-  /**
-   * Enhanced context with additional information
-   */
-  enhancedContext: QueryContext;
-  
-  /**
-   * List of files used in the processing
-   */
-  files: FileData[];
-  
-  /**
-   * Whether the query is a starter question
-   */
-  isStarterQuestion?: boolean;
-  
-  /**
-   * Whether the query is a comparison query
-   */
-  isComparisonQuery?: boolean;
-  
-  /**
-   * Additional metadata about the processing
-   */
-  metadata?: any;
-}
-
-/**
- * Processor for handling user queries and generating responses
+ * Query Processor Interface
+ * 
+ * Defines the contract for components that process queries against data
  */
 export interface QueryProcessor {
   /**
-   * Process a query and generate a response
+   * Process a query against available data
    *
-   * @param query User query text
-   * @param context QueryContext with processing context
-   * @returns Processed response
-   */
-  processQuery(query: string, context: QueryContext): Promise<QueryResponse>;
-
-  /**
-   * Process a query with retrieved data
-   * 
-   * @param query User query text
-   * @param context QueryContext with processing context
-   * @param cachedFileIds Optional array of cached file IDs
-   * @param threadId Thread ID for the conversation
-   * @param isFollowUp Whether this is a follow-up query
-   * @param previousQuery Previous query in the conversation
-   * @param previousAssistantResponse Previous assistant response
-   * @returns Enhanced context with processed data
+   * @param context - The query context containing the query and related information
+   * @param options - Processing options to customize behavior
+   * @returns Promise resolving to the processed query result
    */
   processQueryWithData(
-    query: string,
     context: QueryContext,
-    cachedFileIds?: string[],
-    threadId?: string,
-    isFollowUp?: boolean,
-    previousQuery?: string,
-    previousAssistantResponse?: string
+    options?: QueryProcessingOptions
   ): Promise<ProcessedQueryResult>;
 
   /**
-   * Classify the type of query
-   *
-   * @param query User query text
-   * @param context QueryContext with processing context
-   * @returns Classification result
-   */
-  classifyQuery(query: string, context?: QueryContext): QueryClassification;
-
-  /**
-   * Process data based on the query and context
-   *
-   * @param data File data to process
-   * @param query User query
-   * @param context QueryContext with processing context
-   * @returns Processed data result
-   */
-  processData(
-    data: FileData[],
-    query: string,
-    context: QueryContext
-  ): Promise<ProcessedResult>;
-
-  /**
-   * Format the final response
-   *
-   * @param result Processed result
-   * @param context QueryContext with processing context
-   * @returns Formatted query response
-   */
-  formatResponse(result: ProcessedResult, context: QueryContext): QueryResponse;
-  
-  /**
-   * Determine if a query is asking for a comparison between years
+   * Determine if a query is asking for a comparison between data
    * 
-   * @param query User query text
-   * @returns Boolean indicating if this is a comparison query
+   * @param query - The query text to analyze
+   * @returns Whether the query is a comparison query
    */
   isComparisonQuery(query: string): boolean;
-  
+
   /**
-   * Check if a query is a starter question
+   * Determine if a query is a starter question
    * 
-   * @param query User query text
-   * @returns Boolean indicating if this is a starter question
+   * @param query - The query text to analyze
+   * @returns Whether the query is a starter question
    */
   isStarterQuestion(query: string): boolean;
-  
+
   /**
-   * Extract segments from a query
+   * Extract segments mentioned in a query
    * 
-   * @param query User query text
-   * @returns Array of segments mentioned in the query
+   * @param query - The query text to analyze
+   * @returns Array of segment identifiers mentioned in the query
    */
   extractSegmentsFromQuery(query: string): string[];
 }

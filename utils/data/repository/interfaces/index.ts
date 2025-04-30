@@ -1,17 +1,19 @@
 /**
  * Repository Pattern Interface Exports
  *
- * Central export point for all repository pattern interfaces.
+ * Central export point for repository pattern interfaces.
  *
  * Last Updated: Wed May 1 2024
  */
 
+// Export all interfaces
 export * from './QueryContext';
 export * from './FileRepository';
 export * from './QueryProcessor';
 export * from './SegmentManager';
 export * from './CacheManager';
 
+// Default exports for direct imports
 export type { default as QueryContext } from './QueryContext';
 export type { default as FileRepository } from './FileRepository';
 export type { default as QueryProcessor } from './QueryProcessor';

@@ -12,109 +12,115 @@
  * Last Updated: Wed May 1 2024
  */
 
-import { FileData } from './FileRepository';
+import { DataFile } from './FileRepository';
 import { QueryContext } from './QueryContext';
 
 /**
- * Options for segment filtering
+ * Options for segment filtering operations
  */
 export interface SegmentFilterOptions {
-  includeAll?: boolean;
-  preserveStructure?: boolean;
-  defaultSegments?: string[];
+  /** Include only these segments in the filter */
+  includeSegments?: string[];
+  /** Exclude these segments from the filter */
+  excludeSegments?: string[];
+  /** Full segments that should be loaded regardless of content */
+  requiredFullSegments?: string[];
+  /** Filter criteria for segment content */
+  filterCriteria?: {
+    /** Terms that must be present in segment content */
+    requiredTerms?: string[];
+    /** Terms that must not be present in segment content */
+    excludedTerms?: string[];
+    /** Minimum relevance score for the segment to be included */
+    minRelevanceScore?: number;
+  };
 }
 
 /**
- * Result of segment calculation
+ * Result of a segment extraction operation
  */
-export interface SegmentCalculationResult {
-  availableSegments: string[];
-  missingSegments: Record<string, string[]>;
-  segmentsToLoad: Record<string, string[]>;
+export interface SegmentExtractionResult {
+  /** Segments that were identified in the query */
+  detectedSegments: string[];
+  /** Pattern that matched segments (if any) */
+  matchPattern?: string;
+  /** Confidence score for the extraction (0-1) */
+  confidence: number;
 }
 
 /**
- * Manager for handling data segmentation
+ * Segment Manager Interface
+ * 
+ * Provides functionality for managing data segmentation
  */
 export interface SegmentManager {
   /**
-   * Extract segment identifiers from a query
-   *
-   * @param query User query text
-   * @param context QueryContext with processing context
-   * @returns Array of segment identifiers
+   * Extract segments mentioned in a query
+   * 
+   * @param query - The query text to analyze
+   * @param context - Optional query context with additional information
+   * @returns The extracted segments and extraction metadata
    */
-  extractSegmentsFromQuery(
-    query: string,
-    context?: QueryContext
-  ): string[];
+  extractSegmentsFromQuery(query: string, context?: QueryContext): SegmentExtractionResult;
 
   /**
-   * Calculate which segments are missing for the given files
-   *
-   * @param fileData Array of file data objects
-   * @param requestedSegments Array of requested segment identifiers
-   * @param context QueryContext with processing context
-   * @returns Calculation result with missing segments
+   * Calculate which segments are missing from a set of files
+   * 
+   * @param files - The files to check for segments
+   * @param requiredSegments - The segments that are needed
+   * @returns Record of file IDs to arrays of missing segments
    */
   calculateMissingSegments(
-    fileData: FileData[],
-    requestedSegments: string[],
-    context?: QueryContext
-  ): SegmentCalculationResult;
+    files: DataFile[],
+    requiredSegments: string[]
+  ): Record<string, string[]>;
 
   /**
-   * Load additional segments for files
-   *
-   * @param fileData Array of file data objects
-   * @param segmentsToLoad Record mapping file IDs to segments
-   * @param context QueryContext with processing context
-   * @returns Updated file data with new segments
+   * Load additional segments for files that are missing segments
+   * 
+   * @param files - The files that need additional segments
+   * @param missingSegments - Record of file IDs to arrays of missing segments
+   * @returns The updated files with new segments loaded
    */
   loadAdditionalSegments(
-    fileData: FileData[],
-    segmentsToLoad: Record<string, string[]>,
-    context?: QueryContext
-  ): Promise<FileData[]>;
+    files: DataFile[],
+    missingSegments: Record<string, string[]>
+  ): Promise<DataFile[]>;
 
   /**
-   * Merge new segments into existing file data
-   *
-   * @param existingData Existing file data
-   * @param newSegments New segment data to merge
-   * @returns Merged file data
+   * Merge new segments into existing files
+   * 
+   * @param existingFiles - The files to update
+   * @param newSegments - New segment data to merge
+   * @returns The merged files with all segments
    */
   mergeFileSegments(
-    existingData: FileData,
-    newSegments: any
-  ): FileData;
+    existingFiles: DataFile[],
+    newSegments: Record<string, Record<string, any>>
+  ): DataFile[];
 
   /**
-   * Filter data by segment identifiers
-   *
-   * @param fileData Array of file data objects
-   * @param segments Array of segment identifiers to include
-   * @param options Filter options
-   * @returns Filtered file data
+   * Filter data based on segments and filtering options
+   * 
+   * @param files - The files to filter
+   * @param options - Filtering options
+   * @returns The filtered files
    */
   filterDataBySegments(
-    fileData: FileData[],
-    segments: string[],
-    options?: SegmentFilterOptions
-  ): FileData[];
+    files: DataFile[],
+    options: SegmentFilterOptions
+  ): DataFile[];
 
   /**
    * Identify segments relevant to a query
-   *
-   * @param query User query text
-   * @param availableSegments Array of available segment identifiers
-   * @param context QueryContext with processing context
+   * 
+   * @param query - The query to analyze
+   * @param context - Query context with additional information
    * @returns Array of relevant segment identifiers
    */
   filterRelevantSegments(
     query: string,
-    availableSegments: string[],
-    context?: QueryContext
+    context: QueryContext
   ): string[];
 }
 
