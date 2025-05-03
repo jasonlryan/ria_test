@@ -22,6 +22,12 @@ const {
 } = require("../../utils/data/smart_filtering");
 const { UnifiedCache } = require("../../utils/cache/cache-utils");
 
+// Import the adapter at the top of the file
+import {
+  identifyRelevantFiles as identifyRelevantFilesAdapter,
+  retrieveDataFiles as retrieveDataFilesAdapter,
+} from "../data/repository/adapters/retrieval-adapter";
+
 // Initialize OpenAI client
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -304,142 +310,165 @@ export async function identifyRelevantFiles(
   previousQuery = "",
   previousAssistantResponse = ""
 ) {
+  // Call the adapter implementation with proper options mapping
   try {
-    // Import query normalization utility if not already at the top of the file
-    const { normalizeQueryText } = require("../shared/queryUtils");
+    const adapterOptions = {
+      threadId: context?.threadId || "default",
+      isFollowUp: isFollowUp,
+      previousQuery: previousQuery,
+      previousResponse: previousAssistantResponse,
+      context: context,
+    };
 
-    // Ensure all queries are normalized
-    const normalizedQuery = normalizeQueryText(query);
-    const normalizedPreviousQuery = previousQuery
-      ? normalizeQueryText(previousQuery)
-      : "";
-
-    // Add clear logging about the isFollowUp parameter
-    logger.info("=== IDENTIFY FILES DEBUG ===");
-    logger.info(`IS FOLLOW-UP FLAG IN IDENTIFY: ${isFollowUp}`);
-    logger.info(`QUERY IN IDENTIFY: "${normalizedQuery.substring(0, 50)}..."`);
     logger.info(
-      `HAS PREV QUERY IN IDENTIFY: ${normalizedPreviousQuery ? "YES" : "NO"}`
+      `[RETRIEVAL] Calling adapter for identifyRelevantFiles via adapter method`
     );
-    logger.info("============================");
-
-    // No more keyword checks - rely purely on semantic analysis
-
-    // Check cache first (Cache key should ideally include context for follow-ups)
-    const cacheKey = generateCacheKey(
-      normalizedQuery +
-        (isFollowUp
-          ? `_followup_${normalizedPreviousQuery.substring(0, 50)}`
-          : "")
-    );
-    if (queryCache.has(cacheKey)) {
-      // if (process.env.DEBUG) {
-      //   logger.debug("Using cached query results");
-      // }
-      return queryCache.get(cacheKey);
-    }
-
-    // Load the canonical topic mapping for more accurate file identification
-    const mapping = loadCanonicalTopicMapping();
-
-    // Build the system prompt
-    const promptPath = path.join(
-      process.cwd(),
-      "utils",
-      "openai",
-      "1_data_retrieval.md"
-    );
-    let systemPrompt;
-    try {
-      systemPrompt = fs.readFileSync(promptPath, "utf8");
-    } catch (err) {
-      logger.error(`Error reading data retrieval prompt: ${err}`);
-      throw new Error("Failed to load data retrieval prompt");
-    }
-
-    // Build the user prompt with replacements
-    const userPrompt = systemPrompt
-      .replace("{{QUERY}}", normalizedQuery)
-      .replace("{{MAPPING}}", JSON.stringify(mapping))
-      .replace("{{IS_FOLLOWUP}}", isFollowUp ? "true" : "false")
-      .replace("{{PREVIOUS_QUERY}}", normalizedPreviousQuery || "")
-      .replace(
-        "{{PREVIOUS_ASSISTANT_RESPONSE}}",
-        previousAssistantResponse || ""
-      );
-
-    const response = await openai.chat.completions.create({
-      model: process.env.OPENAI_MODEL || DEFAULT_OPENAI_MODEL,
-      messages: [
-        {
-          role: "system",
-          content: systemPrompt,
-        },
-        {
-          role: "user",
-          content: userPrompt,
-        },
-      ],
-      temperature: 0.1,
-      max_tokens: 1000,
-      response_format: { type: "json_object" },
-    });
-
-    // Extract the content directly from the message
-    const content = response.choices[0].message.content;
-
-    try {
-      // Parse the JSON content
-      // if (process.env.DEBUG) {
-      //   logger.debug(
-      //     "Raw response content: " + content.substring(0, 100) + "..."
-      //   );
-      // }
-      const result = JSON.parse(content);
-
-      // Apply validations
-      if (!result.file_ids || !Array.isArray(result.file_ids)) {
-        result.file_ids = [];
-      }
-
-      if (!result.matched_topics || !Array.isArray(result.matched_topics)) {
-        result.matched_topics = [];
-      }
-
-      if (!result.explanation) {
-        result.explanation = "No explanation provided";
-      }
-
-      // ENFORCE: If isFollowUp is true, forcibly set out_of_scope to false
-      if (isFollowUp === true || isFollowUp === "true") {
-        result.out_of_scope = false;
-        // Optionally, clear out_of_scope_message if present
-        if ("out_of_scope_message" in result) {
-          result.out_of_scope_message = "";
-        }
-        // Optionally, update explanation
-        result.explanation +=
-          " (out_of_scope forcibly set to false for follow-up)";
-      }
-
-      // Cache the result
-      queryCache.set(cacheKey, result);
-
-      return result;
-    } catch (parseError) {
-      logger.error("JSON parse error in response content:", parseError);
-      logger.error("Content that failed to parse:", content);
-
-      // Provide a fallback result
-      return {
-        file_ids: [],
-        matched_topics: [],
-        explanation: "Error parsing OpenAI response: " + parseError.message,
-      };
-    }
+    return await identifyRelevantFilesAdapter(query, adapterOptions);
   } catch (error) {
-    logger.error("Error identifying relevant files:", error);
-    throw error;
+    logger.error(
+      `[RETRIEVAL] Error calling adapter, falling back to original implementation: ${error.message}`
+    );
+
+    // Original implementation continues below
+    try {
+      // Import query normalization utility if not already at the top of the file
+      const { normalizeQueryText } = require("../shared/queryUtils");
+
+      // Ensure all queries are normalized
+      const normalizedQuery = normalizeQueryText(query);
+      const normalizedPreviousQuery = previousQuery
+        ? normalizeQueryText(previousQuery)
+        : "";
+
+      // Add clear logging about the isFollowUp parameter
+      logger.info("=== IDENTIFY FILES DEBUG ===");
+      logger.info(`IS FOLLOW-UP FLAG IN IDENTIFY: ${isFollowUp}`);
+      logger.info(
+        `QUERY IN IDENTIFY: "${normalizedQuery.substring(0, 50)}..."`
+      );
+      logger.info(
+        `HAS PREV QUERY IN IDENTIFY: ${normalizedPreviousQuery ? "YES" : "NO"}`
+      );
+      logger.info("============================");
+
+      // No more keyword checks - rely purely on semantic analysis
+
+      // Check cache first (Cache key should ideally include context for follow-ups)
+      const cacheKey = generateCacheKey(
+        normalizedQuery +
+          (isFollowUp
+            ? `_followup_${normalizedPreviousQuery.substring(0, 50)}`
+            : "")
+      );
+      if (queryCache.has(cacheKey)) {
+        // if (process.env.DEBUG) {
+        //   logger.debug("Using cached query results");
+        // }
+        return queryCache.get(cacheKey);
+      }
+
+      // Load the canonical topic mapping for more accurate file identification
+      const mapping = loadCanonicalTopicMapping();
+
+      // Build the system prompt
+      const promptPath = path.join(
+        process.cwd(),
+        "utils",
+        "openai",
+        "1_data_retrieval.md"
+      );
+      let systemPrompt;
+      try {
+        systemPrompt = fs.readFileSync(promptPath, "utf8");
+      } catch (err) {
+        logger.error(`Error reading data retrieval prompt: ${err}`);
+        throw new Error("Failed to load data retrieval prompt");
+      }
+
+      // Build the user prompt with replacements
+      const userPrompt = systemPrompt
+        .replace("{{QUERY}}", normalizedQuery)
+        .replace("{{MAPPING}}", JSON.stringify(mapping))
+        .replace("{{IS_FOLLOWUP}}", isFollowUp ? "true" : "false")
+        .replace("{{PREVIOUS_QUERY}}", normalizedPreviousQuery || "")
+        .replace(
+          "{{PREVIOUS_ASSISTANT_RESPONSE}}",
+          previousAssistantResponse || ""
+        );
+
+      const response = await openai.chat.completions.create({
+        model: process.env.OPENAI_MODEL || DEFAULT_OPENAI_MODEL,
+        messages: [
+          {
+            role: "system",
+            content: systemPrompt,
+          },
+          {
+            role: "user",
+            content: userPrompt,
+          },
+        ],
+        temperature: 0.1,
+        max_tokens: 1000,
+        response_format: { type: "json_object" },
+      });
+
+      // Extract the content directly from the message
+      const content = response.choices[0].message.content;
+
+      try {
+        // Parse the JSON content
+        // if (process.env.DEBUG) {
+        //   logger.debug(
+        //     "Raw response content: " + content.substring(0, 100) + "..."
+        //   );
+        // }
+        const result = JSON.parse(content);
+
+        // Apply validations
+        if (!result.file_ids || !Array.isArray(result.file_ids)) {
+          result.file_ids = [];
+        }
+
+        if (!result.matched_topics || !Array.isArray(result.matched_topics)) {
+          result.matched_topics = [];
+        }
+
+        if (!result.explanation) {
+          result.explanation = "No explanation provided";
+        }
+
+        // ENFORCE: If isFollowUp is true, forcibly set out_of_scope to false
+        if (isFollowUp === true || isFollowUp === "true") {
+          result.out_of_scope = false;
+          // Optionally, clear out_of_scope_message if present
+          if ("out_of_scope_message" in result) {
+            result.out_of_scope_message = "";
+          }
+          // Optionally, update explanation
+          result.explanation +=
+            " (out_of_scope forcibly set to false for follow-up)";
+        }
+
+        // Cache the result
+        queryCache.set(cacheKey, result);
+
+        return result;
+      } catch (parseError) {
+        logger.error("JSON parse error in response content:", parseError);
+        logger.error("Content that failed to parse:", content);
+
+        // Provide a fallback result
+        return {
+          file_ids: [],
+          matched_topics: [],
+          explanation: "Error parsing OpenAI response: " + parseError.message,
+        };
+      }
+    } catch (error) {
+      logger.error("Error identifying relevant files:", error);
+      throw error;
+    }
   }
 }
 
@@ -821,143 +850,156 @@ export async function generateAnalysis(query, dataFiles, matchedTopics) {
  * @returns {Promise<object>} - The retrieved data
  */
 export async function retrieveDataFiles(fileIds) {
-  // if (process.env.DEBUG) {
-  //   logger.debug(`Retrieving ${fileIds.length} data files...`);
-  // }
+  // Call the adapter implementation
+  try {
+    logger.info(
+      `[RETRIEVAL] Calling adapter for retrieveDataFiles via adapter method with ${fileIds.length} files`
+    );
+    return await retrieveDataFilesAdapter(fileIds);
+  } catch (error) {
+    logger.error(
+      `[RETRIEVAL] Error calling adapter, falling back to original implementation: ${error.message}`
+    );
 
-  // In production on Vercel, read files directly from the file system
-  // This avoids API cross-calling issues with authentication
-  if (process.env.NODE_ENV === "production") {
+    // Original implementation continues below
+    // if (process.env.DEBUG) {
+    //   logger.debug(`Retrieving ${fileIds.length} data files...`);
+    // }
+
+    // In production on Vercel, read files directly from the file system
+    // This avoids API cross-calling issues with authentication
+    if (process.env.NODE_ENV === "production") {
+      try {
+        // if (process.env.DEBUG) {
+        //   logger.debug(
+        //     "Using direct file system access in production environment"
+        //   );
+        // }
+
+        // Topics to collect
+        const topics = new Set();
+
+        // Process each file ID and read directly from file system
+        const files = await Promise.all(
+          fileIds.map(async (fileId) => {
+            try {
+              // Normalize file ID to include .json extension if missing
+              const normalizedId = fileId.endsWith(".json")
+                ? fileId
+                : `${fileId}.json`;
+
+              // Construct absolute path to the data file
+              const filePath = path.join(
+                process.cwd(),
+                "scripts",
+                "output",
+                "split_data",
+                normalizedId
+              );
+
+              // if (process.env.DEBUG) {
+              //   logger.debug(`Attempting to read file: ${filePath}`);
+              // }
+
+              // Ensure file exists
+              if (!fs.existsSync(filePath)) {
+                logger.error(`File not found: ${filePath}`);
+                return {
+                  id: fileId,
+                  error: `File not found: ${filePath}`,
+                };
+              }
+
+              // Read the file content
+              const fileContent = fs.readFileSync(filePath, "utf8");
+
+              // Parse the file content as JSON
+              const jsonData = JSON.parse(fileContent);
+
+              // Extract topic from file_id
+              let topic = "Unknown";
+              if (fileId.includes("_1")) topic = "Attraction_Factors";
+              else if (fileId.includes("_2")) topic = "Retention_Factors";
+              else if (fileId.includes("_3")) topic = "Attrition_Factors";
+              else if (fileId.includes("_7")) topic = "Intention_to_Leave";
+              else if (fileId.includes("_12")) topic = "Work_Preferences";
+
+              // Add topic to set
+              topics.add(topic);
+
+              // Return file data
+              return {
+                id: fileId,
+                topic: topic,
+                data: jsonData,
+              };
+            } catch (error) {
+              logger.error(`Error retrieving file ${fileId}:`, error);
+              return {
+                id: fileId,
+                error: error.message,
+              };
+            }
+          })
+        );
+
+        // Calculate total data points
+        let totalDataPoints = 0;
+        files.forEach((file) => {
+          if (file.data && Array.isArray(file.data)) {
+            totalDataPoints += file.data.length;
+          } else if (file.data && typeof file.data === "object") {
+            totalDataPoints += 1;
+          }
+        });
+
+        return {
+          files: files || [],
+          topics: Array.from(topics) || [],
+          totalDataPoints: totalDataPoints || 0,
+        };
+      } catch (error) {
+        logger.error("Error with direct file access:", error);
+        throw error;
+      }
+    }
+
+    // For development, continue using the API
+    // Determine API URL based on environment
+    const apiUrl = "http://localhost:3000/api/retrieve-data";
+
     try {
+      // Call the API to retrieve data files
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ file_ids: fileIds }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to retrieve files: ${response.status}`);
+      }
+
+      // Parse the API response
+      const result = await response.json();
       // if (process.env.DEBUG) {
       //   logger.debug(
-      //     "Using direct file system access in production environment"
+      //     `API response: ${result.files ? result.files.length : 0} files, ${
+      //       result.totalDataPoints || 0
+      //     } data points`
       //   );
       // }
 
-      // Topics to collect
-      const topics = new Set();
-
-      // Process each file ID and read directly from file system
-      const files = await Promise.all(
-        fileIds.map(async (fileId) => {
-          try {
-            // Normalize file ID to include .json extension if missing
-            const normalizedId = fileId.endsWith(".json")
-              ? fileId
-              : `${fileId}.json`;
-
-            // Construct absolute path to the data file
-            const filePath = path.join(
-              process.cwd(),
-              "scripts",
-              "output",
-              "split_data",
-              normalizedId
-            );
-
-            // if (process.env.DEBUG) {
-            //   logger.debug(`Attempting to read file: ${filePath}`);
-            // }
-
-            // Ensure file exists
-            if (!fs.existsSync(filePath)) {
-              logger.error(`File not found: ${filePath}`);
-              return {
-                id: fileId,
-                error: `File not found: ${filePath}`,
-              };
-            }
-
-            // Read the file content
-            const fileContent = fs.readFileSync(filePath, "utf8");
-
-            // Parse the file content as JSON
-            const jsonData = JSON.parse(fileContent);
-
-            // Extract topic from file_id
-            let topic = "Unknown";
-            if (fileId.includes("_1")) topic = "Attraction_Factors";
-            else if (fileId.includes("_2")) topic = "Retention_Factors";
-            else if (fileId.includes("_3")) topic = "Attrition_Factors";
-            else if (fileId.includes("_7")) topic = "Intention_to_Leave";
-            else if (fileId.includes("_12")) topic = "Work_Preferences";
-
-            // Add topic to set
-            topics.add(topic);
-
-            // Return file data
-            return {
-              id: fileId,
-              topic: topic,
-              data: jsonData,
-            };
-          } catch (error) {
-            logger.error(`Error retrieving file ${fileId}:`, error);
-            return {
-              id: fileId,
-              error: error.message,
-            };
-          }
-        })
-      );
-
-      // Calculate total data points
-      let totalDataPoints = 0;
-      files.forEach((file) => {
-        if (file.data && Array.isArray(file.data)) {
-          totalDataPoints += file.data.length;
-        } else if (file.data && typeof file.data === "object") {
-          totalDataPoints += 1;
-        }
-      });
-
+      // Return the retrieved data in the expected format
       return {
-        files: files || [],
-        topics: Array.from(topics) || [],
-        totalDataPoints: totalDataPoints || 0,
+        files: result.files || [],
+        topics: result.topics || [],
+        totalDataPoints: result.totalDataPoints || 0,
       };
     } catch (error) {
-      logger.error("Error with direct file access:", error);
+      logger.error("Error retrieving data files:", error);
       throw error;
     }
-  }
-
-  // For development, continue using the API
-  // Determine API URL based on environment
-  const apiUrl = "http://localhost:3000/api/retrieve-data";
-
-  try {
-    // Call the API to retrieve data files
-    const response = await fetch(apiUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ file_ids: fileIds }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to retrieve files: ${response.status}`);
-    }
-
-    // Parse the API response
-    const result = await response.json();
-    // if (process.env.DEBUG) {
-    //   logger.debug(
-    //     `API response: ${result.files ? result.files.length : 0} files, ${
-    //       result.totalDataPoints || 0
-    //     } data points`
-    //   );
-    // }
-
-    // Return the retrieved data in the expected format
-    return {
-      files: result.files || [],
-      topics: result.topics || [],
-      totalDataPoints: result.totalDataPoints || 0,
-    };
-  } catch (error) {
-    logger.error("Error retrieving data files:", error);
-    throw error;
   }
 }
 
