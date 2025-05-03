@@ -180,12 +180,12 @@ npm run repo:full        # Full implementation (100%)
 npm run repo:off         # Turn off repository pattern
 npm run repo:retrieval   # Enable only the retrieval adapter
 npm run repo:service     # Enable only the service adapter
-npm run repo:monitor     # Launch monitoring dashboard on port 3001
+npm run repo:monitor     # Display information about the monitoring dashboard
 ```
 
 ## Monitoring Dashboard
 
-The monitoring dashboard is available at `/repository-monitor` and provides:
+The monitoring dashboard is available at `/repository-monitor` on the main application server and provides:
 
 1. Real-time performance comparison
 2. Error rate tracking

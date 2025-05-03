@@ -31,8 +31,19 @@ interface OverallMetrics {
 
 interface PerformanceData {
   [operation: string]: {
-    original: { avg: number; count: number };
-    repository: { avg: number; count: number };
+    callCount: number;
+    totalDuration: {
+      original: number;
+      repository: number;
+    };
+    averageDuration: {
+      original: number;
+      repository: number;
+    };
+    callCounts: {
+      original: number;
+      repository: number;
+    };
   };
 }
 
@@ -276,19 +287,20 @@ export default function RepositoryMonitorPage() {
                           {operation}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {metrics.original.avg.toFixed(1)}
+                          {metrics.averageDuration.original.toFixed(1)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {metrics.repository.avg.toFixed(1)}
+                          {metrics.averageDuration.repository.toFixed(1)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {calculateImprovement(
-                            metrics.repository.avg,
-                            metrics.original.avg
+                            metrics.averageDuration.repository,
+                            metrics.averageDuration.original
                           )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {metrics.original.count} / {metrics.repository.count}
+                          {metrics.callCounts.original} /{" "}
+                          {metrics.callCounts.repository}
                         </td>
                       </tr>
                     )

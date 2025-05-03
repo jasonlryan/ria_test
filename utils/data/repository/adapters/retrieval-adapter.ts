@@ -17,6 +17,7 @@ import { FileRepository, QueryProcessor, QueryContext, FileIdentificationResult 
 import { FileSystemRepository, QueryProcessorImpl } from '../implementations';
 import logger from '../../../shared/logger';
 import { startTimer, endTimer, recordError } from '../monitoring';
+import { QueryContext as QueryContextImpl } from '../implementations/QueryContext';
 
 /**
  * Feature flags and rollout configuration
@@ -26,6 +27,9 @@ const SHADOW_MODE = process.env.REPOSITORY_SHADOW_MODE === 'true';
 const TRAFFIC_PERCENTAGE = parseInt(process.env.REPOSITORY_TRAFFIC_PERCENTAGE || '0', 10);
 const ENABLE_RETRIEVAL_ADAPTER = process.env.ENABLE_RETRIEVAL_ADAPTER === 'true';
 
+// Guard against recursive calls
+const CALL_STACK = new Set<string>();
+
 /**
  * Helper to determine if a request should use the repository implementation
  * based on feature flags and traffic percentage
@@ -34,35 +38,16 @@ const ENABLE_RETRIEVAL_ADAPTER = process.env.ENABLE_RETRIEVAL_ADAPTER === 'true'
  * @returns Boolean indicating whether to use repository implementation
  */
 function shouldUseRepositoryImplementation(threadId?: string): boolean {
-  // Adapter-specific flag has priority (can enable/disable just this adapter)
-  if (ENABLE_RETRIEVAL_ADAPTER === false) {
-    return false;
+  if (!USE_REPOSITORY_PATTERN) return false;
+  if (!ENABLE_RETRIEVAL_ADAPTER) return false;
+  
+  // Base decision on traffic percentage for non-shadow mode
+  if (!SHADOW_MODE && TRAFFIC_PERCENTAGE < 100) {
+    const random = Math.floor(Math.random() * 100);
+    return random < TRAFFIC_PERCENTAGE;
   }
   
-  // If feature flag is explicitly off, don't use repository
-  if (!USE_REPOSITORY_PATTERN) {
-    return false;
-  }
-  
-  // If no traffic percentage is set, rely only on the main feature flag
-  if (TRAFFIC_PERCENTAGE <= 0) {
-    return USE_REPOSITORY_PATTERN;
-  }
-  
-  // For consistent user experience, use threadId hash to determine
-  // if this user/thread should get repository implementation
-  if (threadId) {
-    // Simple hash function to get a number between 0-99
-    const hash = threadId.split('').reduce((acc, char) => {
-      return (acc + char.charCodeAt(0)) % 100;
-    }, 0);
-    
-    // Use repository for the specified percentage of traffic
-    return hash < TRAFFIC_PERCENTAGE;
-  }
-  
-  // If no threadId, use random assignment
-  return Math.random() * 100 < TRAFFIC_PERCENTAGE;
+  return !SHADOW_MODE && USE_REPOSITORY_PATTERN && ENABLE_RETRIEVAL_ADAPTER;
 }
 
 /**
@@ -78,159 +63,227 @@ function getDefaultImplementations() {
 }
 
 /**
- * Adapter for identifyRelevantFiles in retrieval.js
- * 
- * @param query User query
- * @param options Additional options
- * @param customRepository Optional custom repository instance
- * @returns Array of relevant file IDs
+ * Identifies relevant files based on a query
+ * @param {string} query - The user query
+ * @param {object} options - Original options object
+ * @returns {Promise<object>} Object with file_ids and metadata
  */
-export async function identifyRelevantFiles(
-  query: string,
-  options: any = {},
-  customRepository?: FileRepository
-) {
-  // Determine if this request should use repository implementation
-  const useRepository = shouldUseRepositoryImplementation(options.threadId);
-  const isShadowMode = SHADOW_MODE && USE_REPOSITORY_PATTERN;
-  
-  logger.info(`[ADAPTER] identifyRelevantFiles called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%, shadow: ${isShadowMode}`);
-  
-  // Always run original implementation in shadow mode or when feature flag is off
-  const originalTimer = startTimer('original', 'identifyRelevantFiles', { 
-    threadId: options.threadId,
-    queryLength: query.length
-  });
-  
-  let originalResult;
+export async function identifyRelevantFiles(query: string, options: any = {}) {
   try {
-    const { identifyRelevantFiles } = await import('../../../openai/retrieval');
-    originalResult = await identifyRelevantFiles(query, options);
-    endTimer(originalTimer, true, { filesProcessed: originalResult?.length || 0 });
-  } catch (error) {
-    endTimer(originalTimer, false);
-    recordError('original', 'identifyRelevantFiles');
-    logger.error(`[ADAPTER] Error in original identifyRelevantFiles: ${error.message}`);
-    throw error; // Re-throw if we're not using the repository as fallback
-  }
-  
-  // If not using repository implementation and not in shadow mode, return original result
-  if (!useRepository && !isShadowMode) {
-    return originalResult;
-  }
-  
-  // Start timer for repository implementation
-  const repoTimer = startTimer('repository', 'identifyRelevantFiles', { 
-    threadId: options.threadId,
-    queryLength: query.length
-  });
-  
-  try {
-    // Create or use repository
-    const { repository } = customRepository 
-      ? { repository: customRepository } 
-      : getDefaultImplementations();
+    // Calculate if this request should use the repository implementation
+    const useRepository = shouldUseRepositoryImplementation(options.threadId);
+    const isShadowMode = SHADOW_MODE && USE_REPOSITORY_PATTERN;
     
-    // Create context from options
-    const context: QueryContext = {
-      query,
-      isFollowUp: options.isFollowUp || false,
-      threadId: options.threadId,
-      previousQuery: options.previousQuery,
-      previousResponse: options.previousResponse
-    };
+    logger.info(`[ADAPTER] identifyRelevantFiles called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%, shadow: ${isShadowMode}`);
     
-    // Call repository method
-    const repoResult = await repository.getFilesByQuery(context);
-    endTimer(repoTimer, true, { filesProcessed: repoResult.relevantFiles.length || 0 });
-    
-    // In shadow mode, log comparison but return original result
-    if (isShadowMode) {
-      logger.info(`[SHADOW] identifyRelevantFiles comparison - original: ${originalResult.length} files, repository: ${repoResult.relevantFiles.length} files`);
-      return originalResult;
+    if (!useRepository) {
+      // Call original implementation with the flag to prevent recursive calls
+      logger.info(`[ADAPTER] Using original implementation for identifyRelevantFiles`);
+      
+      // Start timer for original implementation
+      const timer = startTimer('original', 'identifyRelevantFiles', { 
+        threadId: options.threadId,
+        queryLength: query?.length || 0
+      });
+      
+      try {
+        const { identifyRelevantFiles } = await import('../../../openai/retrieval');
+        const result = await identifyRelevantFiles(query, options, false, "", "", true); // true = _isAdapterCall
+        
+        // End timer with success status
+        endTimer(timer, true, { fileCount: result?.file_ids?.length || 0 });
+        logger.info(`[METRICS] Recorded original identifyRelevantFiles: ${result?.file_ids?.length || 0} files in ${performance.now() - timer.startTime}ms`);
+        
+        return result;
+      } catch (error) {
+        // Record error and end timer
+        recordError('original', 'identifyRelevantFiles');
+        endTimer(timer, false, { error: error.message });
+        logger.error(`[METRICS] Recorded original identifyRelevantFiles error: ${error.message}`);
+        throw error;
+      }
     }
     
-    // Otherwise return repository result
-    return repoResult.relevantFiles;
-  } catch (error) {
-    endTimer(repoTimer, false);
-    recordError('repository', 'identifyRelevantFiles');
-    logger.error(`[ADAPTER] Error in repository identifyRelevantFiles: ${error.message}`);
+    // Start timer for repository implementation
+    const repoTimer = startTimer('repository', 'identifyRelevantFiles', {
+      threadId: options.threadId,
+      queryLength: query?.length || 0
+    });
     
-    // Return original result on error
-    return originalResult;
+    try {
+      // Map options to QueryContext
+      const context = mapToQueryContext(query, options);
+      
+      // Use repository implementation
+      logger.info(`[ADAPTER] Using repository implementation for identifyRelevantFiles`);
+      const { repository: fileRepository } = getDefaultImplementations();
+      const result = await fileRepository.getFilesByQuery(context);
+      
+      // Format result to match original API format
+      const formattedResult = formatResult(result);
+      logger.info(`[ADAPTER] Formatted result from repository: ${JSON.stringify(formattedResult.file_ids)}`);
+      
+      // End timer with success status
+      endTimer(repoTimer, true, { 
+        fileCount: formattedResult?.file_ids?.length || 0,
+        relevantFilesCount: result?.relevantFiles?.length || 0
+      });
+      logger.info(`[METRICS] Recorded repository identifyRelevantFiles: ${result?.relevantFiles?.length || 0} files in ${performance.now() - repoTimer.startTime}ms`);
+      
+      return formattedResult;
+    } catch (error) {
+      // Record error and end timer
+      recordError('repository', 'identifyRelevantFiles');
+      endTimer(repoTimer, false, { error: error.message });
+      logger.error(`[METRICS] Recorded repository identifyRelevantFiles error: ${error.message}`);
+      
+      logger.error(`[ADAPTER] Error in identifyRelevantFiles: ${error.message}`);
+      // Fallback to original implementation
+      logger.warn(`[FALLBACK] Using original identifyRelevantFiles implementation`);
+      
+      // Start timer for fallback operation
+      const fallbackTimer = startTimer('original', 'identifyRelevantFiles_fallback');
+      
+      try {
+        // Import here to prevent circular dependencies
+        const originalImplementation = await import('../../../openai/retrieval');
+        const result = await originalImplementation.identifyRelevantFiles(query, options);
+        
+        // End fallback timer with success
+        endTimer(fallbackTimer, true);
+        logger.info(`[METRICS] Recorded fallback identifyRelevantFiles success`);
+        
+        return result;
+      } catch (fallbackError) {
+        // Record fallback error
+        recordError('original', 'identifyRelevantFiles_fallback');
+        endTimer(fallbackTimer, false, { error: fallbackError.message });
+        logger.error(`[METRICS] Recorded fallback identifyRelevantFiles error: ${fallbackError.message}`);
+        throw fallbackError;
+      }
+    }
+  } catch (error) {
+    logger.error(`[ADAPTER] Unhandled error in identifyRelevantFiles adapter: ${error.message}`);
+    recordError('adapter', 'identifyRelevantFiles');
+    
+    // Last resort fallback
+    const { identifyRelevantFiles } = await import('../../../openai/retrieval');
+    return identifyRelevantFiles(query, options);
   }
 }
 
+// Helper to determine if we should use the repository based on traffic percentage
+function determineIfShouldUseRepository() {
+  if (!USE_REPOSITORY_PATTERN) return false;
+  if (SHADOW_MODE) return false;
+  
+  // Random percentage-based routing
+  if (TRAFFIC_PERCENTAGE < 100) {
+    const random = Math.floor(Math.random() * 100);
+    return random < TRAFFIC_PERCENTAGE;
+  }
+  
+  return true;
+}
+
+// Map options from old format to QueryContext
+function mapToQueryContext(query: string, options: any): QueryContext {
+  // Create a new context with the query
+  return new QueryContextImpl({
+    query,
+    threadId: options.threadId || 'default',
+    isFollowUp: options.isFollowUp || false,
+    previousQuery: options.previousQuery || '',
+    previousResponse: options.previousResponse || '',
+    // Add other context properties as needed
+  });
+}
+
+// Format repository result back to original API format
+function formatResult(result: any): any {
+  // The original API expects an object with file_ids, not just an array of IDs
+  if (!result || !result.relevantFiles) return { file_ids: [] };
+  
+  // Create a result that matches the format expected by the original implementation
+  return {
+    file_ids: result.relevantFiles,
+    matched_topics: result.matchedTopics || [],
+    explanation: result.explanation || "Files identified by repository implementation",
+    segments: result.detectedSegments || ["region", "age", "gender"],
+    out_of_scope: false
+  };
+}
+
 /**
- * Adapter for retrieveDataFiles in retrieval.js
- * 
- * @param fileIds Array of file IDs
- * @param customRepository Optional custom repository instance
- * @returns Array of file data
+ * Retrieve data files based on file IDs
+ * @param {string[]} fileIds - Array of file IDs
+ * @returns {Promise<object>} Retrieved data
  */
-export async function retrieveDataFiles(
-  fileIds: string[],
-  customRepository?: FileRepository
-) {
-  const useRepository = shouldUseRepositoryImplementation();
-  const isShadowMode = SHADOW_MODE && USE_REPOSITORY_PATTERN;
-  
-  logger.info(`[ADAPTER] retrieveDataFiles called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%, shadow: ${isShadowMode}`);
-  
-  // Always run original implementation in shadow mode or when feature flag is off
-  const originalTimer = startTimer('original', 'retrieveDataFiles', { 
-    queryLength: fileIds.length
-  });
-  
-  let originalResult;
+export async function retrieveDataFiles(fileIds: string[]) {
   try {
-    const { retrieveDataFiles } = await import('../../../openai/retrieval');
-    originalResult = await retrieveDataFiles(fileIds);
-    endTimer(originalTimer, true, { filesProcessed: fileIds.length });
-  } catch (error) {
-    endTimer(originalTimer, false);
-    recordError('original', 'retrieveDataFiles');
-    logger.error(`[ADAPTER] Error in original retrieveDataFiles: ${error.message}`);
-    throw error; // Re-throw if we're not using the repository as fallback
-  }
-  
-  // If not using repository implementation and not in shadow mode, return original result
-  if (!useRepository && !isShadowMode) {
-    return originalResult;
-  }
-  
-  // Start timer for repository implementation
-  const repoTimer = startTimer('repository', 'retrieveDataFiles', { 
-    queryLength: fileIds.length
-  });
-  
-  try {
-    // Create or use repository
-    const { repository } = customRepository 
-      ? { repository: customRepository } 
-      : getDefaultImplementations();
+    // Calculate if this request should use the repository implementation
+    const useRepository = shouldUseRepositoryImplementation();
+    const isShadowMode = SHADOW_MODE && USE_REPOSITORY_PATTERN;
     
-    // Call repository method
-    const repoResult = await repository.getFilesByIds(fileIds);
-    endTimer(repoTimer, true, { filesProcessed: fileIds.length });
+    logger.info(`[ADAPTER] retrieveDataFiles called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%, shadow: ${isShadowMode}`);
     
-    // In shadow mode, log comparison but return original result
-    if (isShadowMode) {
-      logger.info(`[SHADOW] retrieveDataFiles comparison - original: ${originalResult.length} files, repository: ${repoResult.length} files`);
-      return originalResult;
+    if (!useRepository) {
+      // Call original implementation with the flag to prevent recursive calls
+      logger.info(`[ADAPTER] Using original implementation for retrieveDataFiles`);
+      const { retrieveDataFiles } = await import('../../../openai/retrieval');
+      return retrieveDataFiles(fileIds, true); // true = _isAdapterCall
     }
     
-    // Otherwise return repository result
-    return repoResult;
-  } catch (error) {
-    endTimer(repoTimer, false);
-    recordError('repository', 'retrieveDataFiles');
-    logger.error(`[ADAPTER] Error in repository retrieveDataFiles: ${error.message}`);
+    // Use repository implementation
+    logger.info(`[ADAPTER] Using repository implementation for retrieveDataFiles`);
+    const { repository: fileRepository } = getDefaultImplementations();
+    const result = await fileRepository.getFilesByIds(fileIds);
     
-    // Return original result on error
-    return originalResult;
+    // Format result back to original format expected by consumers
+    return {
+      files: result,
+      topics: extractTopics(result),
+      totalDataPoints: countDataPoints(result),
+    };
+  } catch (error) {
+    logger.error(`[ADAPTER] Error in retrieveDataFiles: ${error.message}`);
+    // Fallback to original implementation
+    logger.warn(`[FALLBACK] Using original retrieveDataFiles implementation`);
+    
+    // Import here to prevent circular dependencies
+    const originalImplementation = await import('../../../openai/retrieval');
+    return originalImplementation.retrieveDataFiles(fileIds);
   }
+}
+
+// Helper to extract topics from files
+function extractTopics(files: any[]): string[] {
+  const topics = new Set<string>();
+  
+  files.forEach(file => {
+    if (file.topic) {
+      topics.add(file.topic);
+    }
+  });
+  
+  return Array.from(topics);
+}
+
+// Helper to count data points
+function countDataPoints(files: any[]): number {
+  let count = 0;
+  
+  files.forEach(file => {
+    if (file.data) {
+      if (Array.isArray(file.data)) {
+        count += file.data.length;
+      } else if (typeof file.data === 'object') {
+        count += 1;
+      }
+    }
+  });
+  
+  return count;
 }
 
 /**
