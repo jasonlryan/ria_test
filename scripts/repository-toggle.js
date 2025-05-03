@@ -15,6 +15,8 @@
  *   - test50: Test mode with 50% traffic
  *   - full: Full implementation (100%)
  *   - off: Turn off repository pattern
+ *   - retrieval_only: Only enable retrieval adapter
+ *   - service_only: Only enable service adapter
  *
  * Last Updated: Sat May 3 2025
  */
@@ -37,36 +39,64 @@ const modes = {
     USE_REPOSITORY_PATTERN: "true",
     REPOSITORY_SHADOW_MODE: "true",
     REPOSITORY_TRAFFIC_PERCENTAGE: "0",
+    ENABLE_RETRIEVAL_ADAPTER: "true",
+    ENABLE_SERVICE_ADAPTER: "true",
   },
   test5: {
     USE_REPOSITORY_PATTERN: "true",
     REPOSITORY_SHADOW_MODE: "false",
     REPOSITORY_TRAFFIC_PERCENTAGE: "5",
+    ENABLE_RETRIEVAL_ADAPTER: "true",
+    ENABLE_SERVICE_ADAPTER: "true",
   },
   test10: {
     USE_REPOSITORY_PATTERN: "true",
     REPOSITORY_SHADOW_MODE: "false",
     REPOSITORY_TRAFFIC_PERCENTAGE: "10",
+    ENABLE_RETRIEVAL_ADAPTER: "true",
+    ENABLE_SERVICE_ADAPTER: "true",
   },
   test25: {
     USE_REPOSITORY_PATTERN: "true",
     REPOSITORY_SHADOW_MODE: "false",
     REPOSITORY_TRAFFIC_PERCENTAGE: "25",
+    ENABLE_RETRIEVAL_ADAPTER: "true",
+    ENABLE_SERVICE_ADAPTER: "true",
   },
   test50: {
     USE_REPOSITORY_PATTERN: "true",
     REPOSITORY_SHADOW_MODE: "false",
     REPOSITORY_TRAFFIC_PERCENTAGE: "50",
+    ENABLE_RETRIEVAL_ADAPTER: "true",
+    ENABLE_SERVICE_ADAPTER: "true",
   },
   full: {
     USE_REPOSITORY_PATTERN: "true",
     REPOSITORY_SHADOW_MODE: "false",
     REPOSITORY_TRAFFIC_PERCENTAGE: "100",
+    ENABLE_RETRIEVAL_ADAPTER: "true",
+    ENABLE_SERVICE_ADAPTER: "true",
   },
   off: {
     USE_REPOSITORY_PATTERN: "false",
     REPOSITORY_SHADOW_MODE: "false",
     REPOSITORY_TRAFFIC_PERCENTAGE: "0",
+    ENABLE_RETRIEVAL_ADAPTER: "false",
+    ENABLE_SERVICE_ADAPTER: "false",
+  },
+  retrieval_only: {
+    USE_REPOSITORY_PATTERN: "true",
+    REPOSITORY_SHADOW_MODE: "false",
+    REPOSITORY_TRAFFIC_PERCENTAGE: "100",
+    ENABLE_RETRIEVAL_ADAPTER: "true",
+    ENABLE_SERVICE_ADAPTER: "false",
+  },
+  service_only: {
+    USE_REPOSITORY_PATTERN: "true",
+    REPOSITORY_SHADOW_MODE: "false",
+    REPOSITORY_TRAFFIC_PERCENTAGE: "100",
+    ENABLE_RETRIEVAL_ADAPTER: "false",
+    ENABLE_SERVICE_ADAPTER: "true",
   },
 };
 
@@ -103,6 +133,18 @@ function getCurrentMode() {
 
   if (currentEnv.REPOSITORY_SHADOW_MODE === "true") {
     return "shadow";
+  }
+
+  // Check for adapter-specific modes
+  const retrievalEnabled = currentEnv.ENABLE_RETRIEVAL_ADAPTER === "true";
+  const serviceEnabled = currentEnv.ENABLE_SERVICE_ADAPTER === "true";
+
+  if (retrievalEnabled && !serviceEnabled) {
+    return "retrieval_only";
+  }
+
+  if (!retrievalEnabled && serviceEnabled) {
+    return "service_only";
   }
 
   const percentage = parseInt(

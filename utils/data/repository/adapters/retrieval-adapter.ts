@@ -24,6 +24,7 @@ import { startTimer, endTimer, recordError } from '../monitoring';
 const USE_REPOSITORY_PATTERN = process.env.USE_REPOSITORY_PATTERN === 'true';
 const SHADOW_MODE = process.env.REPOSITORY_SHADOW_MODE === 'true';
 const TRAFFIC_PERCENTAGE = parseInt(process.env.REPOSITORY_TRAFFIC_PERCENTAGE || '0', 10);
+const ENABLE_RETRIEVAL_ADAPTER = process.env.ENABLE_RETRIEVAL_ADAPTER === 'true';
 
 /**
  * Helper to determine if a request should use the repository implementation
@@ -33,6 +34,11 @@ const TRAFFIC_PERCENTAGE = parseInt(process.env.REPOSITORY_TRAFFIC_PERCENTAGE ||
  * @returns Boolean indicating whether to use repository implementation
  */
 function shouldUseRepositoryImplementation(threadId?: string): boolean {
+  // Adapter-specific flag has priority (can enable/disable just this adapter)
+  if (ENABLE_RETRIEVAL_ADAPTER === false) {
+    return false;
+  }
+  
   // If feature flag is explicitly off, don't use repository
   if (!USE_REPOSITORY_PATTERN) {
     return false;
