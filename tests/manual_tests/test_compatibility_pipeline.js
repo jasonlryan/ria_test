@@ -9,8 +9,10 @@ const fs = require("fs");
 const path = require("path");
 const {
   DataRetrievalService,
-} = require("../app/api/services/dataRetrievalService");
-const { buildPromptWithFilteredData } = require("../utils/openai/promptUtils");
+} = require("../../app/api/services/dataRetrievalService");
+const {
+  buildPromptWithFilteredData,
+} = require("../../utils/openai/promptUtils");
 
 // Mock data for testing
 const mockFilteredData = {

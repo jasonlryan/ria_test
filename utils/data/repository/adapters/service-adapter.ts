@@ -290,17 +290,15 @@ export async function processQueryWithData(
   try {
     const service = await getOriginalService();
     originalResult = await service.processQueryWithData(
-      query,
-      options,
+      query, 
+      options.context || {},
       options.cachedFileIds || [],
       options.threadId,
       options.isFollowUp,
       options.previousQuery,
       options.previousResponse
     );
-    endTimer(originalTimer, true, { 
-      filesProcessed: originalResult?.relevantFiles?.length || 0 
-    });
+    endTimer(originalTimer, true);
   } catch (error) {
     endTimer(originalTimer, false);
     recordError('original', 'service.processQueryWithData');
@@ -313,29 +311,11 @@ export async function processQueryWithData(
     return originalResult;
   }
   
-  // Create enhanced context with service-specific fields
-  const segmentTracking: SegmentTrackingData = {
-    requestedSegments: options.segments || [],
-    currentSegments: options.currentSegments || [],
-    loadedSegments: options.loadedSegments || {},
-    missingSegments: {}
-  };
-  
-  const context: QueryContext = {
-    query,
-    isFollowUp: options.isFollowUp || false,
-    threadId: options.threadId,
-    previousQuery: options.previousQuery,
-    previousResponse: options.previousResponse,
-    cachedFileIds: options.cachedFileIds || [],
-    compatibility: options.compatibility || {},
-    segmentTracking
-  };
-  
   // Start timer for repository implementation
   const repoTimer = startTimer('repository', 'service.processQueryWithData', { 
     threadId: options.threadId,
-    queryLength: query.length
+    queryLength: query.length,
+    hasSegments: options.segments ? true : false
   });
   
   try {
@@ -344,20 +324,52 @@ export async function processQueryWithData(
       ? { processor: customProcessor } 
       : getDefaultImplementations();
     
-    // Call processor method
-    const repoResult = await processor.processQueryWithData(context);
+    // Create context from options
+    const context: QueryContext = {
+      query,
+      isFollowUp: options.isFollowUp || false,
+      threadId: options.threadId,
+      previousQuery: options.previousQuery,
+      previousResponse: options.previousResponse,
+      cachedFileIds: options.cachedFileIds || [],
+      compatibility: options.compatibility,
+      segmentTracking: {
+        requestedSegments: options.segments || [],
+        loadedSegments: {},
+        currentSegments: [],
+        missingSegments: {}
+      }
+    };
+    
+    // Call repository method
+    const processingOptions = {
+      enablePatternDetection: options.enablePatternDetection,
+      maxFiles: options.maxFiles,
+      prioritySegments: options.segments
+    };
+    
+    const result = await processor.processQueryWithData(context, processingOptions);
     endTimer(repoTimer, true, { 
-      filesProcessed: repoResult?.relevantFiles?.length || 0 
+      filesProcessed: result.relevantFiles.length,
+      segmentsProcessed: context.segmentTracking.requestedSegments.length
     });
     
     // In shadow mode, log comparison but return original result
     if (isShadowMode) {
-      logger.info(`[SHADOW] service.processQueryWithData comparison - original: ${originalResult?.relevantFiles?.length || 0} files, repository: ${repoResult?.relevantFiles?.length || 0} files`);
+      logger.info(`[SHADOW] service.processQueryWithData comparison - original: ${Object.keys(originalResult).length} properties, repository: ${Object.keys(result).length} properties`);
       return originalResult;
     }
     
     // Otherwise return repository result
-    return repoResult;
+    return {
+      ...result,
+      // Add information about missing/available segments
+      segmentInfo: {
+        requested: context.segmentTracking.requestedSegments,
+        found: result.processedData?.foundSegments || context.segmentTracking.currentSegments,
+        missing: result.processedData?.missingSegments || []
+      }
+    };
   } catch (error) {
     endTimer(repoTimer, false);
     recordError('repository', 'service.processQueryWithData');

@@ -272,26 +272,65 @@ export class DataRetrievalService {
   }
 
   /**
-   * Filter loaded data by demographic segments.
-   * @param {object} loadedData - The data to filter
-   * @param {string[]} segments - The segments to filter by
-   * @returns {object} filtered data and stats
+   * Filter data by segments
+   * @param {object[]} loadedData - Loaded data files
+   * @param {string[]} segments - Segments to filter by
+   * @returns {object[]} Filtered data
    */
   filterDataBySegments(loadedData, segments) {
-    // Use getSpecificData from smart_filtering.js to do the actual filtering
-    // Convert segments array to the demographics format expected by getSpecificData
-    const options = {
-      demographics: segments || [],
-    };
+    // Call the getSpecificData function from smart_filtering
+    const { getSpecificData } = require("../../../utils/data/smart_filtering");
 
     logger.info(
-      `[FILTER] Filtering data by segments: ${
-        segments ? segments.join(", ") : "none"
-      }`
+      `[FILTERING] Filtering data by segments: ${JSON.stringify(segments)}`
     );
 
-    // Call getSpecificData to perform the actual filtering
-    return getSpecificData(loadedData, options);
+    try {
+      // Convert loadedData to format expected by getSpecificData
+      const formattedData = {
+        files: loadedData,
+      };
+
+      const result = getSpecificData(formattedData, { demographics: segments });
+
+      // Log found/missing segments
+      if (segments && segments.length > 0) {
+        const foundSegments = new Set();
+
+        // Extract found segments from filtered data
+        if (result.stats && result.stats.length > 0) {
+          result.stats.forEach((stat) => {
+            if (stat.category) {
+              foundSegments.add(stat.category);
+            }
+          });
+        }
+
+        const foundSegmentsArray = Array.from(foundSegments);
+        const missingSegments = segments.filter(
+          (seg) => !foundSegmentsArray.includes(seg)
+        );
+
+        logger.info(
+          `[FILTERING] Found segments: ${JSON.stringify(foundSegmentsArray)}`
+        );
+        if (missingSegments.length > 0) {
+          logger.warn(
+            `[FILTERING] Missing requested segments: ${JSON.stringify(
+              missingSegments
+            )}`
+          );
+        }
+      }
+
+      return result.stats || [];
+    } catch (error) {
+      logger.error(
+        `[FILTERING] Error filtering data by segments: ${error.message}`
+      );
+      // Return the original data on error
+      return loadedData;
+    }
   }
 
   /**

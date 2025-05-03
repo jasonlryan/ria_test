@@ -3,7 +3,7 @@
  *
  * Central export point for repository pattern interfaces.
  *
- * Last Updated: Wed May 1 2024
+ * Last Updated: Sat May 25 2025
  */
 
 // Export all interfaces
@@ -12,6 +12,7 @@ export * from './FileRepository';
 export * from './QueryProcessor';
 export * from './SegmentManager';
 export * from './CacheManager';
+export * from './FilterProcessor';
 
 // Default exports for direct imports
 export type { default as QueryContext } from './QueryContext';

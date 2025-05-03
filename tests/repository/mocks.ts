@@ -36,6 +36,19 @@ export function createMockQueryProcessor(): QueryProcessor {
     }),
     isComparisonQuery: vi.fn().mockReturnValue(false),
     isStarterQuestion: vi.fn().mockReturnValue(false),
-    extractSegmentsFromQuery: vi.fn().mockReturnValue([])
+    extractSegmentsFromQuery: vi.fn().mockReturnValue([]),
+    parseQueryIntent: vi.fn().mockReturnValue({
+      topics: [],
+      demographics: [],
+      years: [],
+      specificity: "general",
+      isFollowUp: false
+    }),
+    filterDataBySegments: vi.fn().mockReturnValue({
+      filteredData: [],
+      stats: [],
+      foundSegments: [],
+      missingSegments: []
+    })
   };
 } 

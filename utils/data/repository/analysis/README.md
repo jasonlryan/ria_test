@@ -1,28 +1,38 @@
 # Repository Pattern Analysis Documents
 
-**Last Updated:** Tue Apr 29 2025
+**Last Updated:** Sat May 25 2025
 
 <!--
 LLM-GUIDANCE
 This README serves as the entry point for understanding the analysis behind the Repository Pattern implementation.
 Follow these steps when implementing the Repository Pattern:
-1. First, read through the Consolidated-Analysis.md for the high-level strategy
+1. First, read through the docs/Consolidated-Analysis.md for the high-level strategy
 2. Then, review the specific analysis document for the component you're implementing
-3. Check the IMPLEMENTATION_PLAN.md for implementation order and details
+3. Check the plans/IMPLEMENTATION_PLAN.md for implementation order and details
 4. Reference both documents when implementing the specific interface or class
 -->
 
 This directory contains the detailed code analysis documents that inform the implementation of the Repository Pattern for data retrieval operations in RIA25.
 
+## Directory Structure
+
+- **docs/** - Core analysis documents for each component
+- **plans/** - Implementation plans and strategies
+- **audits/** - Original audit documentation
+- **BACKLOG.md** - Current prioritized implementation backlog
+
 ## Document Overview
 
-| Document                                                   | Description                                                        | Implementation Reference                                                                                                                                        |
-| ---------------------------------------------------------- | ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Consolidated-Analysis.md](./Consolidated-Analysis.md)     | Complete overview of analysis findings and implementation strategy | See [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) for full implementation order                                                                            |
-| [FileRepository-Analysis.md](./FileRepository-Analysis.md) | Detailed analysis of file identification and loading operations    | See [IMPLEMENTATION_PLAN.md § 1.2](./IMPLEMENTATION_PLAN.md#filerepository-interface)                                                                           |
-| [QueryProcessor-Analysis.md](./QueryProcessor-Analysis.md) | Detailed analysis of query processing and helper functions         | See [IMPLEMENTATION_PLAN.md § 2.1](./IMPLEMENTATION_PLAN.md#queryprocessor-helper-functions) and [§ 2.3](./IMPLEMENTATION_PLAN.md#queryprocessor-core-function) |
-| [QueryContext-Analysis.md](./QueryContext-Analysis.md)     | Analysis of context objects and standardization approach           | See [IMPLEMENTATION_PLAN.md § 1.1](./IMPLEMENTATION_PLAN.md#querycontext-interface)                                                                             |
-| [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md)         | Detailed implementation plan with step-by-step guidance            | Direct reference for implementation tasks and their dependencies                                                                                                |
+| Document                                                                       | Description                                                                | Implementation Reference                                                                                                                                                          |
+| ------------------------------------------------------------------------------ | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [docs/Consolidated-Analysis.md](./docs/Consolidated-Analysis.md)               | Complete overview of analysis findings and implementation strategy         | See [plans/IMPLEMENTATION_PLAN.md](./plans/IMPLEMENTATION_PLAN.md) for full implementation order                                                                                  |
+| [docs/FileRepository-Analysis.md](./docs/FileRepository-Analysis.md)           | Detailed analysis of file identification and loading operations            | See [plans/IMPLEMENTATION_PLAN.md § 1.2](./plans/IMPLEMENTATION_PLAN.md#filerepository-interface)                                                                                 |
+| [docs/QueryProcessor-Analysis.md](./docs/QueryProcessor-Analysis.md)           | Detailed analysis of query processing and helper functions                 | See [plans/IMPLEMENTATION_PLAN.md § 2.1](./plans/IMPLEMENTATION_PLAN.md#queryprocessor-helper-functions) and [§ 2.3](./plans/IMPLEMENTATION_PLAN.md#queryprocessor-core-function) |
+| [docs/QueryContext-Analysis.md](./docs/QueryContext-Analysis.md)               | Analysis of context objects and standardization approach                   | See [plans/IMPLEMENTATION_PLAN.md § 1.1](./plans/IMPLEMENTATION_PLAN.md#querycontext-interface)                                                                                   |
+| [plans/IMPLEMENTATION_PLAN.md](./plans/IMPLEMENTATION_PLAN.md)                 | Detailed implementation plan with step-by-step guidance                    | Direct reference for implementation tasks and their dependencies                                                                                                                  |
+| [plans/Testing-Implementation-Plan.md](./plans/Testing-Implementation-Plan.md) | Testing infrastructure and approach for repository pattern                 | Reference for test implementation and organization                                                                                                                                |
+| [audits/duplication-analysis.md](./audits/duplication-analysis.md)             | Original duplication audit that identified the need for repository pattern | Historical reference for understanding motivation behind repository implementation                                                                                                |
+| [BACKLOG.md](./BACKLOG.md)                                                     | Current prioritized implementation backlog                                 | Active work tracking with dependency information                                                                                                                                  |
 
 ## Purpose of Analysis
 
@@ -55,9 +65,9 @@ Each document follows a consistent analysis approach:
 
 When implementing the repository pattern:
 
-1. Use the [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) to determine the order of implementation
-2. For each component, first review its analysis document in this directory
-3. Refer to the interface definitions in the `interfaces` directory
+1. Use the [plans/IMPLEMENTATION_PLAN.md](./plans/IMPLEMENTATION_PLAN.md) to determine the order of implementation
+2. For each component, first review its analysis document in the docs/ directory
+3. Refer to the interface definitions in the `../interfaces` directory
 4. Implement according to the consolidation strategy in the analysis
 5. Cross-reference with existing implementations in `retrieval.js` and `dataRetrievalService.js`
 
@@ -65,9 +75,9 @@ When implementing the repository pattern:
 
 After reviewing these analysis documents:
 
-1. Begin implementing the interfaces as defined in the [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md)
+1. Begin implementing the interfaces as defined in the [plans/IMPLEMENTATION_PLAN.md](./plans/IMPLEMENTATION_PLAN.md)
 2. Create automated tests that verify behavior matches the analysis
 3. Implement concrete classes following the consolidation strategies
 4. Create adapters for backward compatibility
 
-_Last updated: Tue Apr 29 2025_
+_Last updated: Sat May 25 2025_

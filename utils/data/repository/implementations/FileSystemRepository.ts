@@ -145,12 +145,8 @@ export class FileSystemRepository implements FileRepository {
     if (!query) {
       logger.warn(`[FILE_REPOSITORY] Empty query provided, returning default files`);
       return { 
-        relevantFiles: ['2025_1', '2025_2', '2025_3'],
-        relevanceScores: {
-          '2025_1': 0.5,
-          '2025_2': 0.5,
-          '2025_3': 0.5
-        }
+        relevantFiles: [],
+        relevanceScores: {}
       };
     }
 

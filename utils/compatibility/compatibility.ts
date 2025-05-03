@@ -3,7 +3,7 @@
  * Provides functions to load compatibility data, check if files and topics are comparable,
  * and filter incomparable files from retrieval.
  * 
- * Last Updated: Fri Apr 25 2025
+ * Last Updated: Sat May 25 2025
  */
 
 import fs from 'fs';
@@ -16,6 +16,7 @@ const CACHE_TTL = 60 * 60 * 1000; // 1 hour in milliseconds
 let lastCacheTime = 0;
 
 // Path to unified compatibility mapping file
+// NOTE: This TypeScript version was already using the unified compatibility file
 const MAPPING_PATH = path.join(
   process.cwd(),
   'data',
@@ -460,4 +461,4 @@ export default {
   getFileIncomparabilityReason
 };
 
-// Last updated: Fri Apr 25 2025 
+// Last updated: Sat May 25 2025 

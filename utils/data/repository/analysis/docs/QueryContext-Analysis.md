@@ -18,7 +18,7 @@ This document analyzes the Query Context model required to unify the different c
 
 ## Related Documents
 
-- [IMPLEMENTATION_PLAN.md § 1.1](./IMPLEMENTATION_PLAN.md#querycontext-model) - Implementation plan for QueryContext
+- [IMPLEMENTATION_PLAN.md § 1.1](../plans/IMPLEMENTATION_PLAN.md#querycontext-model) - Implementation plan for QueryContext
 - [Consolidated-Analysis.md](./Consolidated-Analysis.md) - Overall consolidation strategy
 - [FileRepository-Analysis.md](./FileRepository-Analysis.md) - Repository that uses QueryContext
 - [QueryProcessor-Analysis.md](./QueryProcessor-Analysis.md) - Processor that uses QueryContext

@@ -1,12 +1,12 @@
 /**
  * Simple script to test the QueryContext implementation
  *
- * Run with: npx ts-node scripts/test-query-context.ts
+ * Run with: npx ts-node tests/integration/test-query-context.ts
  */
 
 // Import using CommonJS require
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { QueryContext } = require('../utils/data/repository/implementations/QueryContext');
+const { QueryContext } = require('../../utils/data/repository/implementations/QueryContext');
 
 function runTests() {
   console.log("Testing QueryContext implementation...\n");
@@ -18,6 +18,7 @@ function runTests() {
   console.log(`threadId: ${context1.threadId}`);
   console.log(`isFollowUp: ${context1.isFollowUp}`);
   console.log(`cachedFileIds: ${JSON.stringify(context1.cachedFileIds)}`);
+  console.log(`segmentTracking: ${JSON.stringify(context1.segmentTracking)}`);
   console.log("Test 1: Passed ✅\n");
 
   // Test 2: Object constructor
@@ -28,12 +29,19 @@ function runTests() {
     isFollowUp: true,
     cachedFileIds: ["file1", "file2"],
     relevantFiles: ["file1"],
+    segmentTracking: {
+      loadedSegments: {},
+      currentSegments: ["demographics"],
+      requestedSegments: ["demographics", "job_level"],
+      missingSegments: {}
+    }
   };
   const context2 = new QueryContext(contextData);
   console.log(`query: ${context2.query}`);
   console.log(`threadId: ${context2.threadId}`);
   console.log(`isFollowUp: ${context2.isFollowUp}`);
   console.log(`cachedFileIds: ${JSON.stringify(context2.cachedFileIds)}`);
+  console.log(`segmentTracking: ${JSON.stringify(context2.segmentTracking)}`);
   console.log("Test 2: Passed ✅\n");
 
   // Test 3: JSON serialization
@@ -43,6 +51,12 @@ function runTests() {
     threadId: "thread-123",
     isFollowUp: true,
     cachedFileIds: ["file1", "file2"],
+    segmentTracking: {
+      loadedSegments: {},
+      currentSegments: [],
+      requestedSegments: [],
+      missingSegments: {}
+    }
   });
   const json = original.toJSON();
   console.log(`JSON: ${JSON.stringify(json, null, 2)}`);
@@ -52,7 +66,9 @@ function runTests() {
     recreated.threadId === original.threadId &&
     recreated.isFollowUp === original.isFollowUp &&
     JSON.stringify(recreated.cachedFileIds) ===
-      JSON.stringify(original.cachedFileIds);
+      JSON.stringify(original.cachedFileIds) &&
+    JSON.stringify(recreated.segmentTracking) ===
+      JSON.stringify(original.segmentTracking);
   console.log(`Serialization round-trip successful: ${success}`);
   console.log("Test 3: Passed ✅\n");
 
@@ -63,6 +79,12 @@ function runTests() {
     threadId: "thread-123",
     cachedFileIds: ["file1", "file2"],
     relevantFiles: ["file1"],
+    segmentTracking: {
+      loadedSegments: {},
+      currentSegments: ["job_level"],
+      requestedSegments: ["job_level"],
+      missingSegments: {}
+    }
   });
   const clone = originalForClone.clone();
   console.log("Before modification:");
@@ -70,17 +92,27 @@ function runTests() {
     `Original cachedFileIds: ${JSON.stringify(originalForClone.cachedFileIds)}`
   );
   console.log(`Clone cachedFileIds: ${JSON.stringify(clone.cachedFileIds)}`);
+  console.log(
+    `Original segmentTracking: ${JSON.stringify(originalForClone.segmentTracking)}`
+  );
+  console.log(`Clone segmentTracking: ${JSON.stringify(clone.segmentTracking)}`);
 
   // Modify original
   originalForClone.cachedFileIds.push("file3");
+  originalForClone.segmentTracking.currentSegments.push("education");
   console.log("After modification:");
   console.log(
     `Original cachedFileIds: ${JSON.stringify(originalForClone.cachedFileIds)}`
   );
   console.log(`Clone cachedFileIds: ${JSON.stringify(clone.cachedFileIds)}`);
+  console.log(
+    `Original segmentTracking: ${JSON.stringify(originalForClone.segmentTracking)}`
+  );
+  console.log(`Clone segmentTracking: ${JSON.stringify(clone.segmentTracking)}`);
 
   const cloneSuccess =
-    JSON.stringify(clone.cachedFileIds) === JSON.stringify(["file1", "file2"]);
+    JSON.stringify(clone.cachedFileIds) === JSON.stringify(["file1", "file2"]) &&
+    JSON.stringify(clone.segmentTracking.currentSegments) === JSON.stringify(["job_level"]);
   console.log(`Clone remained unchanged: ${cloneSuccess}`);
   console.log("Test 4: Passed ✅\n");
 
@@ -91,6 +123,12 @@ function runTests() {
     threadId: "thread-123",
     isFollowUp: false,
     cachedFileIds: ["file1"],
+    segmentTracking: {
+      loadedSegments: {},
+      currentSegments: [],
+      requestedSegments: [],
+      missingSegments: {}
+    }
   });
 
   console.log("Before merge:");
@@ -98,6 +136,9 @@ function runTests() {
   console.log(`isFollowUp: ${originalForMerge.isFollowUp}`);
   console.log(
     `cachedFileIds: ${JSON.stringify(originalForMerge.cachedFileIds)}`
+  );
+  console.log(
+    `segmentTracking: ${JSON.stringify(originalForMerge.segmentTracking)}`
   );
 
   const merged = originalForMerge.merge({
@@ -107,6 +148,12 @@ function runTests() {
     responseProperties: {
       enhancedMode: true,
     },
+    segmentTracking: {
+      loadedSegments: {},
+      currentSegments: ["job_level"],
+      requestedSegments: ["job_level", "education"],
+      missingSegments: { education: ["file3"] }
+    }
   });
 
   console.log("After merge (original):");
@@ -114,6 +161,9 @@ function runTests() {
   console.log(`isFollowUp: ${originalForMerge.isFollowUp}`);
   console.log(
     `cachedFileIds: ${JSON.stringify(originalForMerge.cachedFileIds)}`
+  );
+  console.log(
+    `segmentTracking: ${JSON.stringify(originalForMerge.segmentTracking)}`
   );
 
   console.log("After merge (merged):");
@@ -123,6 +173,9 @@ function runTests() {
   console.log(
     `responseProperties: ${JSON.stringify(merged.responseProperties)}`
   );
+  console.log(
+    `segmentTracking: ${JSON.stringify(merged.segmentTracking)}`
+  );
 
   const mergeSuccess =
     merged.query === "updated query" &&
@@ -131,7 +184,9 @@ function runTests() {
     JSON.stringify(merged.cachedFileIds) ===
       JSON.stringify(["file1", "file2"]) &&
     JSON.stringify(merged.responseProperties) ===
-      JSON.stringify({ enhancedMode: true });
+      JSON.stringify({ enhancedMode: true }) &&
+    JSON.stringify(merged.segmentTracking.currentSegments) ===
+      JSON.stringify(["job_level"]);
 
   console.log(`Merge successful: ${mergeSuccess}`);
   console.log("Test 5: Passed ✅\n");

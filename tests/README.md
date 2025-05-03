@@ -15,6 +15,10 @@ tests/
 │   ├── mocks.ts           # Mock implementations
 │   ├── adapters/          # Adapter tests
 │   └── implementations/   # Implementation tests
+├── manual_tests/      # Manual test scripts (not in automated test suite)
+│   ├── compatibility_smoke_test.js    # Compatibility module tests
+│   ├── test_compatibility_pipeline.js # End-to-end compatibility tests
+│   └── README.md          # Test descriptions and status
 ├── setup.ts           # Vitest setup configuration
 ├── index.js           # Main test runner for OpenAI Assistant tests
 ├── index-tests.js     # OpenAI Assistant test implementation

@@ -62,11 +62,12 @@ const queryCache = new Map();
 // Load file compatibility data once at module level
 export const fileCompatibilityData = (() => {
   try {
+    // NOTE: Routing changed from original "scripts/reference files/file_compatibility.json" to unified file
     const compatibilityPath = path.join(
       process.cwd(),
-      "scripts",
-      "reference files",
-      "file_compatibility.json"
+      "data",
+      "compatibility",
+      "unified_compatibility.json"
     );
     const data = fs.readFileSync(compatibilityPath, "utf8");
     const parsedData = JSON.parse(data);
@@ -76,7 +77,7 @@ export const fileCompatibilityData = (() => {
       : [];
     const keysLoaded = fileCompatKeys.length;
     logger.info(
-      `[COMPATIBILITY_LOAD] Successfully loaded file_compatibility.json. Found ${keysLoaded} file entries.`
+      `[COMPATIBILITY_LOAD] Successfully loaded unified_compatibility.json. Found ${keysLoaded} file entries.`
     );
     if (keysLoaded > 0) {
       logger.info(

@@ -30,7 +30,12 @@ export class QueryContext implements IQueryContext {
 
   // Enhanced capabilities
   compatibility?: CompatibilityData;
-  segmentTracking?: SegmentTrackingData;
+  segmentTracking: SegmentTrackingData = {
+    loadedSegments: {},
+    currentSegments: [],
+    requestedSegments: [],
+    missingSegments: {}
+  };
 
   // Response enhancement
   responseProperties: Record<string, any> = {};
@@ -54,7 +59,13 @@ export class QueryContext implements IQueryContext {
       this.processedData = obj.processedData || null;
       this.dataVersion = obj.dataVersion || "v2";
       this.compatibility = obj.compatibility;
-      this.segmentTracking = obj.segmentTracking;
+      // Initialize segmentTracking with provided values or defaults
+      this.segmentTracking = obj.segmentTracking || {
+        loadedSegments: {},
+        currentSegments: [],
+        requestedSegments: [],
+        missingSegments: {}
+      };
       this.responseProperties = obj.responseProperties || {};
     }
   }

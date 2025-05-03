@@ -348,7 +348,13 @@ export async function processQueryWithData(
       threadId: options.threadId,
       previousQuery: options.previousQuery,
       previousResponse: options.previousResponse,
-      cachedFileIds: options.cachedFileIds || []
+      cachedFileIds: options.cachedFileIds || [],
+      segmentTracking: {
+        loadedSegments: {},
+        currentSegments: [],
+        requestedSegments: [],
+        missingSegments: {}
+      }
     };
     
     // Call processor method

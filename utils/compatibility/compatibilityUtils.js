@@ -5,7 +5,7 @@
  * Compatibility utilities for checking dataset comparability across years
  * and accessing compatibility mapping data.
  *
- * Last Updated: Fri Apr 25 2025
+ * Last Updated: Sat May 25 2025
  */
 
 // Log a warning when this module is imported
@@ -26,11 +26,12 @@ let compatibilityMappingCache = null;
  * @returns {string} Path to compatibility mapping file
  */
 function getCompatibilityMappingPath() {
+  // NOTE: Routing changed from original "data/compatibility/compatibility_mapping.json" to unified file
   return path.join(
     process.cwd(),
     "data",
     "compatibility",
-    "compatibility_mapping.json"
+    "unified_compatibility.json"
   );
 }
 
@@ -91,7 +92,8 @@ function isFileComparable(fileId, mapping = null) {
     return true;
   }
 
-  return compatMapping.files[fileId].isComparable;
+  // Updated to use 'comparable' property instead of 'isComparable'
+  return compatMapping.files[fileId].comparable;
 }
 
 /**
@@ -108,7 +110,8 @@ function isTopicComparable(topicId, mapping = null) {
     return true;
   }
 
-  return compatMapping.topics[topicId].isComparable;
+  // Updated to use 'comparable' property instead of 'isComparable'
+  return compatMapping.topics[topicId].comparable;
 }
 
 /**
@@ -123,7 +126,7 @@ function getIncomparableTopicMessage(topicId, mapping = null) {
   if (
     !compatMapping.topics ||
     !compatMapping.topics[topicId] ||
-    compatMapping.topics[topicId].isComparable
+    compatMapping.topics[topicId].comparable
   ) {
     return null;
   }
@@ -167,7 +170,7 @@ function getFileIncomparabilityReason(fileId, mapping = null) {
   if (
     !compatMapping.files ||
     !compatMapping.files[fileId] ||
-    compatMapping.files[fileId].isComparable
+    compatMapping.files[fileId].comparable
   ) {
     return null;
   }
@@ -203,7 +206,8 @@ function areFilesComparable(fileId1, fileId2, mapping = null) {
   }
 
   // If either file is marked as not comparable, they can't be compared
-  if (!file1.isComparable || !file2.isComparable) {
+  // Updated to use 'comparable' property instead of 'isComparable'
+  if (!file1.comparable || !file2.comparable) {
     return false;
   }
 
@@ -220,4 +224,4 @@ module.exports = {
   areFilesComparable,
 };
 
-// Last updated: Fri Apr 25 2025
+// Last updated: Sat May 25 2025

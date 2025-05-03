@@ -6,7 +6,7 @@
  * Provides functions to load compatibility data, check if files are comparable,
  * and filter incomparable files from retrieval.
  *
- * Last Updated: Fri Apr 25 2025
+ * Last Updated: Sat May 25 2025
  */
 
 // Log a warning when this module is imported
@@ -20,9 +20,10 @@ import path from "path";
 import logger from "../shared/logger";
 
 // Path to compatibility mapping file
+// NOTE: Routing changed from original "scripts/reference files/file_compatibility.json" to unified file
 const COMPATIBILITY_FILE_PATH = path.join(
   process.cwd(),
-  "scripts/reference files/file_compatibility.json"
+  "data/compatibility/unified_compatibility.json"
 );
 
 // In-memory cache of the compatibility data
@@ -253,4 +254,4 @@ export default {
   getCompatibleTopics,
   getNonComparableTopics,
 };
-// Last updated: Fri Apr 25 2025
+// Last updated: Sat May 25 2025

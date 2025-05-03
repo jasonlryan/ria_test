@@ -15,11 +15,11 @@ This document provides a comprehensive analysis of duplication issues in the dat
 
 ## Related Documents
 
-- [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) - Implementation plan for the refactoring
+- [IMPLEMENTATION_PLAN.md](../plans/IMPLEMENTATION_PLAN.md) - Implementation plan for the refactoring
 - [QueryContext-Analysis.md](./QueryContext-Analysis.md) - Analysis of QueryContext requirements
 - [FileRepository-Analysis.md](./FileRepository-Analysis.md) - Analysis of FileRepository requirements
 - [QueryProcessor-Analysis.md](./QueryProcessor-Analysis.md) - Analysis of QueryProcessor requirements
-- [README.md](./README.md) - Overview of the repository and analysis documents
+- [README.md](../README.md) - Overview of the repository and analysis documents
 
 ## 1. Current Codebase Analysis
 
@@ -96,7 +96,7 @@ Implementing a repository pattern to abstract data access:
 
 ### 2.2 Implementation Sequence
 
-Based on the [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md), follow this sequence:
+Based on the [IMPLEMENTATION_PLAN.md](../plans/IMPLEMENTATION_PLAN.md), follow this sequence:
 
 1. **QueryContext** - Implement this first as it's required by other components
 2. **FileRepository** - Implement the repository after the context model
@@ -201,6 +201,6 @@ export class LegacyQueryAdapter {
 
 This consolidation effort will streamline the data retrieval system, making it more maintainable and preparing it for the upcoming API migration. By implementing the repository pattern with clear interfaces, we'll reduce duplication and improve overall code quality.
 
-The detailed analyses for each component provide specific implementation guidance, and the [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) outlines the step-by-step process for the refactoring effort.
+The detailed analyses for each component provide specific implementation guidance, and the [IMPLEMENTATION_PLAN.md](../plans/IMPLEMENTATION_PLAN.md) outlines the step-by-step process for the refactoring effort.
 
 _Last updated: Tue Apr 29 2025_

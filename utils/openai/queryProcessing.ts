@@ -100,7 +100,13 @@ export async function processQueryDataCore(
     isFollowUp,
     cachedFileIds,
     cachedSegmentLabels,
-    userMetadata
+    userMetadata,
+    segmentTracking: {
+      loadedSegments: {},
+      currentSegments: [],
+      requestedSegments: cachedSegmentLabels || [],
+      missingSegments: {}
+    }
   };
 
   // Use the repository pattern adapter to process the query

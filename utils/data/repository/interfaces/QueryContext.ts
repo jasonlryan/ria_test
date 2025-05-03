@@ -8,8 +8,10 @@
  * - Implementation Plan: ../analysis/IMPLEMENTATION_PLAN.md#querycontext-interface
  * - Analysis: ../analysis/QueryContext-Analysis.md#context-object-analysis
  *
- * Last Updated: Wed May 1 2024
+ * Last Updated: Sat May 25 2025
  */
+
+import { QueryIntent } from './FilterProcessor';
 
 /**
  * Compatibility metadata structure
@@ -26,9 +28,24 @@ export interface CompatibilityData {
  * Segment tracking data structure
  */
 export interface SegmentTrackingData {
+  /**
+   * Segments already loaded by fileId
+   */
   loadedSegments: Record<string, string[]>;
+  
+  /**
+   * Segments currently in use
+   */
   currentSegments: string[];
+  
+  /**
+   * Segments requested in the current query
+   */
   requestedSegments: string[];
+  
+  /**
+   * Segments that need to be loaded by fileId
+   */
   missingSegments: Record<string, string[]>;
 }
 
@@ -53,7 +70,12 @@ export interface QueryContext {
 
   // Enhanced capabilities
   compatibility?: CompatibilityData;
-  segmentTracking?: SegmentTrackingData;
+  segmentTracking: SegmentTrackingData;
+  
+  /**
+   * Parsed intent from the query
+   */
+  queryIntent?: QueryIntent;
 
   // Response enhancement
   responseProperties?: Record<string, any>;
@@ -67,7 +89,13 @@ export interface QueryContext {
  */
 export const createBasicContext = (query: string): QueryContext => ({
   query,
-  isFollowUp: false
+  isFollowUp: false,
+  segmentTracking: {
+    loadedSegments: {},
+    currentSegments: [],
+    requestedSegments: [],
+    missingSegments: {}
+  }
 });
 
 export const createThreadContext = (query: string, threadId: string): QueryContext => ({

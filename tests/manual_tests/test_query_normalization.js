@@ -1,9 +1,9 @@
 /**
  * Test script for query normalization
- * Run with: node scripts/test_query_normalization.js
+ * Run with: node tests/integration/test_query_normalization.js
  */
 
-const { normalizeQueryText } = require("../utils/shared/queryUtils");
+const { normalizeQueryText } = require("../../utils/shared/queryUtils");
 
 // Sample queries from logs
 const queries = [

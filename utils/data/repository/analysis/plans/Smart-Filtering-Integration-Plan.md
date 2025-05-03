@@ -49,16 +49,23 @@ The integration of smart filtering with the repository pattern requires:
 
 ### 1. TypeScript Interface Definitions
 
-**Target File:** `utils/data/repository/interfaces/SmartFiltering.ts`
+**Target File:** `utils/data/repository/interfaces/FilterProcessor.ts`
 
 ```typescript
 /**
- * Smart Filtering Interfaces
+ * FilterProcessor Interface
  *
- * TypeScript interfaces for the smart filtering functionality,
- * adapted from the original JavaScript JSDoc types.
+ * Defines the contract for filter processors that filter data by segments
+ * and other criteria. This is used to implement smart filtering within
+ * the repository pattern.
  */
 
+import { DataFile } from "./FileRepository";
+import { QueryContext } from "./QueryContext";
+
+/**
+ * Interface for query intent information extracted from queries
+ */
 export interface QueryIntent {
   topics: string[];
   demographics: string[];
@@ -67,6 +74,9 @@ export interface QueryIntent {
   isFollowUp: boolean;
 }
 
+/**
+ * Interface for data scope used in filtering
+ */
 export interface DataScope {
   topics: Set<string>;
   demographics: Set<string>;
@@ -74,6 +84,9 @@ export interface DataScope {
   fileIds: Set<string>;
 }
 
+/**
+ * Interface for filtered data items
+ */
 export interface FilteredDataItem {
   fileId: string;
   question: string;
@@ -86,9 +99,54 @@ export interface FilteredDataItem {
   formatted: string;
 }
 
-export interface FilteredDataResult {
+/**
+ * Result of filtering data by segments and other criteria
+ */
+export interface FilterResult {
+  /**
+   * Filtered data items organized by segment
+   */
   filteredData: FilteredDataItem[];
+
+  /**
+   * Statistics extracted from the data
+   */
   stats: FilteredDataItem[];
+
+  /**
+   * Summary of the filtering operation
+   */
+  summary?: string;
+
+  /**
+   * Segments that were found in the data
+   */
+  foundSegments: string[];
+
+  /**
+   * Segments that were requested but not found in the data
+   */
+  missingSegments: string[];
+}
+
+/**
+ * Interface for processors that filter data by segments and other criteria
+ */
+export interface FilterProcessor {
+  /**
+   * Filter data by segments and extract statistics
+   */
+  filterDataBySegments(files: DataFile[], context: QueryContext): FilterResult;
+
+  /**
+   * Parse query intent from the query text and context
+   */
+  parseQueryIntent(query: string, context: QueryContext): QueryContext;
+
+  /**
+   * Return only essential data for general queries
+   */
+  getBaseData(files: DataFile[], context: QueryContext): FilterResult;
 }
 ```
 
@@ -99,7 +157,7 @@ export interface FilteredDataResult {
 Add to the existing interface:
 
 ```typescript
-import { QueryIntent } from "./SmartFiltering";
+import { QueryIntent } from "./FilterProcessor";
 
 export interface QueryContext {
   // ... existing properties
@@ -143,7 +201,7 @@ export interface SegmentTrackingData {
 Add to the existing interface:
 
 ```typescript
-import { FilteredDataResult, QueryIntent } from "./SmartFiltering";
+import { FilterResult, QueryIntent } from "./FilterProcessor";
 
 export interface QueryProcessor {
   // ... existing methods
@@ -156,16 +214,7 @@ export interface QueryProcessor {
   /**
    * Filter data by specified segments
    */
-  filterDataBySegments(data: any, segments: string[]): FilteredDataResult;
-}
-
-export interface QueryResult {
-  // ... existing properties
-
-  /**
-   * Processed and filtered data
-   */
-  processedData: FilteredDataItem[];
+  filterDataBySegments(data: any, segments: string[]): FilterResult;
 }
 ```
 
@@ -186,9 +235,9 @@ export interface QueryResult {
 import {
   QueryIntent,
   DataScope,
-  FilteredDataResult,
+  FilterResult,
   FilteredDataItem,
-} from "../interfaces/SmartFiltering";
+} from "../interfaces/FilterProcessor";
 import { CANONICAL_SEGMENTS } from "../../../cache/segment_keys";
 
 /**
@@ -216,7 +265,7 @@ export function mapIntentToDataScope(queryIntent: QueryIntent): DataScope {
 export function filterDataBySegments(
   data: any,
   segments: string[]
-): FilteredDataResult {
+): FilterResult {
   // Implementation similar to getSpecificData from the original
   // but adapted for the repository pattern
   // Implementation details...
@@ -229,7 +278,7 @@ export function filterDataBySegments(
 export function getSpecificData(
   retrievedData: any,
   options: { demographics?: string[] }
-): FilteredDataResult {
+): FilterResult {
   // For backward compatibility, delegate to filterDataBySegments
   return filterDataBySegments(retrievedData, options.demographics || []);
 }
@@ -245,39 +294,42 @@ Update the implementation to include smart filtering:
 import {
   QueryProcessor,
   QueryContext,
-  QueryResult,
-  FileRepository,
+  ProcessedQueryResult,
 } from "../interfaces";
+import { FilterResult, QueryIntent } from "../interfaces/FilterProcessor";
 import { parseQueryIntent, filterDataBySegments } from "./SmartFiltering";
-import { FilteredDataItem } from "../interfaces/SmartFiltering";
 
 export class QueryProcessorImpl implements QueryProcessor {
-  constructor(private fileRepository: FileRepository) {}
+  private fileRepository: FileRepository;
+
+  constructor(fileRepository: FileRepository) {
+    this.fileRepository = fileRepository;
+  }
 
   // Implement the smart filtering methods
-  parseQueryIntent(query: string, conversationHistory?: any[]) {
+  parseQueryIntent(query: string, conversationHistory?: any[]): QueryIntent {
     return parseQueryIntent(query, conversationHistory || []);
   }
 
-  filterDataBySegments(data: any, segments: string[]) {
+  filterDataBySegments(data: any, segments: string[]): FilterResult {
     return filterDataBySegments(data, segments);
   }
 
   async processQueryWithData(
-    query: string,
-    context: QueryContext
-  ): Promise<QueryResult> {
+    context: QueryContext,
+    options?: QueryProcessingOptions
+  ): Promise<ProcessedQueryResult> {
     // Start timing
     const startTime = Date.now();
 
     // 1. Enhance context with query intent if not already present
     if (!context.queryIntent) {
-      context.queryIntent = this.parseQueryIntent(query);
+      context.queryIntent = this.parseQueryIntent(context.query);
 
       // Extract segments from query if none provided
       if (!context.segmentTracking.requestedSegments.length) {
         context.segmentTracking.requestedSegments =
-          this.extractSegmentsFromQuery(query);
+          this.extractSegmentsFromQuery(context.query);
       }
     }
 
@@ -290,7 +342,7 @@ export class QueryProcessorImpl implements QueryProcessor {
     );
 
     // 4. Apply smart filtering based on segments
-    let processedData: FilteredDataItem[] = [];
+    let processedData: any;
 
     if (context.segmentTracking?.requestedSegments?.length > 0) {
       // Use the smart filtering to filter data by segments
@@ -298,21 +350,36 @@ export class QueryProcessorImpl implements QueryProcessor {
         { files: fileData },
         context.segmentTracking.requestedSegments
       );
-      processedData = filtered.stats;
+
+      // Update context with found/missing segments
+      if (filtered.foundSegments) {
+        context.segmentTracking.currentSegments = filtered.foundSegments;
+      }
+
+      processedData = {
+        stats: filtered.stats,
+        filteredData: filtered.filteredData,
+        summary: filtered.summary,
+        foundSegments: filtered.foundSegments,
+        missingSegments: filtered.missingSegments,
+      };
     } else {
       // Process without filtering if no segments requested
-      // Convert file data to standardized format
-      processedData = this.convertToStandardFormat(fileData);
+      processedData = {
+        files: fileData,
+      };
     }
 
     // 5. Return the formatted result
     return {
-      relevantFiles: fileResult.relevantFiles,
+      relevantFiles: fileData,
       processedData,
-      queryType: this.isComparisonQuery(query) ? "comparison" : "standard",
+      enhancedContext: context,
+      dataVersion: "v2",
       metrics: {
-        duration: Date.now() - startTime,
-        filesProcessed: fileData.length,
+        processingTimeMs: Date.now() - startTime,
+        fileCount: fileData.length,
+        segmentCount: context.segmentTracking.currentSegments.length,
       },
     };
   }
@@ -517,3 +584,14 @@ After completing this integration plan:
 3. Add smart filtering metrics to the monitoring dashboard
 
 _Last updated: Sat May 25 2025_
+
+## Implementation Notes
+
+The design follows a consolidated approach where:
+
+1. All filtering-related types and interfaces are defined in `FilterProcessor.ts`
+2. The implementation code is in `SmartFiltering.ts`
+3. The `QueryProcessor` interface extends the filtering capability
+4. The `QueryProcessorImpl` delegates to the SmartFiltering implementation
+
+This consolidation creates a cleaner architecture that matches the pattern used for other components in the repository pattern.

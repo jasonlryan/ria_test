@@ -9,7 +9,7 @@
  * - Analysis: ../analysis/QueryProcessor-Analysis.md#1-processquerywithdata
  * - Interface: ../interfaces/QueryProcessor.ts
  *
- * Last Updated: Wed May 1 2024
+ * Last Updated: Sat May 25 2025
  */
 
 import { 
@@ -24,6 +24,11 @@ import {
   FileIdentificationResult,
   FileRetrievalOptions
 } from '../interfaces/FileRepository';
+import { 
+  parseQueryIntent as parseQueryIntentImpl, 
+  filterDataBySegments as filterDataBySegmentsImpl
+} from './SmartFiltering';
+import { QueryIntent, FilterResult } from '../interfaces/FilterProcessor';
 
 /**
  * Implementation of the QueryProcessor interface
@@ -65,6 +70,16 @@ export class QueryProcessorImpl implements QueryProcessor {
       // Early return for empty queries
       if (!context.query || context.query.trim() === '') {
         return this.createEmptyResult(enhancedContext, 'Empty query');
+      }
+      
+      // Parse query intent if not already available
+      if (!enhancedContext.queryIntent) {
+        enhancedContext.queryIntent = this.parseQueryIntent(context.query);
+      }
+      
+      // Extract segments if not provided
+      if (!enhancedContext.segmentTracking.requestedSegments.length) {
+        enhancedContext.segmentTracking.requestedSegments = this.extractSegmentsFromQuery(context.query);
       }
 
       // Detect query characteristics
@@ -228,9 +243,32 @@ export class QueryProcessorImpl implements QueryProcessor {
   }
 
   /**
+   * Parse query intent from a user query and conversation history
+   * 
+   * @param query The query text to analyze
+   * @param conversationHistory Optional conversation history for follow-up detection
+   * @returns Parsed query intent
+   */
+  parseQueryIntent(query: string, conversationHistory?: any[]): QueryIntent {
+    return parseQueryIntentImpl(query, conversationHistory);
+  }
+  
+  /**
+   * Filter data by specified segments
+   * 
+   * @param data Data files to filter
+   * @param segments Segments to filter by
+   * @returns Filtered data result
+   */
+  filterDataBySegments(data: any, segments: string[]): FilterResult {
+    return filterDataBySegmentsImpl(data, segments);
+  }
+
+  /**
    * Extract segments mentioned in a query
    * 
-   * Identifies segments specifically mentioned in the query text.
+   * Analyzes the query text for mentions of specific data segments,
+   * such as demographic information or time periods.
    * 
    * @param query The query text to analyze
    * @returns Array of segment identifiers mentioned in the query
@@ -238,64 +276,29 @@ export class QueryProcessorImpl implements QueryProcessor {
   extractSegmentsFromQuery(query: string): string[] {
     if (!query) return [];
     
-    // Normalize the query
+    // Basic implementation matches key terms to known segment types
+    const detectedSegments: string[] = [];
     const normalizedQuery = query.toLowerCase().trim();
     
-    // Known segment patterns
-    const segmentPatterns: Record<string, RegExp[]> = {
-      'executive_summary': [
-        /\bexecutive\s+summary\b/i,
-        /\bexec\s+summary\b/i,
-        /\bsummary\b/i
-      ],
-      'introduction': [
-        /\bintroduction\b/i,
-        /\bintro\b/i,
-        /\bbackground\b/i
-      ],
-      'methodology': [
-        /\bmethodology\b/i,
-        /\bmethods\b/i,
-        /\bapproach\b/i,
-        /\bresearch method\b/i
-      ],
-      'findings': [
-        /\bfindings\b/i,
-        /\bresults\b/i,
-        /\boutcomes\b/i
-      ],
-      'analysis': [
-        /\banalysis\b/i, 
-        /\banalyze\b/i,
-        /\bdata analysis\b/i
-      ],
-      'conclusions': [
-        /\bconclusions\b/i,
-        /\bconclude\b/i,
-        /\bsumming up\b/i,
-        /\bin conclusion\b/i
-      ],
-      'recommendations': [
-        /\brecommendations\b/i,
-        /\brecommend\b/i,
-        /\bsuggestions\b/i,
-        /\bproposals\b/i
-      ],
-      'appendix': [
-        /\bappendix\b/i,
-        /\bappendices\b/i,
-        /\bannex\b/i
-      ]
+    // Demographic segments
+    const segmentPatterns = {
+      region: [/\bcountry\b|\bcountries\b|\bregion\b|\bregions\b|\block\w*\b|\bgeograph\w*\b/i],
+      gender: [/\bgender\b|\bmale\b|\bfemale\b|\bmen\b|\bwomen\b|\bnon-binary\b/i],
+      age: [/\bage\b|\bage group\b|\bage range\b|\byoung\w*\b|\bold\w*\b|\bgeneration\b/i],
+      org_size: [/\bcompany size\b|\borganization size\b|\bemployee count\b|\bworkforce size\b/i],
+      sector: [/\bsector\b|\bindustry\b|\bfield\b/i],
+      job_level: [/\bjob level\b|\bsenior\w*\b|\bjunior\b|\bexecutive\b|\bmanager\w*\b|\bc-suite\b|\bdirector\b/i],
+      relationship_status: [/\brelationship\b|\bmarried\b|\bsingle\b|\bdivorced\b/i],
+      education: [/\beducation\b|\bdegree\b|\bcollege\b|\buniversity\b|\bacademic\b/i],
+      employment_status: [/\bemployment\b|\bemployed\b|\bunemployed\b|\bfull-time\b|\bpart-time\b/i],
     };
     
-    const detectedSegments: string[] = [];
-    
-    // Check each segment pattern
+    // Check for each segment pattern
     for (const [segment, patterns] of Object.entries(segmentPatterns)) {
       for (const pattern of patterns) {
         if (pattern.test(normalizedQuery)) {
           detectedSegments.push(segment);
-          break; // Once we've matched a segment, no need to check other patterns
+          break;
         }
       }
     }
@@ -453,6 +456,34 @@ export class QueryProcessorImpl implements QueryProcessor {
     // For comparison queries
     if (this.isComparisonQuery(context.query) && options.comparisonStrategy !== 'disabled') {
       return this.processComparisonData(files, context);
+    }
+    
+    // Check if we need to filter by segments
+    if (context.segmentTracking?.requestedSegments?.length > 0) {
+      const filesData = { files };
+      const filteredData = this.filterDataBySegments(
+        filesData, 
+        context.segmentTracking.requestedSegments
+      );
+      
+      // Update context with found/missing segments
+      if (filteredData.foundSegments) {
+        context.segmentTracking.currentSegments = filteredData.foundSegments;
+      }
+      
+      // Return filtered data
+      return {
+        stats: filteredData.stats,
+        filteredData: filteredData.filteredData,
+        summary: filteredData.summary,
+        foundSegments: filteredData.foundSegments,
+        missingSegments: filteredData.missingSegments,
+        queryContext: {
+          query: context.query,
+          isFollowUp: context.isFollowUp,
+          segments: context.segmentTracking.requestedSegments
+        }
+      };
     }
     
     // Default data processing

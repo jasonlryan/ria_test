@@ -10,11 +10,12 @@
  * - Related Interface: ./QueryContext.ts
  * - Related Interface: ./FileRepository.ts
  *
- * Last Updated: Wed May 1 2024
+ * Last Updated: Sat May 25 2025
  */
 
 import { QueryContext } from './QueryContext';
 import { DataFile } from './FileRepository';
+import { FilterResult, QueryIntent } from './FilterProcessor';
 
 /**
  * Processing options for queries
@@ -100,6 +101,24 @@ export interface QueryProcessor {
    * @returns Array of segment identifiers mentioned in the query
    */
   extractSegmentsFromQuery(query: string): string[];
+  
+  /**
+   * Parse query intent from a user query and conversation history
+   * 
+   * @param query - The query text to analyze
+   * @param conversationHistory - Optional conversation history for follow-up detection
+   * @returns Parsed query intent
+   */
+  parseQueryIntent(query: string, conversationHistory?: any[]): QueryIntent;
+  
+  /**
+   * Filter data by specified segments
+   * 
+   * @param data - Data files to filter
+   * @param segments - Segments to filter by
+   * @returns Filtered data result
+   */
+  filterDataBySegments(data: any, segments: string[]): FilterResult;
 }
 
 export default QueryProcessor; 

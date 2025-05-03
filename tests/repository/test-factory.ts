@@ -23,6 +23,12 @@ export function createMockQueryContext(overrides = {}): QueryContext {
       metadataCompatibility: { format: true, version: true }
     },
     cachedFileIds: [],
+    segmentTracking: {
+      loadedSegments: {},
+      currentSegments: [],
+      requestedSegments: [],
+      missingSegments: {}
+    },
     clone: function() { return createMockQueryContext(this) },
     ...overrides,
   };
