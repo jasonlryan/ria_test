@@ -1,6 +1,6 @@
 # TypeScript Testing Implementation Plan
 
-**Last Updated:** Wed Apr 30 2025
+**Last Updated:** Sat May 3 2025
 
 ## Overview
 
@@ -44,6 +44,7 @@ export default defineConfig({
     setupFiles: ["./tests/setup.ts"],
     include: ["**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts}"],
     coverage: {
+      provider: "v8",
       reporter: ["text", "json", "html"],
     },
   },
@@ -72,33 +73,16 @@ afterEach(() => {
 
 #### 1.4 TypeScript Configuration Updates
 
-**Target File:** `tsconfig.json` (updates)
-
-```json
-{
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "esModuleInterop": true,
-    "baseUrl": ".",
-    "paths": {
-      "@utils/*": ["utils/*"]
-    },
-    "types": ["vitest/globals"]
-  },
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
-}
-```
-
 **Target File:** `tsconfig.test.json` (new)
 
 ```json
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "types": ["vitest/globals", "node"]
+    "types": ["vitest/globals", "node"],
+    "esModuleInterop": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
   },
   "include": ["**/*.ts", "**/*.tsx", "tests/**/*.ts"]
 }
@@ -110,7 +94,8 @@ afterEach(() => {
 
 ```json
 "scripts": {
-  "test": "vitest run",
+  "test": "node tests/index.js",
+  "test:unit": "vitest run",
   "test:watch": "vitest",
   "test:coverage": "vitest run --coverage"
 }
@@ -132,10 +117,13 @@ export function createMockQueryContext(overrides = {}): QueryContext {
     threadId: "test-thread",
     isFollowUp: false,
     compatibility: {
-      dataFormat: "standard",
-      queryType: "general",
-      dataVersions: ["1.0"],
+      compatibleYears: ["2023", "2024"],
+      compatibleSegments: ["demographics", "economics"],
+      compatibilityScore: 0.8,
+      incompatibleReasons: [],
+      metadataCompatibility: { format: true, version: true },
     },
+    cachedFileIds: [],
     ...overrides,
   };
 }
@@ -143,8 +131,8 @@ export function createMockQueryContext(overrides = {}): QueryContext {
 export function createMockDataFile(overrides = {}): DataFile {
   return {
     id: "test-file-1",
-    path: "data/test.csv",
-    type: "csv",
+    filepath: "data/test.csv",
+    contentType: "csv",
     metadata: {
       format: "standard",
       version: "1.0",
@@ -161,6 +149,7 @@ export function createMockDataFile(overrides = {}): DataFile {
 
 ```typescript
 import { FileRepository } from "../../utils/data/repository/interfaces/FileRepository";
+import { QueryProcessor } from "../../utils/data/repository/interfaces/QueryProcessor";
 import { vi } from "vitest";
 import { createMockDataFile } from "./test-factory";
 
@@ -168,8 +157,27 @@ export function createMockFileRepository(): FileRepository {
   return {
     getFileById: vi.fn().mockResolvedValue(createMockDataFile()),
     getFilesByIds: vi.fn().mockResolvedValue([createMockDataFile()]),
-    getFilesByQuery: vi.fn().mockResolvedValue([createMockDataFile()]),
+    getFilesByQuery: vi
+      .fn()
+      .mockResolvedValue({ relevantFiles: ["test-file-1"] }),
     loadSegments: vi.fn().mockResolvedValue(createMockDataFile()),
+  };
+}
+
+export function createMockQueryProcessor(): QueryProcessor {
+  return {
+    processQueryWithData: vi.fn().mockResolvedValue({
+      relevantFiles: [createMockDataFile()],
+      processedData: [{ source: "test", content: "test data" }],
+      queryType: "general",
+      metrics: {
+        duration: 100,
+        filesProcessed: 1,
+      },
+    }),
+    isComparisonQuery: vi.fn().mockReturnValue(false),
+    isStarterQuestion: vi.fn().mockReturnValue(false),
+    extractSegmentsFromQuery: vi.fn().mockReturnValue([]),
   };
 }
 ```
@@ -178,35 +186,34 @@ export function createMockFileRepository(): FileRepository {
 
 #### 3.1 QueryContext Tests
 
-**Target File:** `tests/repository/implementations/QueryContext.test.ts`
+**Target File:** `tests/repository/QueryContext.test.ts`
 
 ```typescript
 import { describe, it, expect } from "vitest";
 import { QueryContext } from "../../../utils/data/repository/implementations/QueryContext";
 
 describe("QueryContext", () => {
-  describe("createBasicContext", () => {
-    it("should create a context with default values", () => {
-      const context = QueryContext.createBasicContext("test query");
-
-      expect(context.query).toBe("test query");
-      expect(context.isFollowUp).toBe(false);
-      expect(context.compatibility).toBeDefined();
-    });
+  it("should create a basic context with default values", () => {
+    const context = new QueryContext("test query");
+    expect(context.query).toBe("test query");
+    expect(context.isFollowUp).toBe(false);
   });
 
-  describe("clone", () => {
-    it("should create a deep copy of the context", () => {
-      const original = QueryContext.createBasicContext("test query");
-      const cloned = original.clone();
-
-      // Modify cloned context
-      cloned.query = "modified query";
-
-      // Original should be unchanged
-      expect(original.query).toBe("test query");
-      expect(cloned.query).toBe("modified query");
+  it("should create a clone with independent properties", () => {
+    const original = new QueryContext({
+      query: "test query",
+      cachedFileIds: ["file1", "file2"],
     });
+
+    const clone = original.clone();
+
+    // Modify the clone
+    clone.query = "modified query";
+    clone.cachedFileIds = ["file3"];
+
+    // Original should be unchanged
+    expect(original.query).toBe("test query");
+    expect(original.cachedFileIds).toEqual(["file1", "file2"]);
   });
 });
 ```
@@ -280,7 +287,7 @@ describe("QueryProcessorImpl", () => {
 
 ### 4. Adapter Testing Template
 
-Adapter tests will follow the standards defined in [adapter-implementation-standard.mdc](../../../.cursor/rules/adapter-implementation-standard.mdc#testing-requirements), implementing shadow testing to ensure behavioral equivalence.
+Adapter tests follow the standards defined in [adapter-implementation-standard.mdc](../../../.cursor/rules/adapter-implementation-standard.mdc#testing-requirements), implementing shadow testing to ensure behavioral equivalence.
 
 **Target File:** `tests/repository/adapters/retrieval-adapter.test.ts`
 
@@ -350,57 +357,71 @@ describe("retrieval-adapter", () => {
 
 ### Phase 1: Setup Testing Infrastructure (2 days)
 
-| Task                            | Priority | Dependencies  | Status         |
-| ------------------------------- | -------- | ------------- | -------------- |
-| Install Vitest and dependencies | High     | None          | 🟠 Not Started |
-| Configure Vitest                | High     | Installation  | 🟠 Not Started |
-| Update TypeScript configuration | High     | None          | 🟠 Not Started |
-| Create test utilities           | High     | Configuration | 🟠 Not Started |
-| Verify basic test runs          | High     | All above     | 🟠 Not Started |
+| Task                            | Priority | Dependencies  | Status       |
+| ------------------------------- | -------- | ------------- | ------------ |
+| Install Vitest and dependencies | High     | None          | ✅ Completed |
+| Configure Vitest                | High     | Installation  | ✅ Completed |
+| Update TypeScript configuration | High     | None          | ✅ Completed |
+| Create test utilities           | High     | Configuration | ✅ Completed |
+| Verify basic test runs          | High     | All above     | ✅ Completed |
 
 ### Phase 2: Core Component Tests (3 days)
 
-| Task                           | Priority | Dependencies  | Status         |
-| ------------------------------ | -------- | ------------- | -------------- |
-| Implement QueryContext tests   | High     | Phase 1       | 🟠 Not Started |
-| Implement FileRepository tests | High     | Phase 1       | 🟠 Not Started |
-| Implement QueryProcessor tests | High     | Phase 1       | 🟠 Not Started |
-| Create shared test utilities   | Medium   | Initial tests | 🟠 Not Started |
+| Task                           | Priority | Dependencies  | Status       |
+| ------------------------------ | -------- | ------------- | ------------ |
+| Implement QueryContext tests   | High     | Phase 1       | ✅ Completed |
+| Implement FileRepository tests | High     | Phase 1       | ✅ Completed |
+| Implement QueryProcessor tests | High     | Phase 1       | ✅ Completed |
+| Create shared test utilities   | Medium   | Initial tests | ✅ Completed |
 
 ### Phase 3: Adapter Testing Setup (3 days)
 
-| Task                             | Priority | Dependencies   | Status         |
-| -------------------------------- | -------- | -------------- | -------------- |
-| Create adapter testing utilities | High     | Phase 2        | 🟠 Not Started |
-| Implement shadow test templates  | High     | Phase 2        | 🟠 Not Started |
-| Add feature flag test helpers    | Medium   | Test utilities | 🟠 Not Started |
-| Create error handling tests      | Medium   | Shadow tests   | 🟠 Not Started |
+| Task                             | Priority | Dependencies   | Status       |
+| -------------------------------- | -------- | -------------- | ------------ |
+| Create adapter testing utilities | High     | Phase 2        | ✅ Completed |
+| Implement shadow test templates  | High     | Phase 2        | ✅ Completed |
+| Add feature flag test helpers    | Medium   | Test utilities | ✅ Completed |
+| Create error handling tests      | Medium   | Shadow tests   | ✅ Completed |
 
-### Phase 4: Integration Tests (2 days)
+### Phase 4: Adapter Implementation & Rollout (3 days)
+
+| Task                               | Priority | Dependencies   | Status       |
+| ---------------------------------- | -------- | -------------- | ------------ |
+| Implement adapter functionality    | High     | Phase 3        | ✅ Completed |
+| Create monitoring system           | High     | Adapters       | ✅ Completed |
+| Implement gradual rollout strategy | High     | Monitoring     | ✅ Completed |
+| Create repository-toggle script    | Medium   | Feature flags  | ✅ Completed |
+| Implement shadow mode comparison   | Medium   | Monitoring     | ✅ Completed |
+| Create monitoring dashboard        | Medium   | All monitoring | ✅ Completed |
+
+### Phase 5: Integration Tests (2 days)
 
 | Task                                | Priority | Dependencies | Status         |
 | ----------------------------------- | -------- | ------------ | -------------- |
-| Create end-to-end test helpers      | Medium   | Phase 3      | 🟠 Not Started |
+| Create end-to-end test helpers      | Medium   | Phase 4      | 🟠 Not Started |
 | Verify thread context preservation  | Medium   | E2E helpers  | 🟠 Not Started |
-| Test adapter behavior with services | Medium   | Phase 3      | 🟠 Not Started |
+| Test adapter behavior with services | Medium   | Phase 4      | 🟡 In Progress |
 
-### Phase 5: Documentation and CI Integration (1 day)
+### Phase 6: Documentation and CI Integration (1 day)
 
 | Task                          | Priority | Dependencies   | Status         |
 | ----------------------------- | -------- | -------------- | -------------- |
-| Document testing approach     | Medium   | All tests      | 🟠 Not Started |
+| Document testing approach     | Medium   | All tests      | ✅ Completed   |
+| Update README with usage info | Medium   | Documentation  | ✅ Completed   |
 | Add tests to CI pipeline      | Medium   | Documentation  | 🟠 Not Started |
 | Establish code coverage goals | Low      | CI integration | 🟠 Not Started |
 
 ## Risk Analysis and Mitigation
 
-| Risk Area                    | Specific Risk                                   | Mitigation Strategy                                     | Status             |
-| ---------------------------- | ----------------------------------------------- | ------------------------------------------------------- | ------------------ |
-| **Vitest Compatibility**     | Some libraries may not work with Vitest         | Test critical dependencies early, have fallback options | 🟠 Not assessed    |
-| **TypeScript Configuration** | ESM compatibility issues with TypeScript        | Strict tsconfig settings, explicit module declarations  | 🟠 Not implemented |
-| **Complex Dependencies**     | Difficult to mock complex dependency chains     | Create comprehensive factory functions for test objects | 🟠 Not implemented |
-| **Adapter Testing**          | Hard to ensure identical behavior with original | Shadow testing with comprehensive test cases            | 🟠 Not implemented |
-| **CI Integration**           | Tests might be slow in CI pipeline              | Optimize tests, use test filtering and parallelization  | 🟠 Not assessed    |
+| Risk Area                    | Specific Risk                                   | Mitigation Strategy                                     | Status                      |
+| ---------------------------- | ----------------------------------------------- | ------------------------------------------------------- | --------------------------- |
+| **Vitest Compatibility**     | Some libraries may not work with Vitest         | Test critical dependencies early, have fallback options | ✅ Verified core tests pass |
+| **TypeScript Configuration** | ESM compatibility issues with TypeScript        | Strict tsconfig settings, explicit module declarations  | ✅ Implemented              |
+| **Complex Dependencies**     | Difficult to mock complex dependency chains     | Create comprehensive factory functions for test objects | ✅ Implemented              |
+| **Adapter Testing**          | Hard to ensure identical behavior with original | Shadow testing with comprehensive test cases            | ✅ Implemented              |
+| **Performance Impact**       | Repository pattern could impact performance     | Monitoring system tracks metrics for comparison         | ✅ Implemented              |
+| **Rollout Risks**            | Breaking changes in production                  | Gradual rollout strategy with feature flags             | ✅ Implemented              |
+| **CI Integration**           | Tests might be slow in CI pipeline              | Optimize tests, use test filtering and parallelization  | 🟠 Not assessed             |
 
 ## Integration with Adapter Implementation
 
@@ -415,15 +436,43 @@ This testing infrastructure specifically supports the adapter implementation req
 
 The testing infrastructure implementation will be considered successful when:
 
-1. **Core Tests**: All core repository components have comprehensive test suites
-2. **Coverage**: Test coverage of repository pattern code exceeds 80%
-3. **Adapter Testing**: Shadow tests can verify behavioral equivalence between original and adapted implementations
-4. **CI Integration**: Tests run successfully in the CI pipeline
-5. **Developer Experience**: Testing workflow is documented and easy for developers to use
+1. **Core Tests**: All core repository components have comprehensive test suites - ✅ Completed
+2. **Coverage**: Test coverage of repository pattern code exceeds 80% - 🟡 In Progress
+3. **Adapter Testing**: Shadow tests can verify behavioral equivalence between original and adapted implementations - ✅ Completed
+4. **Monitoring**: Performance metrics show no regression from original implementation - ✅ Implemented
+5. **Rollout Strategy**: Feature flags allow for controlled implementation - ✅ Implemented
+6. **CI Integration**: Tests run successfully in the CI pipeline - 🟠 Pending implementation
+7. **Developer Experience**: Testing workflow is documented and easy for developers to use - ✅ Completed
 
 ## Next Steps
 
-Once this plan is implemented, it will unblock [BACKLOG.md item #3: Implement Adapter Layer](./BACKLOG.md#3-implement-adapter-layer) and enable the continuation of the repository pattern implementation according to the main [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md).
+1. ✅ Complete implementation of components to match test expectations
+2. ✅ Update tests as implementations evolve
+3. ✅ Implement full adapter functionality with monitoring
+4. ✅ Create gradual rollout strategy with feature flags
+5. 🟡 Complete adapter integration with remaining services
+6. 🟠 Add CI integration
+7. 🟠 Implement remaining end-to-end integration tests
+
+## Current Status
+
+As of Sat May 3 2025, all repository pattern components are implemented and ready for rollout:
+
+- ✅ QueryContext implementation and tests
+- ✅ FileSystemRepository implementation and tests
+- ✅ QueryProcessorImpl implementation and tests
+- ✅ Adapter implementations with shadow testing
+- ✅ Monitoring system for performance tracking
+- ✅ Repository toggle script for gradual rollout
+- ✅ Monitoring dashboard (/repository-monitor)
+
+When running the full test suite with `npm run test:unit`, there's an expected failure with cache-utils.test.ts which is still using Jest. This doesn't affect the repository pattern tests which all pass with `npm run test:unit tests/repository`.
+
+The repository pattern implementation has been completed with a gradual rollout strategy:
+
+1. Shadow mode for monitoring without changing behavior
+2. Progressive traffic allocation (5%, 10%, 25%, 50%, 100%)
+3. Performance monitoring to ensure no regressions
 
 ## References
 
@@ -432,4 +481,4 @@ Once this plan is implemented, it will unblock [BACKLOG.md item #3: Implement Ad
 - [BACKLOG.md](./BACKLOG.md#2-resolve-typescript-testing-infrastructure) - Issue in backlog
 - [adapter-implementation-standard.mdc](../../../.cursor/rules/adapter-implementation-standard.mdc#testing-requirements) - Adapter testing standards
 
-_Last updated: Wed Apr 30 2025_
+_Last updated: Sat May 3 2025_
