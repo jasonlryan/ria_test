@@ -38,6 +38,10 @@ export interface FileIdentificationResult {
   matchedPatterns?: Record<string, string[]>;
   detectedYears?: string[];
   detectedSegments?: string[];
+  /** Matched canonical topic IDs */
+  matchedTopics?: string[];
+  /** Human-readable rationale from upstream services */
+  explanation?: string;
 }
 
 /**

@@ -14,7 +14,8 @@
  */
 
 import { FileRepository, QueryProcessor, QueryContext, SegmentTrackingData } from '../interfaces';
-import { FileSystemRepository, QueryProcessorImpl } from '../implementations';
+import { FileSystemRepository, QueryProcessorImpl, PromptRepository } from '../implementations';
+import { ThreadCacheManager } from '../implementations/ThreadCacheManager';
 import logger from '../../../shared/logger';
 import { startTimer, endTimer, recordError } from '../monitoring';
 
@@ -82,13 +83,15 @@ function shouldUseRepositoryImplementation(threadId?: string): boolean {
 /**
  * Create default repository instances if none provided
  * 
- * @returns Object with repository and processor
+ * @returns Object with repository, processor, and cacheManager
  */
 function getDefaultImplementations() {
-  const repository = new FileSystemRepository();
+  // Use PromptRepository so file identification relies on the canonical prompt
+  const repository = new PromptRepository();
   const processor = new QueryProcessorImpl(repository);
+  const cacheManager = new ThreadCacheManager(repository);
   
-  return { repository, processor };
+  return { repository, processor, cacheManager };
 }
 
 /**
@@ -393,9 +396,71 @@ export async function cacheFilesForThread(
   fileIds: string[],
   customRepository?: FileRepository
 ) {
-  // TODO: Implement this functionality in the repository pattern
-  logger.warn('[ADAPTER] cacheFilesForThread is not yet implemented in the repository pattern');
-  return true;
+  // Determine if this request should use repository implementation
+  const useRepository = shouldUseRepositoryImplementation(threadId);
+  const isShadowMode = SHADOW_MODE && USE_REPOSITORY_PATTERN;
+  
+  logger.info(`[ADAPTER] Service cacheFilesForThread called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%, shadow: ${isShadowMode}`);
+  
+  // Always run original implementation in shadow mode or when feature flag is off
+  const originalTimer = startTimer('original', 'service.cacheFilesForThread', { 
+    threadId,
+    fileCount: fileIds.length
+  });
+  
+  let originalResult = false;
+  try {
+    const service = await getOriginalService();
+    originalResult = await service.cacheFilesForThread(threadId, fileIds);
+    endTimer(originalTimer, true);
+  } catch (error) {
+    endTimer(originalTimer, false);
+    recordError('original', 'service.cacheFilesForThread');
+    logger.error(`[ADAPTER] Error in original service.cacheFilesForThread: ${error.message}`);
+    // Original implementation failed, don't rethrow as we'll try repository if enabled
+  }
+  
+  // If not using repository implementation and not in shadow mode, return original result
+  if (!useRepository && !isShadowMode) {
+    return originalResult;
+  }
+  
+  // Start timer for repository implementation
+  const repoTimer = startTimer('repository', 'service.cacheFilesForThread', { 
+    threadId,
+    fileCount: fileIds.length
+  });
+  
+  try {
+    // Create or use repository
+    const { repository, cacheManager } = customRepository 
+      ? { repository: customRepository, cacheManager: null } 
+      : getDefaultImplementations();
+    
+    // Call repository method using cacheManager for thread-related caching
+    if (!cacheManager) {
+      throw new Error('CacheManager not available in repository implementation');
+    }
+    
+    const result = await cacheManager.setThreadFiles(threadId, fileIds);
+    endTimer(repoTimer, true, { filesProcessed: fileIds.length });
+    
+    // In shadow mode, log comparison but return original result
+    if (isShadowMode) {
+      logger.info(`[SHADOW] service.cacheFilesForThread comparison - original: ${originalResult}, repository: ${result}`);
+      return originalResult;
+    }
+    
+    // Otherwise return repository result
+    return result;
+  } catch (error) {
+    endTimer(repoTimer, false);
+    recordError('repository', 'service.cacheFilesForThread');
+    logger.error(`[ADAPTER] Error in repository service.cacheFilesForThread: ${error.message}`);
+    
+    // Return original result on error
+    return originalResult;
+  }
 }
 
 /**
@@ -409,9 +474,69 @@ export async function getCachedFilesForThread(
   threadId: string,
   customRepository?: FileRepository
 ) {
-  // TODO: Implement this functionality in the repository pattern
-  logger.warn('[ADAPTER] getCachedFilesForThread is not yet implemented in the repository pattern');
-  return [];
+  // Determine if this request should use repository implementation
+  const useRepository = shouldUseRepositoryImplementation(threadId);
+  const isShadowMode = SHADOW_MODE && USE_REPOSITORY_PATTERN;
+  
+  logger.info(`[ADAPTER] Service getCachedFilesForThread called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%, shadow: ${isShadowMode}`);
+  
+  // Always run original implementation in shadow mode or when feature flag is off
+  const originalTimer = startTimer('original', 'service.getCachedFilesForThread', { 
+    threadId
+  });
+  
+  let originalResult = [];
+  try {
+    const service = await getOriginalService();
+    originalResult = await service.getCachedFilesForThread(threadId);
+    endTimer(originalTimer, true, { filesReturned: originalResult.length });
+  } catch (error) {
+    endTimer(originalTimer, false);
+    recordError('original', 'service.getCachedFilesForThread');
+    logger.error(`[ADAPTER] Error in original service.getCachedFilesForThread: ${error.message}`);
+    // Original implementation failed, don't rethrow as we'll try repository if enabled
+  }
+  
+  // If not using repository implementation and not in shadow mode, return original result
+  if (!useRepository && !isShadowMode) {
+    return originalResult;
+  }
+  
+  // Start timer for repository implementation
+  const repoTimer = startTimer('repository', 'service.getCachedFilesForThread', { 
+    threadId
+  });
+  
+  try {
+    // Create or use repository
+    const { repository, cacheManager } = customRepository 
+      ? { repository: customRepository, cacheManager: null } 
+      : getDefaultImplementations();
+    
+    // Call repository method using cacheManager for thread-related caching
+    if (!cacheManager) {
+      throw new Error('CacheManager not available in repository implementation');
+    }
+    
+    const cachedFiles = await cacheManager.getThreadFiles(threadId);
+    endTimer(repoTimer, true, { filesReturned: cachedFiles.length });
+    
+    // In shadow mode, log comparison but return original result
+    if (isShadowMode) {
+      logger.info(`[SHADOW] service.getCachedFilesForThread comparison - original: ${originalResult.length} files, repository: ${cachedFiles.length} files`);
+      return originalResult;
+    }
+    
+    // Otherwise return repository result
+    return cachedFiles;
+  } catch (error) {
+    endTimer(repoTimer, false);
+    recordError('repository', 'service.getCachedFilesForThread');
+    logger.error(`[ADAPTER] Error in repository service.getCachedFilesForThread: ${error.message}`);
+    
+    // Return original result on error
+    return originalResult;
+  }
 }
 
 export default {

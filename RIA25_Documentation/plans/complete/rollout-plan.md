@@ -1,6 +1,10 @@
 # Repository Pattern Rollout Plan
 
-**Last Updated:** Sat May 3 2025
+**Last Updated:** Sun May 4 2025
+
+> **⚠️ DEPRECATED ⚠️**  
+> This document has been consolidated into [CONSOLIDATED_IMPLEMENTATION_PLAN.md](./CONSOLIDATED_IMPLEMENTATION_PLAN.md).  
+> Please refer to the consolidated plan for the most up-to-date information on the rollout strategy.
 
 ## Overview
 

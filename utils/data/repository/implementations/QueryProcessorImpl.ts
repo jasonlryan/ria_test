@@ -9,7 +9,7 @@
  * - Analysis: ../analysis/QueryProcessor-Analysis.md#1-processquerywithdata
  * - Interface: ../interfaces/QueryProcessor.ts
  *
- * Last Updated: Sat May 25 2025
+ * Last Updated: Sun May 4 2025
  */
 
 import { 
@@ -373,9 +373,17 @@ export class QueryProcessorImpl implements QueryProcessor {
     context: QueryContext,
     options: QueryProcessingOptions
   ): Promise<string[]> {
-    // Start with cached files if available and this is a follow-up
+    // For follow-up questions, analyze if the new query is semantically related to cached files
     if (context.isFollowUp && context.cachedFileIds && context.cachedFileIds.length > 0) {
-      return context.cachedFileIds;
+      const isRelatedToCache = await this.isQueryRelatedToCachedFiles(context);
+      
+      // Only use cached files if the query is semantically related to previous context
+      if (isRelatedToCache) {
+        return context.cachedFileIds;
+      }
+      // Otherwise, we'll identify new files below
+      // Log that we're not using cache even though this is a follow-up
+      console.log(`[INFO] Not using cached files for follow-up question. New topic detected.`);
     }
     
     // Identify relevant files based on the query
@@ -402,6 +410,69 @@ export class QueryProcessorImpl implements QueryProcessor {
     context.relevantFiles = relevantFiles;
     
     return relevantFiles;
+  }
+
+  /**
+   * Determine if current query is related to cached files
+   * 
+   * Analyzes the current query to determine if it's semantically 
+   * related to the previously cached files.
+   * 
+   * @param context The query context with current and previous query info
+   * @returns Boolean indicating if query is related to cached content
+   */
+  private async isQueryRelatedToCachedFiles(context: QueryContext): Promise<boolean> {
+    // If no previous query exists, we can't determine relatedness
+    if (!context.previousQuery) {
+      return false;
+    }
+
+    // Simple topic/keyword extraction and comparison
+    const currentTopics = this.extractTopicsFromQuery(context.query);
+    const previousTopics = this.extractTopicsFromQuery(context.previousQuery);
+    
+    // If we have segment information, compare requested segments
+    const currentSegments = this.extractSegmentsFromQuery(context.query);
+    const prevSegments = context.segmentTracking?.currentSegments || [];
+    
+    // Check basic topic overlap
+    const topicOverlap = currentTopics.some(topic => previousTopics.includes(topic));
+    
+    // Check segment overlap
+    const segmentOverlap = currentSegments.some(segment => prevSegments.includes(segment));
+    
+    // If there's significant topic or segment overlap, consider it related
+    return topicOverlap || segmentOverlap;
+  }
+
+  /**
+   * Extract topic keywords from a query
+   * 
+   * @param query The query string to analyze
+   * @returns Array of extracted topic keywords
+   */
+  private extractTopicsFromQuery(query: string): string[] {
+    // Simple extraction of potential topic keywords
+    // In a real implementation, this would use more sophisticated NLP
+    
+    // Remove common words and punctuation
+    const normalizedQuery = query.toLowerCase()
+      .replace(/[^\w\s]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    
+    // Split into words and filter out common words
+    const commonWords = ['the', 'a', 'an', 'in', 'on', 'at', 'to', 'for', 'with', 'by', 
+      'about', 'as', 'is', 'are', 'was', 'were', 'be', 'been', 'being',
+      'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'should',
+      'can', 'could', 'may', 'might', 'must', 'how', 'why', 'what', 'who',
+      'where', 'when', 'which', 'and', 'or', 'but', 'if', 'then', 'else', 'while'];
+    
+    const words = normalizedQuery.split(' ')
+      .filter(word => word.length > 2) // Only words of reasonable length
+      .filter(word => !commonWords.includes(word)); // Exclude common words
+    
+    return words;
   }
 
   /**

@@ -1,6 +1,10 @@
 # Smart Filtering Integration Plan
 
-**Last Updated:** Sat May 25 2025
+**Last Updated:** Sun May 4 2025
+
+> **⚠️ DEPRECATED ⚠️**  
+> This document has been consolidated into [CONSOLIDATED_IMPLEMENTATION_PLAN.md](./CONSOLIDATED_IMPLEMENTATION_PLAN.md).  
+> Please refer to the consolidated plan for the most up-to-date information on Smart Filtering integration.
 
 ## Overview
 
@@ -535,6 +539,15 @@ describe("Smart Filtering E2E", () => {
 | Update QueryProcessorImpl               | High     | Implementation | 🟠 Not Started |
 | Update adapters                         | Medium   | Implementation | 🟠 Not Started |
 | Fix dataRetrievalService.js placeholder | Medium   | None           | 🟠 Not Started |
+| Integrate with ThreadCacheManager       | Medium   | Implementation | 🟠 Not Started |
+
+### Phase 1.5: Cache Integration (1 day)
+
+| Task                                          | Priority | Dependencies | Status         |
+| --------------------------------------------- | -------- | ------------ | -------------- |
+| Update ThreadCacheManager for smart filtering | Medium   | Phase 1      | 🟠 Not Started |
+| Add segment-aware caching                     | Medium   | Phase 1      | 🟠 Not Started |
+| Update service-adapter.ts cache methods       | Medium   | Phase 1      | 🟠 Not Started |
 
 ### Phase 2: Testing (2 days)
 
@@ -583,7 +596,7 @@ After completing this integration plan:
 2. Consider refactoring the original `utils/data/smart_filtering.js` to use the new TypeScript implementation
 3. Add smart filtering metrics to the monitoring dashboard
 
-_Last updated: Sat May 25 2025_
+_Last updated: Sun May 4 2025_
 
 ## Implementation Notes
 

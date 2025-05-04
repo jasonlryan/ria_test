@@ -14,10 +14,11 @@
  */
 
 import { FileRepository, QueryProcessor, QueryContext, FileIdentificationResult } from '../interfaces';
-import { FileSystemRepository, QueryProcessorImpl } from '../implementations';
+import { FileSystemRepository, QueryProcessorImpl, PromptRepository } from '../implementations';
 import logger from '../../../shared/logger';
 import { startTimer, endTimer, recordError } from '../monitoring';
 import { QueryContext as QueryContextImpl } from '../implementations/QueryContext';
+import path from 'path';
 
 /**
  * Feature flags and rollout configuration
@@ -56,7 +57,8 @@ function shouldUseRepositoryImplementation(threadId?: string): boolean {
  * @returns Object with repository and processor
  */
 function getDefaultImplementations() {
-  const repository = new FileSystemRepository();
+  // Use PromptRepository so that identifyRelevantFiles still leverages 1_data_retrieval.md
+  const repository = new PromptRepository();
   const processor = new QueryProcessorImpl(repository);
   
   return { repository, processor };

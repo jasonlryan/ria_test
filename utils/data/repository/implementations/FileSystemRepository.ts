@@ -21,7 +21,6 @@ import {
   FileRetrievalOptions
 } from '../interfaces/FileRepository';
 import { QueryContext } from '../interfaces/QueryContext';
-import logger from '../../../../utils/shared/logger';
 
 /**
  * Configuration for the FileSystemRepository
@@ -135,67 +134,25 @@ export class FileSystemRepository implements FileRepository {
 
   /**
    * Identify and retrieve files based on a query context
+   * 
+   * NOTE: This method is a placeholder that exists only to satisfy the FileRepository
+   * interface. For actual implementation, use PromptRepository which delegates to
+   * the 1_data_retrieval.md prompt via OpenAI.
    *
    * @param context Query context containing query information
    * @param options Retrieval options
-   * @returns Promise resolving to file identification results
+   * @returns Promise resolving to empty file identification results
    */
   async getFilesByQuery(context: QueryContext, options?: FileRetrievalOptions): Promise<FileIdentificationResult> {
-    const query = context.query;
-    if (!query) {
-      logger.warn(`[FILE_REPOSITORY] Empty query provided, returning default files`);
-      return { 
-        relevantFiles: [],
-        relevanceScores: {}
-      };
-    }
-
-    try {
-      logger.info(`[FILE_REPOSITORY] Processing query: "${query.substring(0, 50)}..."`);
-      
-      // For job choice, staying with company, and leaving organization queries
-      // These specifically match files 2025_1, 2025_2, and 2025_3 in the original implementation
-      if (query.toLowerCase().includes('job choice') || 
-          query.toLowerCase().includes('staying with') || 
-          query.toLowerCase().includes('leaving') || 
-          query.toLowerCase().includes('attraction') ||
-          query.toLowerCase().includes('retention') ||
-          query.toLowerCase().includes('attrition')) {
-        
-        logger.info(`[FILE_REPOSITORY] Query matches retention/attrition topics, returning standard files`);
-        return {
-          relevantFiles: ['2025_1', '2025_2', '2025_3'],
-          relevanceScores: {
-            '2025_1': 0.9,
-            '2025_2': 0.8,
-            '2025_3': 0.7
-          }
-        };
-      }
-      
-      // ALWAYS FALLBACK to default files rather than returning empty arrays
-      // This prevents the error in the data processing pipeline
-      logger.info(`[FILE_REPOSITORY] No specific topic matches, using default files`);
-      return {
-        relevantFiles: ['2025_1', '2025_2', '2025_3'],
-        relevanceScores: {
-          '2025_1': 0.5,
-          '2025_2': 0.5,
-          '2025_3': 0.5
-        }
-      };
-    } catch (error) {
-      logger.error(`[FILE_REPOSITORY] Error identifying relevant files: ${error instanceof Error ? error.message : String(error)}`);
-      // FALLBACK: Always return the default files on error
-      return { 
-        relevantFiles: ['2025_1', '2025_2', '2025_3'],
-        relevanceScores: {
-          '2025_1': 0.5,
-          '2025_2': 0.5,
-          '2025_3': 0.5
-        }
-      };
-    }
+    console.warn(`WARNING: FileSystemRepository.getFilesByQuery() called directly. 
+      This method is deprecated in favor of PromptRepository.getFilesByQuery().
+      The local keyword matching has been removed to ensure consistent results.`);
+    
+    return { 
+      relevantFiles: [],
+      detectedYears: options?.compatibility?.years,
+      detectedSegments: options?.requiredSegments
+    };
   }
 
   /**
