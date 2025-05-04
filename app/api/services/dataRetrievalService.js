@@ -23,6 +23,8 @@ import {
   logCompatibilityInPrompt,
 } from "../../../utils/compatibility/compatibilityLogger";
 import { getSpecificData } from "../../../utils/data/smart_filtering";
+import { unifiedOpenAIService } from "../services/unifiedOpenAIService";
+import { migrationMonitor } from "../../../utils/shared/monitoring";
 
 // Import compatibility types (using JS comment format since we're in a .js file)
 // @ts-check
@@ -30,6 +32,56 @@ import { getSpecificData } from "../../../utils/data/smart_filtering";
 
 export class DataRetrievalService {
   constructor() {}
+
+  /**
+   * Process a query using the unified OpenAI service
+   * @param {string} prompt - The prompt text to process
+   * @param {object} options - Processing options
+   * @returns {Promise<object>} The processed response
+   */
+  async processWithUnifiedService(prompt, options = {}) {
+    const startTime = Date.now();
+    try {
+      // Prepare messages for the OpenAI API
+      const messages = [
+        {
+          role: "system",
+          content: "You are a helpful assistant analyzing survey data.",
+        },
+        { role: "user", content: prompt },
+      ];
+
+      // Add any additional context messages if provided
+      if (options.contextMessages && Array.isArray(options.contextMessages)) {
+        messages.push(...options.contextMessages);
+      }
+
+      // Process with unified service
+      const result = await unifiedOpenAIService.createChatCompletion(messages, {
+        model: options.model || "gpt-4.1-mini",
+        temperature: options.temperature || 0.5,
+        max_tokens: options.maxTokens || 1500,
+      });
+
+      // Track performance
+      const duration = Date.now() - startTime;
+      logger.info(
+        `[DATA_RETRIEVAL] Unified service processed query in ${duration}ms`
+      );
+
+      return result.data;
+    } catch (error) {
+      logger.error(
+        `[DATA_RETRIEVAL] Error processing with unified service: ${error.message}`
+      );
+      migrationMonitor.trackError(
+        "unified",
+        "processWithUnifiedService",
+        error
+      );
+      throw error;
+    }
+  }
 
   /**
    * Identify relevant data files based on a query and context.
@@ -334,15 +386,15 @@ export class DataRetrievalService {
   }
 
   /**
-   * Process a query with data retrieval, filtering, and caching.
+   * Process a query with the appropriate data
    * @param {string} query
    * @param {string} context
-   * @param {string[]} cachedFileIds
+   * @param {Array<string>} cachedFileIds
    * @param {string} threadId
    * @param {boolean} isFollowUp
    * @param {string} previousQuery
    * @param {string} previousAssistantResponse
-   * @returns {Promise<object>} processed result
+   * @returns {Promise<object>}
    */
   async processQueryWithData(
     query,
@@ -353,151 +405,139 @@ export class DataRetrievalService {
     previousQuery = "",
     previousAssistantResponse = ""
   ) {
-    // Step 1: Retrieve existing cache for the thread
-    const cacheEntry = await this.getCachedFiles(threadId);
+    const startTime = Date.now();
 
-    // Step 2: Check for existing compatibility metadata
-    const cachedCompatibilityMetadata =
-      await UnifiedCache.getThreadCompatibilityMetadata(threadId);
+    try {
+      // Check if this is a starter question (unchanged logic)
+      if (isStarterQuestion(query)) {
+        const starterCode = query.trim().toUpperCase();
+        const precompiled = getPrecompiledStarterData(starterCode);
 
-    // Log cache read operation
-    if (cachedCompatibilityMetadata) {
-      logCompatibilityCache(
-        "read",
-        threadId,
-        true,
-        `Found cached compatibility metadata version ${cachedCompatibilityMetadata.mappingVersion}`
-      );
-    } else {
-      logCompatibilityCache(
-        "read",
-        threadId,
-        false,
-        "No cached compatibility metadata found"
-      );
-    }
-
-    // Step 3: Identify relevant files and assess compatibility
-    const fileIdentificationResult = await this.identifyRelevantFiles(
-      query,
-      context,
-      isFollowUp,
-      previousQuery,
-      previousAssistantResponse
-    );
-
-    // Step 4: Extract relevant information
-    const fileIds = fileIdentificationResult.file_ids || [];
-    const relevantTopics = fileIdentificationResult.matched_topics || [];
-    const requestedSegments =
-      fileIdentificationResult.segments || DEFAULT_SEGMENTS;
-    const compatibilityMetadata =
-      fileIdentificationResult.compatibilityMetadata;
-
-    // Step 5: Extract requested segments from query intent or use default
-    const intendedSegments =
-      isFollowUp && previousQuery
-        ? this.extractSegmentsFromQuery(previousQuery)
-        : DEFAULT_SEGMENTS;
-
-    // Step 6: Calculate missing segments for each cached file
-    const missingSegmentsIndex = this.calculateMissingSegments(
-      requestedSegments,
-      cacheEntry
-    );
-
-    // Step 7: For each cached file with missing segments, load additional segments
-    for (const file of cacheEntry) {
-      if (missingSegmentsIndex[file.id]) {
-        const missingSegments = missingSegmentsIndex[file.id];
-        const additionalData = await this.loadAdditionalSegments(
-          file.id,
-          missingSegments
-        );
-        this.mergeFileSegments(file, additionalData, missingSegments);
-
-        // Log newly loaded segments
-        logger.info(
-          `[SEGMENTS] Loaded additional segments for file ${
-            file.id
-          }: ${missingSegments.join(", ")}`
-        );
+        if (precompiled) {
+          logger.info(
+            `[DATA_RETRIEVAL] Using precompiled data for starter question: ${starterCode}`
+          );
+          return precompiled;
+        }
       }
-    }
 
-    // Step 8: Update thread cache with compatibility metadata
-    await UnifiedCache.updateThreadWithFiles(
-      threadId,
-      cacheEntry,
-      compatibilityMetadata
-    );
+      // Get cached files from thread if available
+      let cachedFiles = [];
+      if (cachedFileIds.length === 0) {
+        cachedFiles = await this.getCachedFiles(threadId);
+        cachedFileIds = cachedFiles.map((file) => file.fileId);
+      }
 
-    // Log cache update operation
-    logCompatibilityCache(
-      "write",
-      threadId,
-      true,
-      `Updated cache with compatibility metadata, isFullyCompatible: ${compatibilityMetadata.isFullyCompatible}`
-    );
+      // Identify relevant files
+      const fileIdentificationResult = await this.identifyRelevantFiles(
+        query,
+        context,
+        isFollowUp,
+        previousQuery,
+        previousAssistantResponse
+      );
 
-    // Log detailed compatibility information to file for analysis
-    logCompatibilityToFile(query, threadId, compatibilityMetadata);
+      const fileIds = fileIdentificationResult.file_ids || [];
+      const explanation = fileIdentificationResult.explanation || "";
+      const requestedSegments =
+        fileIdentificationResult.segments || DEFAULT_SEGMENTS;
+      const isComparison = this.isComparisonQuery(query);
+      const compatibilityMetadata =
+        fileIdentificationResult.compatibilityMetadata;
 
-    // Step 9: Check if the query is asking for a comparison between years
-    const isComparisonQuery = this.isComparisonQuery(query);
-
-    // If this is a comparison query and some topics are not comparable,
-    // use detailed compatibility information to make the warning more prominent
-    let compatibilityVerbosity = "standard";
-    if (isComparisonQuery && !compatibilityMetadata.isFullyCompatible) {
-      compatibilityVerbosity = "detailed";
       logger.info(
-        `[COMPATIBILITY] Using detailed verbosity for comparison query with incompatible topics`
+        `[DATA_RETRIEVAL] Identified ${
+          fileIds.length
+        } relevant files for query "${query.substring(0, 50)}..."`
       );
+
+      // Load data from files
+      const loadedData = await this.loadDataFiles(fileIds);
+
+      // Filter data by segments
+      const filteredData = this.filterDataBySegments(
+        loadedData,
+        requestedSegments
+      );
+
+      // Process the data using unified OpenAI service instead of direct API
+      let analysis;
+      try {
+        // Create a rich prompt with all the data context
+        let prompt = query;
+        if (filteredData.stats && filteredData.stats.length > 0) {
+          prompt += "\n\n### Data:\n";
+          prompt += JSON.stringify(filteredData.stats, null, 2);
+        }
+
+        if (compatibilityMetadata) {
+          prompt += "\n\n### Compatibility Information:\n";
+          prompt += JSON.stringify(compatibilityMetadata, null, 2);
+
+          // Add warnings about incomparable topics
+          if (!compatibilityMetadata.isFullyCompatible) {
+            prompt +=
+              "\n\nWARNING: Some topics cannot be compared between years. Check compatibility metadata.";
+          }
+        }
+
+        // Add additional context for follow-up queries
+        const contextMessages = [];
+        if (isFollowUp && previousQuery && previousAssistantResponse) {
+          contextMessages.push(
+            { role: "user", content: previousQuery },
+            { role: "assistant", content: previousAssistantResponse }
+          );
+        }
+
+        // Process with unified service
+        const result = await this.processWithUnifiedService(prompt, {
+          contextMessages,
+          model: isComparison ? "gpt-4.1-turbo" : "gpt-4.1-mini",
+        });
+
+        analysis = result.content || "";
+      } catch (error) {
+        logger.error(
+          `[DATA_RETRIEVAL] Error processing query: ${error.message}`
+        );
+        analysis = `Sorry, I encountered an error analyzing the data: ${error.message}`;
+      }
+
+      // Update thread cache with new data
+      if (loadedData.length > 0) {
+        await this.updateThreadCache(threadId, loadedData);
+      }
+
+      // Prepare response
+      const response = {
+        query,
+        result: analysis,
+        metadata: {
+          explanation,
+          processingTimeMs: Date.now() - startTime,
+          fileCount: fileIds.length,
+          isComparison,
+          isFollowUp,
+          source: "unified-service",
+        },
+        compatibilityInfo: compatibilityMetadata,
+      };
+
+      return response;
+    } catch (error) {
+      logger.error(
+        `[DATA_RETRIEVAL] Error in processQueryWithData: ${error.message}`
+      );
+      return {
+        query,
+        result: `Sorry, I encountered an error: ${error.message}`,
+        metadata: {
+          error: error.message,
+          processingTimeMs: Date.now() - startTime,
+        },
+      };
     }
-
-    // Step 10: Create an enhanced context with compatibility information
-    // Check if there are any incomparable topics to highlight
-    const hasIncomparableTopics =
-      !compatibilityMetadata.isFullyCompatible &&
-      Object.entries(compatibilityMetadata.topicCompatibility || {}).some(
-        ([_, info]) => !info.comparable && info.availableYears.length > 1
-      );
-
-    // Add flag directly to context to simplify prompt building decisions
-    const enhancedContext = {
-      ...context,
-      compatibilityMetadata,
-      compatibilityVerbosity,
-      hasIncomparableTopics,
-    };
-
-    // Log if incomparable topics were detected
-    if (hasIncomparableTopics) {
-      logger.info(
-        `[COMPATIBILITY] Detected incomparable topics in compatibility metadata. ` +
-          `Setting hasIncomparableTopics flag to true.`
-      );
-    }
-
-    // Log that we're including compatibility information in the prompt
-    logCompatibilityInPrompt(
-      compatibilityVerbosity,
-      query,
-      compatibilityMetadata.isFullyCompatible
-    );
-
-    // Step 11: Proceed with existing processQueryWithData logic
-    return processQueryWithData(
-      query,
-      enhancedContext,
-      cachedFileIds,
-      threadId,
-      isFollowUp,
-      previousQuery,
-      previousAssistantResponse,
-      fileIdentificationResult
-    );
   }
 
   /**
@@ -666,7 +706,28 @@ export class DataRetrievalService {
    * @returns {Promise<boolean>} Success status
    */
   async updateThreadCache(threadId, files) {
-    return UnifiedCache.updateThreadWithFiles(threadId, files);
+    try {
+      // Convert loadedData array to format expected by the cache system
+      const cachedFiles = files.map((file) => {
+        // Format loadedData to CachedFile structure
+        return {
+          id: file.id,
+          fileId: file.id, // Adding fileId for compatibility with some parts of the codebase
+          data: file.data || {},
+          loadedSegments: new Set(Object.keys(file.data || {})),
+          availableSegments: new Set(Object.keys(file.data || {})),
+        };
+      });
+
+      // Log the conversion for debugging
+      logger.info(`[CACHE] Formatted ${files.length} files for thread cache`);
+
+      // Update the thread cache with properly formatted files
+      return UnifiedCache.updateThreadWithFiles(threadId, cachedFiles);
+    } catch (error) {
+      logger.error(`[CACHE] Error updating thread cache: ${error.message}`);
+      return false;
+    }
   }
 }
 

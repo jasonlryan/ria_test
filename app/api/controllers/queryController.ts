@@ -13,6 +13,7 @@ import { normalizeQueryText } from "../../../utils/shared/queryUtils";
 const dataRetrievalService = new DataRetrievalService();
 
 export async function postHandler(request) {
+  const startTime = Date.now();
   try {
     const body = await request.json();
     const { query, threadId, previousQuery, previousAssistantResponse } = body;
@@ -44,6 +45,16 @@ export async function postHandler(request) {
       normalizedPreviousQuery,
       previousAssistantResponse || ""
     );
+    
+    // Check if result is valid before returning
+    if (!result) {
+      logger.error(`[ERROR] Data retrieval service returned null or undefined result`);
+      return formatErrorResponse(new Error("Failed to process query"));
+    }
+
+    // Log processing time
+    const processingTime = Date.now() - startTime;
+    logger.info(`[QUERY] Query processed in ${processingTime}ms`);
 
     return NextResponse.json(result);
   } catch (error) {
