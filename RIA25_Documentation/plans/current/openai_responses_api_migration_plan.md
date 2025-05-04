@@ -490,57 +490,56 @@ describe("UnifiedOpenAIService", () => {
 
 - Create developer guide for Responses API usage
 
-## Risk Assessment & Mitigation
+## Migration Checklist
 
-| Risk                   | Impact | Likelihood | Mitigation                                                     |
-| ---------------------- | ------ | ---------- | -------------------------------------------------------------- |
-| API incompatibility    | High   | Medium     | Comprehensive test coverage, feature flags for gradual rollout |
-| Performance regression | High   | Low        | Benchmark before/after, performance testing in staging         |
-| Data corruption        | High   | Low        | Backup procedures, read-only migration validation              |
-| Development delays     | Medium | Medium     | Buffer time in estimates, prioritize critical paths            |
-| User-facing issues     | High   | Low        | Gradual rollout, monitoring, quick rollback procedures         |
+This checklist provides a step-by-step guide to completing the migration to OpenAI's Responses API. Use this to track progress and ensure all critical components are completed in the correct order.
 
-## Rollback Procedures
+### Critical Path Tasks
 
-Each phase includes specific rollback procedures:
+| #   | Task                                     | Dependencies | Status               | Notes                                                                                                                                                                                                                   |
+| --- | ---------------------------------------- | ------------ | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | **Complete OpenAI Service Unification**  | None         | ⚠️ IN PROGRESS (80%) | - ✅ `unifiedOpenAIService.ts` implemented with feature flag toggle<br>- ⚠️ Responses API functionality integrated directly in service rather than separate adapter<br>- ⚠️ Need to complete error handling and testing |
+| 2   | **Implement Controller Integration**     | Task #1      | ⚠️ IN PROGRESS (50%) | - ✅ `chatAssistantController.ts` updated to use unified service<br>- ⚠️ Need to update remaining controllers<br>- ⚠️ Add monitoring for API calls                                                                      |
+| 3   | **Complete Responses API Streaming**     | Task #1      | ✅ COMPLETED         | - ✅ Streaming support implemented in unified service<br>- ✅ Error handling for streaming implemented<br>- ⚠️ Need comprehensive testing                                                                               |
+| 4   | **Resolve Adapter Layer Implementation** | Task #2      | 🚫 NOT STARTED       | - Complete adapter layers connecting repository pattern<br>- Implement feature flags for rollout<br>- Add comprehensive logging                                                                                         |
+| 5   | **Implement Comprehensive Test Suite**   | Tasks #1-4   | 🚫 NOT STARTED       | - Create unit and integration tests<br>- Verify edge cases and error handling<br>- Test streaming behavior                                                                                                              |
+| 6   | **Finalize Performance Benchmarking**    | Tasks #1-4   | ⚠️ IN PROGRESS (60%) | - ✅ Monitoring infrastructure in place<br>- ✅ Performance tracking implemented<br>- ⚠️ Need actual benchmarks comparing implementations                                                                               |
+| 7   | **Implement Phased Rollout Strategy**    | Tasks #1-6   | ⚠️ IN PROGRESS (40%) | - ✅ Feature flag system implemented<br>- ✅ Rollback mechanism in place<br>- ⚠️ Need full activation schedule and documentation                                                                                        |
 
-1. **Feature Flags**: Disable problematic features immediately via admin console
-2. **API Version**: Revert to legacy OpenAI API via feature flag
-3. **Cache System**: Maintain legacy cache alongside new implementation
-4. **Deployment**: Automated rollback on error detection in CI/CD pipeline
+### Parallelizable Tasks
 
-## Timeline Estimate
+These tasks can be worked on in parallel with the critical path:
 
-| Phase                        | Duration | Dependencies | Status         |
-| ---------------------------- | -------- | ------------ | -------------- |
-| Foundation & Preparation     | 2 weeks  | None         | ✅ COMPLETED   |
-| Cache Consolidation          | 2 weeks  | Phase 1      | ✅ COMPLETED   |
-| OpenAI Service Unification   | 3 weeks  | Phase 1      | ⚠️ IN PROGRESS |
-| Data Retrieval Consolidation | 2 weeks  | Phase 2      | ✅ COMPLETED   |
-| Testing & Verification       | 2 weeks  | Phases 2-4   | 🚫 NOT STARTED |
-| Rollout & Documentation      | 1 week   | Phase 5      | 🚫 NOT STARTED |
+| #   | Task                        | Dependencies | Status         | Notes                                                                                   |
+| --- | --------------------------- | ------------ | -------------- | --------------------------------------------------------------------------------------- |
+| A   | **Documentation Updates**   | None         | 🚫 NOT STARTED | - Update API documentation<br>- Create migration guide<br>- Document best practices     |
+| B   | **Developer Training**      | Task A       | 🚫 NOT STARTED | - Prepare knowledge transfer sessions<br>- Document new patterns<br>- Update guidelines |
+| C   | **Monitoring Enhancements** | None         | 🚫 NOT STARTED | - Improve observability<br>- Add custom metrics<br>- Create alerts for issues           |
 
-**Total Estimated Duration**: 10-12 weeks
+### Task Dependencies Visualization
 
-## Leveraging Responses API Features
+```
+[1] OpenAI Service Unification
+ ↓
+[2] Controller Integration
+ ↓
+[4] Adapter Layer Implementation ← [3] Responses API Streaming
+ ↓
+[5] Test Suite ← [6] Performance Benchmarking
+ ↓
+[7] Phased Rollout
+```
 
-### Streaming Optimization
+### Risk Mitigation Checklist
 
-- Implement efficient chunk processing for real-time UI updates
-- Use streaming for progressive rendering of complex responses
-- Optimize network usage with proper chunking strategies
+| Risk                      | Mitigation Strategy                                                        | Status         |
+| ------------------------- | -------------------------------------------------------------------------- | -------------- |
+| API Incompatibility       | - Feature flags for rollback<br>- Comprehensive tests<br>- Adapter pattern | 🚫 NOT STARTED |
+| Performance Regression    | - Benchmark before/after<br>- Performance testing<br>- Gradual rollout     | 🚫 NOT STARTED |
+| Streaming Reliability     | - Robust error handling<br>- Connection recovery<br>- Fallback mechanisms  | 🚫 NOT STARTED |
+| Error Handling Edge Cases | - Comprehensive test suite<br>- Error simulation<br>- Monitoring           | 🚫 NOT STARTED |
 
-### Function Calling
-
-- Replace OpenAI tool calls with direct function calls
-- Implement type-safe function specifications
-- Create reusable function call templates for common operations
-
-### JSON Mode
-
-- Use JSON mode for structured data responses
-- Implement type validation for JSON responses
-- Optimize parsing and data extraction from structured responses
+Use this checklist to track progress and ensure all components are properly implemented before proceeding to the next phases of the migration.
 
 ## Conclusion
 
