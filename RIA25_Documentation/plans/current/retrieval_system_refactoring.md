@@ -59,7 +59,7 @@ KV thread metadata is created the moment a thread ID is generated. When the cont
 
 ## Simplification & Hardening Migration Plan
 
-**Last Updated:** Mon May 5 09:52:24 BST 2025
+**Last Updated:** Mon May 5 18:01:43 BST 2025
 
 ### Phase 0 — Build unblock & quick wins (COMPLETED)
 
@@ -89,31 +89,36 @@ ENABLE_RETRIEVAL_ADAPTER=true
 
 **Critical issue identified**: While the retrieval system correctly identifies files and builds data structures, the actual data content is not being sent with the prompt to OpenAI. This needs urgent attention in Phase 2.
 
-### Phase 2 — Legacy shim & Data transmission (1-2 hours)
+### Phase 2 — Legacy shim & Data transmission (COMPLETED)
 
-1. Rename `utils/openai/retrieval.js` → `retrieval.legacy.js`.
-2. Create shim `utils/openai/retrieval.js`:
+✅ Rename `utils/openai/retrieval.js` → `retrieval.legacy.js`.
+✅ Create shim `utils/openai/retrieval.js` exporting from adapter.
+✅ Fixed data transmission issue:
 
-```js
-export * from "../data/repository/adapters/retrieval-adapter";
-```
+- Identified SmartFiltering duplication as root cause
+- Consolidated to single implementation
+- Ensured proper data flow from repository to OpenAI prompts
 
-3. **Fix data transmission issue**:
-   - Identify where data content is dropped in the pipeline
-   - Fix OpenAI prompt construction to include actual file data
-   - Ensure data is properly converted from repository format to OpenAI messages
-   - Add logging to verify data transmission at each step
+### Phase 3 — Clean feature-flag spaghetti (COMPLETED)
 
-### Phase 3 — Clean feature-flag spaghetti (½–1 day)
+✅ Deleted branches guarded by feature flags.
+✅ Kept single roll-back flag for safety.
+✅ Consolidated import paths to repository adapter.
 
-1. Delete branches guarded by `USE_REPOSITORY_PATTERN !== "true"`, `ENABLE_RETRIEVAL_ADAPTER` etc.
-2. Keep single roll-back flag `USE_REPOSITORY_PATTERN`.
+### Phase 4 — One compatibility gate (COMPLETED)
 
-### Phase 4 — One compatibility gate (1 day)
+✅ Added utility functions in `compatibility.ts`:
 
-1. Add `filterFilesByYearAndCompatibility` in `compatibility.ts`.
-2. Call it **once** in adapter before data load.
-3. Remove duplicate gates elsewhere.
+- `lookupFiles()` - Enriches file IDs with metadata
+- `getComparablePairs()` - Validates file combinations across years
+  ✅ Enhanced repository with compatibility metadata handling.
+  ✅ Implemented controller-level compatibility checking.
+  ✅ Added hardened compatibility gate with two clear paths:
+- Single-year queries: default to 2025 data only
+- Comparison queries: validate compatible topics only
+  ✅ Fixed critical issue with undefined years in file metadata.
+  ✅ Connected controller with adapter's compatibility flag.
+  ✅ Validated proper blocking of incompatible comparisons.
 
 ### Phase 5 — Clean-up & tests (1–2 days)
 
@@ -123,5 +128,7 @@ export * from "../data/repository/adapters/retrieval-adapter";
    • first-query follow-up detection
    • default-to-2025 rule
    • comparison query blocking for non-comparable topics.
+4. Add developer documentation for compatibility system.
+5. Clean up debug logging once system is stable.
 
-_Last updated: Mon May 5 09:52:24 BST 2025_
+_Last updated: Mon May 5 18:01:43 BST 2025_
