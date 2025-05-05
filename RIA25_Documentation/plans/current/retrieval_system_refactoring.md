@@ -1,6 +1,6 @@
-# State-of-the-Union: Compatibility & Retrieval System
+# Architecture Refactoring: Consolidating the Retrieval System
 
-Below is a concise but thorough overview of how the current compatibility / retrieval system works, why the first query sometimes ends up with `isFollowUp = true`, where fragility comes from, and a hardening + simplification roadmap.
+Below is a concise but thorough overview of how the current retrieval system architecture works, where its fragility comes from, and a comprehensive plan to consolidate our maze of legacy code, adapters, and repositories into a single, maintainable implementation.
 
 ---
 
