@@ -1,21 +1,81 @@
 /**
- * Helper function to build a natural language prompt with filtered data stats.
- * Groups stats by fileId, question, and response, then formats them into readable text.
- * @param {string} originalUserContent - The original user query.
- * @param {object} filteredData - The filtered data object containing stats array.
- * @param {object} options - Additional options for prompt building.
- * @param {object} [options.compatibilityMetadata] - Compatibility metadata for the query.
- * @param {string} [options.compatibilityVerbosity='standard'] - Verbosity level for compatibility info ('minimal', 'standard', 'detailed').
- * @returns {string} - The constructed prompt string.
+ * Helper functions to build natural language prompts with filtered data stats.
+ * 
+ * @file promptUtils.ts
+ * @description Formats filtered data and compatibility metadata into structured prompts.
+ * @last_updated Mon May 5 2025
  */
 
 import logger from "../shared/logger";
 
+/**
+ * Options for building a prompt with filtered data
+ */
+export interface PromptBuildingOptions {
+  /** Compatibility metadata for the query */
+  compatibilityMetadata?: any;
+  /** Verbosity level for compatibility info */
+  compatibilityVerbosity?: 'minimal' | 'standard' | 'detailed';
+  /** Optional explicit instruction to add before the data */
+  prefixInstruction?: string;
+  /** Additional context information */
+  context?: {
+    incomparableTopicMessages?: Record<string, string>;
+    hasIncomparableTopics?: boolean;
+  };
+  /** Incomparable topic messages directly at root level */
+  incomparableTopicMessages?: Record<string, string>;
+}
+
+/**
+ * Filtered data structure used for prompt building
+ */
+export interface FilteredData {
+  /** Array of statistic items */
+  stats?: Array<{
+    fileId: string;
+    question?: string;
+    response?: string;
+    segment?: string;
+    percentage?: number;
+    value?: number;
+    [key: string]: any;
+  }>;
+  /** Nested filtered data structure */
+  filteredData?: {
+    stats?: any[];
+    filteredData?: any[];
+    summary?: string;
+  };
+  /** Direct file data for raw formatting */
+  directFileData?: Array<{
+    id: string;
+    responseCount: number;
+    examples: Array<{
+      response: string;
+      segments: Record<string, any>;
+    }>;
+  }>;
+  /** Pre-formatted direct file data */
+  formattedDirectData?: string;
+  /** Segments used in the filtering */
+  segments?: string[];
+}
+
+/**
+ * Helper function to build a natural language prompt with filtered data stats.
+ * Groups stats by fileId, question, and response, then formats them into readable text.
+ * 
+ * @param originalUserContent - The original user query
+ * @param filteredData - The filtered data object containing stats array
+ * @param options - Additional options for prompt building
+ * @returns The constructed prompt string
+ */
 export function buildPromptWithFilteredData(
-  originalUserContent,
-  filteredData,
-  options = {}
-) {
+  originalUserContent: string,
+  filteredData: FilteredData,
+  options: PromptBuildingOptions = {}
+): string {
   // Check for direct file data that might have been added by the controller
   if (
     filteredData &&
@@ -78,7 +138,7 @@ export function buildPromptWithFilteredData(
   }
 
   // Check for alternative data sources in priority order
-  let statsToUse = [];
+  let statsToUse: any[] = [];
   if (Array.isArray(filteredData.stats) && filteredData.stats.length > 0) {
     statsToUse = filteredData.stats;
     logger.info(
@@ -105,7 +165,7 @@ export function buildPromptWithFilteredData(
   }
 
   // Group filteredStats by fileId, question, response
-  const groupStats = (stats) => {
+  const groupStats = (stats: any[]) => {
     const grouped = [];
     const keyMap = new Map();
     for (const stat of stats) {
@@ -124,13 +184,13 @@ export function buildPromptWithFilteredData(
       const entry = keyMap.get(key);
       if (stat.segment === "overall") {
         entry.overall = stat.percentage;
-      } else if (stat.segment.startsWith("region:")) {
+      } else if (stat.segment && stat.segment.startsWith("region:")) {
         const region = stat.segment.split(":")[1];
         entry.region[region] = stat.percentage;
-      } else if (stat.segment.startsWith("age:")) {
+      } else if (stat.segment && stat.segment.startsWith("age:")) {
         const age = stat.segment.split(":")[1];
         entry.age[age] = stat.percentage;
-      } else if (stat.segment.startsWith("gender:")) {
+      } else if (stat.segment && stat.segment.startsWith("gender:")) {
         const gender = stat.segment.split(":")[1];
         entry.gender[gender] = stat.percentage;
       }
@@ -138,12 +198,12 @@ export function buildPromptWithFilteredData(
     return Array.from(keyMap.values());
   };
 
-  const formatGroupedStats = (grouped) => {
+  const formatGroupedStats = (grouped: any[]) => {
     return grouped
       .map((entry) => {
         let lines = [];
-        lines.push("Question: " + entry.question);
-        lines.push("Response: " + entry.response);
+        lines.push("Question: " + (entry.question || "Unknown question"));
+        lines.push("Response: " + (entry.response || "Unknown response"));
         if (entry.overall !== null) {
           lines.push("- overall: " + entry.overall + "%");
         }
@@ -219,6 +279,7 @@ export function buildPromptWithFilteredData(
   // Initialize the prompt - we'll build it in pieces
   let promptParts = {
     userQuery: originalUserContent,
+    prefixInstruction: options.prefixInstruction || "",
     incomparableTopicNotice: "",
     compatibilityInfo: "",
     data: statsPreview,
@@ -260,9 +321,10 @@ export function buildPromptWithFilteredData(
   // Add compatibility information if provided
   if (options.compatibilityMetadata) {
     const compatibilityVerbosity = options.compatibilityVerbosity || "standard";
-
+    
     // If we have incomparable topics and this is a comparison query,
     // promote verbosity to at least "standard" to ensure clear warnings
+    let effectiveVerbosity = compatibilityVerbosity;
     if (
       options.context &&
       options.context.hasIncomparableTopics &&
@@ -271,12 +333,13 @@ export function buildPromptWithFilteredData(
       logger.info(
         "[COMPATIBILITY] Upgrading verbosity from minimal to standard due to incomparable topics"
       );
-      compatibilityVerbosity = "standard";
+      // Don't modify options directly
+      effectiveVerbosity = "standard";
     }
-
+    
     // Log that we're adding compatibility info to the prompt
     logger.info(
-      `[COMPATIBILITY] Adding ${compatibilityVerbosity} compatibility info to prompt: "${originalUserContent.substring(
+      `[COMPATIBILITY] Adding ${effectiveVerbosity} compatibility info to prompt: "${originalUserContent.substring(
         0,
         60
       )}..." (isFullyCompatible: ${
@@ -286,7 +349,7 @@ export function buildPromptWithFilteredData(
 
     const compatibilitySection = formatCompatibilityMetadataForPrompt(
       options.compatibilityMetadata,
-      compatibilityVerbosity
+      effectiveVerbosity
     );
 
     if (compatibilitySection) {
@@ -298,6 +361,11 @@ export function buildPromptWithFilteredData(
   // Assemble the prompt - putting incomparable topics warning FIRST for prominence
   let prompt = promptParts.userQuery;
 
+  // Add prefix instruction if provided
+  if (promptParts.prefixInstruction) {
+    prompt += "\n\n### INSTRUCTIONS FOR RESPONSE\n" + promptParts.prefixInstruction;
+  }
+
   // Add incomparable topic notice FIRST if present
   if (promptParts.incomparableTopicNotice) {
     prompt += promptParts.incomparableTopicNotice;
@@ -308,22 +376,22 @@ export function buildPromptWithFilteredData(
     prompt += promptParts.compatibilityInfo;
   }
 
-  // Finally add the data preview
-  prompt += "\n\n" + promptParts.data;
+  // Finally add the data preview with clear header
+  prompt += "\n\n### SURVEY DATA (USE THESE EXACT STATISTICS)\nBelow are the exact statistics you must use in your response. Do not make up or estimate any other percentages. Only use the numbers provided here:\n\n" + promptParts.data;
 
   return prompt;
 }
 
 /**
  * Formats compatibility metadata for insertion into a prompt with appropriate verbosity level
- * @param {object} metadata - The compatibility metadata
- * @param {string} verbosity - Verbosity level ('minimal', 'standard', 'detailed')
- * @returns {string} Formatted compatibility information for the prompt
+ * @param metadata - The compatibility metadata
+ * @param verbosity - Verbosity level ('minimal', 'standard', 'detailed')
+ * @returns Formatted compatibility information for the prompt
  */
 export function formatCompatibilityMetadataForPrompt(
-  metadata,
-  verbosity = "standard"
-) {
+  metadata: any,
+  verbosity: 'minimal' | 'standard' | 'detailed' = "standard"
+): string {
   if (!metadata) return "";
 
   // Log the compatibility formatting
@@ -354,13 +422,13 @@ export function formatCompatibilityMetadataForPrompt(
 
     // Log incompatible topics and segments count
     const incompatibleTopics = Object.entries(metadata.topicCompatibility || {})
-      .filter(([_, info]) => !info.comparable)
+      .filter(([_, info]: [string, any]) => !info.comparable)
       .map(([topic]) => topic);
 
     const incompatibleSegments = Object.entries(
       metadata.segmentCompatibility || {}
     )
-      .filter(([_, info]) => !info.comparable)
+      .filter(([_, info]: [string, any]) => !info.comparable)
       .map(([segment]) => segment);
 
     if (incompatibleTopics.length > 0 || incompatibleSegments.length > 0) {
@@ -375,10 +443,10 @@ export function formatCompatibilityMetadataForPrompt(
 
 /**
  * Formats compatibility metadata with minimal details
- * @param {object} metadata - The compatibility metadata
- * @returns {string} Minimal compatibility information
+ * @param metadata - The compatibility metadata
+ * @returns Minimal compatibility information
  */
-function formatMinimalCompatibilityMessage(metadata) {
+function formatMinimalCompatibilityMessage(metadata: any): string {
   if (!metadata) return "";
 
   // Log formatting
@@ -400,7 +468,7 @@ function formatMinimalCompatibilityMessage(metadata) {
     const nonComparableTopics = Object.entries(
       metadata.topicCompatibility || {}
     )
-      .filter(([_, info]) => !info.comparable)
+      .filter(([_, info]: [string, any]) => !info.comparable)
       .map(([topic]) => topic);
 
     if (nonComparableTopics.length > 0) {
@@ -418,10 +486,10 @@ function formatMinimalCompatibilityMessage(metadata) {
 
 /**
  * Formats compatibility metadata with standard level of detail
- * @param {object} metadata - The compatibility metadata
- * @returns {string} Standard compatibility information
+ * @param metadata - The compatibility metadata
+ * @returns Standard compatibility information
  */
-function formatStandardCompatibilityMessage(metadata) {
+function formatStandardCompatibilityMessage(metadata: any): string {
   if (!metadata) return "";
 
   // Log formatting
@@ -446,8 +514,8 @@ function formatStandardCompatibilityMessage(metadata) {
     const nonComparableTopics = Object.entries(
       metadata.topicCompatibility || {}
     )
-      .filter(([_, info]) => !info.comparable && info.availableYears.length > 1)
-      .map(([topic, info]) => `- ${topic}: ${info.userMessage}`)
+      .filter(([_, info]: [string, any]) => !info.comparable && info.availableYears.length > 1)
+      .map(([topic, info]: [string, any]) => `- ${topic}: ${info.userMessage}`)
       .join("\n");
 
     if (nonComparableTopics) {
@@ -458,8 +526,8 @@ function formatStandardCompatibilityMessage(metadata) {
     const nonComparableSegments = Object.entries(
       metadata.segmentCompatibility || {}
     )
-      .filter(([_, info]) => !info.comparable)
-      .map(([segment, info]) => `- ${segment}: ${info.userMessage}`)
+      .filter(([_, info]: [string, any]) => !info.comparable)
+      .map(([segment, info]: [string, any]) => `- ${segment}: ${info.userMessage}`)
       .join("\n");
 
     if (nonComparableSegments) {
@@ -472,10 +540,10 @@ function formatStandardCompatibilityMessage(metadata) {
 
 /**
  * Formats compatibility metadata with detailed information
- * @param {object} metadata - The compatibility metadata
- * @returns {string} Detailed compatibility information
+ * @param metadata - The compatibility metadata
+ * @returns Detailed compatibility information
  */
-function formatDetailedCompatibilityMessage(metadata) {
+function formatDetailedCompatibilityMessage(metadata: any): string {
   if (!metadata) return "";
 
   // Log formatting
@@ -507,7 +575,7 @@ function formatDetailedCompatibilityMessage(metadata) {
     const nonComparableTopics = Object.entries(
       metadata.topicCompatibility || {}
     )
-      .filter(([_, info]) => !info.comparable)
+      .filter(([_, info]: [string, any]) => !info.comparable)
       .map(([topic]) => topic);
 
     if (nonComparableTopics.length > 0) {
@@ -520,30 +588,30 @@ function formatDetailedCompatibilityMessage(metadata) {
 
   // Add all topics with their compatibility status
   message += "Topic Compatibility:\n";
-  Object.entries(metadata.topicCompatibility || {}).forEach(([topic, info]) => {
+  Object.entries(metadata.topicCompatibility || {}).forEach(([topic, info]: [string, any]) => {
     message += `- ${topic}:\n`;
     message += `  - Comparable: ${info.comparable ? "Yes" : "No"}\n`;
     if (!info.comparable) {
       message += `  - IMPORTANT: DO NOT COMPARE years for this topic!\n`;
     }
     message += `  - Available Years: ${
-      info.availableYears.join(", ") || "None"
+      info.availableYears && info.availableYears.length ? info.availableYears.join(", ") : "None"
     }\n`;
     message += `  - Available Markets: ${
-      info.availableMarkets.length ? info.availableMarkets.join(", ") : "All"
+      info.availableMarkets && info.availableMarkets.length ? info.availableMarkets.join(", ") : "All"
     }\n`;
     message += `  - Notice: ${info.userMessage}\n`;
   });
 
   message += "\nSegment Compatibility:\n";
   Object.entries(metadata.segmentCompatibility || {}).forEach(
-    ([segment, info]) => {
+    ([segment, info]: [string, any]) => {
       message += `- ${segment}:\n`;
       message += `  - Comparable: ${info.comparable ? "Yes" : "No"}\n`;
       if (!info.comparable) {
         message += `  - IMPORTANT: DO NOT COMPARE ${segment} data across years!\n`;
       }
-      if (info.comparableValues.length) {
+      if (info.comparableValues && info.comparableValues.length) {
         message += `  - Comparable Values: ${info.comparableValues.join(
           ", "
         )}\n`;
@@ -553,4 +621,4 @@ function formatDetailedCompatibilityMessage(metadata) {
   );
 
   return message;
-}
+} 

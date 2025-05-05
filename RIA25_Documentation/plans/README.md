@@ -20,6 +20,10 @@ The following plans have been fully implemented:
 7. **Data Compatibility Implementation** - Blocking incompatible year-on-year comparisons
 8. **Data Comparison Fix** - Filtering logic for incomparable data in comparisons
 9. **Data Compatibility Integration** - Integration of compatibility checks throughout the system
+10. **Retrieval System Refactoring** - Consolidation of the retrieval system architecture
+11. **No-BS Implementation Plan** - Efficient codebase cleanup and OpenAI service unification
+12. **Compatibility Gate Enhancement** - Hardened compatibility gate for year-on-year comparisons
+13. **Architecture Pattern Standardization** - Standardized controller-service pattern implementation
 
 ## Current Plans (⚠️ or ❌)
 
@@ -30,24 +34,26 @@ The following plans are in progress or pending implementation:
 3. **Shared Utilities Library** (⚠️ Partially Implemented) - Centralized utility functions
 4. **Smart Filtering and Segment-Aware Caching** (⚠️ Partially Implemented) - Enhanced caching
 5. **Vercel KV Cache Migration** (❌ Not Implemented) - Production-ready persistent caching
-6. **Compatibility Enhancements** (❌ Not Implemented) - Advanced features for compatibility handling
+6. **Compatibility Enhancements** (⚠️ Partially Implemented) - Advanced features for compatibility handling
+7. **OpenAI Responses API Migration** (⚠️ Partially Implemented) - Migration to OpenAI's new Responses API
 
 ## Implementation Priority
 
 1. **Critical Priority**:
 
-   - Vercel KV Cache Migration
+   - OpenAI Responses API Migration
+   - Complete Repository Pattern Phase 5 cleanup
 
 2. **High Priority**:
 
-   - Complete Smart Filtering and Segment-Aware Caching
-   - Finish API Refactoring
+   - Vercel KV Cache Migration
+   - Complete Architecture Standardization
 
 3. **Medium Priority**:
+   - Continue Compatibility Enhancements
    - Complete Shared Utilities Library
    - Finish Logging Migration
-   - Implement Compatibility Enhancements
 
 ## Reference
 
-For detailed information about the implementation status of each plan, refer to `current/plans_audit.md`.
+For detailed information about the implementation status of each plan, refer to `current/MASTER_IMPLEMENTATION_PLAN.md`.

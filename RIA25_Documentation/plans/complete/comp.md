@@ -1,6 +1,8 @@
-# RIA25 System Enhancements: Comparison Compatibility
+# [DEPRECATED] RIA25 System Enhancements: Comparison Compatibility
 
-**Last Updated:** Wed May 1 2024
+> **DEPRECATION NOTICE:** The initial compatibility fixes outlined in this plan (Phase 0) have been successfully implemented. The compatibility gate has been hardened and is now working correctly. All remaining tasks (Phases 1-4) have been consolidated into the [MASTER_IMPLEMENTATION_PLAN.md](./MASTER_IMPLEMENTATION_PLAN.md) under the "Compatibility Enhancements" section. Please refer to that document for current implementation status and next steps.
+>
+> **Last Updated:** Mon May 5 18:14:58 BST 2025
 
 ## Overview
 

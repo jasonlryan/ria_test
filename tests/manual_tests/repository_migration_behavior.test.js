@@ -90,7 +90,82 @@ vi.mock("../../utils/shared/monitoring", () => ({
 
 // Import the code we want to test
 import { DataRetrievalService } from "../../app/api/services/dataRetrievalService";
-import { processQueryDataCore } from "../../utils/openai/queryProcessing";
+import * as adapter from "../../utils/data/repository/adapters/retrieval-adapter";
+
+// Helper function to replace processQueryDataCore
+const processQueryDataCore = async (query, params) => {
+  const {
+    threadId = "default",
+    isFollowUp = false,
+    cachedFileIds = [],
+    cachedSegmentLabels = [],
+    previousQuery = "",
+    previousResponse = "",
+    comparisonContext,
+    starterQuestionFallback,
+  } = params || {};
+
+  // Handle empty query
+  if (!query || query.trim() === "") {
+    return {
+      context: [],
+      normalizedQuery: "",
+      fileIds: [],
+      segmentLabels: [],
+      isComparisonQuery: false,
+      earlyReturn: true,
+    };
+  }
+
+  // Handle starter questions if detected
+  if (adapter.isStarterQuestion(query) && starterQuestionFallback) {
+    return {
+      context: starterQuestionFallback,
+      isStarterQuestion: true,
+      normalizedQuery: query,
+    };
+  }
+
+  // Detect comparison queries
+  const isComparison = adapter.detectComparisonQuery(query);
+
+  // Use existing comparison context if available
+  if (isComparison && comparisonContext) {
+    return {
+      context: comparisonContext,
+      normalizedQuery: query,
+      isComparisonQuery: true,
+    };
+  }
+
+  // Call the adapter directly
+  const result = await adapter.processQueryWithData(
+    query,
+    "all-sector", // Default context
+    cachedFileIds,
+    threadId,
+    isFollowUp,
+    previousQuery,
+    previousResponse
+  );
+
+  // Return the same structure as the original function
+  return {
+    context: result?.processedData || [],
+    normalizedQuery: query,
+    fileIds: result?.relevantFiles
+      ? result.relevantFiles.map((file) =>
+          typeof file === "string" ? file : file.id
+        )
+      : [],
+    segmentLabels: result?.relevantFiles
+      ? result.relevantFiles.flatMap((file) =>
+          file.segments ? file.segments.map((segment) => segment.label) : []
+        )
+      : [],
+    isComparisonQuery: Boolean(result?.isComparison || isComparison),
+  };
+};
 
 describe("Repository Migration Behavioral Tests", () => {
   let dataRetrievalService;

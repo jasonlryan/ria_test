@@ -1,6 +1,8 @@
-# No-BS Implementation Plan: Codebase Cleanup & Responses API Migration
+# [DEPRECATED] No-BS Implementation Plan: Codebase Cleanup & Responses API Migration
 
-**Last Updated:** Sat May 3 2025
+> **DEPRECATION NOTICE:** This plan has been successfully implemented, with OpenAI service consolidation and caching system cleanup completed. All remaining tasks have been consolidated into the [MASTER_IMPLEMENTATION_PLAN.md](./MASTER_IMPLEMENTATION_PLAN.md) and the detailed [openai_responses_api_migration_plan.md](./openai_responses_api_migration_plan.md). Please refer to those documents for current implementation status and next steps.
+>
+> **Last Updated:** Mon May 5 18:14:58 BST 2025
 
 ## Timeframe: 1-2 Weeks of Actual Work
 

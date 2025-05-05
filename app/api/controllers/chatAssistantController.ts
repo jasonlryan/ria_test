@@ -41,7 +41,6 @@ import {
 } from "../../../utils/compatibility/compatibility";
 // // TEMPORARILY COMMENTED - Will fix these imports in phase 4
 // // import { CompatibilityMetadata } from "../../../utils/compatibility/compatibilityTypes";
-import { getSpecificData } from "../../../utils/data/smart_filtering";
 // // import { SystemMessage, UserMessage, AssistantMessage } from "../../../utils/message/messageTypes";
 // // import { generateTopicInsights } from "../../../utils/insights/insightGenerator";
 // // import { CHAT_MODELS } from "../../../constants/aiModels";
@@ -719,96 +718,26 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
         }
       }
 
-      const groupStats = (stats) => {
-        if (!Array.isArray(stats)) {
-          logger.error(`[ERROR] groupStats received non-array: ${typeof stats}`);
-          return [];
-        }
-        
-        const grouped = [];
-        const keyMap = new Map();
-        const segmentTypes = new Set();
-        
-        for (const stat of stats) {
-          const key = `${stat.fileId}||${stat.question}||${stat.response}`;
-          if (!keyMap.has(key)) {
-            keyMap.set(key, {
-              fileId: stat.fileId,
-              question: stat.question || "Unknown question",
-              response: stat.response || "Unknown response",
-              segments: {},
-            });
-          }
-          
-          if (stat.segment) {
-            let segmentType = "overall";
-            let segmentValue = "overall";
-            
-            if (stat.segment !== "overall" && stat.segment.includes(":")) {
-              const parts = stat.segment.split(":");
-              segmentType = parts[0];
-              segmentValue = parts[1];
-              segmentTypes.add(segmentType);
-            } else {
-              segmentTypes.add("overall");
-            }
-            
-            const entry = keyMap.get(key);
-            if (!entry.segments[segmentType]) {
-              entry.segments[segmentType] = {};
-            }
-            
-            entry.segments[segmentType][segmentValue] = stat.percentage || stat.value;
-          }
-        }
-        
-        const missingCanonicalSegments = CANONICAL_SEGMENTS.filter(seg => !segmentTypes.has(seg));
-        logger.info(`[SEGMENTS] Found in data: ${Array.from(segmentTypes).join(", ")}`);
-        logger.info(`[SEGMENTS] Missing canonical segments: ${missingCanonicalSegments.join(", ")}`);
-        
-        return Array.from(keyMap.values());
+      // Replace custom formatting code with buildPromptWithFilteredData
+      logger.info(`[PROMPT] Using buildPromptWithFilteredData for structured prompt generation with ${filteredStats.length} stats`);
+      
+      // Create structured data for the prompt builder
+      const filteredDataObj = {
+        stats: filteredStats,
+        segments: result.segments || DEFAULT_SEGMENTS
       };
-
-      const formatGroupedStats = (grouped) => {
-        if (!Array.isArray(grouped)) {
-          logger.error(`[ERROR] formatGroupedStats received non-array: ${typeof grouped}`);
-          return "No data matched for the selected segments.";
+      
+      // Build the prompt with the dedicated utility function
+      const standardModePrompt = buildPromptWithFilteredData(
+        originalUserContent,
+        filteredDataObj,
+        {
+          // Add explicit instruction in the query to use exact statistics
+          prefixInstruction: "IMPORTANT: Use ONLY the exact percentage statistics provided below. Do not use your own statistics or knowledge about the data.",
+          // Add metadata if available
+          compatibilityMetadata: result.compatibilityMetadata
         }
-        
-        return grouped.map((entry) => {
-          const lines = [];
-          
-          lines.push(`Question: ${entry.question}`);
-          lines.push(`Response: ${entry.response}`);
-          
-          if (entry.segments) {
-            Object.entries(entry.segments).forEach(([segmentType, segmentValues]) => {
-              if (Object.keys(segmentValues).length > 0) {
-                const valuesText = Object.entries(segmentValues)
-                  .map(([key, value]) => `${key}: ${value}%`)
-                  .join(", ");
-                
-                lines.push(`- ${segmentType} { ${valuesText} }`);
-              }
-            });
-          }
-          
-          return lines.join("\n");
-        }).join("\n\n");
-      };
-
-      const groupedStats = groupStats(filteredStats);
-      const statsPreview = groupedStats.length > 0
-        ? formatGroupedStats(groupedStats)
-        : "No data matched for the selected segments.";
-
-      const standardModePrompt = statsPreview && statsPreview.trim().length > 0
-        ? `${originalUserContent}
-
-${statsPreview}`
-        : `${originalUserContent}
-
-No data matched for the selected segments.`;
+      );
 
       if (!process.env.VERCEL) {
         try {

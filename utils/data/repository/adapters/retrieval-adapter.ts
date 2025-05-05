@@ -22,15 +22,12 @@ import path from 'path';
 import { DEFAULT_SEGMENTS } from '../../../../utils/cache/segment_keys';
 import { SmartFilteringProcessor } from '../implementations/SmartFiltering';
 
-// IMPORTANT: import from the *legacy* implementation to avoid a circular
-// dependency with the shimmed utils/openai/retrieval.js (which merely
-// re-exports this adapter).  Pulling directly from retrieval.legacy.js
-// breaks the cycle and ensures these helpers are available at module init.
+// Import utility functions from the TypeScript implementation
 import {
-  getPrecompiledStarterData as originalGetPrecompiledStarterData,
-  isStarterQuestion as originalIsStarterQuestion,
-  detectComparisonQuery as originalDetectComparisonQuery,
-} from '../../../../utils/openai/retrieval.legacy.js';
+  getPrecompiledStarterData,
+  isStarterQuestion,
+  detectComparisonQuery
+} from '../../../../utils/openai/starterHelpers';
 
 /**
  * Feature flags and rollout configuration - FORCED to true for repository pattern
@@ -443,10 +440,8 @@ export async function processQueryWithData(
   }
 }
 
-// Re-export the original implementations for backward compatibility
-export const isStarterQuestion = originalIsStarterQuestion;
-export const getPrecompiledStarterData = originalGetPrecompiledStarterData;
-export const detectComparisonQuery = originalDetectComparisonQuery;
+// Export these functions directly (no need to reassign)
+export { getPrecompiledStarterData, isStarterQuestion, detectComparisonQuery };
 
 export default {
   identifyRelevantFiles,

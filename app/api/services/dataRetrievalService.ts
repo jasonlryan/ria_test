@@ -3,6 +3,8 @@
  * Handles data retrieval, smart filtering, caching, and query processing.
  * Encapsulates logic for identifying relevant files, loading data, filtering by segments,
  * and processing queries including starter questions.
+ * 
+ * Last Updated: Sat June 1 2025
  */
 
 import fs from "fs";
@@ -11,7 +13,8 @@ import logger from "../../../utils/shared/logger";
 import { UnifiedCache } from "../../../utils/cache/cache-utils";
 import {
   identifyRelevantFiles,
-  processQueryWithData as retrievalProcessQueryWithData,
+  retrieveDataFiles,
+  processQueryWithData,
   isStarterQuestion,
   getPrecompiledStarterData,
   detectComparisonQuery,
@@ -21,28 +24,53 @@ import {
   loadCompatibilityMapping,
   filterIncomparableFiles,
 } from "../../../utils/compatibility/compatibility";
-import { getSpecificData } from "../../../utils/data/smart_filtering";
-import { unifiedOpenAIService } from "../services/unifiedOpenAIService";
+// Updated import to use the TypeScript implementation
+import { SmartFilteringProcessor } from "../../../utils/data/repository/implementations/SmartFiltering";
+import { unifiedOpenAIService } from "./unifiedOpenAIService";
 import { migrationMonitor } from "../../../utils/shared/monitoring";
+import { FilterResult } from "../../../utils/data/repository/interfaces/FilterProcessor";
+import OpenAI from 'openai';
 
-// Import compatibility types (using JS comment format since we're in a .js file)
-// @ts-check
-// const { CompatibilityMetadata } = require("../../../utils/compatibility/compatibilityTypes");
+// Define our own CompatibilityMetadata type since we can't locate the import
+interface CompatibilityMetadata {
+  isFullyCompatible: boolean;
+  topicCompatibility: Record<string, {
+    comparable: boolean;
+    availableYears: string[];
+    availableMarkets: string[];
+    userMessage?: string;
+  }>;
+  segmentCompatibility: Record<string, {
+    comparable: boolean;
+    comparableValues: string[];
+    userMessage: string;
+  }>;
+  mappingVersion?: string;
+  assessedAt: number;
+  error?: {
+    type: string;
+    message: string;
+    details: string;
+  };
+}
+
+// Create processor instance for filters
+const smartFilteringProcessor = new SmartFilteringProcessor();
 
 export class DataRetrievalService {
   constructor() {}
 
   /**
    * Process a query using the unified OpenAI service
-   * @param {string} prompt - The prompt text to process
-   * @param {object} options - Processing options
-   * @returns {Promise<object>} The processed response
+   * @param prompt - The prompt text to process
+   * @param options - Processing options
+   * @returns The processed response
    */
-  async processWithUnifiedService(prompt, options = {}) {
+  async processWithUnifiedService(prompt: string, options: any = {}): Promise<any> {
     const startTime = Date.now();
     try {
-      // Prepare messages for the OpenAI API
-      const messages = [
+      // Prepare messages for the OpenAI API with proper typing
+      const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
         {
           role: "system",
           content: "You are a helpful assistant analyzing survey data.",
@@ -84,20 +112,20 @@ export class DataRetrievalService {
 
   /**
    * Identify relevant data files based on a query and context.
-   * @param {string} query
-   * @param {string} context
-   * @param {boolean} isFollowUp
-   * @param {string} previousQuery
-   * @param {string} previousAssistantResponse
-   * @returns {Promise<object>} file IDs, matched topics, explanation, and compatibility metadata
+   * @param query - The query text
+   * @param context - Context for the query
+   * @param isFollowUp - Whether this is a follow-up query
+   * @param previousQuery - The previous query if any
+   * @param previousAssistantResponse - The previous assistant response if any
+   * @returns file IDs, matched topics, explanation, and compatibility metadata
    */
   async identifyRelevantFiles(
-    query,
-    context,
+    query: string,
+    context: string,
     isFollowUp = false,
     previousQuery = "",
     previousAssistantResponse = ""
-  ) {
+  ): Promise<any> {
     // Get the file identification result from the existing function
     const fileIdentificationResult = await identifyRelevantFiles(
       query,
@@ -149,11 +177,11 @@ export class DataRetrievalService {
 
   /**
    * Assess data compatibility for the given topics and segments
-   * @param {string[]} topics - Topic IDs to check for compatibility
-   * @param {string[]} segments - Segment types to check for compatibility
-   * @returns {object} Compatibility metadata
+   * @param topics - Topic IDs to check for compatibility
+   * @param segments - Segment types to check for compatibility
+   * @returns Compatibility metadata
    */
-  assessCompatibility(topics, segments) {
+  assessCompatibility(topics: string[], segments: string[]): CompatibilityMetadata {
     try {
       const mappingPath = path.join(
         process.cwd(),
@@ -174,7 +202,7 @@ export class DataRetrievalService {
         segmentCompatibility: {},
         mappingVersion,
         assessedAt: Date.now(),
-      };
+      } as CompatibilityMetadata;
 
       // Check topic compatibility
       for (const topicId of topics) {
@@ -233,7 +261,7 @@ export class DataRetrievalService {
       // Check segment compatibility
       for (const segmentType of segments) {
         let isSegmentCompatible = true;
-        let comparableValues = [];
+        let comparableValues: string[] = [];
         let userMessage = "";
 
         // Check segment compatibility based on mapping rules
@@ -293,22 +321,22 @@ export class DataRetrievalService {
         error: {
           type: "TECHNICAL",
           message: "Unable to assess compatibility due to a technical issue",
-          details: error.message,
+          details: error instanceof Error ? error.message : String(error),
         },
         topicCompatibility: {},
         segmentCompatibility: {},
         mappingVersion: "unknown",
         assessedAt: Date.now(),
-      };
+      } as CompatibilityMetadata;
     }
   }
 
   /**
    * Load data files from filesystem or API.
-   * @param {string[]} fileIds
-   * @returns {Promise<object[]>} loaded data files
+   * @param fileIds - Array of file IDs to load
+   * @returns loaded data files
    */
-  async loadDataFiles(fileIds) {
+  async loadDataFiles(fileIds: string[]): Promise<any[]> {
     const dataDir = path.join(process.cwd(), "scripts", "output", "split_data");
     const files = [];
 
@@ -338,60 +366,27 @@ export class DataRetrievalService {
 
   /**
    * Filter data by segments
-   * @param {object[]} loadedData - Loaded data files
-   * @param {string[]} segments - Segments to filter by
-   * @returns {object[]} Filtered data
+   * @param loadedData - Loaded data files
+   * @param segments - Segments to filter by
+   * @returns Filtered data
    */
-  filterDataBySegments(loadedData, segments) {
-    // Call the getSpecificData function from smart_filtering
-    const { getSpecificData } = require("../../../utils/data/smart_filtering");
-
+  filterDataBySegments(loadedData: any[], segments: string[]): any[] {
     logger.info(
       `[FILTERING] Filtering data by segments: ${JSON.stringify(segments)}`
     );
 
     try {
-      // Convert loadedData to format expected by getSpecificData
-      const formattedData = {
-        files: loadedData,
-      };
+      // Use the TypeScript implementation
+      const result = smartFilteringProcessor.filterDataBySegments(
+        loadedData,
+        { segments } as any
+      );
 
-      const result = getSpecificData(formattedData, { demographics: segments });
-
-      // Log found/missing segments
-      if (segments && segments.length > 0) {
-        const foundSegments = new Set();
-
-        // Extract found segments from filtered data
-        if (result.stats && result.stats.length > 0) {
-          result.stats.forEach((stat) => {
-            if (stat.category) {
-              foundSegments.add(stat.category);
-            }
-          });
-        }
-
-        const foundSegmentsArray = Array.from(foundSegments);
-        const missingSegments = segments.filter(
-          (seg) => !foundSegmentsArray.includes(seg)
-        );
-
-        logger.info(
-          `[FILTERING] Found segments: ${JSON.stringify(foundSegmentsArray)}`
-        );
-        if (missingSegments.length > 0) {
-          logger.warn(
-            `[FILTERING] Missing requested segments: ${JSON.stringify(
-              missingSegments
-            )}`
-          );
-        }
-      }
-
+      // Extract stats or use empty array as fallback
       return result.stats || [];
     } catch (error) {
       logger.error(
-        `[FILTERING] Error filtering data by segments: ${error.message}`
+        `[FILTERING] Error filtering data by segments: ${error instanceof Error ? error.message : String(error)}`
       );
       // Return the original data on error
       return loadedData;
@@ -400,24 +395,24 @@ export class DataRetrievalService {
 
   /**
    * Process a query with the appropriate data
-   * @param {string} query
-   * @param {string} context
-   * @param {Array<string>} cachedFileIds
-   * @param {string} threadId
-   * @param {boolean} isFollowUp
-   * @param {string} previousQuery
-   * @param {string} previousAssistantResponse
-   * @returns {Promise<object>}
+   * @param query - The query text
+   * @param context - Context for the query
+   * @param cachedFileIds - Array of cached file IDs
+   * @param threadId - Thread ID for context
+   * @param isFollowUp - Whether this is a follow-up query
+   * @param previousQuery - The previous query if any
+   * @param previousAssistantResponse - The previous assistant response if any
+   * @returns Processed query result
    */
   async processQueryWithData(
-    query,
-    context,
-    cachedFileIds = [],
-    threadId = "default",
-    isFollowUp = false,
-    previousQuery = "",
-    previousAssistantResponse = ""
-  ) {
+    query: string,
+    context: string,
+    cachedFileIds: string[] = [],
+    threadId: string = "default",
+    isFollowUp: boolean = false,
+    previousQuery: string = "",
+    previousAssistantResponse: string = ""
+  ): Promise<any> {
     // Fast path for starter questions
     if (isStarterQuestion(query)) {
       const starterCode = query.trim().toUpperCase();
@@ -487,8 +482,8 @@ export class DataRetrievalService {
       // This is a comparison query, so filter out incomparable files
       if (fileIdResult.file_ids.length > 1) {
         // Group files by year to detect mixed years
-        const filesByYear = {};
-        fileIdResult.file_ids.forEach((fileId) => {
+        const filesByYear: Record<string, string[]> = {};
+        fileIdResult.file_ids.forEach((fileId: string) => {
           const year = fileId.startsWith("2024_")
             ? "2024"
             : fileId.startsWith("2025_")
@@ -524,21 +519,21 @@ export class DataRetrievalService {
 
           // Store incomparable topic messages for the prompt
           if (context) {
-            context.incomparableTopicMessages = incomparableTopicMessages;
+            (context as any).incomparableTopicMessages = incomparableTopicMessages;
           }
         }
       }
     }
 
     // Update the context with our compatibility checks
-    context = {
-      ...context,
+    const updatedContext = {
+      ...(typeof context === 'string' ? { originalContext: context } : context),
       compatibilityChecked: true,
       isComparisonQuery,
     };
 
     // Delegate to the core retrieval implementation to avoid duplicated logic.
-    const result = await retrievalProcessQueryWithData(
+    const result = await processQueryWithData(
       query,
       context,
       cachedFileIds,
@@ -559,4 +554,4 @@ export class DataRetrievalService {
       }
     );
   }
-}
+} 

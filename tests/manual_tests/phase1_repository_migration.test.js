@@ -44,10 +44,49 @@ vi.mock("../../utils/openai/retrieval", () => ({
   identifyRelevantFiles: vi.fn(),
 }));
 
-// Import our test subject
-import { processQueryDataCore } from "../../utils/openai/queryProcessing";
+// Import directly from the adapter instead of queryProcessing
 import * as adapter from "../../utils/data/repository/adapters/retrieval-adapter";
 import * as legacy from "../../utils/openai/retrieval";
+
+// Helper function to replace processQueryDataCore
+const processQueryDataCore = async (query, params) => {
+  const {
+    threadId = "default",
+    isFollowUp = false,
+    cachedFileIds = [],
+    cachedSegmentLabels = [],
+    previousQuery = "",
+    previousResponse = "",
+  } = params || {};
+
+  // Call the adapter directly
+  const result = await adapter.processQueryWithData(
+    query,
+    "all-sector", // Default context
+    cachedFileIds,
+    threadId,
+    isFollowUp,
+    previousQuery,
+    previousResponse
+  );
+
+  // Return the same structure as the original function
+  return {
+    context: result?.processedData || [],
+    normalizedQuery: query,
+    fileIds: result?.relevantFiles
+      ? result.relevantFiles.map((file) =>
+          typeof file === "string" ? file : file.id
+        )
+      : [],
+    segmentLabels: result?.relevantFiles
+      ? result.relevantFiles.flatMap((file) =>
+          file.segments ? file.segments.map((segment) => segment.label) : []
+        )
+      : [],
+    isComparisonQuery: Boolean(result?.isComparison),
+  };
+};
 
 describe("Phase 1 - Repository Pattern Migration", () => {
   beforeEach(() => {

@@ -1,4 +1,8 @@
-# Architecture Refactoring: Consolidating the Retrieval System
+# [DEPRECATED] Architecture Refactoring: Consolidating the Retrieval System
+
+> **DEPRECATION NOTICE:** This plan has been completed through Phase 4, with only Phase 5 cleanup remaining. All outstanding tasks have been consolidated into the [MASTER_IMPLEMENTATION_PLAN.md](./MASTER_IMPLEMENTATION_PLAN.md). Please refer to that document for current implementation status and next steps.
+>
+> **Last Updated:** Mon May 5 18:14:58 BST 2025
 
 Below is a concise but thorough overview of how the current retrieval system architecture works, where its fragility comes from, and a comprehensive plan to consolidate our maze of legacy code, adapters, and repositories into a single, maintainable implementation.
 
