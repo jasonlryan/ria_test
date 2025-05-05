@@ -167,7 +167,10 @@ function formatResult(result: any): any {
     file_ids: result.relevantFiles || [],
     matched_topics: result.matchedTopics || [],
     explanation: result.explanation || "Files identified by repository",
-    segments: result.segments || DEFAULT_SEGMENTS
+    segments: result.segments || DEFAULT_SEGMENTS,
+    fileMetadata: result.fileMetadata || [],
+    isComparisonQuery: result.isComparisonQuery || false,
+    detectedYears: result.detectedYears || []
   };
 }
 

@@ -14,6 +14,7 @@
  */
 
 import { QueryContext } from './QueryContext';
+import { FileMetadata } from '../../../compatibility/compatibility';
 
 /**
  * Represents a data file with metadata and segments
@@ -29,6 +30,11 @@ export interface DataFile {
   lastModified?: Date;
   isLoaded?: boolean;
   error?: string;
+  /** Compatibility metadata */
+  topicId?: string;
+  year?: number;
+  comparable?: boolean;
+  userMessage?: string;
 }
 
 /**
@@ -44,6 +50,10 @@ export interface FileIdentificationResult {
   matchedTopics?: string[];
   /** Human-readable rationale from upstream services */
   explanation?: string;
+  /** Enriched file metadata with compatibility information */
+  fileMetadata?: FileMetadata[];
+  /** Whether the query is a comparison query */
+  isComparisonQuery?: boolean;
 }
 
 /**

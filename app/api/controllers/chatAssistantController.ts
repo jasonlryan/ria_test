@@ -1179,11 +1179,27 @@ async function clearThreadCacheForComparison(threadId: string): Promise<void> {
       return;
     }
     
-    // Reset only compatibility metadata, preserve files
+    // Re-derive fileMetadata so the compatibility gate has something to work with
+    let derivedFileMeta = [];
+    try {
+      const { lookupFiles } = await import(
+        "../../../utils/compatibility/compatibility"
+      );
+      if (Array.isArray(existingCache.files) && existingCache.files.length > 0) {
+        const ids = existingCache.files.map((f: any) =>
+          typeof f === "string" ? f : f.id
+        );
+        derivedFileMeta = lookupFiles(ids);
+      }
+    } catch (e) {
+      // fail silently – we just won't have metadata
+    }
+
     const updatedCache = {
       ...existingCache,
       compatibilityMetadata: undefined,
-      lastUpdated: Date.now()
+      fileMetadata: derivedFileMeta,
+      lastUpdated: Date.now(),
     };
     
     // Update the thread cache with reset compatibility metadata

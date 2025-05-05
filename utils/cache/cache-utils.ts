@@ -48,6 +48,8 @@ export interface CompatibilityMetadata {
 export interface ThreadCache {
   files: CachedFile[];
   compatibilityMetadata?: CompatibilityMetadata;
+  /** Enriched file metadata with compatibility info */
+  fileMetadata?: import("../compatibility/compatibility").FileMetadata[];
   lastUpdated: number;
   previousQueries?: string[];
   rawQueries?: string[];

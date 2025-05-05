@@ -63,6 +63,26 @@ export interface CompatibilityMapping {
 }
 
 /**
+ * Extended file metadata with compatibility information
+ */
+export interface FileMetadata {
+  fileId: string;
+  topicId: string;
+  year: number;
+  comparable: boolean;
+  userMessage?: string;
+}
+
+/**
+ * Result of comparable pairs check
+ */
+export interface ComparablePairsResult {
+  valid: string[];
+  invalid: string[];
+  message: string;
+}
+
+/**
  * Load the compatibility mapping from disk
  * @returns The compatibility mapping
  * @throws Error if the compatibility file cannot be loaded
@@ -445,6 +465,155 @@ export function getFileIncomparabilityReason(fileId: string): string | null {
   }
 }
 
+/**
+ * Look up file metadata with compatibility information
+ * @param fileIds Array of file IDs to enrich with metadata
+ * @returns Array of file metadata with compatibility information
+ */
+export function lookupFiles(fileIds: string[]): FileMetadata[] {
+  try {
+    const mapping = loadCompatibilityMapping();
+    return fileIds.map(fileId => {
+      // Clean the fileId by removing .json extension if present
+      const cleanFileId = fileId.replace(/\.json$/, '');
+      
+      // Get file entry from mapping
+      const fileEntry = mapping.files[cleanFileId];
+      
+      if (!fileEntry) {
+        // Default for unknown files - conservative approach
+        return {
+          fileId: cleanFileId,
+          topicId: 'Unknown',
+          year: extractYearFromFileId(cleanFileId),
+          comparable: false,
+          userMessage: 'No compatibility information available for this file.'
+        };
+      }
+      
+      // Return enriched file metadata
+      return {
+        fileId: cleanFileId,
+        topicId: fileEntry.topicId,
+        year: fileEntry.year,
+        comparable: fileEntry.comparable,
+        userMessage: fileEntry.userMessage
+      };
+    });
+  } catch (error) {
+    logger.error(`Error looking up file metadata: ${(error as Error).message}`);
+    // Return minimal metadata with default values
+    return fileIds.map(fileId => ({
+      fileId: fileId.replace(/\.json$/, ''),
+      topicId: 'Unknown',
+      year: extractYearFromFileId(fileId),
+      comparable: false,
+      userMessage: 'Unable to determine compatibility due to a technical issue.'
+    }));
+  }
+}
+
+/**
+ * Check for comparable pairs of files across years
+ * @param files Array of file metadata to check for comparable pairs
+ * @returns Result with valid and invalid file pairs and user message
+ */
+export function getComparablePairs(files: FileMetadata[]): ComparablePairsResult {
+  try {
+    // Group files by topicId
+    const topicGroups: Record<string, FileMetadata[]> = {};
+    
+    // Initialize result
+    const result: ComparablePairsResult = {
+      valid: [],
+      invalid: [],
+      message: ''
+    };
+    
+    // Group files by topic
+    files.forEach(file => {
+      if (!topicGroups[file.topicId]) {
+        topicGroups[file.topicId] = [];
+      }
+      topicGroups[file.topicId].push(file);
+    });
+    
+    // Collect unique user messages
+    const userMessages: Set<string> = new Set();
+    
+    // Process each topic group
+    Object.entries(topicGroups).forEach(([topicId, topicFiles]) => {
+      // Get all distinct years for this topic
+      const years = new Set(topicFiles.map(file => file.year));
+      
+      // Check if topic has both 2024 and 2025 data
+      if (years.has(2024) && years.has(2025)) {
+        // Get files from each year
+        const files2024 = topicFiles.filter(file => file.year === 2024);
+        const files2025 = topicFiles.filter(file => file.year === 2025);
+        
+        // Check if any file is marked as non-comparable
+        const hasIncomparable = topicFiles.some(file => file.comparable === false);
+        
+        if (hasIncomparable) {
+          // Add all files from this topic to invalid list
+          files2024.concat(files2025).forEach(file => {
+            result.invalid.push(file.fileId);
+            if (file.userMessage) {
+              userMessages.add(file.userMessage);
+            }
+          });
+        } else {
+          // Add all files from this topic to valid list
+          files2024.concat(files2025).forEach(file => {
+            result.valid.push(file.fileId);
+          });
+        }
+      } else {
+        // Topic doesn't have files from both years, so add them all to valid
+        // (this is not a comparison between years)
+        topicFiles.forEach(file => {
+          result.valid.push(file.fileId);
+        });
+      }
+    });
+    
+    // Combine all user messages
+    result.message = Array.from(userMessages).join(' ');
+    
+    return result;
+  } catch (error) {
+    logger.error(`Error checking comparable pairs: ${(error as Error).message}`);
+    return {
+      valid: [],
+      invalid: files.map(f => f.fileId),
+      message: 'Unable to determine file compatibility due to a technical issue.'
+    };
+  }
+}
+
+/**
+ * Extract year from file ID
+ * @param fileId File ID to extract year from
+ * @returns Extracted year or default (2025)
+ */
+function extractYearFromFileId(fileId: string): number {
+  if (fileId.startsWith('2024')) return 2024;
+  if (fileId.startsWith('2025')) return 2025;
+  
+  // Try to extract from more complex patterns
+  const yearMatch = fileId.match(/^(\d{4})_/);
+  if (yearMatch) {
+    const year = parseInt(yearMatch[1]);
+    if (year === 2024 || year === 2025) {
+      return year;
+    }
+  }
+  
+  // Default to current year as fallback
+  return 2025;
+}
+
 export default {
   loadCompatibilityMapping,
   refreshCompatibilityMapping,
@@ -456,7 +625,9 @@ export default {
   getNonComparableTopics,
   getIncomparableTopicMessage,
   getFileIdsForTopic,
-  getFileIncomparabilityReason
+  getFileIncomparabilityReason,
+  lookupFiles,
+  getComparablePairs
 };
 
 // Last updated: Sat May 25 2025 

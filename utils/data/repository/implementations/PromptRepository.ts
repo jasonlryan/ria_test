@@ -1,6 +1,7 @@
 import { FileRepository, DataFile, FileIdentificationResult, FileRetrievalOptions } from '../interfaces/FileRepository';
 import { QueryContext } from '../interfaces/QueryContext';
 import FileSystemRepository from './FileSystemRepository';
+import { lookupFiles, FileMetadata } from '../../../compatibility/compatibility';
 
 /**
  * PromptRepository
@@ -40,10 +41,18 @@ export default class PromptRepository implements FileRepository {
         /* _isAdapterCall */ true
       );
 
+      // Get file IDs from the result
+      const fileIds = result?.file_ids ?? [];
+
+      // Enrich the file IDs with compatibility metadata
+      const fileMetadata = lookupFiles(fileIds);
+
       return {
-        relevantFiles: result?.file_ids ?? [],
+        relevantFiles: fileIds,
         matchedTopics: result?.matched_topics ?? [],
         detectedSegments: (result as any)?.segments ?? [],
+        fileMetadata: fileMetadata,
+        // Note: leaving out detectedYears and isComparisonQuery until legacy API supports them
         // Other optional properties can be extended later
       };
     } catch (error) {
