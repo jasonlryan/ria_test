@@ -14,9 +14,12 @@ import {
   DataScope,
   FilterResult,
   FilteredDataItem,
+  FilterProcessor
 } from "../interfaces/FilterProcessor";
 import { CANONICAL_SEGMENTS } from "../../../cache/segment_keys";
 import logger from "../../../shared/logger";
+import { DataFile } from "../interfaces/FileRepository";
+import { QueryContext } from "../interfaces/QueryContext";
 
 /**
  * Parse the user query and conversation history to extract intent.
@@ -88,190 +91,241 @@ export function mapIntentToDataScope(queryIntent: QueryIntent): DataScope {
 }
 
 /**
- * Filter data by specified segments
- * @param data - Data object with files property containing an array of data files
- * @param segments - Segments to filter by
- * @returns Filtered data result
+ * Implementation of the FilterProcessor interface for smart filtering
+ * of data files by segments and other criteria.
  */
-export function filterDataBySegments(
-  data: any,
-  segments: string[]
-): FilterResult {
-  logger.info("[FILTER] Called with data structure:", {
-    type: typeof data,
-    hasFiles: data?.files ? true : false,
-    filesCount: data?.files?.length || 0,
-    segments: JSON.stringify(segments),
-  });
+export class SmartFilteringProcessor implements FilterProcessor {
+  /**
+   * Filter data by segments and extract statistics
+   *
+   * Direct processing of DataFile[] without intermediate object transformations.
+   * 
+   * @param files Array of data files to filter
+   * @param context QueryContext containing segment information
+   * @returns FilterResult containing filtered data and statistics
+   */
+  filterDataBySegments(files: DataFile[], context: QueryContext): FilterResult {
+    logger.info("[FILTER] Called with files:", {
+      count: files.length,
+      segments: context.segments || []
+    });
 
-  // Validate input data structure
-  if (!data || typeof data !== "object" || !data.files || !Array.isArray(data.files)) {
-    logger.error("[FILTER] ERROR: Invalid data format for filtering");
-    return {
-      filteredData: [],
-      stats: [],
-      foundSegments: [],
-      missingSegments: segments,
-    };
-  }
-
-  const filesWithResponses = data.files.filter(
-    (file: any) =>
-      file.data &&
-      Array.isArray(file.data.responses) &&
-      file.data.responses.length > 0
-  ).length;
-  
-  logger.info(
-    `[FILTER] Files with valid responses: ${filesWithResponses}/${data.files.length}`
-  );
-
-  // If no segments provided, use all canonical segments
-  let segmentsToUse = segments && segments.length > 0
-    ? segments
-        .map((d) => {
-          // Map to canonical if possible (e.g., "country" → "region")
-          if (d.toLowerCase() === "country") return "region";
-          return d;
-        })
-        .filter((d) => CANONICAL_SEGMENTS.includes(d))
-    : CANONICAL_SEGMENTS;
-
-  // Always include "overall" in segmentsToUse
-  if (!segmentsToUse.includes("overall")) {
-    segmentsToUse = ["overall", ...segmentsToUse];
-  }
-
-  logger.info("[FILTER] segmentsToUse:", segmentsToUse);
-
-  const filteredStats: FilteredDataItem[] = [];
-  const foundSegments: string[] = [];
-
-  for (const file of data.files) {
-    // Verify we have a valid file to process
-    if (!file.data) {
-      logger.warn(`[FILTER] File ${file.id} has no data property`);
-      continue;
+    // Use segments from context or fallback to defaults
+    const segments = context.segments || ['region', 'age', 'gender'];
+    
+    // Validate input
+    if (!files || !Array.isArray(files) || files.length === 0) {
+      logger.error("[FILTER] ERROR: Invalid files array");
+      return {
+        filteredData: [],
+        stats: [],
+        foundSegments: [],
+        missingSegments: segments
+      };
     }
 
-    // Extract question from file
-    const question =
-      file.data.question ||
-      (file.data.metadata && file.data.metadata.canonicalQuestion) ||
-      "";
+    // Count files with responses
+    const filesWithResponses = files.filter(
+      (file: DataFile) =>
+        (Array.isArray(file.responses) && file.responses.length > 0) ||
+        ((file as any).data && Array.isArray((file as any).data.responses) && (file as any).data.responses.length > 0)
+    ).length;
+    
+    logger.info(`[FILTER] Files with valid responses: ${filesWithResponses}/${files.length}`);
 
-    // Handle different file structures
-    const responses = Array.isArray(file.data.responses)
-      ? file.data.responses
-      : Array.isArray(file.data)
-      ? file.data
-      : [];
+    // Map any non-canonical segment names and ensure overall is included
+    let segmentsToUse = segments.length > 0
+      ? segments
+          .map((d) => {
+            if (d.toLowerCase() === "country") return "region";
+            return d;
+          })
+          .filter((d) => CANONICAL_SEGMENTS.includes(d))
+      : CANONICAL_SEGMENTS;
 
-    if (responses.length === 0) {
-      logger.warn(`[FILTER] File ${file.id} has no responses`);
-      continue;
+    // Always include "overall" in segmentsToUse
+    if (!segmentsToUse.includes("overall")) {
+      segmentsToUse = ["overall", ...segmentsToUse];
     }
 
-    // Process each response
-    for (const responseObj of responses) {
-      if (!responseObj || typeof responseObj !== "object") {
+    logger.info("[FILTER] segmentsToUse:", segmentsToUse);
+
+    const filteredStats: FilteredDataItem[] = [];
+    const foundSegments: string[] = [];
+
+    // Process each file
+    for (const file of files) {
+      if (!file) {
+        logger.warn("[FILTER] Invalid file object");
         continue;
       }
 
-      const responseText = responseObj.response || "";
-      const dataObj = responseObj.data || responseObj;
+      // Extract question from file (check all possible locations)
+      const question =
+        (file as any).question || 
+        (file.metadata && file.metadata.canonicalQuestion) ||
+        ((file as any).data && (file as any).data.question) ||
+        ((file as any).data && (file as any).data.metadata && (file as any).data.metadata.canonicalQuestion) ||
+        "";
 
-      if (!dataObj || typeof dataObj !== "object") {
-        logger.warn(
-          `[FILTER] Response has no valid data object in file ${file.id}`
-        );
+      // Get responses array from the most direct source
+      const responses = Array.isArray(file.responses)
+        ? file.responses           // Direct responses array - this is what FileSystemRepository returns
+        : Array.isArray((file as any).data?.responses)
+        ? (file as any).data.responses      // Secondary location
+        : [];
+
+      if (responses.length === 0) {
+        logger.warn(`[FILTER] File ${file.id} has no responses`);
         continue;
       }
 
-      // Process each segment in dataObj
-      for (const segmentKey of Object.keys(dataObj)) {
-        // Skip if this segment isn't in our target segments
-        if (!segmentsToUse.includes(segmentKey)) {
+      // Process each response
+      for (const responseObj of responses) {
+        if (!responseObj || typeof responseObj !== "object") {
           continue;
         }
 
-        // Keep track of found segments
-        if (!foundSegments.includes(segmentKey)) {
-          foundSegments.push(segmentKey);
+        const responseText = responseObj.response || "";
+        const dataObj = responseObj.data || responseObj;
+
+        if (!dataObj || typeof dataObj !== "object") {
+          logger.warn(`[FILTER] Response has no valid data object in file ${file.id}`);
+          continue;
         }
 
-        const segmentValue = dataObj[segmentKey];
+        // Process each segment in dataObj
+        for (const segmentKey of Object.keys(dataObj)) {
+          // Skip if this segment isn't in our target segments
+          if (!segmentsToUse.includes(segmentKey)) {
+            continue;
+          }
 
-        // Handle direct value (e.g., "overall": 0.67)
-        if (typeof segmentValue === "number") {
-          filteredStats.push({
-            fileId: file.id,
-            question,
-            response: responseText,
-            segment: segmentKey,
-            category: segmentKey,
-            value: "overall",
-            stat: segmentValue,
-            percentage: Math.round(segmentValue * 100),
-            formatted: `${Math.round(segmentValue * 100)}%`,
-          });
-        }
-        // Handle nested segment objects (e.g., "region": {"united_states": 0.72, ...})
-        else if (typeof segmentValue === "object" && segmentValue !== null) {
-          for (const subKey of Object.keys(segmentValue)) {
-            const subValue = segmentValue[subKey];
-            if (typeof subValue === "number") {
-              filteredStats.push({
-                fileId: file.id,
-                question,
-                response: responseText,
-                segment: `${segmentKey}:${subKey}`,
-                category: segmentKey,
-                value: subKey,
-                stat: subValue,
-                percentage: Math.round(subValue * 100),
-                formatted: `${Math.round(subValue * 100)}%`,
-              });
+          // Track found segments
+          if (!foundSegments.includes(segmentKey)) {
+            foundSegments.push(segmentKey);
+          }
+
+          const segmentValue = dataObj[segmentKey];
+
+          // Handle direct value (e.g., "overall": 0.67)
+          if (typeof segmentValue === "number") {
+            filteredStats.push({
+              fileId: file.id,
+              question,
+              response: responseText,
+              segment: segmentKey,
+              category: segmentKey,
+              value: "overall",
+              stat: segmentValue,
+              percentage: Math.round(segmentValue * 100),
+              formatted: `${Math.round(segmentValue * 100)}%`,
+            });
+          }
+          // Handle nested segment objects (e.g., "region": {"united_states": 0.72, ...})
+          else if (typeof segmentValue === "object" && segmentValue !== null) {
+            for (const subKey of Object.keys(segmentValue)) {
+              const subValue = segmentValue[subKey];
+              if (typeof subValue === "number") {
+                filteredStats.push({
+                  fileId: file.id,
+                  question,
+                  response: responseText,
+                  segment: `${segmentKey}:${subKey}`,
+                  category: segmentKey,
+                  value: subKey,
+                  stat: subValue,
+                  percentage: Math.round(subValue * 100),
+                  formatted: `${Math.round(subValue * 100)}%`,
+                });
+              }
             }
           }
         }
       }
     }
+
+    // Log count of stats for each segment for debugging
+    segmentsToUse.forEach((seg) => {
+      const count = filteredStats.filter((stat) => stat.category === seg).length;
+      logger.info(`[FILTER] ${seg} stats count:`, count);
+    });
+
+    logger.info(`[FILTER] FINAL: Generated ${filteredStats.length} stats items across ${foundSegments.length} segments`);
+
+    // Calculate missing segments
+    const missingSegments = segmentsToUse.filter(
+      (seg) => !foundSegments.includes(seg) && seg !== "overall"
+    );
+
+    // Return the filtered data result
+    return {
+      filteredData: filteredStats,
+      stats: filteredStats,
+      summary: `Extracted ${filteredStats.length} statistics from ${files.length} files across ${foundSegments.length} segments.`,
+      foundSegments,
+      missingSegments,
+    };
   }
 
-  // Log count of stats for each segment for debugging
-  segmentsToUse.forEach((seg) => {
-    const count = filteredStats.filter((stat) => stat.category === seg).length;
-    logger.info(`[FILTER] ${seg} stats count:`, count);
-  });
-
-  logger.info(
-    `[FILTER] FINAL: Generated ${filteredStats.length} stats items across ${foundSegments.length} segments`
-  );
-
-  // Calculate missing segments
-  const missingSegments = segmentsToUse.filter(
-    (seg) => !foundSegments.includes(seg) && seg !== "overall"
-  );
-
-  // Return the filtered data result
-  return {
-    filteredData: filteredStats,
-    stats: filteredStats,
-    summary: `Extracted ${filteredStats.length} statistics from ${data.files.length} files across ${foundSegments.length} segments.`,
-    foundSegments,
-    missingSegments,
-  };
+  /**
+   * Parse query intent from the query text and context
+   * 
+   * @param query Query text to parse
+   * @param context Query context
+   * @returns Updated context with parsed intent
+   */
+  parseQueryIntent(query: string, context: QueryContext): QueryContext {
+    return {
+      ...context,
+      queryIntent: parseQueryIntent(query)
+    };
+  }
+  
+  /**
+   * Return only essential data for general queries
+   * 
+   * @param files Array of data files
+   * @param context Query context
+   * @returns Filter result with base data
+   */
+  getBaseData(files: DataFile[], context: QueryContext): FilterResult {
+    // Delegate to main implementation with default segments
+    return this.filterDataBySegments(files, {
+      ...context,
+      segments: ['overall', 'region', 'age', 'gender']
+    });
+  }
 }
 
 /**
- * Legacy wrapper for getSpecificData to maintain backward compatibility
- * @deprecated Use filterDataBySegments instead
+ * Legacy wrapper for backward compatibility
+ * Directly forwards to the SmartFilteringProcessor implementation
+ * 
+ * @deprecated Use SmartFilteringProcessor.filterDataBySegments instead
  */
-export function getSpecificData(
-  retrievedData: any,
-  options: { demographics?: string[] }
-): FilterResult {
-  logger.info("[LEGACY] Using getSpecificData adapter - forwarding to filterDataBySegments");
-  return filterDataBySegments(retrievedData, options.demographics || []);
-} 
+export function filterDataBySegments(data: any, segments: string[]): FilterResult {
+  // Handle both function signatures: DataFile[] and {files: DataFile[]}
+  const processor = new SmartFilteringProcessor();
+  
+  // If data is directly an array, assume it's DataFile[]
+  if (Array.isArray(data)) {
+    return processor.filterDataBySegments(data, { segments } as any);
+  }
+  
+  // Otherwise, use the legacy {files: [...]} format
+  if (data && Array.isArray(data.files)) {
+    return processor.filterDataBySegments(data.files, { segments } as any);
+  }
+  
+  // Invalid input
+  logger.error("[FILTER] Invalid input to filterDataBySegments");
+  return {
+    filteredData: [],
+    stats: [],
+    foundSegments: [],
+    missingSegments: segments || []
+  };
+}
+
+export default SmartFilteringProcessor; 

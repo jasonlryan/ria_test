@@ -16,9 +16,92 @@ export function buildPromptWithFilteredData(
   filteredData,
   options = {}
 ) {
+  // Check for direct file data that might have been added by the controller
+  if (
+    filteredData &&
+    filteredData.directFileData &&
+    Array.isArray(filteredData.directFileData)
+  ) {
+    logger.info(
+      `[PROMPT] Using direct file data (${filteredData.directFileData.length} files) instead of missing stats`
+    );
+
+    // Format the direct file data into a readable format
+    const formattedDirectData = filteredData.directFileData.map((file) => {
+      const fileHeader = `File: ${file.id} (${file.responseCount} responses)`;
+
+      // Format example responses
+      const exampleSections = file.examples.map((ex) => {
+        let section = `Question/Response: ${ex.response}\n`;
+
+        // Add segment data if available
+        if (ex.segments && Object.keys(ex.segments).length > 0) {
+          const segmentLines = [];
+
+          // Add overall value if it exists
+          if (ex.segments.overall !== undefined) {
+            segmentLines.push(`- overall: ${ex.segments.overall}%`);
+          }
+
+          // Add other segment categories (region, age, gender, etc.)
+          Object.entries(ex.segments).forEach(([segKey, segValue]) => {
+            if (segKey !== "overall" && typeof segValue === "object") {
+              const formattedValues = Object.entries(segValue)
+                .map(([key, val]) => `${key}: ${val}%`)
+                .join(", ");
+
+              if (formattedValues) {
+                segmentLines.push(`- ${segKey}: { ${formattedValues} }`);
+              }
+            }
+          });
+
+          // Add all segment lines to the section
+          if (segmentLines.length > 0) {
+            section += segmentLines.join("\n");
+          }
+        }
+
+        return section;
+      });
+
+      return `${fileHeader}\n${exampleSections.join("\n\n")}`;
+    });
+
+    // Add the formatted direct data to our filteredData
+    filteredData.formattedDirectData = formattedDirectData.join("\n\n");
+  }
+
   // Defensive check for filteredData and stats
-  if (!filteredData || !Array.isArray(filteredData.stats)) {
+  if (!filteredData) {
     return originalUserContent;
+  }
+
+  // Check for alternative data sources in priority order
+  let statsToUse = [];
+  if (Array.isArray(filteredData.stats) && filteredData.stats.length > 0) {
+    statsToUse = filteredData.stats;
+    logger.info(
+      `[PROMPT] Using primary stats array with ${statsToUse.length} items`
+    );
+  } else if (
+    filteredData.filteredData &&
+    Array.isArray(filteredData.filteredData.stats) &&
+    filteredData.filteredData.stats.length > 0
+  ) {
+    statsToUse = filteredData.filteredData.stats;
+    logger.info(
+      `[PROMPT] Using nested filteredData.stats with ${statsToUse.length} items`
+    );
+  } else if (
+    filteredData.filteredData &&
+    Array.isArray(filteredData.filteredData) &&
+    filteredData.filteredData.length > 0
+  ) {
+    statsToUse = filteredData.filteredData;
+    logger.info(
+      `[PROMPT] Using filteredData array directly with ${statsToUse.length} items`
+    );
   }
 
   // Group filteredStats by fileId, question, response
@@ -96,11 +179,42 @@ export function buildPromptWithFilteredData(
       .join("\n\n");
   };
 
-  const groupedStats = groupStats(filteredData.stats);
-  const statsPreview =
-    groupedStats.length > 0
-      ? formatGroupedStats(groupedStats)
-      : "No data matched for the selected segments.";
+  // Generate the standard stats preview if we have stats
+  let statsPreview = "No data matched for the selected segments.";
+  if (statsToUse.length > 0) {
+    let groupedStats = groupStats(statsToUse);
+    // Hard cap on number of grouped entries to avoid huge prompt
+    const GROUP_LIMIT = 500; // ~500 questions/responses is enough context
+    if (groupedStats.length > GROUP_LIMIT) {
+      logger.warn(
+        `[PROMPT] groupedStats size ${groupedStats.length} > ${GROUP_LIMIT}; truncating.`
+      );
+      groupedStats = groupedStats.slice(0, GROUP_LIMIT);
+    }
+
+    if (groupedStats.length > 0) {
+      statsPreview = formatGroupedStats(groupedStats);
+    }
+  }
+  // Use the direct file data as fallback if available
+  else if (filteredData.formattedDirectData) {
+    statsPreview =
+      "### Direct File Data (using raw response data):\n\n" +
+      filteredData.formattedDirectData;
+    logger.info(
+      `[PROMPT] Using formatted direct file data (${filteredData.formattedDirectData.length} chars) as fallback`
+    );
+  }
+
+  // Ensure prompt stays under 200k chars to avoid 256k OpenAI hard limit
+  const MAX_PROMPT_CHARS = 200000;
+  if (statsPreview.length > MAX_PROMPT_CHARS) {
+    logger.warn(
+      `[PROMPT] statsPreview length ${statsPreview.length} > ${MAX_PROMPT_CHARS}; truncating.`
+    );
+    statsPreview =
+      statsPreview.slice(0, MAX_PROMPT_CHARS) + "\n\n[...truncated...]";
+  }
 
   // Initialize the prompt - we'll build it in pieces
   let promptParts = {

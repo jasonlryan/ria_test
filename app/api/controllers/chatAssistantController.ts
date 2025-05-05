@@ -628,6 +628,49 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
           filteredDataKeys: result.filteredData ? Object.keys(result.filteredData).join(", ") : "N/A",
           statsType: typeof result.stats,
         })}`);
+        
+        // Check if there are relevantFiles with data that we can use directly
+        if (result.relevantFiles && Array.isArray(result.relevantFiles) && result.relevantFiles.length > 0) {
+          logger.warn(`[DATA] No structured stats found, but ${result.relevantFiles.length} relevantFiles exist. Extracting data directly.`);
+          
+          // Create direct file data for OpenAI prompt
+          const directFileData = result.relevantFiles.map((file: any) => {
+            // Get responses from the file if available
+            const fileResponses = file.responses || [];
+            
+            // Extract a sample of responses
+            const exampleResponses = fileResponses.slice(0, 5).map((resp: any) => {
+              const responseText = resp.response || "No response text";
+              const segments: Record<string, any> = {};
+              
+              // Extract segment data from response
+              if (resp.data) {
+                Object.entries(resp.data).forEach(([segKey, segValue]: [string, any]) => {
+                  if (segKey !== 'overall' && typeof segValue === 'object') {
+                    segments[segKey] = segValue;
+                  } else if (segKey === 'overall') {
+                    segments.overall = segValue;
+                  }
+                });
+              }
+              
+              return { response: responseText, segments };
+            });
+            
+            return {
+              id: file.id,
+              responseCount: fileResponses.length,
+              examples: exampleResponses,
+            };
+          });
+          
+          // Add the direct data to our filtered data for the prompt
+          if (!result.filteredData) {
+            result.filteredData = {};
+          }
+          result.filteredData.directFileData = directFileData;
+          logger.info(`[DATA] Added direct file data with ${directFileData.length} files and ${directFileData.reduce((sum, file) => sum + file.responseCount, 0)} responses`);
+        }
       }
 
       const groupStats = (stats) => {

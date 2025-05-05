@@ -23,6 +23,8 @@ export interface DataFile {
   filepath: string;
   metadata: Record<string, any>;
   segments: Record<string, any>;
+  /** Raw survey response array from source JSON (used for stats derivation) */
+  responses?: any[];
   contentType?: string;
   lastModified?: Date;
   isLoaded?: boolean;

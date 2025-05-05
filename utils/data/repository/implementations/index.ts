@@ -12,12 +12,11 @@ export { default as FileSystemRepository } from './FileSystemRepository';
 export { default as PromptRepository } from './PromptRepository';
 export { default as QueryProcessorImpl } from './QueryProcessorImpl';
 export { ThreadCacheManager } from './ThreadCacheManager';
-export { default as SmartFilteringProcessor } from './SmartFilteringProcessor';
+export { default as SmartFilteringProcessor } from './SmartFiltering';
 
 // Legacy exports (to be deprecated)
 export { 
   parseQueryIntent,
   mapIntentToDataScope,
   filterDataBySegments,
-  getSpecificData,
 } from './SmartFiltering'; 

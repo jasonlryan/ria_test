@@ -20,13 +20,17 @@ import { startTimer, endTimer, recordError } from '../monitoring';
 import { QueryContext as QueryContextImpl } from '../implementations/QueryContext';
 import path from 'path';
 import { DEFAULT_SEGMENTS } from '../../../../utils/cache/segment_keys';
+import { SmartFilteringProcessor } from '../implementations/SmartFiltering';
 
-// Import the original implementations to re-export
-import { 
+// IMPORTANT: import from the *legacy* implementation to avoid a circular
+// dependency with the shimmed utils/openai/retrieval.js (which merely
+// re-exports this adapter).  Pulling directly from retrieval.legacy.js
+// breaks the cycle and ensures these helpers are available at module init.
+import {
   getPrecompiledStarterData as originalGetPrecompiledStarterData,
   isStarterQuestion as originalIsStarterQuestion,
-  detectComparisonQuery as originalDetectComparisonQuery
-} from '../../../../utils/openai/retrieval';
+  detectComparisonQuery as originalDetectComparisonQuery,
+} from '../../../../utils/openai/retrieval.legacy.js';
 
 /**
  * Feature flags and rollout configuration - FORCED to true for repository pattern
@@ -183,6 +187,14 @@ export async function retrieveDataFiles(fileIds: string[]) {
       // End timer with success
       endTimer(timer, true, { filesRetrieved: result.length });
       
+      // Debug log the file structure to identify where responses are
+      result.forEach((file: any, idx: number) => {
+        // Avoid logging massive response content
+        const hasResponses = Array.isArray(file.responses);
+        const responseCount = hasResponses ? file.responses.length : 0;
+        logger.info(`[ADAPTER] File ${file.id}: responses=${hasResponses}, count=${responseCount}`);
+      });
+      
       logger.info(`[ADAPTER] Successfully retrieved ${result.length} files from repository`);
       return result;
     } catch (error) {
@@ -280,45 +292,62 @@ export async function processQueryWithData(
       const processedData = result.processedData || [];
       const relevantFiles = result.relevantFiles || [];
       
-      // Create a proper stats array in the format expected by the filter functions
-      let stats = [];
-      
-      // Using the structure that getSpecificData expects
+      /**
+       * STEP 1 – Load full file data (segments & responses) if not already available
+       * -------------------------------------------------------------------------
+       * SmartFiltering requires each file to expose either `segments` or
+       * `data.responses` structure.  `relevantFiles` coming from the
+       * QueryProcessorImpl may only contain file‐level metadata (ids). We need
+       * to ensure the complete file objects are in memory before filtering.
+       */
+      let dataFiles: any[] = [];
       if (relevantFiles.length > 0) {
-        logger.info(`[ADAPTER] Creating structured stats entries for filtering`);
-        
-        // Ensure processedData is actually an array before using filter
-        const processedDataArray = Array.isArray(processedData) ? processedData : [];
-        
-        // Transform file data into the expected stats format
-        stats = relevantFiles.map(file => {
-          // Cast 'file' to 'any' to avoid TypeScript errors while we're in the transition phase
-          const fileObj: any = file;
-          
-          return {
-            id: fileObj.id,
-            file_id: fileObj.id,
-            name: fileObj.id, // Just use id for name to avoid type errors
-            // Add a structured stats array with minimal data derived from actual file ID
-            stats: [{
-              // Use structural properties without hardcoding actual values
-              id: `${fileObj.id}_stat`,
-              source_file: fileObj.id,
-              // These properties are needed by filtering but contain no test data
-              category: null,
-              value: null,
-              year: fileObj.id.startsWith('2024_') ? '2024' : '2025'
-            }],
-            segments: fileObj.segments || []
+        const idsToLoad = relevantFiles.map((f: any) => (typeof f === 'string' ? f : f.id));
+        dataFiles = await retrieveDataFiles(idsToLoad);
+        logger.info(`[ADAPTER] Loaded ${dataFiles.length} files for SmartFiltering`);
+      }
+
+      /**
+       * STEP 2 – Work out which segments to include
+       * -------------------------------------------
+       * If the query explicitly asked for certain segments (tracked inside
+       * QueryContext.segmentTracking.requestedSegments) we keep those; otherwise we
+       * fall back to the DEFAULT_SEGMENTS constant (overall, region, age, gender, ...)
+       */
+      const requestedSegments: string[] = (queryContext.segmentTracking?.requestedSegments &&
+        queryContext.segmentTracking.requestedSegments.length > 0)
+        ? queryContext.segmentTracking.requestedSegments
+        : DEFAULT_SEGMENTS;
+
+      /**
+       * STEP 3 – Run SmartFilteringProcessor to obtain filtered stats
+       */
+      let stats: any[] = [];
+      if (dataFiles.length > 0) {
+        const sfProcessor = new SmartFilteringProcessor();
+        try {
+          // Create a consistent context object for the processor
+          const filterContext = {
+            ...queryContext,
+            segments: requestedSegments
           };
-        });
+          
+          // Direct call to SmartFilteringProcessor with DataFile[] array
+          const filterRes = sfProcessor.filterDataBySegments(dataFiles, filterContext);
+          stats = filterRes.stats || filterRes.filteredData || [];
+          logger.info(`[ADAPTER] SmartFiltering produced ${stats.length} stats (segments used: ${requestedSegments.join(', ')})`);
+        } catch (sfErr) {
+          logger.error(`[ADAPTER] SmartFiltering error: ${sfErr instanceof Error ? sfErr.message : String(sfErr)}`);
+        }
+      } else {
+        logger.warn(`[ADAPTER] No file data available for SmartFiltering – stats array will be empty`);
       }
       
       const enhancedResult = {
         processedData: Array.isArray(processedData) ? processedData : [],
         stats,
         enhancedContext: [],
-        relevantFiles,
+        relevantFiles: dataFiles.length > 0 ? dataFiles : relevantFiles,
         isComparison: result.isComparison || false,
         dataVersion: 2,
         metrics: {}

@@ -110,6 +110,7 @@ export class FileSystemRepository implements FileRepository {
         filepath: this.resolveFilePath(fileId),
         metadata: {},
         segments: {},
+        responses: [],
         error: error instanceof Error ? error.message : String(error),
         isLoaded: false
       };
@@ -249,6 +250,7 @@ export class FileSystemRepository implements FileRepository {
       filepath: filePath,
       metadata: fileData.metadata || {},
       segments: {},
+      responses: fileData.responses || [],
       contentType: fileData.contentType || 'application/json',
       lastModified: fileData.lastModified ? new Date(fileData.lastModified) : new Date(),
       isLoaded: false

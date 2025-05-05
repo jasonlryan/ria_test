@@ -27,7 +27,8 @@ export default class PromptRepository implements FileRepository {
    */
   async getFilesByQuery(context: QueryContext, _options?: FileRetrievalOptions): Promise<FileIdentificationResult> {
     try {
-      const { identifyRelevantFiles } = await import('../../../openai/retrieval');
+      // Import the legacy implementation directly to avoid adapter recursion
+      const { identifyRelevantFiles } = await import('../../../openai/retrieval.legacy.js');
       const options = { threadId: context.threadId || 'default' } as any;
 
       const result = await identifyRelevantFiles(
@@ -36,7 +37,7 @@ export default class PromptRepository implements FileRepository {
         context.isFollowUp,
         context.previousQuery || '',
         context.previousResponse || '',
-        true // _isAdapterCall to avoid recursive adapter path
+        /* _isAdapterCall */ true
       );
 
       return {
