@@ -6,7 +6,7 @@
 
 import { NextResponse } from "next/server";
 import { formatBadRequestResponse, formatErrorResponse } from "../../../utils/shared/errorHandler";
-import DataRetrievalService from "../services/dataRetrievalService";
+import { DataRetrievalService } from "../services/dataRetrievalService";
 import logger from "../../../utils/shared/logger";
 import { normalizeQueryText } from "../../../utils/shared/queryUtils";
 

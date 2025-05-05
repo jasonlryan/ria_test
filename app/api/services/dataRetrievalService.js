@@ -13,15 +13,14 @@ import {
   identifyRelevantFiles,
   getPrecompiledStarterData,
   isStarterQuestion,
-  processQueryWithData,
+  processQueryWithData as retrievalProcessQueryWithData,
+  detectComparisonQuery,
 } from "../../../utils/openai/retrieval";
 import { DEFAULT_SEGMENTS } from "../../../utils/cache/segment_keys";
 import {
-  logCompatibilityAssessment,
-  logCompatibilityCache,
-  logCompatibilityToFile,
-  logCompatibilityInPrompt,
-} from "../../../utils/compatibility/compatibilityLogger";
+  loadCompatibilityMapping,
+  filterIncomparableFiles,
+} from "../../../utils/compatibility/compatibility";
 import { getSpecificData } from "../../../utils/data/smart_filtering";
 import { unifiedOpenAIService } from "../services/unifiedOpenAIService";
 import { migrationMonitor } from "../../../utils/shared/monitoring";
@@ -120,12 +119,26 @@ export class DataRetrievalService {
     );
 
     // Log compatibility assessment results
-    logCompatibilityAssessment(
-      query,
-      compatibilityMetadata,
-      relevantTopics,
-      requestedSegments
+    logger.info(
+      `[COMPATIBILITY] Assessment for query: "${query.substring(0, 100)}..."`
     );
+    logger.info(`[COMPATIBILITY] Topics: ${relevantTopics.join(", ")}`);
+    logger.info(`[COMPATIBILITY] Segments: ${requestedSegments.join(", ")}`);
+    logger.info(
+      `[COMPATIBILITY] Is Fully Compatible: ${compatibilityMetadata.isFullyCompatible}`
+    );
+
+    if (!compatibilityMetadata.isFullyCompatible) {
+      const incompatibleTopics = Object.keys(
+        compatibilityMetadata.topicCompatibility || {}
+      )
+        .filter(
+          (topic) =>
+            compatibilityMetadata.topicCompatibility[topic].comparable === false
+        )
+        .join(", ");
+      logger.info(`[COMPATIBILITY] Incompatible Topics: ${incompatibleTopics}`);
+    }
 
     // Add compatibility metadata to the result
     return {
@@ -405,330 +418,131 @@ export class DataRetrievalService {
     previousQuery = "",
     previousAssistantResponse = ""
   ) {
-    const startTime = Date.now();
-
-    try {
-      // Check if this is a starter question (unchanged logic)
-      if (isStarterQuestion(query)) {
-        const starterCode = query.trim().toUpperCase();
-        const precompiled = getPrecompiledStarterData(starterCode);
-
-        if (precompiled) {
-          logger.info(
-            `[DATA_RETRIEVAL] Using precompiled data for starter question: ${starterCode}`
-          );
-          return precompiled;
-        }
+    // Fast path for starter questions
+    if (isStarterQuestion(query)) {
+      const starterCode = query.trim().toUpperCase();
+      const precompiled = getPrecompiledStarterData(starterCode);
+      if (precompiled) {
+        logger.info(
+          `Using precompiled data for starter question: ${starterCode}`
+        );
+        return precompiled;
       }
+    }
 
-      // Get cached files from thread if available
-      let cachedFiles = [];
-      if (cachedFileIds.length === 0) {
-        cachedFiles = await this.getCachedFiles(threadId);
-        cachedFileIds = cachedFiles.map((file) => file.fileId);
-      }
+    // Detect if this is a comparison query asking for 2024 data
+    const isComparisonQuery = detectComparisonQuery(query);
+    logger.info(
+      `[DATA_RETRIEVAL] Query is comparison query: ${isComparisonQuery}`
+    );
 
-      // Identify relevant files
-      const fileIdentificationResult = await this.identifyRelevantFiles(
+    // If we have precomputed identification, use it
+    let fileIdResult = null;
+    if (isFollowUp && cachedFileIds && cachedFileIds.length > 0) {
+      logger.info(
+        `[FOLLOW-UP] Using ${cachedFileIds.length} cached file IDs for thread ${threadId}`
+      );
+
+      // For follow-ups, reuse the cached file IDs
+      fileIdResult = {
+        file_ids: [...cachedFileIds],
+        matched_topics: [],
+        explanation: "Files from cache",
+      };
+    } else {
+      // Otherwise identify files based on the query
+      fileIdResult = await identifyRelevantFiles(
         query,
         context,
         isFollowUp,
         previousQuery,
         previousAssistantResponse
       );
+    }
 
-      const fileIds = fileIdentificationResult.file_ids || [];
-      const explanation = fileIdentificationResult.explanation || "";
-      const requestedSegments =
-        fileIdentificationResult.segments || DEFAULT_SEGMENTS;
-      const isComparison = this.isComparisonQuery(query);
-      const compatibilityMetadata =
-        fileIdentificationResult.compatibilityMetadata;
+    // Explicitly filter 2024 files by default UNLESS this is a comparison query
+    if (!isComparisonQuery) {
+      // Only include 2025 files unless explicitly requesting 2024 data
+      const has2024Reference = /\b2024\b/i.test(query);
 
-      logger.info(
-        `[DATA_RETRIEVAL] Identified ${
-          fileIds.length
-        } relevant files for query "${query.substring(0, 50)}..."`
-      );
+      if (!has2024Reference) {
+        const original = fileIdResult.file_ids.length;
+        fileIdResult.file_ids = fileIdResult.file_ids.filter(
+          (fileId) => !fileId.startsWith("2024_") && !fileId.includes("_2024")
+        );
 
-      // Load data from files
-      const loadedData = await this.loadDataFiles(fileIds);
-
-      // Filter data by segments
-      const filteredData = this.filterDataBySegments(
-        loadedData,
-        requestedSegments
-      );
-
-      // Process the data using unified OpenAI service instead of direct API
-      let analysis;
-      try {
-        // Create a rich prompt with all the data context
-        let prompt = query;
-        if (filteredData.stats && filteredData.stats.length > 0) {
-          prompt += "\n\n### Data:\n";
-          prompt += JSON.stringify(filteredData.stats, null, 2);
-        }
-
-        if (compatibilityMetadata) {
-          prompt += "\n\n### Compatibility Information:\n";
-          prompt += JSON.stringify(compatibilityMetadata, null, 2);
-
-          // Add warnings about incomparable topics
-          if (!compatibilityMetadata.isFullyCompatible) {
-            prompt +=
-              "\n\nWARNING: Some topics cannot be compared between years. Check compatibility metadata.";
-          }
-        }
-
-        // Add additional context for follow-up queries
-        const contextMessages = [];
-        if (isFollowUp && previousQuery && previousAssistantResponse) {
-          contextMessages.push(
-            { role: "user", content: previousQuery },
-            { role: "assistant", content: previousAssistantResponse }
+        // Log the filtering action
+        if (original !== fileIdResult.file_ids.length) {
+          logger.info(
+            `[COMPATIBILITY] Filtered out ${
+              original - fileIdResult.file_ids.length
+            } files from 2024 (default behavior, not a comparison query)`
           );
         }
+      }
+    } else {
+      // This is a comparison query, so filter out incomparable files
+      if (fileIdResult.file_ids.length > 1) {
+        // Group files by year to detect mixed years
+        const filesByYear = {};
+        fileIdResult.file_ids.forEach((fileId) => {
+          const year = fileId.startsWith("2024_")
+            ? "2024"
+            : fileId.startsWith("2025_")
+            ? "2025"
+            : "unknown";
 
-        // Process with unified service
-        const result = await this.processWithUnifiedService(prompt, {
-          contextMessages,
-          model: isComparison ? "gpt-4.1-turbo" : "gpt-4.1-mini",
+          if (!filesByYear[year]) {
+            filesByYear[year] = [];
+          }
+          filesByYear[year].push(fileId);
         });
 
-        analysis = result.content || "";
-      } catch (error) {
-        logger.error(
-          `[DATA_RETRIEVAL] Error processing query: ${error.message}`
-        );
-        analysis = `Sorry, I encountered an error analyzing the data: ${error.message}`;
-      }
+        // If we have multiple years of data, apply compatibility filtering
+        if (
+          filesByYear["2024"] &&
+          filesByYear["2025"] &&
+          filesByYear["2024"].length > 0 &&
+          filesByYear["2025"].length > 0
+        ) {
+          logger.info(
+            `[COMPATIBILITY] Detected mixed years in comparison query. Filtering incomparable files.`
+          );
 
-      // Update thread cache with new data
-      if (loadedData.length > 0) {
-        await this.updateThreadCache(threadId, loadedData);
-      }
+          // Filter incomparable files
+          const { filteredFileIds, incomparableTopicMessages } =
+            filterIncomparableFiles(
+              fileIdResult.file_ids,
+              true // This is a comparison query
+            );
 
-      // Prepare response
-      const response = {
-        query,
-        result: analysis,
-        metadata: {
-          explanation,
-          processingTimeMs: Date.now() - startTime,
-          fileCount: fileIds.length,
-          isComparison,
-          isFollowUp,
-          source: "unified-service",
-        },
-        compatibilityInfo: compatibilityMetadata,
-      };
+          // Update the file IDs
+          fileIdResult.file_ids = filteredFileIds;
 
-      return response;
-    } catch (error) {
-      logger.error(
-        `[DATA_RETRIEVAL] Error in processQueryWithData: ${error.message}`
-      );
-      return {
-        query,
-        result: `Sorry, I encountered an error: ${error.message}`,
-        metadata: {
-          error: error.message,
-          processingTimeMs: Date.now() - startTime,
-        },
-      };
-    }
-  }
-
-  /**
-   * Checks if a query is asking for a comparison between years
-   * @param {string} query - The user query
-   * @returns {boolean} - Whether the query is asking for a comparison
-   */
-  isComparisonQuery(query) {
-    if (!query) return false;
-
-    // Normalize the query
-    const normalizedQuery = query.toLowerCase();
-
-    // Patterns that indicate a comparison query
-    const comparisonPatterns = [
-      // Year-specific patterns
-      /compare.*2024.*2025/i,
-      /compare.*2025.*2024/i,
-      /comparison.*2024.*2025/i,
-      /comparison.*2025.*2024/i,
-      /2024.*compared to.*2025/i,
-      /2025.*compared to.*2024/i,
-      /2024.*vs\.?.*2025/i,
-      /2025.*vs\.?.*2024/i,
-      /2024.*versus.*2025/i,
-      /2025.*versus.*2024/i,
-
-      // Direct comparison requests
-      /\bcompare with 2024\b/i,
-      /\bcompare to 2024\b/i,
-      /\bcompare with previous year\b/i,
-      /\bcompare to previous year\b/i,
-      /\bcompare with last year\b/i,
-      /\bcompare to last year\b/i,
-
-      // Evolution/between patterns
-      /\bbetween 2024 and 2025\b/i,
-      /\bbetween 2025 and 2024\b/i,
-      /\bfrom 2024 to 2025\b/i,
-      /\bfrom 2025 to 2024\b/i,
-      /\b2024 to 2025\b/i,
-      /\b2025 to 2024\b/i,
-      /\bevolution.*between/i,
-
-      // Generic time comparison patterns
-      /change(d|s)? (from|since|over|between)/i,
-      /difference(s)? (from|since|over|between)/i,
-      /trend(s)? (from|since|over|between)/i,
-      /evolution (from|since|over|between)/i,
-      /compare (\w+ )?(year|time)/i,
-      /comparison (\w+ )?(year|time)/i,
-      /previous (year|time)/i,
-      /year[\s-]on[\s-]year/i,
-      /year[\s-]over[\s-]year/i,
-      /over time/i,
-      /across years/i,
-      /across time/i,
-
-      // Follow-up comparison queries
-      /^can you compare/i,
-      /^compare with/i,
-      /^compare to/i,
-      /^how does this compare/i,
-      /^what about (in )?2024/i,
-      /^what about (the )?(previous|last) year/i,
-    ];
-
-    // Check if any comparison pattern matches
-    return comparisonPatterns.some((pattern) => pattern.test(normalizedQuery));
-  }
-
-  /**
-   * Extracts requested segments from a query string.
-   * @param {string} query
-   * @returns {string[]} segments
-   */
-  extractSegmentsFromQuery(query) {
-    // Implement logic to parse query and extract requested segments
-    // Placeholder implementation
-    return DEFAULT_SEGMENTS;
-  }
-
-  /**
-   * Calculates missing segments for each cached file.
-   * @param {string[]} requestedSegments
-   * @param {CachedFile[]} cachedFiles
-   * @returns {Object} mapping of fileId to missing segments
-   */
-  calculateMissingSegments(requestedSegments, cachedFiles) {
-    // NOTE: All segments should be accessible within a single file regardless of cross-year
-    // compatibility concerns. Segment compatibility should only affect cross-year comparisons,
-    // not whether a segment can be retrieved from an individual file.
-
-    const missingSegments = {};
-    for (const file of cachedFiles) {
-      const loaded = file.loadedSegments || new Set();
-      const missing = requestedSegments.filter((seg) => !loaded.has(seg));
-      if (missing.length > 0) {
-        missingSegments[file.id] = missing;
+          // Store incomparable topic messages for the prompt
+          if (context) {
+            context.incomparableTopicMessages = incomparableTopicMessages;
+          }
+        }
       }
     }
-    return missingSegments;
-  }
 
-  /**
-   * Loads additional segments from disk for a specific file.
-   * @param {string} fileId
-   * @param {string[]} segments
-   * @returns {Promise<Object>} segment data
-   */
-  async loadAdditionalSegments(fileId, segments) {
-    // Implement targeted file read to extract only requested segments
-    // Placeholder: load entire file for now
-    const dataDir = path.join(process.cwd(), "scripts", "output", "split_data");
-    const fileName = fileId.endsWith(".json") ? fileId : `${fileId}.json`;
-    const filePath = path.join(dataDir, fileName);
-    const fileContent = await fs.promises.readFile(filePath, "utf8");
-    const jsonData = JSON.parse(fileContent);
-    // Extract only requested segments from jsonData
-    const segmentData = {};
-    for (const seg of segments) {
-      if (jsonData[seg]) {
-        segmentData[seg] = jsonData[seg];
-      }
-    }
-    logger.info(
-      `[LazyLoad] Loaded additional segments for file ${fileId}: ${segments.join(
-        ", "
-      )}`
+    // Update the context with our compatibility checks
+    context = {
+      ...context,
+      compatibilityChecked: true,
+      isComparisonQuery,
+    };
+
+    // Delegate to the core retrieval implementation to avoid duplicated logic.
+    return await retrievalProcessQueryWithData(
+      query,
+      context,
+      cachedFileIds,
+      threadId,
+      isFollowUp,
+      previousQuery,
+      previousAssistantResponse
     );
-    return segmentData;
-  }
-
-  /**
-   * Merges additional segment data into an existing cached file.
-   * @param {CachedFile} existingFile
-   * @param {Object} newSegmentData
-   * @param {string[]} newSegments
-   */
-  mergeFileSegments(existingFile, newSegmentData, newSegments) {
-    if (!existingFile.data) {
-      existingFile.data = {};
-    }
-    for (const seg of newSegments) {
-      existingFile.data[seg] = newSegmentData[seg];
-    }
-    if (!existingFile.loadedSegments) {
-      existingFile.loadedSegments = new Set();
-    }
-    newSegments.forEach((seg) => existingFile.loadedSegments.add(seg));
-  }
-
-  /**
-   * Get cached files for a thread
-   * @param {string} threadId - Thread ID
-   * @returns {Promise<Array>} Array of cached files
-   */
-  async getCachedFiles(threadId) {
-    return UnifiedCache.getCachedFilesForThread(threadId);
-  }
-
-  /**
-   * Update thread cache with files
-   * @param {string} threadId - Thread ID
-   * @param {Array} files - Files to cache
-   * @returns {Promise<boolean>} Success status
-   */
-  async updateThreadCache(threadId, files) {
-    try {
-      // Convert loadedData array to format expected by the cache system
-      const cachedFiles = files.map((file) => {
-        // Format loadedData to CachedFile structure
-        return {
-          id: file.id,
-          fileId: file.id, // Adding fileId for compatibility with some parts of the codebase
-          data: file.data || {},
-          loadedSegments: new Set(Object.keys(file.data || {})),
-          availableSegments: new Set(Object.keys(file.data || {})),
-        };
-      });
-
-      // Log the conversion for debugging
-      logger.info(`[CACHE] Formatted ${files.length} files for thread cache`);
-
-      // Update the thread cache with properly formatted files
-      return UnifiedCache.updateThreadWithFiles(threadId, cachedFiles);
-    } catch (error) {
-      logger.error(`[CACHE] Error updating thread cache: ${error.message}`);
-      return false;
-    }
   }
 }
-
-export default DataRetrievalService;

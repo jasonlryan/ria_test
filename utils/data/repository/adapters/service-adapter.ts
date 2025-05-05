@@ -35,7 +35,7 @@ let originalServiceInstance: any = null;
  */
 async function getOriginalService() {
   if (!originalServiceInstance) {
-    const DataRetrievalService = (await import('../../../../app/api/services/dataRetrievalService')).default;
+    const { DataRetrievalService } = await import('../../../../app/api/services/dataRetrievalService');
     originalServiceInstance = new DataRetrievalService();
   }
   return originalServiceInstance;

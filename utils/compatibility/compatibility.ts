@@ -81,32 +81,30 @@ export function loadCompatibilityMapping(): CompatibilityMapping {
       throw new Error(`Compatibility mapping file not found at ${MAPPING_PATH}`);
     }
 
-    const fileContent = fs.readFileSync(MAPPING_PATH, 'utf8');
-    const compatibilityData = JSON.parse(fileContent) as CompatibilityMapping;
+    const rawData = fs.readFileSync(MAPPING_PATH, 'utf8');
+    const compatibilityData = JSON.parse(rawData);
 
-    // Update cache
+    // Validate basic structure
+    logger.info(`[COMPATIBILITY_LOAD] Data structure confirmed: Keys found - metadata: ${!!compatibilityData.metadata}, files: ${!!compatibilityData.files}, topics: ${!!compatibilityData.topics}`);
+    
+    // Check if files object is empty
+    if (!compatibilityData.files || Object.keys(compatibilityData.files).length === 0) {
+      logger.error(`[COMPATIBILITY_LOAD] CRITICAL: Compatibility mapping loaded but 'files' object is empty or missing!`);
+      throw new Error('Compatibility mapping has no file entries. This will prevent proper compatibility checks.');
+    }
+
+    // Basic validation passed - log file count
+    const fileCount = Object.keys(compatibilityData.files).length;
+    logger.info(`[COMPATIBILITY_LOAD] Successfully loaded unified_compatibility.json. Found ${fileCount} file entries.`);
+
+    // Update cache and return
     compatibilityCache = compatibilityData;
     lastCacheTime = now;
-
-    logger.info(
-      `Loaded compatibility mapping v${compatibilityData.version} with ${
-        Object.keys(compatibilityData.files).length
-      } file entries and ${Object.keys(compatibilityData.topics).length} topic entries`
-    );
     
     return compatibilityData;
   } catch (error) {
-    logger.error(`Error loading compatibility mapping: ${(error as Error).message}`);
-    
-    // Return empty mapping on error
-    return {
-      version: '0.0',
-      lastUpdated: new Date().toISOString().split('T')[0],
-      files: {},
-      topics: {},
-      compatibleTopics: [],
-      nonComparableTopics: []
-    };
+    logger.error(`[COMPATIBILITY_LOAD] Failed to load compatibility mapping: ${error.message}`);
+    throw error;
   }
 }
 

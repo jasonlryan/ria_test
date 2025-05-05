@@ -9,7 +9,6 @@
  * @returns {string} - The constructed prompt string.
  */
 
-import { logCompatibilityInPrompt } from "../compatibility/compatibilityLogger";
 import logger from "../shared/logger";
 
 export function buildPromptWithFilteredData(
@@ -162,10 +161,13 @@ export function buildPromptWithFilteredData(
     }
 
     // Log that we're adding compatibility info to the prompt
-    logCompatibilityInPrompt(
-      compatibilityVerbosity,
-      originalUserContent.substring(0, 60),
-      options.compatibilityMetadata.isFullyCompatible
+    logger.info(
+      `[COMPATIBILITY] Adding ${compatibilityVerbosity} compatibility info to prompt: "${originalUserContent.substring(
+        0,
+        60
+      )}..." (isFullyCompatible: ${
+        options.compatibilityMetadata.isFullyCompatible
+      })`
     );
 
     const compatibilitySection = formatCompatibilityMetadataForPrompt(

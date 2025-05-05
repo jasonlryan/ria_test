@@ -12,7 +12,7 @@
       "year": 2024,
       "comparable": false,
       "reason": "Methodology changed between 2024 and 2025",
-      "userMessage": "Year‑on‑year comparisons are not available due to methodology changes."
+      "userMessage": "Year-on-year comparisons are not available due to methodology changes between 2024 and 2025."
     },
     "talent_retention_2024": {
       "fileId": "talent_retention_2024",
@@ -20,7 +20,7 @@
       "year": 2024,
       "comparable": false,
       "reason": "Question format changed between years",
-      "userMessage": "Year‑on‑year comparisons are not available due to methodology changes."
+      "userMessage": "Year-on-year comparisons are not available due to changes in question format between years."
     },
     "talent_attrition_2024": {
       "fileId": "talent_attrition_2024",
@@ -28,7 +28,7 @@
       "year": 2024,
       "comparable": false,
       "reason": "Response scales changed between 2024 and 2025",
-      "userMessage": "Year‑on‑year comparisons are not available due to methodology changes."
+      "userMessage": "Year-on-year comparisons are not available due to changes in response scales between 2024 and 2025."
     },
     "talent_attraction_2025": {
       "fileId": "talent_attraction_2025",
@@ -36,7 +36,7 @@
       "year": 2025,
       "comparable": false,
       "reason": "Methodology changed between 2024 and 2025",
-      "userMessage": "Year‑on‑year comparisons are not available due to methodology changes."
+      "userMessage": "Year-on-year comparisons are not available due to methodology changes between 2024 and 2025."
     },
     "talent_retention_2025": {
       "fileId": "talent_retention_2025",
@@ -44,7 +44,7 @@
       "year": 2025,
       "comparable": false,
       "reason": "Question format changed between years",
-      "userMessage": "Year‑on‑year comparisons are not available due to methodology changes."
+      "userMessage": "Year-on-year comparisons are not available due to changes in question format between years."
     },
     "talent_attrition_2025": {
       "fileId": "talent_attrition_2025",
@@ -52,7 +52,7 @@
       "year": 2025,
       "comparable": false,
       "reason": "Response scales changed between 2024 and 2025",
-      "userMessage": "Year‑on‑year comparisons are not available due to methodology changes."
+      "userMessage": "Year-on-year comparisons are not available due to changes in response scales between 2024 and 2025."
     },
     "intention_leave_2024": {
       "fileId": "intention_leave_2024",
@@ -67,6 +67,101 @@
       "year": 2025,
       "comparable": true,
       "userMessage": "Data based on comparable markets only."
+    },
+    "2024_1_1": {
+      "fileId": "2024_1_1",
+      "topicId": "Attraction_Factors",
+      "year": 2024,
+      "comparable": false,
+      "reason": "Methodology changed between 2024 and 2025",
+      "userMessage": "Year‑on‑year comparisons are not available due to methodology changes."
+    },
+    "2024_1_2": {
+      "fileId": "2024_1_2",
+      "topicId": "Retention_Factors",
+      "year": 2024,
+      "comparable": false,
+      "reason": "Question format changed between years",
+      "userMessage": "Year‑on‑year comparisons are not available due to methodology changes."
+    },
+    "2025_1_1": {
+      "fileId": "2025_1_1",
+      "topicId": "Attraction_Factors",
+      "year": 2025,
+      "comparable": false,
+      "reason": "Methodology changed between 2024 and 2025",
+      "userMessage": "Year‑on‑year comparisons are not available due to methodology changes."
+    },
+    "2025_1_2": {
+      "fileId": "2025_1_2",
+      "topicId": "Retention_Factors",
+      "year": 2025,
+      "comparable": false,
+      "reason": "Question format changed between years",
+      "userMessage": "Year‑on‑year comparisons are not available due to methodology changes."
+    },
+    "2025_7_6": {
+      "fileId": "2025_7_6",
+      "topicId": "Leadership_Confidence",
+      "year": 2025,
+      "comparable": true,
+      "userMessage": "Data is comparable across years for this topic."
+    },
+    "2025_9_1": {
+      "fileId": "2025_9_1",
+      "topicId": "Manager_Capability",
+      "year": 2025,
+      "comparable": true,
+      "userMessage": "Data is comparable across years for this topic."
+    },
+    "2025_9_6": {
+      "fileId": "2025_9_6",
+      "topicId": "Manager_Capability",
+      "year": 2025,
+      "comparable": true,
+      "userMessage": "Data is comparable across years for this topic."
+    },
+    "2025_9_7": {
+      "fileId": "2025_9_7",
+      "topicId": "Manager_Capability",
+      "year": 2025,
+      "comparable": true,
+      "userMessage": "Data is comparable across years for this topic."
+    },
+    "2025_9_8": {
+      "fileId": "2025_9_8",
+      "topicId": "Manager_Capability",
+      "year": 2025,
+      "comparable": true,
+      "userMessage": "Data is comparable across years for this topic."
+    },
+    "2025_8_1": {
+      "fileId": "2025_8_1",
+      "topicId": "Leadership_Confidence",
+      "year": 2025,
+      "comparable": true,
+      "userMessage": "Data is comparable across years for this topic."
+    },
+    "2025_8_2": {
+      "fileId": "2025_8_2",
+      "topicId": "Leadership_Confidence",
+      "year": 2025,
+      "comparable": true,
+      "userMessage": "Data is comparable across years for this topic."
+    },
+    "2025_9_2": {
+      "fileId": "2025_9_2",
+      "topicId": "Manager_Capability",
+      "year": 2025,
+      "comparable": true,
+      "userMessage": "Data is comparable across years for this topic."
+    },
+    "2025_17_7": {
+      "fileId": "2025_17_7",
+      "topicId": "Trust_and_Ethics",
+      "year": 2025,
+      "comparable": true,
+      "userMessage": "Data is comparable across years for this topic."
     }
   },
   "topics": {
@@ -101,6 +196,30 @@
       "userMessage": "Data based on comparable markets only.",
       "canonicalQuestion": "What percentage of employees are considering leaving?",
       "years": [2024, 2025]
+    },
+    "Leadership_Confidence": {
+      "topicId": "Leadership_Confidence",
+      "parentTheme": "Leadership",
+      "comparable": true,
+      "userMessage": "Leadership confidence data is comparable across years.",
+      "canonicalQuestion": "How confident are employees in their leadership?",
+      "years": [2024, 2025]
+    },
+    "Manager_Capability": {
+      "topicId": "Manager_Capability",
+      "parentTheme": "Leadership",
+      "comparable": true,
+      "userMessage": "Manager capability data is comparable across years.",
+      "canonicalQuestion": "How do employees rate their managers' capabilities?",
+      "years": [2024, 2025]
+    },
+    "Trust_and_Ethics": {
+      "topicId": "Trust_and_Ethics",
+      "parentTheme": "Employee Sentiment",
+      "comparable": true,
+      "userMessage": "Trust and ethics data is comparable across years.",
+      "canonicalQuestion": "How much do employees trust their organization?",
+      "years": [2024, 2025]
     }
   },
   "globalFiles": {
@@ -117,6 +236,8 @@
     "Intention_to_Leave",
     "Skills_Utilization",
     "Leadership_Confidence",
+    "Manager_Capability",
+    "Trust_and_Ethics",
     "DEI",
     "Pay_and_Reward"
   ],

@@ -345,6 +345,53 @@ export class UnifiedCache {
         }
       }
 
+      // CACHE / SHADOW SAFETY: Prevent mixing incompatible years
+      // Check if we're trying to add files from incompatible years
+      if (existingMeta.files.length > 0 && newFiles.length > 0) {
+        const existingYears = new Set<string>();
+        const newYears = new Set<string>();
+        
+        // Extract years from file IDs
+        existingMeta.files.forEach((file: any) => {
+          if (typeof file.id === 'string' && file.id.match(/^(202[45])_/)) {
+            existingYears.add(file.id.substring(0, 4));
+          }
+        });
+        
+        newFiles.forEach(file => {
+          if (typeof file.id === 'string' && file.id.match(/^(202[45])_/)) {
+            newYears.add(file.id.substring(0, 4));
+          }
+        });
+        
+        // Check for mixed years and compatibility
+        if (existingYears.size > 0 && newYears.size > 0) {
+          const allYears = new Set([...existingYears, ...newYears]);
+          
+          // If multiple years and compatible flag is false/missing, prevent mixing
+          if (allYears.size > 1 && 
+              (!compatibilityMetadata?.isFullyCompatible || 
+               (existingMeta.compatibilityMetadata && !existingMeta.compatibilityMetadata.isFullyCompatible))) {
+            logger.warn(`[COMPATIBILITY] Prevented mixing incompatible years in thread ${threadId}: ${Array.from(allYears).join(', ')}`);
+            logger.info(`[COMPATIBILITY] Only adding files from years: ${Array.from(newYears).join(', ')}`);
+            
+            // Filter existing files to keep only those with the same years as new files
+            existingMeta.files = existingMeta.files.filter((file: any) => {
+              if (typeof file.id === 'string' && file.id.match(/^(202[45])_/)) {
+                const fileYear = file.id.substring(0, 4);
+                return newYears.has(fileYear);
+              }
+              return true; // Keep files without clear year indicators
+            });
+            
+            // Update compatibility metadata to show we've enforced compatibility
+            if (compatibilityMetadata) {
+              compatibilityMetadata.isFullyCompatible = true;
+            }
+          }
+        }
+      }
+
       // FIXED: Ensure files is an array before mapping
       const files = ensureFilesArray(existingMeta.files);
       

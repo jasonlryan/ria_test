@@ -5,12 +5,15 @@
 
 import OpenAI from "openai";
 const fs = require("fs");
-const path = require("path");
-const logger = require("../../utils/shared/logger").default;
-const {
+import path from "path";
+import { v4 as uuidv4 } from "uuid";
+import { exec } from "child_process";
+import logger from "../shared/logger";
+import {
   logPerformanceMetrics,
   logPerformanceToFile,
-} = require("../../utils/shared/loggerHelpers");
+} from "../shared/loggerHelpers";
+import { loadCompatibilityMapping } from "../compatibility/compatibility";
 
 const { DEFAULT_SEGMENTS } = require("../../utils/cache/segment_keys");
 // Import smart filtering and incremental cache modules
@@ -58,56 +61,6 @@ let canonicalTopicMapping = null;
 
 // Cache for query results to avoid repeated OpenAI calls for similar queries
 const queryCache = new Map();
-
-// Load file compatibility data once at module level
-export const fileCompatibilityData = (() => {
-  try {
-    // NOTE: Routing changed from original "scripts/reference files/file_compatibility.json" to unified file
-    const compatibilityPath = path.join(
-      process.cwd(),
-      "data",
-      "compatibility",
-      "unified_compatibility.json"
-    );
-    const data = fs.readFileSync(compatibilityPath, "utf8");
-    const parsedData = JSON.parse(data);
-    // Add logging here
-    const fileCompatKeys = parsedData.fileCompatibility
-      ? Object.keys(parsedData.fileCompatibility)
-      : [];
-    const keysLoaded = fileCompatKeys.length;
-    logger.info(
-      `[COMPATIBILITY_LOAD] Successfully loaded unified_compatibility.json. Found ${keysLoaded} file entries.`
-    );
-    if (keysLoaded > 0) {
-      logger.info(
-        `[COMPATIBILITY_LOAD] First 5 keys: ${fileCompatKeys
-          .slice(0, 5)
-          .join(", ")}`
-      );
-    } else {
-      logger.error(
-        "[COMPATIBILITY_LOAD] CRITICAL: fileCompatibilityData loaded but fileCompatibility object is empty or missing!"
-      );
-    }
-    // Log structure confirmation
-    logger.info(
-      `[COMPATIBILITY_LOAD] Data structure confirmed: Keys found - metadata: ${!!parsedData.metadata}, fileCompatibility: ${!!parsedData.fileCompatibility}, compatibleTopics: ${!!parsedData.compatibleTopics}, nonComparableTopics: ${!!parsedData.nonComparableTopics}`
-    );
-    return parsedData;
-  } catch (error) {
-    logger.error(
-      `[COMPATIBILITY_LOAD] Error loading file compatibility data: ${error.message}`
-    );
-    // Ensure a default structure is returned even on error
-    return {
-      metadata: { error: `Failed to load: ${error.message}` },
-      fileCompatibility: {},
-      compatibleTopics: [],
-      nonComparableTopics: [],
-    };
-  }
-})();
 
 /**
  * Load a prompt from a markdown file
@@ -1283,6 +1236,36 @@ export async function processQueryWithData(
     const incompatibleFiles = [];
     const compatibleFiles = []; // Keep track of compatible ones too for logging
 
+    // Load compatibility mapping
+    const compatMapping = loadCompatibilityMapping();
+
+    // Verify the mapping structure to help debugging
+    if (!compatMapping) {
+      logger.error(
+        `[COMPATIBILITY_CHECK] CRITICAL: compatMapping is null or undefined!`
+      );
+    } else {
+      // Log the structure of the compatibility mapping
+      logger.info(
+        `[COMPATIBILITY_LOAD] Data structure confirmed: Keys found - ` +
+          `metadata: ${!!compatMapping.metadata}, ` +
+          `fileCompatibility: ${!!compatMapping.fileCompatibility}, ` +
+          `files: ${!!compatMapping.files}, ` +
+          `compatibleTopics: ${!!compatMapping.compatibleTopics}, ` +
+          `nonComparableTopics: ${!!compatMapping.nonComparableTopics}`
+      );
+
+      // Check for empty files object
+      if (
+        compatMapping.files &&
+        Object.keys(compatMapping.files).length === 0
+      ) {
+        logger.error(
+          `[COMPATIBILITY_CHECK] CRITICAL: compatMapping.files is empty object!`
+        );
+      }
+    }
+
     // Check each file ID against pre-loaded compatibility data
     for (const fileId of fileIds) {
       const normalizedId = fileId.replace(/\.json$/, "");
@@ -1291,8 +1274,13 @@ export async function processQueryWithData(
         `[COMPATIBILITY_CHECK] Checking normalizedId: "${normalizedId}"`
       );
 
-      // *** THE CRITICAL LOOKUP ***
-      const compatInfo = fileCompatibilityData.fileCompatibility[normalizedId];
+      // *** THE CRITICAL LOOKUP - Fixed structure access ***
+      // First try the `files` property (TypeScript structure)
+      // Then fall back to `fileCompatibility` (old JS structure)
+      const compatInfo =
+        (compatMapping?.files && compatMapping.files[normalizedId]) ||
+        (compatMapping?.fileCompatibility &&
+          compatMapping.fileCompatibility[normalizedId]);
 
       // *** VERIFICATION LOGGING ***
       logger.info(
@@ -1318,7 +1306,9 @@ export async function processQueryWithData(
           incompatibleFiles.push({
             id: normalizedId,
             topic: compatInfo.topic,
-            message: compatInfo.userMessage, // Use the specific message
+            message:
+              compatInfo.userMessage ||
+              "This topic cannot be compared between years due to methodology changes.", // Use the specific message or fallback
           });
         } else {
           compatibleFiles.push(normalizedId);
@@ -1756,8 +1746,31 @@ function detectComparisonQuery(query) {
   // Import query normalization utility if not already at the top of the file
   const { normalizeQueryText } = require("../shared/queryUtils");
 
+  // Load compatibility mapping to check if comparison is possible
+  const {
+    loadCompatibilityMapping,
+  } = require("../compatibility/compatibility");
+
   // Normalize the query using our standard function first
   const normalizedQuery = normalizeQueryText(query).toLowerCase();
+
+  // Multi-year safety net: When we see explicit year references, especially for direct comparison queries
+  const directYearMention =
+    /\b(2024|2025|last year|previous year|year[- ]on[- ]year|year over year|yoy)\b/i.test(
+      normalizedQuery
+    );
+  const comparisonTerms =
+    /\b(compar(e|ed|ing|ison)|vs\.?|versus|differ(ence|ent)|change[sd]?|trend|over time)\b/i.test(
+      normalizedQuery
+    );
+
+  // Early return for very explicit cases
+  if (directYearMention && comparisonTerms) {
+    logger.info(
+      "[COMPATIBILITY] Detected explicit year comparison: direct year mention + comparison terms"
+    );
+    return true;
+  }
 
   // Patterns that indicate a comparison query
   const comparisonPatterns = [
@@ -1811,10 +1824,56 @@ function detectComparisonQuery(query) {
     /^how does this compare/i,
     /^what about (in )?2024/i,
     /^what about (the )?(previous|last) year/i,
+
+    // Additional patterns from logs
+    /\bcompare this with\b/i,
+    /\bcompare these with\b/i,
+    /\bcompare the data with\b/i,
+    /\bhow has this changed\b/i,
+    /\bshow me the comparison\b/i,
+    /\byear by year\b/i,
+    /\btrend analysis\b/i,
+    /\bhistorical comparison\b/i,
+    /\bhistorical data\b/i,
+    /\bshow me 2024\b/i,
+    /\bshow the 2024\b/i,
+    /\bdata from 2024\b/i,
+    /\bhas this improved\b/i,
+    /\bchanged compared to\b/i,
+    /\bcompare these results\b/i,
+    /\bcompare these findings\b/i,
+    /\bcompare these numbers\b/i,
+    /\bare these better\b/i,
+    /\bare these worse\b/i,
+    /\bcompare with previous survey\b/i,
+    /\bworse or better than\b/i,
+    /\bbetter or worse than\b/i,
+    /\bhow do the numbers compare\b/i,
+    /\byearly trend\b/i,
+    /\bannual trend\b/i,
+    /\bannual comparison\b/i,
+    /\bhow did the\b.*\bchange\b/i,
+    /\bhow did this\b.*\bchange\b/i,
   ];
 
   // Check if any comparison pattern matches
-  return comparisonPatterns.some((pattern) => pattern.test(normalizedQuery));
+  const patternMatch = comparisonPatterns.some((pattern) =>
+    pattern.test(normalizedQuery)
+  );
+
+  if (patternMatch) {
+    logger.info("[COMPATIBILITY] Detected comparison query via pattern match");
+    return true;
+  }
+
+  // Super explicit single-term direct comparison terms like "2024" or "compare" at the start
+  // with no context - typically follow-up queries asking for comparison
+  if (/^(compare|2024|previous|last year)/i.test(normalizedQuery.trim())) {
+    logger.info("[COMPATIBILITY] Detected likely comparison follow-up query");
+    return true;
+  }
+
+  return false;
 }
 
 /**

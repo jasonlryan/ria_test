@@ -3,11 +3,11 @@
  * Provides methods for determining if datasets are comparable across years
  * and retrieving compatibility information.
  *
- * Last Updated: Fri Apr 25 2025
+ * Last Updated: Mon May 6 2025
  */
 
 import logger from "../../../utils/shared/logger";
-import compatibility from "../../../utils/compatibility/compatibility";
+import * as compatibility from "../../../utils/compatibility/compatibility";
 
 export class CompatibilityService {
   constructor() {}
@@ -190,4 +190,4 @@ export class CompatibilityService {
 
 export default CompatibilityService;
 
-// Last updated: Fri Apr 25 2025
+// Last updated: Mon May 6 2025

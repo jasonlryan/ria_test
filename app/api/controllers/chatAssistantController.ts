@@ -18,7 +18,6 @@ import {
   getPrecompiledStarterData,
   isStarterQuestion,
   detectComparisonQuery,
-  fileCompatibilityData,
 } from "../../../utils/openai/retrieval";
 import {
   getCachedFilesForThread,
@@ -34,6 +33,9 @@ import { migrationMonitor } from "../../../utils/shared/monitoring";
 import { threadMetaKey } from "../../../utils/cache/key-schema";
 import kvClient from "../../../utils/cache/kvClient";
 import { normalizeQueryText, createThreadContext } from "../../../utils/shared/queryUtils";
+import {
+  loadCompatibilityMapping
+} from "../../../utils/compatibility/compatibility";
 
 const OPENAI_TIMEOUT_MS = 90000;
 const isDirectMode = process.env.FILE_ACCESS_MODE === "direct";
@@ -295,22 +297,23 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
           let checkPerformed = false;
           if (
             cachedFileIds.length > 0 &&
-            fileCompatibilityData?.fileCompatibility
+            loadCompatibilityMapping()?.files
           ) {
             checkPerformed = true;
+            const compatMapping = loadCompatibilityMapping();
             for (const fileId of cachedFileIds) {
               const normalizedId = String(fileId).replace(/\.json$/, "");
               const compatInfo =
-                fileCompatibilityData.fileCompatibility[normalizedId];
+                compatMapping.files[normalizedId];
               if (compatInfo && compatInfo.comparable === false) {
                  if (
-                  compatInfo.topic &&
+                  compatInfo.topicId &&
                   !incompatibleFilesInfo.some(
-                    (item) => item.topic === compatInfo.topic
+                    (item) => item.topic === compatInfo.topicId
                   )
                 ) {
                   incompatibleFilesInfo.push({
-                    topic: compatInfo.topic,
+                    topic: compatInfo.topicId,
                     message: compatInfo.userMessage || "Comparison not available due to methodology changes.",
                   });
                 }
@@ -320,7 +323,7 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
              if (cachedFileIds.length === 0) {
                 logger.warn(`[CONTROLLER_COMPAT_CHECK] Skipping check: No cached files found for thread ${finalThreadId}.`);
              } else {
-                logger.error(`[CONTROLLER_COMPAT_CHECK] Skipping check: fileCompatibilityData not loaded or invalid!`);
+                logger.error(`[CONTROLLER_COMPAT_CHECK] Skipping check: Compatibility mapping not loaded or invalid!`);
              }
           }
 
