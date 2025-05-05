@@ -19,9 +19,9 @@ let lastCacheTime = 0;
 // NOTE: This TypeScript version was already using the unified compatibility file
 const MAPPING_PATH = path.join(
   process.cwd(),
-  'data',
-  'compatibility',
-  'unified_compatibility.json'
+  'scripts',
+  'reference files',
+  'file_compatibility.json'
 );
 
 // Type definitions
@@ -102,7 +102,21 @@ export function loadCompatibilityMapping(): CompatibilityMapping {
     }
 
     const rawData = fs.readFileSync(MAPPING_PATH, 'utf8');
-    const compatibilityData = JSON.parse(rawData);
+    const rawData_parsed = JSON.parse(rawData);
+    
+    // Adapt structure - the file_compatibility.json uses "fileCompatibility" instead of "files"
+    const compatibilityData: CompatibilityMapping = {
+      version: rawData_parsed.metadata?.version || "1.0",
+      lastUpdated: rawData_parsed.metadata?.lastUpdated || new Date().toISOString(),
+      metadata: rawData_parsed.metadata,
+      // Use fileCompatibility instead of files if present
+      files: rawData_parsed.files || rawData_parsed.fileCompatibility || {},
+      // Use other fields as-is or empty objects
+      topics: rawData_parsed.topics || {},
+      globalFiles: rawData_parsed.globalFiles || {},
+      compatibleTopics: rawData_parsed.compatibleTopics || [],
+      nonComparableTopics: rawData_parsed.nonComparableTopics || []
+    };
 
     // Validate basic structure
     logger.info(`[COMPATIBILITY_LOAD] Data structure confirmed: Keys found - metadata: ${!!compatibilityData.metadata}, files: ${!!compatibilityData.files}, topics: ${!!compatibilityData.topics}`);
@@ -115,7 +129,7 @@ export function loadCompatibilityMapping(): CompatibilityMapping {
 
     // Basic validation passed - log file count
     const fileCount = Object.keys(compatibilityData.files).length;
-    logger.info(`[COMPATIBILITY_LOAD] Successfully loaded unified_compatibility.json. Found ${fileCount} file entries.`);
+    logger.info(`[COMPATIBILITY_LOAD] Successfully loaded file_compatibility.json. Found ${fileCount} file entries.`);
 
     // Update cache and return
     compatibilityCache = compatibilityData;
@@ -167,18 +181,19 @@ export function getFileCompatibility(fileId: string): {
         };
       }
       
-      // Default for unknown files
+      // Default for unknown files - changed to false for safety
+      logger.warn(`[COMPATIBILITY] Unknown file ID: ${cleanFileId} - No entry found in compatibility mapping.`);
       return {
-        comparable: true, // Assume comparable if not found (conservative approach)
+        comparable: false, // Changed from true to false to be cautious with unknown files
         topic: 'Unknown',
-        userMessage: 'No compatibility information available for this file.'
+        userMessage: 'File not found in compatibility mapping. Treating as non-comparable for safety.'
       };
     }
 
     // Return file compatibility info
     return {
       comparable: fileEntry.comparable,
-      topic: fileEntry.topicId,
+      topic: fileEntry.topicId || (fileEntry as any).topic || 'Unknown', // Handle both structures
       userMessage: fileEntry.userMessage
     };
   } catch (error) {
@@ -224,10 +239,11 @@ export function getTopicCompatibility(topicId: string): {
         };
       }
       
-      // Default for unknown topics
+      // Default for unknown topics - changed to false for safety
+      logger.warn(`[COMPATIBILITY] Unknown topic ID: ${topicId} - No entry found in compatibility mapping.`);
       return {
-        comparable: true, // Assume comparable if not found
-        userMessage: 'No compatibility information available for this topic.'
+        comparable: false, // Changed from true to false to be cautious with unknown topics
+        userMessage: 'Topic not found in compatibility mapping. Treating as non-comparable for safety.'
       };
     }
 
@@ -491,14 +507,21 @@ export function lookupFiles(fileIds: string[]): FileMetadata[] {
         };
       }
       
-      // Return enriched file metadata
-      return {
+      // Build enriched metadata
+      const meta: FileMetadata = {
         fileId: cleanFileId,
         topicId: fileEntry.topicId,
-        year: fileEntry.year,
+        year: (typeof fileEntry.year === 'number' && !isNaN(fileEntry.year))
+              ? fileEntry.year
+              : extractYearFromFileId(cleanFileId),
         comparable: fileEntry.comparable,
         userMessage: fileEntry.userMessage
       };
+
+      // DEBUG TRACE — remove once issue resolved
+      logger.debug(`[COMPAT_TRACE] ${meta.fileId} | topic=${meta.topicId} | year=${meta.year} | comparable=${meta.comparable}`);
+
+      return meta;
     });
   } catch (error) {
     logger.error(`Error looking up file metadata: ${(error as Error).message}`);

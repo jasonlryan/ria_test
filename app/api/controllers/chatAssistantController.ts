@@ -36,6 +36,8 @@ import { normalizeQueryText, createThreadContext } from "../../../utils/shared/q
 import {
   loadCompatibilityMapping,
   filterIncomparableFiles,
+  lookupFiles,
+  getComparablePairs
 } from "../../../utils/compatibility/compatibility";
 // // TEMPORARILY COMMENTED - Will fix these imports in phase 4
 // // import { CompatibilityMetadata } from "../../../utils/compatibility/compatibilityTypes";
@@ -521,6 +523,23 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
 
         await updateThreadCache(finalThreadId, cachedFilesForUpdate);
 
+        // === NEW: Inline compatibility gate for cached file sets ===
+        if (cachedFileIds.length > 1) {
+          try {
+            const fileMetaCheck = lookupFiles(cachedFileIds);
+            const pairRes = getComparablePairs(fileMetaCheck);
+            if (pairRes.invalid.length > 0) {
+              logger.warn(`[CONTROLLER_COMPAT_GATE] Cached file set non-comparable. Blocking.`);
+              return NextResponse.json({
+                incompatible_comparison: true,
+                message: pairRes.message || "Year-on-year comparisons are not available due to methodology changes."
+              }, { status: 200 });
+            }
+          } catch (compatErr) {
+            logger.error(`[CONTROLLER_COMPAT_GATE] Error during cached-file compatibility check: ${compatErr instanceof Error ? compatErr.message : String(compatErr)}`);
+          }
+        }
+
         result = processResult(await processQueryWithData(
           context.normalizedCurrentQuery,
           "all-sector",
@@ -559,6 +578,16 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
           cachedFileIds = relevantFilesResult?.file_ids || [];
           logger.info(`[FOLLOW-UP] Re-identified ${cachedFileIds.length} files: ${cachedFileIds.join(', ')}`);
           
+          // === NEW: respect adapter-level incompatibility flag ===
+          if (relevantFilesResult?.incompatible === true) {
+            logger.warn(`[CONTROLLER_COMPAT_GATE] Adapter flagged non-comparable files (follow-up). Returning early.`);
+            return NextResponse.json({
+              incompatible_comparison: true,
+              message: relevantFilesResult.incompatibleMessage ||
+                "Year-on-year comparisons are not available due to methodology changes."
+            }, { status: 200 });
+          }
+          
           // Add these files to the thread cache
           if (cachedFileIds.length > 0) {
             const cachedFilesForUpdate: CachedFile[] = cachedFileIds.map(id => ({
@@ -569,6 +598,23 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
             }));
             await updateThreadCache(finalThreadId, cachedFilesForUpdate);
             logger.info(`[FOLLOW-UP] Updated thread cache with ${cachedFileIds.length} files`);
+          }
+        }
+
+        // === NEW: Inline compatibility gate for cached file sets ===
+        if (cachedFileIds.length > 1) {
+          try {
+            const fileMetaCheck = lookupFiles(cachedFileIds);
+            const pairRes = getComparablePairs(fileMetaCheck);
+            if (pairRes.invalid.length > 0) {
+              logger.warn(`[CONTROLLER_COMPAT_GATE] Cached file set non-comparable. Blocking.`);
+              return NextResponse.json({
+                incompatible_comparison: true,
+                message: pairRes.message || "Year-on-year comparisons are not available due to methodology changes."
+              }, { status: 200 });
+            }
+          } catch (compatErr) {
+            logger.error(`[CONTROLLER_COMPAT_GATE] Error during cached-file compatibility check: ${compatErr instanceof Error ? compatErr.message : String(compatErr)}`);
           }
         }
 

@@ -113,6 +113,79 @@ export async function identifyRelevantFiles(
       const formattedResult = formatResult(result);
       logger.info(`[ADAPTER] Formatted result from repository: ${JSON.stringify(formattedResult.file_ids)}`);
       
+      // ===== COMPATIBILITY GATE =====
+      try {
+        // Import compatibility utilities
+        const { lookupFiles, getComparablePairs } = await import('../../../compatibility/compatibility');
+        
+        // Decide if the user intent or resulting file set implies a year-comparison
+        const distinctYearsInSet = new Set<number>();
+        const rawYearsInSet: (number | undefined)[] = [];
+
+        // Temporary array to capture potential NaN issues
+        const numericYears: number[] = [];
+
+        // Enrich with compatibility metadata ONCE
+        const fileMeta = lookupFiles(formattedResult.file_ids);
+        fileMeta.forEach(f => {
+          rawYearsInSet.push(f.year);
+          if (!isNaN(f.year)) distinctYearsInSet.add(f.year);
+          if (!isNaN(f.year)) numericYears.push(f.year);
+        });
+
+        const hasMultipleYears = distinctYearsInSet.size > 1;
+
+        const isComparison = formattedResult.isComparisonQuery === true
+                          || detectComparisonQuery(query) // explicit wording
+                          || hasMultipleYears; // implicit because 2+ years selected
+        
+        if (formattedResult.file_ids && formattedResult.file_ids.length > 0) {
+          // ====================================
+          // CASE A – NOT a comparison query
+          // ====================================
+          if (!isComparison) {
+            // Always use the latest *numeric* year present in the set
+            const latestYear = numericYears.includes(2025) ? 2025 : Math.max(...numericYears);
+
+            if (isNaN(latestYear)) {
+              logger.warn('[COMPATIBILITY GATE] Could not determine latest year – abandoning default-year filter');
+            }
+
+            const originalIds = [...formattedResult.file_ids];
+            formattedResult.file_ids = fileMeta
+                .filter(f => f.year === latestYear)
+                .map(f => f.fileId);
+                
+            logger.info(`[COMPATIBILITY GATE] Non-comparison query → default to ${latestYear}. Years present: ${Array.from(distinctYearsInSet).join(',')}. Kept ${formattedResult.file_ids.length}/${originalIds.length} files.`);
+          }
+          // ====================================
+          // CASE B – Comparison query
+          // ====================================
+          else {
+            const compatResult = getComparablePairs(fileMeta);
+            
+            if (compatResult.invalid.length > 0) {
+              // incompatible → let controller return 409 / user-message
+              formattedResult.incompatible = true;
+              formattedResult.incompatibleMessage = compatResult.message || 'Files/topics not comparable';
+              logger.warn(`[COMPATIBILITY GATE] Comparison blocked. Non-comparable files: ${compatResult.invalid.join(', ')}`);
+              
+              // Keep only valid files if any
+              if (compatResult.valid.length > 0) {
+                formattedResult.file_ids = compatResult.valid;
+              }
+            } else {
+              logger.info('[COMPATIBILITY GATE] Comparison allowed – files are compatible');
+            }
+          }
+          
+          // Store metadata for downstream use
+          formattedResult.fileMetadata = fileMeta;
+        }
+      } catch (compatError) {
+        logger.error(`[COMPATIBILITY GATE] Error applying compatibility gate: ${compatError instanceof Error ? compatError.message : String(compatError)}`);
+      }
+      
       // End timer with success status
       endTimer(repoTimer, true, { 
         fileCount: formattedResult?.file_ids?.length || 0,
