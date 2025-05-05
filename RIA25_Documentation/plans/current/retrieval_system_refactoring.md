@@ -59,33 +59,37 @@ KV thread metadata is created the moment a thread ID is generated. When the cont
 
 ## Simplification & Hardening Migration Plan
 
-**Last Updated:** Mon May 05 2025
+**Last Updated:** Mon May 5 09:52:24 BST 2025
 
-### Phase 0 — Build unblock & quick wins (½ day)
+### Phase 0 — Build unblock & quick wins (COMPLETED)
 
-1. Fix unterminated template literal and duplicate export in `dataRetrievalService.js`.
-2. Correct `queryController` import to named `DataRetrievalService`.
-3. Adjust thread-meta check:
+✅ Fix unterminated template literal and duplicate export in `dataRetrievalService.js`.
+✅ Correct `queryController` import to named `DataRetrievalService`.
+✅ Adjust thread-meta check:
 
 ```ts
 const isFollowUp = meta?.previousQueries?.length > 0;
 ```
 
-4. Ensure unified compatibility mapping is loaded once and cached.
+✅ Ensure unified compatibility mapping is loaded once and cached.
 
-### Phase 1 — Force repository path (½ day)
+### Phase 1 — Force repository path (COMPLETED)
 
-1. Set env flags permanently:
+✅ Set env flags permanently:
 
 ```bash
 USE_REPOSITORY_PATTERN=true
 ENABLE_RETRIEVAL_ADAPTER=true
 ```
 
-2. Controllers/services import only `utils/data/repository/adapters/retrieval-adapter` functions.
-3. Remove legacy fall-back conditions in adapter.
+✅ Controllers/services import only `utils/data/repository/adapters/retrieval-adapter` functions.
+✅ Remove legacy fall-back conditions in adapter.
+✅ Completed behavioral testing and fixed robustness issues.
+✅ Fixed data structure format in adapter output.
 
-### Phase 2 — Legacy shim (1 hour)
+**Critical issue identified**: While the retrieval system correctly identifies files and builds data structures, the actual data content is not being sent with the prompt to OpenAI. This needs urgent attention in Phase 2.
+
+### Phase 2 — Legacy shim & Data transmission (1-2 hours)
 
 1. Rename `utils/openai/retrieval.js` → `retrieval.legacy.js`.
 2. Create shim `utils/openai/retrieval.js`:
@@ -93,6 +97,12 @@ ENABLE_RETRIEVAL_ADAPTER=true
 ```js
 export * from "../data/repository/adapters/retrieval-adapter";
 ```
+
+3. **Fix data transmission issue**:
+   - Identify where data content is dropped in the pipeline
+   - Fix OpenAI prompt construction to include actual file data
+   - Ensure data is properly converted from repository format to OpenAI messages
+   - Add logging to verify data transmission at each step
 
 ### Phase 3 — Clean feature-flag spaghetti (½–1 day)
 
@@ -114,4 +124,4 @@ export * from "../data/repository/adapters/retrieval-adapter";
    • default-to-2025 rule
    • comparison query blocking for non-comparable topics.
 
-_Last updated: Mon May 05 2025_
+_Last updated: Mon May 5 09:52:24 BST 2025_

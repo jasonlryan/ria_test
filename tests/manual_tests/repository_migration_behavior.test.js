@@ -135,6 +135,9 @@ describe("Repository Migration Behavioral Tests", () => {
         ],
         isComparison: false,
       }),
+      isStarterQuestion: vi.fn().mockReturnValue(false),
+      getPrecompiledStarterData: vi.fn(),
+      detectComparisonQuery: vi.fn().mockReturnValue(false),
     }));
 
     // Mock QueryUtils

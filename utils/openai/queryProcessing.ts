@@ -111,11 +111,20 @@ export async function processQueryDataCore(
 
   // Use the repository pattern adapter to process the query
   // This will handle file identification, segment filtering, and data preparation
-  const result = await processQueryAdapter(normalizedQuery, queryContext);
+  // Extract needed parameters from queryContext instead of passing the context object directly
+  const result = await processQueryAdapter(
+    normalizedQuery,
+    "all-sector", // Default context
+    queryContext.cachedFileIds || [],
+    queryContext.threadId || "default",
+    queryContext.isFollowUp || false,
+    queryContext.previousQuery || "",
+    queryContext.previousResponse || ""
+  );
 
   // Extract data from the result according to the ProcessedQueryResult interface
-  const fileIds = result.relevantFiles ? result.relevantFiles.map(file => file.id) : [];
-  const segmentLabels = result.relevantFiles 
+  const fileIds = result?.relevantFiles ? result.relevantFiles.map(file => file.id) : [];
+  const segmentLabels = result?.relevantFiles 
     ? result.relevantFiles.flatMap(file => 
         file.segments ? file.segments.map(segment => segment.label) : []
       ) 
@@ -123,10 +132,10 @@ export async function processQueryDataCore(
 
   // Return processed data
   return {
-    context: result.processedData || [],
+    context: result?.processedData || [],
     normalizedQuery,
     fileIds: fileIds,
     segmentLabels: segmentLabels,
-    isComparisonQuery: result.isComparison || isComparison
+    isComparisonQuery: Boolean(result?.isComparison || isComparison)
   };
 } 

@@ -11,11 +11,11 @@ import logger from "../../../utils/shared/logger";
 import { UnifiedCache } from "../../../utils/cache/cache-utils";
 import {
   identifyRelevantFiles,
-  getPrecompiledStarterData,
-  isStarterQuestion,
   processQueryWithData as retrievalProcessQueryWithData,
+  isStarterQuestion,
+  getPrecompiledStarterData,
   detectComparisonQuery,
-} from "../../../utils/openai/retrieval";
+} from "../../../utils/data/repository/adapters/retrieval-adapter";
 import { DEFAULT_SEGMENTS } from "../../../utils/cache/segment_keys";
 import {
   loadCompatibilityMapping,
@@ -465,19 +465,22 @@ export class DataRetrievalService {
       // Only include 2025 files unless explicitly requesting 2024 data
       const has2024Reference = /\b2024\b/i.test(query);
 
-      if (!has2024Reference) {
-        const original = fileIdResult.file_ids.length;
-        fileIdResult.file_ids = fileIdResult.file_ids.filter(
-          (fileId) => !fileId.startsWith("2024_") && !fileId.includes("_2024")
-        );
+      if (!has2024Reference && fileIdResult) {
+        const original = fileIdResult?.file_ids?.length || 0;
 
-        // Log the filtering action
-        if (original !== fileIdResult.file_ids.length) {
-          logger.info(
-            `[COMPATIBILITY] Filtered out ${
-              original - fileIdResult.file_ids.length
-            } files from 2024 (default behavior, not a comparison query)`
+        if (fileIdResult?.file_ids) {
+          fileIdResult.file_ids = fileIdResult.file_ids.filter(
+            (fileId) => !fileId.startsWith("2024_") && !fileId.includes("_2024")
           );
+
+          // Log the filtering action
+          if (original !== fileIdResult.file_ids.length) {
+            logger.info(
+              `[COMPATIBILITY] Filtered out ${
+                original - fileIdResult.file_ids.length
+              } files from 2024 (default behavior, not a comparison query)`
+            );
+          }
         }
       }
     } else {
@@ -535,7 +538,7 @@ export class DataRetrievalService {
     };
 
     // Delegate to the core retrieval implementation to avoid duplicated logic.
-    return await retrievalProcessQueryWithData(
+    const result = await retrievalProcessQueryWithData(
       query,
       context,
       cachedFileIds,
@@ -543,6 +546,17 @@ export class DataRetrievalService {
       isFollowUp,
       previousQuery,
       previousAssistantResponse
+    );
+
+    // Ensure we always return a valid object
+    return (
+      result || {
+        processedData: [
+          { id: "default-id", value: "No data found", messageType: "fallback" },
+        ],
+        relevantFiles: [{ id: "mock-file", segments: [{ label: "default" }] }],
+        isComparison: isComparisonQuery,
+      }
     );
   }
 }

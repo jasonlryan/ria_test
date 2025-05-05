@@ -1,8 +1,8 @@
 /**
  * Chat Assistant Controller
- * Handles OpenAI Assistant interactions, message processing,
- * thread management, tool call handling, and streaming responses.
- * Central orchestration point for the entire chat assistant flow.
+ * Handles chat completion API endpoints.
+ * Processes queries, manages context, performs data retrieval,
+ * and constructs appropriate prompts for the LLM.
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -18,7 +18,7 @@ import {
   getPrecompiledStarterData,
   isStarterQuestion,
   detectComparisonQuery,
-} from "../../../utils/openai/retrieval";
+} from "../../../utils/data/repository/adapters/retrieval-adapter";
 import {
   getCachedFilesForThread,
   updateThreadCache,
@@ -34,13 +34,50 @@ import { threadMetaKey } from "../../../utils/cache/key-schema";
 import kvClient from "../../../utils/cache/kvClient";
 import { normalizeQueryText, createThreadContext } from "../../../utils/shared/queryUtils";
 import {
-  loadCompatibilityMapping
+  loadCompatibilityMapping,
+  filterIncomparableFiles,
 } from "../../../utils/compatibility/compatibility";
+// // TEMPORARILY COMMENTED - Will fix these imports in phase 4
+// // import { CompatibilityMetadata } from "../../../utils/compatibility/compatibilityTypes";
+import { getSpecificData } from "../../../utils/data/smart_filtering";
+// // import { SystemMessage, UserMessage, AssistantMessage } from "../../../utils/message/messageTypes";
+// // import { generateTopicInsights } from "../../../utils/insights/insightGenerator";
+// // import { CHAT_MODELS } from "../../../constants/aiModels";
+
+type CompatibilityMetadata = any; // temporary type definition
+
+// Temporary interface to handle type mismatches during the migration
+// This will be replaced with proper types in Phase 4
+interface ProcessedQueryResult {
+  out_of_scope?: boolean;
+  out_of_scope_message?: string;
+  stats?: any[];
+  segments?: string[];
+  conversation_state?: string;
+  filteredData?: {
+    stats?: any[];
+    filteredData?: any[];
+    summary?: string;
+  };
+  // Additional properties accessed in the file
+  dataScope?: {
+    fileIds?: Set<string>;
+  };
+  queryIntent?: any;
+  cacheStatus?: any;
+  processing_time_ms?: number;
+}
 
 const OPENAI_TIMEOUT_MS = 90000;
 const isDirectMode = process.env.FILE_ACCESS_MODE === "direct";
 const forceStandardMode = true;
 const { DEFAULT_SEGMENTS, CANONICAL_SEGMENTS } = require("../../../utils/cache/segment_keys");
+
+// This will be called when filtering tool output results
+function processResult(result: any): ProcessedQueryResult {
+  // Cast the result to our temporary interface
+  return result as ProcessedQueryResult;
+}
 
 /**
  * Log starter question invocations to a file
@@ -484,7 +521,7 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
 
         await updateThreadCache(finalThreadId, cachedFilesForUpdate);
 
-        result = await processQueryWithData(
+        result = processResult(await processQueryWithData(
           context.normalizedCurrentQuery,
           "all-sector",
           fileIdArray,
@@ -492,7 +529,7 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
           context.isFollowUp,
           context.normalizedPreviousQuery,
           context.previousResponse
-        );
+        ));
 
         if (result && result.out_of_scope === true) {
           return NextResponse.json({
@@ -535,7 +572,7 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
           }
         }
 
-        result = await processQueryWithData(
+        result = processResult(await processQueryWithData(
           context.normalizedCurrentQuery,
           "all-sector",
           cachedFileIds,
@@ -543,7 +580,7 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
           true, // Force isFollowUp to true
           context.normalizedPreviousQuery,
           context.previousResponse
-        );
+        ));
 
         if (result && result.out_of_scope === true) {
           return NextResponse.json({
@@ -885,7 +922,7 @@ No data matched for the selected segments.`;
                         logger.info(`[TOOL] Re-identified ${filesToUse.length} files for tool call: ${filesToUse.join(', ')}`);
                       }
                       
-                      const result = await processQueryWithData(
+                      const result = processResult(await processQueryWithData(
                         normalizedToolQuery,
                         "all-sector",
                         filesToUse,
@@ -893,7 +930,7 @@ No data matched for the selected segments.`;
                         true, // Always treat tool calls as follow-ups
                         context.normalizedPreviousQuery,
                         context.previousResponse
-                      );
+                      ));
 
                       // Ensure we always update the cache with any new file IDs
                       if (result.dataScope && result.dataScope.fileIds) {

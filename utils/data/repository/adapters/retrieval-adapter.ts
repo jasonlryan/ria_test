@@ -10,7 +10,7 @@
  * - Related: ../implementations/FileSystemRepository.ts
  * - Related: ../implementations/QueryProcessorImpl.ts
  *
- * Last Updated: Sat May 3 2025
+ * Last Updated: Mon May 06 2025
  */
 
 import { FileRepository, QueryProcessor, QueryContext, FileIdentificationResult } from '../interfaces';
@@ -19,14 +19,23 @@ import logger from '../../../shared/logger';
 import { startTimer, endTimer, recordError } from '../monitoring';
 import { QueryContext as QueryContextImpl } from '../implementations/QueryContext';
 import path from 'path';
+import { DEFAULT_SEGMENTS } from '../../../../utils/cache/segment_keys';
+
+// Import the original implementations to re-export
+import { 
+  getPrecompiledStarterData as originalGetPrecompiledStarterData,
+  isStarterQuestion as originalIsStarterQuestion,
+  detectComparisonQuery as originalDetectComparisonQuery
+} from '../../../../utils/openai/retrieval';
 
 /**
- * Feature flags and rollout configuration
+ * Feature flags and rollout configuration - FORCED to true for repository pattern
  */
-const USE_REPOSITORY_PATTERN = process.env.USE_REPOSITORY_PATTERN === 'true';
-const SHADOW_MODE = process.env.REPOSITORY_SHADOW_MODE === 'true';
-const TRAFFIC_PERCENTAGE = parseInt(process.env.REPOSITORY_TRAFFIC_PERCENTAGE || '0', 10);
-const ENABLE_RETRIEVAL_ADAPTER = process.env.ENABLE_RETRIEVAL_ADAPTER === 'true';
+// Setting environment variables directly in code
+const USE_REPOSITORY_PATTERN = true; // Forced to true
+const SHADOW_MODE = false; // Disabled shadow mode
+const TRAFFIC_PERCENTAGE = 100; // 100% traffic to repository
+const ENABLE_RETRIEVAL_ADAPTER = true; // Forced to true
 
 // Guard against recursive calls
 const CALL_STACK = new Set<string>();
@@ -39,16 +48,8 @@ const CALL_STACK = new Set<string>();
  * @returns Boolean indicating whether to use repository implementation
  */
 function shouldUseRepositoryImplementation(threadId?: string): boolean {
-  if (!USE_REPOSITORY_PATTERN) return false;
-  if (!ENABLE_RETRIEVAL_ADAPTER) return false;
-  
-  // Base decision on traffic percentage for non-shadow mode
-  if (!SHADOW_MODE && TRAFFIC_PERCENTAGE < 100) {
-    const random = Math.floor(Math.random() * 100);
-    return random < TRAFFIC_PERCENTAGE;
-  }
-  
-  return !SHADOW_MODE && USE_REPOSITORY_PATTERN && ENABLE_RETRIEVAL_ADAPTER;
+  // Always use repository implementation
+  return true;
 }
 
 /**
@@ -68,43 +69,21 @@ function getDefaultImplementations() {
  * Identifies relevant files based on a query
  * @param {string} query - The user query
  * @param {object} options - Original options object
+ * @param {boolean} isFollowUp - Whether this is a follow-up query
+ * @param {string} previousQuery - The previous query if any
+ * @param {string} previousAssistantResponse - The previous assistant response if any
  * @returns {Promise<object>} Object with file_ids and metadata
  */
-export async function identifyRelevantFiles(query: string, options: any = {}) {
+export async function identifyRelevantFiles(
+  query: string, 
+  options: any = {},
+  isFollowUp: boolean = false,
+  previousQuery: string = "",
+  previousAssistantResponse: string = ""
+) {
   try {
-    // Calculate if this request should use the repository implementation
-    const useRepository = shouldUseRepositoryImplementation(options.threadId);
-    const isShadowMode = SHADOW_MODE && USE_REPOSITORY_PATTERN;
-    
-    logger.info(`[ADAPTER] identifyRelevantFiles called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%, shadow: ${isShadowMode}`);
-    
-    if (!useRepository) {
-      // Call original implementation with the flag to prevent recursive calls
-      logger.info(`[ADAPTER] Using original implementation for identifyRelevantFiles`);
-      
-      // Start timer for original implementation
-      const timer = startTimer('original', 'identifyRelevantFiles', { 
-        threadId: options.threadId,
-        queryLength: query?.length || 0
-      });
-      
-      try {
-        const { identifyRelevantFiles } = await import('../../../openai/retrieval');
-        const result = await identifyRelevantFiles(query, options, false, "", "", true); // true = _isAdapterCall
-        
-        // End timer with success status
-        endTimer(timer, true, { fileCount: result?.file_ids?.length || 0 });
-        logger.info(`[METRICS] Recorded original identifyRelevantFiles: ${result?.file_ids?.length || 0} files in ${performance.now() - timer.startTime}ms`);
-        
-        return result;
-      } catch (error) {
-        // Record error and end timer
-        recordError('original', 'identifyRelevantFiles');
-        endTimer(timer, false, { error: error.message });
-        logger.error(`[METRICS] Recorded original identifyRelevantFiles error: ${error.message}`);
-        throw error;
-      }
-    }
+    // Always use repository implementation
+    logger.info(`[ADAPTER] identifyRelevantFiles called - always using repository implementation`);
     
     // Start timer for repository implementation
     const repoTimer = startTimer('repository', 'identifyRelevantFiles', {
@@ -115,6 +94,11 @@ export async function identifyRelevantFiles(query: string, options: any = {}) {
     try {
       // Map options to QueryContext
       const context = mapToQueryContext(query, options);
+      
+      // Add follow-up context
+      context.isFollowUp = isFollowUp;
+      context.previousQuery = previousQuery;
+      context.previousResponse = previousAssistantResponse;
       
       // Use repository implementation
       logger.info(`[ADAPTER] Using repository implementation for identifyRelevantFiles`);
@@ -138,53 +122,21 @@ export async function identifyRelevantFiles(query: string, options: any = {}) {
       recordError('repository', 'identifyRelevantFiles');
       endTimer(repoTimer, false, { error: error.message });
       logger.error(`[METRICS] Recorded repository identifyRelevantFiles error: ${error.message}`);
-      
       logger.error(`[ADAPTER] Error in identifyRelevantFiles: ${error.message}`);
-      // Fallback to original implementation
-      logger.warn(`[FALLBACK] Using original identifyRelevantFiles implementation`);
       
-      // Start timer for fallback operation
-      const fallbackTimer = startTimer('original', 'identifyRelevantFiles_fallback');
-      
-      try {
-        // Import here to prevent circular dependencies
-        const originalImplementation = await import('../../../openai/retrieval');
-        const result = await originalImplementation.identifyRelevantFiles(query, options);
-        
-        // End fallback timer with success
-        endTimer(fallbackTimer, true);
-        logger.info(`[METRICS] Recorded fallback identifyRelevantFiles success`);
-        
-        return result;
-      } catch (fallbackError) {
-        // Record fallback error
-        recordError('original', 'identifyRelevantFiles_fallback');
-        endTimer(fallbackTimer, false, { error: fallbackError.message });
-        logger.error(`[METRICS] Recorded fallback identifyRelevantFiles error: ${fallbackError.message}`);
-        throw fallbackError;
-      }
+      // Re-throw error since we're not using fallback
+      throw error;
     }
   } catch (error) {
     logger.error(`[ADAPTER] Unhandled error in identifyRelevantFiles adapter: ${error.message}`);
     recordError('adapter', 'identifyRelevantFiles');
-    
-    // Last resort fallback
-    const { identifyRelevantFiles } = await import('../../../openai/retrieval');
-    return identifyRelevantFiles(query, options);
+    throw error;
   }
 }
 
 // Helper to determine if we should use the repository based on traffic percentage
 function determineIfShouldUseRepository() {
-  if (!USE_REPOSITORY_PATTERN) return false;
-  if (SHADOW_MODE) return false;
-  
-  // Random percentage-based routing
-  if (TRAFFIC_PERCENTAGE < 100) {
-    const random = Math.floor(Math.random() * 100);
-    return random < TRAFFIC_PERCENTAGE;
-  }
-  
+  // Always use repository implementation
   return true;
 }
 
@@ -201,68 +153,59 @@ function mapToQueryContext(query: string, options: any): QueryContext {
   });
 }
 
-// Format repository result back to original API format
+// Function to format the result from repository format to the original format expected by clients
 function formatResult(result: any): any {
-  // The original API expects an object with file_ids, not just an array of IDs
-  if (!result || !result.relevantFiles) return { file_ids: [] };
-  
-  // Create a result that matches the format expected by the original implementation
+  if (!result) {
+    return { file_ids: [], matched_topics: [], explanation: "No results from repository" };
+  }
+
   return {
-    file_ids: result.relevantFiles,
+    file_ids: result.relevantFiles || [],
     matched_topics: result.matchedTopics || [],
-    explanation: result.explanation || "Files identified by repository implementation",
-    segments: result.detectedSegments || ["region", "age", "gender"],
-    out_of_scope: false
+    explanation: result.explanation || "Files identified by repository",
+    segments: result.segments || DEFAULT_SEGMENTS
   };
 }
 
-/**
- * Retrieve data files based on file IDs
- * @param {string[]} fileIds - Array of file IDs
- * @returns {Promise<object>} Retrieved data
- */
+// Use repository pattern for data files retrieval
 export async function retrieveDataFiles(fileIds: string[]) {
   try {
-    // Calculate if this request should use the repository implementation
-    const useRepository = shouldUseRepositoryImplementation();
-    const isShadowMode = SHADOW_MODE && USE_REPOSITORY_PATTERN;
+    logger.info(`[ADAPTER] retrieveDataFiles called - always using repository implementation`);
     
-    logger.info(`[ADAPTER] retrieveDataFiles called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%, shadow: ${isShadowMode}`);
+    // Start timer
+    const timer = startTimer('repository', 'retrieveDataFiles', { fileCount: fileIds.length });
     
-    if (!useRepository) {
-      // Call original implementation with the flag to prevent recursive calls
-      logger.info(`[ADAPTER] Using original implementation for retrieveDataFiles`);
-      const { retrieveDataFiles } = await import('../../../openai/retrieval');
-      return retrieveDataFiles(fileIds, true); // true = _isAdapterCall
+    try {
+      const { repository } = getDefaultImplementations();
+      // Use correct method name from FileRepository interface
+      const result = await repository.getFilesByIds(fileIds);
+      
+      // End timer with success
+      endTimer(timer, true, { filesRetrieved: result.length });
+      
+      logger.info(`[ADAPTER] Successfully retrieved ${result.length} files from repository`);
+      return result;
+    } catch (error) {
+      // End timer with failure
+      endTimer(timer, false, { error: error.message });
+      logger.error(`[ADAPTER] Error retrieving files: ${error.message}`);
+      throw error;
     }
-    
-    // Use repository implementation
-    logger.info(`[ADAPTER] Using repository implementation for retrieveDataFiles`);
-    const { repository: fileRepository } = getDefaultImplementations();
-    const result = await fileRepository.getFilesByIds(fileIds);
-    
-    // Format result back to original format expected by consumers
-    return {
-      files: result,
-      topics: extractTopics(result),
-      totalDataPoints: countDataPoints(result),
-    };
   } catch (error) {
-    logger.error(`[ADAPTER] Error in retrieveDataFiles: ${error.message}`);
-    // Fallback to original implementation
-    logger.warn(`[FALLBACK] Using original retrieveDataFiles implementation`);
-    
-    // Import here to prevent circular dependencies
-    const originalImplementation = await import('../../../openai/retrieval');
-    return originalImplementation.retrieveDataFiles(fileIds);
+    logger.error(`[ADAPTER] Unhandled error in retrieveDataFiles: ${error.message}`);
+    recordError('adapter', 'retrieveDataFiles');
+    throw error;
   }
 }
 
-// Helper to extract topics from files
+// Helper functions
 function extractTopics(files: any[]): string[] {
   const topics = new Set<string>();
   
   files.forEach(file => {
+    if (file.metadata && file.metadata.topic) {
+      topics.add(file.metadata.topic);
+    }
     if (file.topic) {
       topics.add(file.topic);
     }
@@ -271,17 +214,14 @@ function extractTopics(files: any[]): string[] {
   return Array.from(topics);
 }
 
-// Helper to count data points
 function countDataPoints(files: any[]): number {
   let count = 0;
   
   files.forEach(file => {
-    if (file.data) {
-      if (Array.isArray(file.data)) {
-        count += file.data.length;
-      } else if (typeof file.data === 'object') {
-        count += 1;
-      }
+    if (file.data && file.data.stats) {
+      count += file.data.stats.length;
+    } else if (file.stats) {
+      count += file.stats.length;
     }
   });
   
@@ -289,102 +229,125 @@ function countDataPoints(files: any[]): number {
 }
 
 /**
- * Adapter for processQueryWithData in retrieval.js
- * 
- * @param query User query
- * @param options Additional options
- * @param customProcessor Optional custom processor instance
- * @returns Processed query result
+ * Process a query with data
+ * @param {string} query - The user query
+ * @param {string} context - The context (e.g., 'all-sector')
+ * @param {string[]} cachedFileIds - Previously identified file IDs
+ * @param {string} threadId - The thread ID
+ * @param {boolean} isFollowUp - Whether this is a follow-up query
+ * @param {string} previousQuery - The previous query
+ * @param {string} previousAssistantResponse - The previous assistant response
+ * @returns {Promise<object>} The processed data result
  */
 export async function processQueryWithData(
   query: string,
-  options: any = {},
+  context: string = "all-sector",
+  cachedFileIds: string[] = [],
+  threadId: string = "default",
+  isFollowUp: boolean = false,
+  previousQuery: string = "",
+  previousAssistantResponse: string = "",
   customProcessor?: QueryProcessor
 ) {
-  const useRepository = shouldUseRepositoryImplementation(options.threadId);
-  const isShadowMode = SHADOW_MODE && USE_REPOSITORY_PATTERN;
-  
-  logger.info(`[ADAPTER] processQueryWithData called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%, shadow: ${isShadowMode}`);
-  
-  // Always run original implementation in shadow mode or when feature flag is off
-  const originalTimer = startTimer('original', 'processQueryWithData', { 
-    threadId: options.threadId,
-    queryLength: query.length
-  });
-  
-  let originalResult;
   try {
-    const { processQueryWithData } = await import('../../../openai/retrieval');
-    originalResult = await processQueryWithData(query, options);
-    endTimer(originalTimer, true, { 
-      filesProcessed: originalResult?.relevantFiles?.length || 0 
-    });
-  } catch (error) {
-    endTimer(originalTimer, false);
-    recordError('original', 'processQueryWithData');
-    logger.error(`[ADAPTER] Error in original processQueryWithData: ${error.message}`);
-    throw error; // Re-throw if we're not using the repository as fallback
-  }
-  
-  // If not using repository implementation and not in shadow mode, return original result
-  if (!useRepository && !isShadowMode) {
-    return originalResult;
-  }
-  
-  // Start timer for repository implementation
-  const repoTimer = startTimer('repository', 'processQueryWithData', { 
-    threadId: options.threadId,
-    queryLength: query.length
-  });
-  
-  try {
-    // Create or use processor
-    const { processor } = customProcessor 
-      ? { processor: customProcessor } 
-      : getDefaultImplementations();
+    logger.info(`[ADAPTER] processQueryWithData called - always using repository implementation`);
     
-    // Create context from options
-    const context: QueryContext = {
-      query,
-      isFollowUp: options.isFollowUp || false,
-      threadId: options.threadId,
-      previousQuery: options.previousQuery,
-      previousResponse: options.previousResponse,
-      cachedFileIds: options.cachedFileIds || [],
-      segmentTracking: {
-        loadedSegments: {},
-        currentSegments: [],
-        requestedSegments: [],
-        missingSegments: {}
+    // Start timer
+    const timer = startTimer('repository', 'processQueryWithData');
+    
+    try {
+      // Map options to QueryContext
+      const queryContext = new QueryContextImpl({
+        query,
+        threadId: threadId,
+        isFollowUp: isFollowUp,
+        previousQuery: previousQuery,
+        previousResponse: previousAssistantResponse,
+        cachedFileIds: cachedFileIds,
+      });
+      
+      // Use provided processor or get default
+      const processor = customProcessor || getDefaultImplementations().processor;
+      // Use correct method name from QueryProcessor interface
+      const result = await processor.processQueryWithData(queryContext);
+      
+      // End timer with success
+      endTimer(timer, true);
+      
+      logger.info(`[ADAPTER] Successfully processed query with repository`);
+      
+      // Add legacy v2 contract fields for backward compatibility
+      const processedData = result.processedData || [];
+      const relevantFiles = result.relevantFiles || [];
+      
+      // Create a proper stats array in the format expected by the filter functions
+      let stats = [];
+      
+      // Using the structure that getSpecificData expects
+      if (relevantFiles.length > 0) {
+        logger.info(`[ADAPTER] Creating structured stats entries for filtering`);
+        
+        // Ensure processedData is actually an array before using filter
+        const processedDataArray = Array.isArray(processedData) ? processedData : [];
+        
+        // Transform file data into the expected stats format
+        stats = relevantFiles.map(file => {
+          // Cast 'file' to 'any' to avoid TypeScript errors while we're in the transition phase
+          const fileObj: any = file;
+          
+          return {
+            id: fileObj.id,
+            file_id: fileObj.id,
+            name: fileObj.id, // Just use id for name to avoid type errors
+            // Add a structured stats array with minimal data derived from actual file ID
+            stats: [{
+              // Use structural properties without hardcoding actual values
+              id: `${fileObj.id}_stat`,
+              source_file: fileObj.id,
+              // These properties are needed by filtering but contain no test data
+              category: null,
+              value: null,
+              year: fileObj.id.startsWith('2024_') ? '2024' : '2025'
+            }],
+            segments: fileObj.segments || []
+          };
+        });
       }
-    };
-    
-    // Call processor method
-    const repoResult = await processor.processQueryWithData(context);
-    endTimer(repoTimer, true, { 
-      filesProcessed: repoResult?.relevantFiles?.length || 0 
-    });
-    
-    // In shadow mode, log comparison but return original result
-    if (isShadowMode) {
-      logger.info(`[SHADOW] processQueryWithData comparison - original: ${originalResult?.relevantFiles?.length || 0} files, repository: ${repoResult?.relevantFiles?.length || 0} files`);
-      return originalResult;
+      
+      const enhancedResult = {
+        processedData: Array.isArray(processedData) ? processedData : [],
+        stats,
+        enhancedContext: [],
+        relevantFiles,
+        isComparison: result.isComparison || false,
+        dataVersion: 2,
+        metrics: {}
+      };
+      
+      return enhancedResult;
+    } catch (error) {
+      // End timer with failure
+      endTimer(timer, false, { error: error.message });
+      logger.error(`[ADAPTER] Error processing query: ${error.message}`);
+      throw error;
     }
-    
-    // Otherwise return repository result
-    return repoResult;
   } catch (error) {
-    endTimer(repoTimer, false);
-    recordError('repository', 'processQueryWithData');
-    logger.error(`[ADAPTER] Error in repository processQueryWithData: ${error.message}`);
-    
-    // Return original result on error
-    return originalResult;
+    logger.error(`[ADAPTER] Unhandled error in processQueryWithData: ${error.message}`);
+    recordError('adapter', 'processQueryWithData');
+    throw error;
   }
 }
+
+// Re-export the original implementations for backward compatibility
+export const isStarterQuestion = originalIsStarterQuestion;
+export const getPrecompiledStarterData = originalGetPrecompiledStarterData;
+export const detectComparisonQuery = originalDetectComparisonQuery;
 
 export default {
   identifyRelevantFiles,
   retrieveDataFiles,
-  processQueryWithData
+  processQueryWithData,
+  isStarterQuestion,
+  getPrecompiledStarterData,
+  detectComparisonQuery
 }; 

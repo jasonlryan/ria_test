@@ -82,7 +82,6 @@ After analyzing the query, you must review the entire file to:
 
    - **Thoroughly** detect any demographic segments mentioned in the query. Populate the `"segments"` array accordingly (`[]` if none).
    - **Allowed Segment Categories:** Only detect segments belonging to the following categories: `country`, `age`, `generation`, `gender`, `org_size`, `employment_status`, `sector`, `job_level`, `marital_status`, `education`. Do not detect other types of segments.
-   - **AI-Related Skills Queries:** For queries related to employee confidence, skills relevance in AI contexts, or AI attitudes, ALWAYS include file ids related to AI*Attitudes (2025_5*\* files) and prioritize file `2025_5_1.json` (skills relevance) and `2025_5_8.json` (AI bolstering value).
    - **Default Segments Rule:** If NO allowed segments are explicitly mentioned or detected in the `{{QUERY}}`, you MUST set the `"segments"` field in your output JSON to the default value: `["country", "age", "gender"]`. The `"segments"` array should never be empty unless explicitly specified by advanced instructions not present here.
    - If the query mentions multiple segments, determine whether it requests combined analysis.
      - **Allowed:** Reporting on segments independently (e.g., separate reports for "United Kingdom" and "CEOs").
