@@ -7,6 +7,7 @@ import kvClient from "./kvClient";
 import logger from "../../utils/shared/logger";
 import { performance } from "perf_hooks";
 import { threadFileKey, threadMetaKey, TTL } from "./key-schema";
+import { AsyncLocalStorage } from 'node:async_hooks';
 
 // Define type interfaces
 export interface CachedFile {
@@ -64,44 +65,56 @@ export interface ThreadCache {
   };
 }
 
+// Simple short-lived in-process cache to dedupe KV GETs made in quick succession
+//   Key   → { value, ts }
+// Entries expire after 2 seconds to avoid stale data / memory bloat.
+const localCache: Map<string, { value: any; ts: number }> = new Map();
+const LOCAL_CACHE_TTL_MS = 2000;
+
+function getLocalCache<T>(key: string): T | undefined {
+  const entry = localCache.get(key);
+  if (!entry) return undefined;
+  if (Date.now() - entry.ts > LOCAL_CACHE_TTL_MS) {
+    localCache.delete(key);
+    return undefined;
+  }
+  return entry.value as T;
+}
+
+function setLocalCache(key: string, value: any) {
+  localCache.set(key, { value, ts: Date.now() });
+  // Lightweight cleanup when map grows large
+  if (localCache.size > 1000) {
+    const cutoff = Date.now() - LOCAL_CACHE_TTL_MS;
+    for (const [k, v] of localCache) {
+      if (v.ts < cutoff) localCache.delete(k);
+    }
+  }
+}
+
 /**
  * Validate thread data structure before caching
  * @param threadData Thread data to validate
  * @returns Validation result with error message if invalid
  */
 function validateThreadData(threadData: any): { valid: boolean; error?: string } {
-  if (!threadData) {
-    return { valid: false, error: 'Thread data is null or undefined' };
+  if (!threadData || typeof threadData !== 'object') {
+    return { valid: false, error: 'Thread data must be a non-null object' };
   }
 
-  if (typeof threadData !== 'object') {
-    return { valid: false, error: `Thread data is not an object (got ${typeof threadData})` };
-  }
-
-  // Check for required fields
-  const requiredFields = ['id', 'files', 'metadata'];
-  const missingFields = requiredFields.filter(field => !threadData[field]);
-  
-  if (missingFields.length > 0) {
-    return { 
-      valid: false, 
-      error: `Thread data missing required fields: ${missingFields.join(', ')}` 
-    };
-  }
-
-  // Validate files array
+  // Must have a files array
   if (!Array.isArray(threadData.files)) {
-    return { 
-      valid: false, 
-      error: `Thread files is not an array (got ${typeof threadData.files})` 
+    return {
+      valid: false,
+      error: `Thread data 'files' must be an array (got ${typeof threadData.files})`
     };
   }
 
-  // Validate metadata object
-  if (typeof threadData.metadata !== 'object' || threadData.metadata === null) {
-    return { 
-      valid: false, 
-      error: `Thread metadata is not an object (got ${typeof threadData.metadata})` 
+  // If metadata is present it must be an object (but it's optional)
+  if ('metadata' in threadData && (typeof threadData.metadata !== 'object' || threadData.metadata === null)) {
+    return {
+      valid: false,
+      error: `Thread metadata is not an object (got ${typeof threadData.metadata})`
     };
   }
 
@@ -130,11 +143,22 @@ export class UnifiedCache {
    * @returns The cached value or null if not found
    */
   static async get<T>(key: string): Promise<T | null> {
+    // First, try in-process cache to avoid duplicate network hits within the same request
+    const cachedLocal = key.endsWith(':meta') ? getLocalCache<T>(key) : undefined;
+    if (cachedLocal !== undefined) {
+      logger.info(`Cache HIT for ${key} (local)`);
+      return cachedLocal;
+    }
+
     const startTime = performance.now();
     try {
       const result = await kvClient.get<T>(key);
       const duration = performance.now() - startTime;
       
+      if (key.endsWith(':meta')) {
+        setLocalCache(key, result);
+      }
+
       if (result) {
         logger.info(`Cache HIT for ${key} in ${duration.toFixed(2)}ms`);
         return result;
@@ -234,7 +258,30 @@ export class UnifiedCache {
    */
   static async getThreadCache(threadId: string): Promise<ThreadCache | null> {
     const key = threadMetaKey(threadId);
-    return this.get<ThreadCache>(key);
+    // Local cache first
+    const local = getLocalCache<ThreadCache>(key);
+    if (local !== undefined) return local;
+
+    const startTime = performance.now();
+    try {
+      const result = await this.get<ThreadCache>(key);
+      const duration = performance.now() - startTime;
+      
+      if (key.endsWith(':meta')) {
+        setLocalCache(key, result);
+      }
+
+      if (result) {
+        logger.info(`Cache HIT for ${key} in ${duration.toFixed(2)}ms`);
+        return result;
+      } else {
+        logger.info(`Cache MISS for ${key} in ${duration.toFixed(2)}ms`);
+        return null;
+      }
+    } catch (error) {
+      logger.error(`Error reading cache for thread ${threadId}:`, error);
+      return null;
+    }
   }
 
   /**
@@ -443,9 +490,13 @@ export class UnifiedCache {
         const fileKey = threadFileKey(threadId, file.id);
         const segmentData: Record<string, string> = {};
         for (const segment of Array.from(file.loadedSegments)) {
-          segmentData[segment] = JSON.stringify(file.data[segment]);
+          const segVal = file.data[segment];
+          if (segVal === undefined || segVal === null) continue;
+          segmentData[segment] = JSON.stringify(segVal);
         }
-        await this.hset(fileKey, segmentData, TTL.THREAD_DATA);
+        if (Object.keys(segmentData).length > 0) {
+          await this.hset(fileKey, segmentData, TTL.THREAD_DATA);
+        }
       }
 
       return true;

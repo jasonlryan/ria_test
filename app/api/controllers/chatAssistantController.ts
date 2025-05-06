@@ -21,10 +21,11 @@ import {
 } from "../../../utils/data/repository/adapters/retrieval-adapter";
 import {
   getCachedFilesForThread,
-  updateThreadCache,
+  updateThreadWithFiles,
   CachedFile,
   updateThreadWithContext,
-  getThreadContext
+  getThreadContext,
+  UnifiedCache
 } from "../../../utils/cache/cache-utils";
 import { buildPromptWithFilteredData } from "../../../utils/openai/promptUtils";
 import { unifiedOpenAIService, RunStatus } from "../services/unifiedOpenAIService";
@@ -183,6 +184,14 @@ export async function postHandler(request: NextRequest) {
 
     let previousQuery = "";
 
+    // We'll keep a local copy of thread context to avoid duplicate KV hits
+    let threadContextCached: {
+      previousQueries: string[];
+      rawQueries: string[];
+      isFollowUp: boolean;
+      lastQueryTime?: number;
+    } | null = null;
+
     // Initialize context object
     let context = {
       normalizedCurrentQuery: normalizeQueryText(content),
@@ -297,13 +306,13 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
     } else {
       logger.info(`[THREAD] Reusing existing thread: ${finalThreadId}`);
       
-      // Get existing thread context
-      const existingContext = await getThreadContext(finalThreadId);
+      // Get existing thread context once and cache it
+      threadContextCached = await getThreadContext(finalThreadId);
       // Don't override context.isFollowUp if there are previous queries
-      if (existingContext.previousQueries.length > 0) {
+      if (threadContextCached.previousQueries.length > 0) {
         context.isFollowUp = true;
       }
-      logger.info(`[THREAD] Existing context - isFollowUp: ${context.isFollowUp}, previousQueries: ${existingContext.previousQueries.length}`);
+      logger.info(`[THREAD] Existing context - isFollowUp: ${context.isFollowUp}, previousQueries: ${threadContextCached.previousQueries.length}`);
     }
 
     // Flag and variable for early return
@@ -520,7 +529,8 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
           availableSegments: file.availableSegments
         }));
 
-        await updateThreadCache(finalThreadId, cachedFilesForUpdate);
+        await updateThreadWithFiles(finalThreadId, cachedFilesForUpdate);
+        cachedFileIds = cachedFilesForUpdate.map(f => f.id);
 
         // === NEW: Inline compatibility gate for cached file sets ===
         if (cachedFileIds.length > 1) {
@@ -559,7 +569,7 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
         usedFileIds = fileIdArray;
       } else {
         // Critical fix: Get cached files but ensure we actually have their IDs
-        const cachedFiles = await getCachedFilesForThread(finalThreadId);
+        let cachedFiles = await getCachedFilesForThread(finalThreadId);
         cachedFileIds = cachedFiles.map(file => file.id);
         
         logger.info(`[FOLLOW-UP] Retrieved ${cachedFileIds.length} cached file IDs for thread ${finalThreadId}: ${cachedFileIds.join(', ')}`);
@@ -595,7 +605,8 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
               loadedSegments: new Set(),
               availableSegments: new Set()
             }));
-            await updateThreadCache(finalThreadId, cachedFilesForUpdate);
+            await updateThreadWithFiles(finalThreadId, cachedFilesForUpdate);
+            cachedFileIds = cachedFilesForUpdate.map(f => f.id);
             logger.info(`[FOLLOW-UP] Updated thread cache with ${cachedFileIds.length} files`);
           }
         }
@@ -642,7 +653,8 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
             loadedSegments: new Set(),
             availableSegments: new Set()
           }));
-          await updateThreadCache(finalThreadId, cachedFiles);
+          await updateThreadWithFiles(finalThreadId, cachedFiles);
+          cachedFileIds = cachedFiles.map(f => f.id);
         }
       }
 
@@ -752,7 +764,7 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
 
       content = standardModePrompt;
     } else if (!isStarterQuestion(content) && isDirectMode && !forceStandardMode) {
-      const cachedFiles = await getCachedFilesForThread(finalThreadId);
+      let cachedFiles = await getCachedFilesForThread(finalThreadId);
       cachedFileIds = cachedFiles.map(file => file.id);
       const relevantFilesResult = await identifyRelevantFiles(
         context.normalizedCurrentQuery,
@@ -793,14 +805,16 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
 
     // Ensure we store query context in thread metadata
     try {
-      // Get existing thread context
-      const threadContext = await getThreadContext(finalThreadId);
-      const existingQueries = threadContext.previousQueries || [];
+      // Reuse cached thread context if we already fetched it
+      if (!threadContextCached) {
+        threadContextCached = await getThreadContext(finalThreadId);
+      }
+      const existingQueries = threadContextCached.previousQueries || [];
       
       // Store both current normalized query and raw query for future reference
       await updateThreadWithContext(finalThreadId, {
         previousQueries: [context.normalizedCurrentQuery, ...existingQueries].slice(0, 5),
-        rawQueries: [content, ...(threadContext.rawQueries || [])].slice(0, 5),
+        rawQueries: [content, ...(threadContextCached.rawQueries || [])].slice(0, 5),
         isFollowUp: true,
         lastQueryTime: Date.now()
       });
@@ -862,9 +876,8 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
                     logger.info(`[TOOL] Raw tool query: "${rawQuery.substring(0, 50)}..."`);
                     logger.info(`[TOOL] Normalized tool query: "${normalizedToolQuery.substring(0, 50)}..."`);
 
-                    const cachedFileIds = await getCachedFilesForThread(
-                      finalThreadId
-                    );
+                    let cachedFiles = await getCachedFilesForThread(finalThreadId);
+                    let cachedFileIds = cachedFiles.map(f => f.id);
 
                     if (isDirectMode && !forceStandardMode) {
                       const relevantFilesResult = await identifyRelevantFiles(
@@ -890,7 +903,8 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
                         loadedSegments: new Set(),
                         availableSegments: new Set()
                       }));
-                      await updateThreadCache(finalThreadId, cachedFiles);
+                      await updateThreadWithFiles(finalThreadId, cachedFiles);
+                      cachedFileIds = cachedFiles.map(f => f.id);
 
                       await unifiedOpenAIService.submitToolOutputs(
                         finalThreadId,
@@ -918,10 +932,8 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
                       const identificationTime =
                         performance.now() - toolStartTime;
                     } else {
-                      const cachedFileIds = await getCachedFilesForThread(
-                        finalThreadId
-                      );
-                      
+                      let cachedFiles = await getCachedFilesForThread(finalThreadId);
+                      let cachedFileIds = cachedFiles.map(f => f.id);
                       logger.info(`[TOOL] Retrieved ${cachedFileIds.length} cached file IDs for tool call: ${cachedFileIds.join(', ')}`);
                       
                       let filesToUse = cachedFileIds;
@@ -964,7 +976,8 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
                             loadedSegments: new Set(),
                             availableSegments: new Set()
                           }));
-                          await updateThreadCache(finalThreadId, cachedFiles);
+                          await updateThreadWithFiles(finalThreadId, cachedFiles);
+                          cachedFileIds = cachedFiles.map(f => f.id);
                           logger.info(`[TOOL] Updated thread cache with ${fileIdsArray.length} files: ${fileIdsArray.join(', ')}`);
                         }
                       }
