@@ -58,3 +58,8 @@ logs/
 
 # Ignore all legacy scripts
 scripts/legacy/
+
+# Cursor IDE files
+.cursor/
+**/.cursor/
+.cursor
