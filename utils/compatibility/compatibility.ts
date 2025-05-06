@@ -15,6 +15,9 @@ let compatibilityCache: CompatibilityMapping | null = null;
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour in milliseconds
 let lastCacheTime = 0;
 
+// Debug helper - track fileIds that have been logged to avoid duplicate trace logs
+const COMPAT_TRACE_SEEN = new Set<string>();
+
 // Path to unified compatibility mapping file
 // NOTE: This TypeScript version was already using the unified compatibility file
 const MAPPING_PATH = path.join(
@@ -518,8 +521,11 @@ export function lookupFiles(fileIds: string[]): FileMetadata[] {
         userMessage: fileEntry.userMessage
       };
 
-      // DEBUG TRACE — remove once issue resolved
-      logger.debug(`[COMPAT_TRACE] ${meta.fileId} | topic=${meta.topicId} | year=${meta.year} | comparable=${meta.comparable}`);
+      // DEBUG TRACE — deduplicated to avoid repetitive logs
+      if (!COMPAT_TRACE_SEEN.has(meta.fileId)) {
+        logger.debug(`[COMPAT_TRACE] ${meta.fileId} | topic=${meta.topicId} | year=${meta.year} | comparable=${meta.comparable}`);
+        COMPAT_TRACE_SEEN.add(meta.fileId);
+      }
 
       return meta;
     });
