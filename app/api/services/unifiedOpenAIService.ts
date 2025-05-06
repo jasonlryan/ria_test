@@ -669,20 +669,27 @@ export class UnifiedOpenAIService {
     await this.initialize();
     return this.executeWithMonitoring('waitForNoActiveRuns', async () => {
       const activeStatuses = new Set(["queued", "in_progress", "requires_action"]);
-      const start = Date.now();
       
-      while (true) {
-        const runs = await this.client.beta.threads.runs.list(threadId, { limit: 10 });
-        const activeRun = runs.data.find((run) => activeStatuses.has(run.status));
-        
-        if (!activeRun) break;
-        
-        if (Date.now() - start > timeoutMs) {
-          throw new Error(`Timeout waiting for previous run to complete on thread ${threadId}`);
+      await pollingManager.poll(
+        async () => {
+          const runs = await this.client.beta.threads.runs.list(threadId, { limit: 10 });
+          const activeRun = runs.data.find((run) => activeStatuses.has(run.status));
+          
+          if (activeRun) {
+            // Return the active run to continue polling
+            return activeRun;
+          }
+          
+          // Return null to indicate no active runs (polling complete)
+          return null;
+        },
+        {
+          maxPollingTime: timeoutMs,
+          pollingInterval: pollInterval,
+          context: 'THREAD_RUN',
+          stopCondition: (result) => result === null,
         }
-        
-        await new Promise((res) => setTimeout(res, pollInterval));
-      }
+      );
     });
   }
 }

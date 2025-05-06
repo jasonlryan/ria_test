@@ -1,6 +1,6 @@
 # Assistant Tests
 
-**Last Updated:** Sat May 3 2025
+**Last Updated:** Tue May 6 2025
 
 This directory contains test scripts for evaluating different aspects of the application.
 
@@ -16,9 +16,10 @@ tests/
 │   ├── adapters/          # Adapter tests
 │   └── implementations/   # Implementation tests
 ├── manual_tests/      # Manual test scripts (not in automated test suite)
-│   ├── compatibility_smoke_test.js    # Compatibility module tests
 │   ├── test_compatibility_pipeline.js # End-to-end compatibility tests
 │   └── README.md          # Test descriptions and status
+├── legacy/            # Deprecated test scripts kept for reference
+│   └── compatibility_smoke_test.js    # Legacy compatibility module tests
 ├── setup.ts           # Vitest setup configuration
 ├── index.js           # Main test runner for OpenAI Assistant tests
 ├── index-tests.js     # OpenAI Assistant test implementation
@@ -192,4 +193,4 @@ The repository pattern implementation follows a phased rollout approach:
 
 At each phase, performance metrics and error rates are monitored to ensure no regressions.
 
-_Last updated: Sat May 3 2025_
+_Last updated: Tue May 6 2025_
