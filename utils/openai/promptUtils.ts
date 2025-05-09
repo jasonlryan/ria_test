@@ -164,6 +164,10 @@ export function buildPromptWithFilteredData(
     );
   }
 
+  // Log the stats that will be used for prompt building
+  logger.info(`[PROMPT_BUILDER] statsToUse (first 5): ${JSON.stringify(statsToUse.slice(0, 5), null, 2)}`);
+  logger.info(`[PROMPT_BUILDER] Total statsToUse count: ${statsToUse.length}`);
+
   // Group filteredStats by fileId, question, response
   const groupStats = (stats: any[]) => {
     const grouped = [];

@@ -56,6 +56,7 @@ export interface ThreadCache {
   rawQueries?: string[];
   isFollowUp?: boolean;
   lastQueryTime?: number;
+  responseId?: string;
   metadata?: {
     cacheErrors?: Array<{
       timestamp: string;
@@ -587,6 +588,7 @@ export class UnifiedCache {
       rawQueries?: string[];
       isFollowUp?: boolean;
       lastQueryTime?: number;
+      responseId?: string;
     }
   ): Promise<boolean> {
     try {
@@ -603,6 +605,7 @@ export class UnifiedCache {
         rawQueries: contextData.rawQueries || existing.rawQueries || [],
         isFollowUp: contextData.isFollowUp ?? existing.isFollowUp,
         lastQueryTime: contextData.lastQueryTime || Date.now(),
+        responseId: contextData.responseId || existing.responseId,
         lastUpdated: Date.now()
       };
 
@@ -625,6 +628,7 @@ export class UnifiedCache {
     rawQueries: string[];
     isFollowUp: boolean;
     lastQueryTime?: number;
+    responseId?: string;
   }> {
     try {
       const key = threadMetaKey(threadId);
@@ -634,7 +638,8 @@ export class UnifiedCache {
         previousQueries: data?.previousQueries || [],
         rawQueries: data?.rawQueries || [],
         isFollowUp: Array.isArray(data?.previousQueries) && data.previousQueries.length > 0,
-        lastQueryTime: data?.lastQueryTime
+        lastQueryTime: data?.lastQueryTime,
+        responseId: data?.responseId
       };
     } catch (error) {
       logger.error(`Error getting thread context for ${threadId}: ${(error as Error).message}`);

@@ -81,13 +81,141 @@ function processResult(result: any): ProcessedQueryResult {
   return result as ProcessedQueryResult;
 }
 
+// Modify handleResponseStream definition to accept new parameters
+async function handleResponseStream(responseStream, controller, threadId, threadContext, getStreamClosed, setStreamClosed, encoder, perfTimings, startTime, apiStartTime) {
+  if (!responseStream) {
+    throw new Error("Response stream not available");
+  }
+  
+  let fullText = '';
+  let responseId = null;
+  let chunkCount = 0;
+
+  for await (const chunk of responseStream) {
+    chunkCount++;
+    // Remove verbose logging, keep only the brief log for the first two chunks
+    // logger.info(`[STREAM_DEBUG_VERBOSE] Chunk ${chunkCount} type: ${chunk.type}, Keys: ${Object.keys(chunk)}`);
+    // if (chunk.type === 'response.output_text.delta') {
+    //   logger.info(`[STREAM_DEBUG_VERBOSE] Delta content: ${(chunk as any).delta || (chunk.data?.delta)}`);
+    // }
+    if (chunkCount <= 2) { 
+      logger.info(`[STREAM_DEBUG] Chunk ${chunkCount}: ${JSON.stringify(chunk).substring(0,300)}`);
+    }
+    // Handle the response ID that comes at the beginning
+    if (chunk.id && !responseId) {
+      responseId = chunk.id;
+      
+      // Update thread with response ID for future continuations
+      await updateThreadWithContext(threadId, {
+        ...(threadContext || {}),
+        responseId: responseId
+      });
+      logger.info(`[THREAD] Updated thread with response ID: ${responseId}`);
+      
+      // Use getStreamClosed() before enqueueing
+      if (!getStreamClosed()) {
+        controller.enqueue(
+          encoder.encode(
+            `event: responseId\ndata: ${JSON.stringify({ id: responseId })}\n\n`
+          )
+        );
+      } else {
+        logger.warn('[STREAM_LIFECYCLE] Attempted to enqueue responseId to a closed controller. Chunk skipped.');
+      }
+    }
+    
+    // Handle response.output_text.delta (various shapes)
+    let textChunk: string | undefined;
+    // New-style raw event
+    if (chunk.type === 'response.output_text.delta') {
+      textChunk = (chunk as any).delta || (chunk.data?.delta);
+    }
+    // Legacy nested format
+    else if (chunk.response && chunk.response.output_text && chunk.response.output_text.delta) {
+      textChunk = chunk.response.output_text.delta;
+    } else if (chunk.output_text && chunk.output_text.delta) {
+      textChunk = chunk.output_text.delta;
+    }
+
+    if (textChunk !== undefined) {
+      fullText += textChunk;
+      if (!getStreamClosed()) {
+        controller.enqueue(
+          encoder.encode(
+            `event: textDelta\ndata: ${JSON.stringify({ value: textChunk })}\n\n`
+          )
+        );
+      } else {
+        logger.warn('[STREAM_LIFECYCLE] Attempted to enqueue textDelta to a closed controller. Chunk skipped.');
+      }
+    }
+    
+    // Check if this is a finish chunk
+    else if (chunk.finish_reason) {
+      if (!getStreamClosed()) {
+        controller.enqueue(
+          encoder.encode(
+            `event: status\ndata: ${JSON.stringify({ status: "completed" })}\n\n`
+          )
+        );
+      } else {
+        logger.warn('[STREAM_LIFECYCLE] Attempted to enqueue status to a closed controller. Chunk skipped.');
+      }
+    }
+    
+    // Handle tool calls
+    if (chunk.response && chunk.response.tool_call) {
+      if (!getStreamClosed()) {
+        controller.enqueue(
+          encoder.encode(
+            `event: toolCall\ndata: ${JSON.stringify(chunk.response.tool_call)}\n\n`
+          )
+        );
+      } else {
+        logger.warn('[STREAM_LIFECYCLE] Attempted to enqueue toolCall to a closed controller. Chunk skipped.');
+      }
+    } else if (chunk.tool_call) {
+      if (!getStreamClosed()) {
+        controller.enqueue(
+          encoder.encode(
+            `event: toolCall\ndata: ${JSON.stringify(chunk.tool_call)}\n\n`
+          )
+        );
+      } else {
+        logger.warn('[STREAM_LIFECYCLE] Attempted to enqueue toolCall to a closed controller. Chunk skipped.');
+      }
+    }
+  }
+  
+  // Send final message when we have content
+  if (!getStreamClosed() && responseId && fullText) {
+    perfTimings.messageReceived = Date.now();
+    logger.info(`[ASSISTANT] Response received in ${perfTimings.messageReceived - startTime}ms`);
+    
+    if (!getStreamClosed()) {
+      controller.enqueue(
+        encoder.encode(
+          `event: messageDone\ndata: ${JSON.stringify({
+            id: responseId,
+            threadId: threadId,
+            role: "assistant",
+            content: fullText,
+            createdAt: Date.now(),
+          })}\n\n`
+        )
+      );
+    } else {
+      logger.warn('[STREAM_LIFECYCLE] Attempted to enqueue messageDone to a closed controller. Chunk skipped.');
+    }
+  }
+}
+
 /**
  * Log starter question invocations to a file
  */
 async function logStarterQuestionInvocation({
   starterQuestionCode,
   question,
-  assistantId,
   threadId,
   dataFiles,
   stats,
@@ -95,7 +223,6 @@ async function logStarterQuestionInvocation({
 }: {
   starterQuestionCode: string;
   question: string;
-  assistantId: string;
   threadId: string;
   dataFiles: string[];
   stats: any;
@@ -109,7 +236,6 @@ async function logStarterQuestionInvocation({
       timestamp,
       starterQuestionCode,
       question,
-      assistantId,
       threadId,
       dataFiles,
       stats
@@ -164,19 +290,20 @@ function isNewTopicQuery(currentQuery: string, previousQuery: string): boolean {
 export async function postHandler(request: NextRequest) {
   const startTime = Date.now();
   const apiStartTime = Date.now();
-  try {
-    let perfTimings = {
-      requestStart: apiStartTime,
-      runCreated: 0,
-      pollStart: 0,
-      firstPoll: 0,
-      messageReceived: 0,
-      totalTime: 0,
-      pollingInterval: 250,
-    };
+  const encoder = new TextEncoder();
+  let perfTimings = {
+    requestStart: apiStartTime,
+    runCreated: 0,
+    pollStart: 0,
+    firstPoll: 0,
+    messageReceived: 0,
+    totalTime: 0,
+    pollingInterval: 250,
+  };
 
+  try {
     const body = await request.json();
-    let { assistantId, threadId, content } = body;
+    let { threadId, content } = body;
 
     if (!content) {
       return formatBadRequestResponse("Missing required field: content");
@@ -190,6 +317,7 @@ export async function postHandler(request: NextRequest) {
       rawQueries: string[];
       isFollowUp: boolean;
       lastQueryTime?: number;
+      responseId?: string;
     } | null = null;
 
     // Initialize context object
@@ -197,7 +325,9 @@ export async function postHandler(request: NextRequest) {
       normalizedCurrentQuery: normalizeQueryText(content),
       normalizedPreviousQuery: "",
       previousResponse: "",
-      isFollowUp: !!threadId
+      isFollowUp: !!threadId,
+      systemPrompt: "",
+      tools: []
     };
 
     // Retrieve messages for context when this is a follow-up
@@ -207,7 +337,13 @@ export async function postHandler(request: NextRequest) {
           threadId,
           { limit: 4 }
         );
-        const messages = messagesResponse.data.data;
+        
+        // Fix the type error by checking if data exists and handling it properly
+        const messages = messagesResponse && 
+          typeof messagesResponse === 'object' && 
+          'data' in messagesResponse ? 
+          (Array.isArray(messagesResponse.data) ? messagesResponse.data : []) : 
+          [];
 
         // Extract previous query and response
         for (let i = 0; i < messages.length - 1; i++) {
@@ -248,7 +384,6 @@ export async function postHandler(request: NextRequest) {
         logStarterQuestionInvocation({
           starterQuestionCode: precompiled.starterQuestionCode || starterCode,
           question: precompiled.question,
-          assistantId,
           threadId,
           dataFiles: precompiled.data_files,
           stats: precompiled.stats,
@@ -281,38 +416,121 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
       }
     }
 
-    if (!assistantId) {
-      return formatBadRequestResponse("Missing required field: assistantId");
-    }
-
     const isFollowUp = !!threadId; // Determine if this is a follow-up based on threadId presence
-    logger.info(`[REQUEST] New ${isFollowUp ? "follow-up" : "initial"} request | Assistant: ${assistantId}`);
+    logger.info(`[REQUEST] New ${isFollowUp ? "follow-up" : "initial"} request`);
 
     let finalThreadId = threadId;
     if (!finalThreadId) {
-      const result = await unifiedOpenAIService.createThread();
-      finalThreadId = result.data.id;
-      logger.info(`[THREAD] Created new thread: ${finalThreadId}`);
-      migrationMonitor.trackCall('unified', 'createThread', startTime);
+      // Replace thread creation with response creation
+      // Instead of creating an empty thread first, we'll create a response directly
+      const initialMessage = {
+        role: "user",
+        content: content
+      };
       
-      // Initialize thread context for new threads with both raw and normalized queries
-      await updateThreadWithContext(finalThreadId, {
-        previousQueries: [context.normalizedCurrentQuery],
-        rawQueries: [content],
-        isFollowUp: false,
-        lastQueryTime: Date.now()
-      });
-      logger.info(`[THREAD] Initialized thread context with first query`);
+      // Create the initial system message if needed
+      const systemMessage = {
+        role: "system",
+        content: context.systemPrompt
+      };
+      
+      const messages = [systemMessage, initialMessage];
+      
+      try {
+        // Create response with the full content immediately
+        const { data: responseResult } = await unifiedOpenAIService.createResponse(
+          content,
+          {
+            model: "gpt-4o",
+            tools: context.tools || [],
+          }
+        );
+        
+        // Extract response ID from the response result
+        const responseId = responseResult && typeof responseResult === 'object' && 'id' in responseResult
+          ? String(responseResult.id)
+          : `response_${Date.now()}`;
+        
+        // Use responseId as finalThreadId for consistency with existing code
+        finalThreadId = responseId;
+        
+        logger.info(`[RESPONSE] Created new response with ID: ${responseId}`);
+        migrationMonitor.trackCall('unified', 'createResponse', startTime);
+        
+        // Store the thread context with the response ID
+        await updateThreadWithContext(finalThreadId, {
+          previousQueries: [context.normalizedCurrentQuery],
+          rawQueries: [content],
+          isFollowUp: false,
+          lastQueryTime: Date.now(),
+          responseId: responseId // Explicitly store response ID for continuation
+        });
+        
+        logger.info(`[THREAD] Initialized context with first query and response ID: ${responseId}`);
+      } catch (error) {
+        logger.error(`[RESPONSE] Error creating initial response: ${error.message}`);
+        throw error;
+      }
     } else {
-      logger.info(`[THREAD] Reusing existing thread: ${finalThreadId}`);
+      logger.info(`[THREAD] Reusing existing thread ID: ${finalThreadId}`);
       
       // Get existing thread context once and cache it
       threadContextCached = await getThreadContext(finalThreadId);
       // Don't override context.isFollowUp if there are previous queries
       if (threadContextCached.previousQueries.length > 0) {
         context.isFollowUp = true;
+        
+        // For continuing conversations, we need the previous response ID from cache
+        const previousResponseIdFromCache = threadContextCached.responseId || finalThreadId;
+        
+        const isLegacyId = typeof previousResponseIdFromCache === 'string' && 
+                           (previousResponseIdFromCache.startsWith('thread_') || !previousResponseIdFromCache.startsWith('resp_'));
+
+        let resultFromOpenAI;
+
+        if (isLegacyId) {
+          logger.info(`[RESPONSE] chatAssistantController (pre-stream context setup): Legacy ID (${previousResponseIdFromCache}) detected for thread ${finalThreadId}. Creating new response.`);
+          const { data: newResponseData } = await unifiedOpenAIService.createResponse(
+            content, // Current user query
+            {
+              model: "gpt-4o",
+              // tools: context.tools || [], // context.tools is likely empty at this stage, can be omitted or confirmed
+            }
+          );
+          resultFromOpenAI = newResponseData;
+        } else {
+          logger.info(`[RESPONSE] chatAssistantController (pre-stream context setup): Continuing conversation with response ID: ${previousResponseIdFromCache} for thread ${finalThreadId}.`);
+          const { data: continuedResponseData } = await unifiedOpenAIService.continueConversation(
+            previousResponseIdFromCache,
+            content, // Current user query
+            {
+              model: "gpt-4o",
+              // tools: context.tools || [],
+            }
+          );
+          resultFromOpenAI = continuedResponseData;
+        }
+        
+        const newResponseIdToCache = resultFromOpenAI && typeof resultFromOpenAI === 'object' && 'id' in resultFromOpenAI && typeof resultFromOpenAI.id === 'string'
+                                      ? resultFromOpenAI.id
+                                      : null;
+
+        if (newResponseIdToCache) {
+          await updateThreadWithContext(finalThreadId, { // finalThreadId is the original 'thread_...' key
+            ...threadContextCached,
+            previousQueries: [...threadContextCached.previousQueries, context.normalizedCurrentQuery],
+            rawQueries: [...(threadContextCached.rawQueries || []), content],
+            lastQueryTime: Date.now(),
+            responseId: newResponseIdToCache // Store the new 'resp_...' ID
+          });
+          logger.info(`[THREAD] chatAssistantController (pre-stream context setup): Updated context for ${finalThreadId} with new response ID: ${newResponseIdToCache}`);
+          // Update the locally cached threadContext for the current request
+          threadContextCached.responseId = newResponseIdToCache;
+        } else {
+          logger.error(`[THREAD] chatAssistantController (pre-stream context setup): Failed to get a valid new response ID from OpenAI. Context for ${finalThreadId} not updated with new responseId. OpenAI result: ${JSON.stringify(resultFromOpenAI)}`);
+          // Potentially throw an error or handle this case, as follow-up logic might depend on a valid responseId
+        }
       }
-      logger.info(`[THREAD] Existing context - isFollowUp: ${context.isFollowUp}, previousQueries: ${threadContextCached.previousQueries.length}`);
     }
 
     // Flag and variable for early return
@@ -457,7 +675,7 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
     }
     logger.info(`[CONTROLLER_FLOW] Compatibility check passed or not applicable, proceeding to main flow.`);
 
-    await unifiedOpenAIService.waitForNoActiveRuns(finalThreadId);
+    await unifiedOpenAIService.waitForNoActiveRuns();
 
     let usedFileIds: string[] = [];
     let cachedFileIds: string[] = [];
@@ -730,15 +948,17 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
         }
       }
 
-      // Replace custom formatting code with buildPromptWithFilteredData
-      logger.info(`[PROMPT] Using buildPromptWithFilteredData for structured prompt generation with ${filteredStats.length} stats`);
-      
+      // Load the assistant prompt
+      const assistantPromptPath = path.join(process.cwd(), 'utils', 'openai', 'assistant_prompt.md');
+      const assistantPrompt = fs.readFileSync(assistantPromptPath, 'utf-8');
+      logger.info(`[PROMPT] Loaded assistant prompt from ${assistantPromptPath}`);
+
       // Create structured data for the prompt builder
       const filteredDataObj = {
         stats: filteredStats,
         segments: result.segments || DEFAULT_SEGMENTS
       };
-      
+
       // Build the prompt with the dedicated utility function
       const standardModePrompt = buildPromptWithFilteredData(
         originalUserContent,
@@ -751,18 +971,205 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
         }
       );
 
-      if (!process.env.VERCEL) {
-        try {
-          const logsDir = path.join(process.cwd(), "logs");
-          const promptLogFile = path.join(logsDir, "assistant_full_prompt.txt");
-          await fs.promises.mkdir(logsDir, { recursive: true });
-          await fs.promises.writeFile(promptLogFile, standardModePrompt, "utf8");
-        } catch (err) {
-          logger.error("Failed to write full assistant prompt to log:", err);
+      // Combine the assistant prompt with the filtered data prompt
+      const fullPrompt = `${assistantPrompt}\n\n${standardModePrompt}`;
+
+      // Log this for debugging (truncated)
+      logger.info(`[PROMPT] Combined assistant prompt with filtered data prompt: ${fullPrompt.substring(0, 200)}...`);
+
+      // Set content to the full prompt for use in the stream
+      content = fullPrompt;
+
+      // Add debug info for follow-up queries
+      logger.info(`=== FOLLOW-UP DEBUG ===`);
+      logger.info(`THREAD ID: ${finalThreadId}`);
+      logger.info(`IS FOLLOW-UP FLAG: ${isFollowUp}`);
+      logger.info(`CACHED FILE IDS: ${JSON.stringify(cachedFileIds)}`);
+      logger.info(`HAS PREVIOUS QUERY: ${context.normalizedPreviousQuery ? 'YES' : 'NO'}`);
+      logger.info(`QUERY: "${context.normalizedCurrentQuery.substring(0, 50)}..."`);
+      if (context.normalizedPreviousQuery) {
+        logger.info(`PREV QUERY: "${context.normalizedPreviousQuery.substring(0, 50)}..."`);
+      }
+      logger.info(`=======================`);
+
+      // Track context for all threads right after message creation
+      // Store both the raw and normalized queries for future reference
+      const queryContext = {
+        rawQuery: content,
+        normalizedQuery: context.normalizedCurrentQuery,
+        timestamp: Date.now(),
+      };
+
+      // Ensure we store query context in thread metadata
+      try {
+        // Reuse cached thread context if we already fetched it
+        if (!threadContextCached) {
+          threadContextCached = await getThreadContext(finalThreadId);
         }
+        const existingQueries = threadContextCached.previousQueries || [];
+        
+        // Store both current normalized query and raw query for future reference
+        await updateThreadWithContext(finalThreadId, {
+          previousQueries: [context.normalizedCurrentQuery, ...existingQueries].slice(0, 5),
+          rawQueries: [content, ...(threadContextCached.rawQueries || [])].slice(0, 5),
+          isFollowUp: true,
+          lastQueryTime: Date.now()
+        });
+        
+        logger.info(`[THREAD] Updated thread ${finalThreadId} with query context (total queries: ${existingQueries.length + 1})`);
+      } catch (err) {
+        logger.error(`[THREAD] Failed to update thread context: ${err.message}`);
       }
 
-      content = standardModePrompt;
+      perfTimings.runCreated = Date.now();
+
+      // Create a response directly using the Responses API instead of the Assistants API
+      // No need for createRun, we directly create a response
+      const encoder = new TextEncoder();
+      const stream = new ReadableStream({
+        async start(controller) {
+          let streamClosed = false;
+          const originalControllerClose = controller.close.bind(controller);
+          controller.close = () => {
+            if (!streamClosed) {
+              streamClosed = true;
+              originalControllerClose();
+              logger.info('[STREAM_LIFECYCLE] Controller explicitly closed.');
+            }
+          };
+
+          try {
+            let messageReceived = false;
+            perfTimings.pollStart = Date.now();
+
+            // For follow-up queries, use the continueConversation method
+            if (isFollowUp && threadContextCached && threadContextCached.responseId) {
+              // Check if the response ID is an old thread ID (starts with thread_)
+              const isLegacyThreadId = typeof threadContextCached.responseId === 'string' && 
+                (threadContextCached.responseId.startsWith('thread_') || !threadContextCached.responseId.startsWith('resp_'));
+              
+              if (isLegacyThreadId) {
+                logger.info(`[RESPONSE] Legacy or invalid response ID detected (${threadContextCached.responseId}). Creating new response instead.`);
+                
+                // Create a new streaming response with the full prompt content
+                const { data: responseStream } = await unifiedOpenAIService.createResponse(
+                  content,
+                  {
+                    model: "gpt-4o",
+                    tools: context.tools || [],
+                    stream: true
+                  }
+                );
+                
+                // Store the new response ID for future continuations
+                if (responseStream && typeof responseStream === 'object' && 'id' in responseStream) {
+                  await updateThreadWithContext(finalThreadId, {
+                    ...threadContextCached,
+                    responseId: responseStream.id
+                  });
+                  logger.info(`[RESPONSE] Updated thread with new response ID: ${responseStream.id}`);
+                }
+                
+                // Pass controller and the streamClosed tracker to handleResponseStream
+                await handleResponseStream(responseStream, controller, finalThreadId, threadContextCached, () => streamClosed, (val) => streamClosed = val, encoder, perfTimings, startTime, apiStartTime);
+              } else {
+                logger.info(`[RESPONSE] Continuing conversation with response ID: ${threadContextCached.responseId}`);
+                
+                // Create a streaming response using continueConversation
+                try {
+                  const { data: responseStream } = await unifiedOpenAIService.continueConversation(
+                    threadContextCached.responseId,
+                    content,
+                    {
+                      model: "gpt-4o",
+                      tools: context.tools || [],
+                      stream: true
+                    }
+                  );
+                  
+                  // Store the new response ID if it changed
+                  if (responseStream && typeof responseStream === 'object' && 'id' in responseStream && 
+                      responseStream.id !== threadContextCached.responseId) {
+                    await updateThreadWithContext(finalThreadId, {
+                      ...threadContextCached,
+                      responseId: responseStream.id
+                    });
+                    logger.info(`[RESPONSE] Updated thread with new response ID: ${responseStream.id}`);
+                  }
+                  
+                  // Pass controller and the streamClosed tracker to handleResponseStream
+                  await handleResponseStream(responseStream, controller, finalThreadId, threadContextCached, () => streamClosed, (val) => streamClosed = val, encoder, perfTimings, startTime, apiStartTime);
+                } catch (error) {
+                  logger.error(`[RESPONSE] Error continuing conversation: ${error.message}. Falling back to new response.`);
+                  
+                  // Fall back to creating a new response
+                  const { data: responseStream } = await unifiedOpenAIService.createResponse(
+                    content,
+                    {
+                      model: "gpt-4o",
+                      tools: context.tools || [],
+                      stream: true
+                    }
+                  );
+                  
+                  // Store the new response ID for future continuations
+                  if (responseStream && typeof responseStream === 'object' && 'id' in responseStream) {
+                    await updateThreadWithContext(finalThreadId, {
+                      ...threadContextCached,
+                      responseId: responseStream.id
+                    });
+                    logger.info(`[RESPONSE] Updated thread with new response ID: ${responseStream.id}`);
+                  }
+                  
+                  // Pass controller and the streamClosed tracker to handleResponseStream
+                  await handleResponseStream(responseStream, controller, finalThreadId, threadContextCached, () => streamClosed, (val) => streamClosed = val, encoder, perfTimings, startTime, apiStartTime);
+                }
+              }
+            } else {
+              // For initial queries or queries without a previous response ID, create a new response
+              logger.info(`[RESPONSE] Creating new response for content length: ${content.length}`);
+              
+              // Create a streaming response with the full prompt content
+              const { data: responseStream } = await unifiedOpenAIService.createResponse(
+                content,
+                {
+                  model: "gpt-4o",
+                  tools: context.tools || [],
+                  stream: true
+                }
+              );
+              
+              // Store the response ID for future continuations
+              if (responseStream && typeof responseStream === 'object' && 'id' in responseStream) {
+                await updateThreadWithContext(finalThreadId, {
+                  ...(threadContextCached || {}),
+                  responseId: responseStream.id
+                });
+                logger.info(`[RESPONSE] Updated thread with new response ID: ${responseStream.id}`);
+              }
+              
+              // Pass controller and the streamClosed tracker to handleResponseStream
+              await handleResponseStream(responseStream, controller, finalThreadId, threadContextCached, () => streamClosed, (val) => streamClosed = val, encoder, perfTimings, startTime, apiStartTime);
+            }
+            
+            perfTimings.totalTime = Date.now() - apiStartTime;
+          } catch (error) {
+            logger.error("Stream start error:", error);
+            if (!streamClosed) {
+              logger.info('[STREAM_LIFECYCLE] Controller closing in stream finally block.');
+              controller.close(); // This will now call our wrapper
+            }
+          }
+        },
+      });
+
+      return new Response(stream, {
+        headers: {
+          "Content-Type": "text/event-stream",
+          "Cache-Control": "no-cache",
+          "Connection": "keep-alive",
+        },
+      });
     } else if (!isStarterQuestion(content) && isDirectMode && !forceStandardMode) {
       let cachedFiles = await getCachedFilesForThread(finalThreadId);
       cachedFileIds = cachedFiles.map(file => file.id);
@@ -789,11 +1196,6 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
       logger.info(`PREV QUERY: "${context.normalizedPreviousQuery.substring(0, 50)}..."`);
     }
     logger.info(`=======================`);
-
-    const createMessageResponse = await unifiedOpenAIService.createMessage(finalThreadId, {
-      role: "user",
-      content: content,
-    });
 
     // Track context for all threads right after message creation
     // Store both the raw and normalized queries for future reference
@@ -824,295 +1226,144 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
       logger.error(`[THREAD] Failed to update thread context: ${err.message}`);
     }
 
-    const createRunResponse = await unifiedOpenAIService.createRun(finalThreadId, {
-      assistant_id: assistantId,
-      instructions: (isDirectMode && !forceStandardMode) ? "OPERATING MODE: DIRECT" : "OPERATING MODE: STANDARD",
-    });
-
-    const run = createRunResponse.data;
-    let runStatus: RunStatus = run.status;
-
     perfTimings.runCreated = Date.now();
 
+    // Create a response directly using the Responses API instead of the Assistants API
+    // No need for createRun, we directly create a response
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
+        let streamClosed = false;
+        const originalControllerClose = controller.close.bind(controller);
+        controller.close = () => {
+          if (!streamClosed) {
+            streamClosed = true;
+            originalControllerClose();
+            logger.info('[STREAM_LIFECYCLE] Controller explicitly closed.');
+          }
+        };
+
         try {
           let messageReceived = false;
-          let pollCount = 0;
           perfTimings.pollStart = Date.now();
 
-          while (shouldContinuePolling(runStatus, messageReceived)) {
-            try {
-              if (pollCount === 0) {
-                perfTimings.firstPoll = Date.now();
-              }
-              pollCount++;
-
-              const currentRunResponse = await unifiedOpenAIService.retrieveRun(finalThreadId, run.id);
-              const currentRun = currentRunResponse.data;
-              runStatus = currentRun.status;
-
-              controller.enqueue(
-                encoder.encode(
-                  `event: status\ndata: ${JSON.stringify({ status: runStatus })}\n\n`
-                )
+          // For follow-up queries, use the continueConversation method
+          if (isFollowUp && threadContextCached && threadContextCached.responseId) {
+            // Check if the response ID is an old thread ID (starts with thread_)
+            const isLegacyThreadId = typeof threadContextCached.responseId === 'string' && 
+              (threadContextCached.responseId.startsWith('thread_') || !threadContextCached.responseId.startsWith('resp_'));
+            
+            if (isLegacyThreadId) {
+              logger.info(`[RESPONSE] Legacy or invalid response ID detected (${threadContextCached.responseId}). Creating new response instead.`);
+              
+              // Create a new streaming response with the full prompt content
+              const { data: responseStream } = await unifiedOpenAIService.createResponse(
+                content,
+                {
+                  model: "gpt-4o",
+                  tools: context.tools || [],
+                  stream: true
+                }
               );
-
-              if (runStatus === "requires_action" && currentRun.required_action?.type === "submit_tool_outputs") {
-                const toolCalls = currentRun.required_action.submit_tool_outputs.tool_calls;
-
-                for (const toolCall of toolCalls) {
-                  try {
-                    const toolStartTime = performance.now();
-
-                    const args = JSON.parse(toolCall.function.arguments);
-                    const rawQuery = args.query;
-                    const normalizedToolQuery = normalizeQueryText(rawQuery);
-
-                    if (!normalizedToolQuery)
-                      throw new Error("Missing query parameter");
-
-                    logger.info(`[TOOL] Raw tool query: "${rawQuery.substring(0, 50)}..."`);
-                    logger.info(`[TOOL] Normalized tool query: "${normalizedToolQuery.substring(0, 50)}..."`);
-
-                    let cachedFiles = await getCachedFilesForThread(finalThreadId);
-                    let cachedFileIds = cachedFiles.map(f => f.id);
-
-                    if (isDirectMode && !forceStandardMode) {
-                      const relevantFilesResult = await identifyRelevantFiles(
-                        normalizedToolQuery,
-                        "all-sector",
-                        context.isFollowUp,
-                        context.normalizedPreviousQuery,
-                        context.previousResponse
-                      );
-                      const fileIdArray =
-                        relevantFilesResult?.file_ids || [];
-
-                      const allRelevantFileIds = Array.from(
-                        new Set([
-                          ...(cachedFileIds || []),
-                          ...(fileIdArray || []),
-                        ])
-                      );
-
-                      const cachedFiles: CachedFile[] = allRelevantFileIds.map(id => ({
-                        id: String(id),
-                        data: {},
-                        loadedSegments: new Set(),
-                        availableSegments: new Set()
-                      }));
-                      await updateThreadWithFiles(finalThreadId, cachedFiles);
-                      cachedFileIds = cachedFiles.map(f => f.id);
-
-                      await unifiedOpenAIService.submitToolOutputs(
-                        finalThreadId,
-                        run.id,
-                        {
-                          tool_outputs: [
-                            {
-                              tool_call_id: toolCall.id,
-                              output: JSON.stringify({
-                                prompt: normalizedToolQuery,
-                                file_ids: allRelevantFileIds,
-                                matched_topics:
-                                  relevantFilesResult.matched_topics || [],
-                                is_followup_query:
-                                  cachedFileIds.length > 0,
-                                explanation:
-                                  relevantFilesResult.explanation ||
-                                  "No explanation provided",
-                              }),
-                            },
-                          ],
-                        }
-                      );
-
-                      const identificationTime =
-                        performance.now() - toolStartTime;
-                    } else {
-                      let cachedFiles = await getCachedFilesForThread(finalThreadId);
-                      let cachedFileIds = cachedFiles.map(f => f.id);
-                      logger.info(`[TOOL] Retrieved ${cachedFileIds.length} cached file IDs for tool call: ${cachedFileIds.join(', ')}`);
-                      
-                      let filesToUse = cachedFileIds;
-                      
-                      // If no cached files, reidentify them
-                      if (filesToUse.length === 0) {
-                        logger.warn(`[TOOL] No cached files for tool call, re-identifying files`);
-                        const tempIdentification = await identifyRelevantFiles(
-                          normalizedToolQuery,
-                          "all-sector",
-                          true, // Force follow-up to true for tools
-                          context.normalizedPreviousQuery,
-                          context.previousResponse
-                        );
-                        filesToUse = tempIdentification?.file_ids || [];
-                        logger.info(`[TOOL] Re-identified ${filesToUse.length} files for tool call: ${filesToUse.join(', ')}`);
-                      }
-                      
-                      const result = processResult(await processQueryWithData(
-                        normalizedToolQuery,
-                        "all-sector",
-                        filesToUse,
-                        finalThreadId,
-                        true, // Always treat tool calls as follow-ups
-                        context.normalizedPreviousQuery,
-                        context.previousResponse
-                      ));
-
-                      // Ensure we always update the cache with any new file IDs
-                      if (result.dataScope && result.dataScope.fileIds) {
-                        const fileIdsArray = Array.from(
-                          result.dataScope.fileIds
-                        ).map(String);
-                        
-                        // Only update if we have files
-                        if (fileIdsArray.length > 0) {
-                          const cachedFiles: CachedFile[] = fileIdsArray.map(id => ({
-                            id,
-                            data: {},
-                            loadedSegments: new Set(),
-                            availableSegments: new Set()
-                          }));
-                          await updateThreadWithFiles(finalThreadId, cachedFiles);
-                          cachedFileIds = cachedFiles.map(f => f.id);
-                          logger.info(`[TOOL] Updated thread cache with ${fileIdsArray.length} files: ${fileIdsArray.join(', ')}`);
-                        }
-                      }
-
-                      await unifiedOpenAIService.submitToolOutputs(
-                        finalThreadId,
-                        run.id,
-                        {
-                          tool_outputs: [
-                            {
-                              tool_call_id: toolCall.id,
-                              output: JSON.stringify({
-                                filteredData: result.filteredData,
-                                queryIntent: result.queryIntent,
-                                dataScope: result.dataScope,
-                                cacheStatus: result.cacheStatus,
-                                processing_time_ms:
-                                  result.processing_time_ms,
-                              }),
-                            },
-                          ],
-                        }
-                      );
-                    }
-                  } catch (error) {
-                    logger.error("Error processing tool call:", error);
-                    await unifiedOpenAIService.submitToolOutputs(
-                      finalThreadId,
-                      run.id,
-                      {
-                        tool_outputs: [
-                          {
-                            tool_call_id: toolCall.id,
-                            output: JSON.stringify({ error: error.message }),
-                          },
-                        ],
-                      }
-                    );
-                  }
-                }
+              
+              // Store the new response ID for future continuations
+              if (responseStream && typeof responseStream === 'object' && 'id' in responseStream) {
+                await updateThreadWithContext(finalThreadId, {
+                  ...threadContextCached,
+                  responseId: responseStream.id
+                });
+                logger.info(`[RESPONSE] Updated thread with new response ID: ${responseStream.id}`);
               }
-
-              if (runStatus === "completed") {
-                const messagesResponse = await unifiedOpenAIService.listMessages(finalThreadId);
-                const messages = messagesResponse.data.data;
-                if (messages && messages.length > 0) {
-                  messageReceived = true;
-                  perfTimings.messageReceived = Date.now();
-
-                  const message = messages[0];
-                  let fullText = "";
-
-                  for (const content of message.content) {
-                    if (content.type === "text") {
-                      fullText += content.text.value;
-                    }
+              
+              // Pass controller and the streamClosed tracker to handleResponseStream
+              await handleResponseStream(responseStream, controller, finalThreadId, threadContextCached, () => streamClosed, (val) => streamClosed = val, encoder, perfTimings, startTime, apiStartTime);
+            } else {
+              logger.info(`[RESPONSE] Continuing conversation with response ID: ${threadContextCached.responseId}`);
+              
+              // Create a streaming response using continueConversation
+              try {
+                const { data: responseStream } = await unifiedOpenAIService.continueConversation(
+                  threadContextCached.responseId,
+                  content,
+                  {
+                    model: "gpt-4o",
+                    tools: context.tools || [],
+                    stream: true
                   }
-
-                  const cleanText = sanitizeOutput(fullText);
-
-                  const chunkSize = 40;
-                  for (let i = 0; i < cleanText.length; i += chunkSize) {
-                    const chunk = cleanText.substring(i, i + chunkSize);
-
-                    controller.enqueue(
-                      encoder.encode(
-                        `event: textDelta\ndata: ${JSON.stringify({
-                          value: chunk,
-                        })}\n\n`
-                      )
-                    );
-
-                    await new Promise((resolve) =>
-                      setTimeout(resolve, 100)
-                    );
-                  }
-
-                  controller.enqueue(
-                    encoder.encode(
-                      `event: messageDone\ndata: ${JSON.stringify({
-                        id: message.id,
-                        threadId: finalThreadId,
-                        role: message.role,
-                        content: cleanText,
-                        createdAt: message.created_at,
-                        runId: run.id,
-                      })}\n\n`
-                    )
-                  );
-                }
-              }
-
-              if (runStatus === "failed") {
-                const errorMessage = currentRun.last_error
-                  ? `${currentRun.last_error.code}: ${currentRun.last_error.message}`
-                  : "Unknown error";
-
-                controller.enqueue(
-                  encoder.encode(
-                    `event: error\ndata: ${JSON.stringify({
-                      message: `Run failed: ${errorMessage}`,
-                    })}\n\n`
-                  )
                 );
-                break;
+                
+                // Store the new response ID if it changed
+                if (responseStream && typeof responseStream === 'object' && 'id' in responseStream && 
+                    responseStream.id !== threadContextCached.responseId) {
+                  await updateThreadWithContext(finalThreadId, {
+                    ...threadContextCached,
+                    responseId: responseStream.id
+                  });
+                  logger.info(`[RESPONSE] Updated thread with new response ID: ${responseStream.id}`);
+                }
+                
+                // Pass controller and the streamClosed tracker to handleResponseStream
+                await handleResponseStream(responseStream, controller, finalThreadId, threadContextCached, () => streamClosed, (val) => streamClosed = val, encoder, perfTimings, startTime, apiStartTime);
+              } catch (error) {
+                logger.error(`[RESPONSE] Error continuing conversation: ${error.message}. Falling back to new response.`);
+                
+                // Fall back to creating a new response
+                const { data: responseStream } = await unifiedOpenAIService.createResponse(
+                  content,
+                  {
+                    model: "gpt-4o",
+                    tools: context.tools || [],
+                    stream: true
+                  }
+                );
+                
+                // Store the new response ID for future continuations
+                if (responseStream && typeof responseStream === 'object' && 'id' in responseStream) {
+                  await updateThreadWithContext(finalThreadId, {
+                    ...threadContextCached,
+                    responseId: responseStream.id
+                  });
+                  logger.info(`[RESPONSE] Updated thread with new response ID: ${responseStream.id}`);
+                }
+                
+                // Pass controller and the streamClosed tracker to handleResponseStream
+                await handleResponseStream(responseStream, controller, finalThreadId, threadContextCached, () => streamClosed, (val) => streamClosed = val, encoder, perfTimings, startTime, apiStartTime);
               }
-
-              if (shouldContinuePolling(runStatus, messageReceived)) {
-                await new Promise((resolve) => setTimeout(resolve, perfTimings.pollingInterval));
-              }
-            } catch (error) {
-              logger.error("Error in polling loop:", error);
-              controller.enqueue(
-                encoder.encode(
-                  `event: error\ndata: ${JSON.stringify({
-                    message: `Error processing run: ${error.message}`,
-                  })}\n\n`
-                )
-              );
-              break;
             }
+          } else {
+            // For initial queries or queries without a previous response ID, create a new response
+            logger.info(`[RESPONSE] Creating new response for content length: ${content.length}`);
+            
+            // Create a streaming response with the full prompt content
+            const { data: responseStream } = await unifiedOpenAIService.createResponse(
+              content,
+              {
+                model: "gpt-4o",
+                tools: context.tools || [],
+                stream: true
+              }
+            );
+            
+            // Store the response ID for future continuations
+            if (responseStream && typeof responseStream === 'object' && 'id' in responseStream) {
+              await updateThreadWithContext(finalThreadId, {
+                ...(threadContextCached || {}),
+                responseId: responseStream.id
+              });
+              logger.info(`[RESPONSE] Updated thread with new response ID: ${responseStream.id}`);
+            }
+            
+            // Pass controller and the streamClosed tracker to handleResponseStream
+            await handleResponseStream(responseStream, controller, finalThreadId, threadContextCached, () => streamClosed, (val) => streamClosed = val, encoder, perfTimings, startTime, apiStartTime);
           }
-
+          
           perfTimings.totalTime = Date.now() - apiStartTime;
         } catch (error) {
           logger.error("Stream start error:", error);
-          controller.enqueue(
-            encoder.encode(
-              `event: error\ndata: ${JSON.stringify({
-                message: `Stream error: ${error.message}`,
-              })}\n\n`
-            )
-          );
-        } finally {
-          controller.close();
+          if (!streamClosed) {
+            logger.info('[STREAM_LIFECYCLE] Controller closing in stream finally block.');
+            controller.close(); // This will now call our wrapper
+          }
         }
       },
     });

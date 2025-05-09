@@ -25,6 +25,8 @@ import { pollingManager } from '../../../utils/shared/polling-manager';
 import logger from '../../../utils/shared/logger';
 import { migrationMonitor } from '../../../utils/shared/monitoring';
 import { rollbackManager } from '../../../utils/shared/rollback';
+import path from 'path';
+import fs from 'fs';
 
 // OpenAI API configuration
 const OPENAI_CONFIG = {
@@ -73,6 +75,64 @@ export type RunStatus = Run['status'];
 export interface OpenAIResponse<T = any> {
   data: T;
   error?: string;
+}
+
+// Define proper interfaces for Responses API
+export interface ResponseOptionsBase {
+  max_tokens?: number;
+  temperature?: number;
+  top_p?: number;
+  tools?: Array<{
+    type: string;
+    [key: string]: any;
+  }>;
+  store?: boolean;
+}
+
+export interface ResponseCreateParamsNonStreaming extends ResponseOptionsBase {
+  model: string;
+  input: string;
+  stream: false;
+}
+
+export interface ResponseCreateParamsStreaming extends ResponseOptionsBase {
+  model: string;
+  input: string;
+  stream: true;
+}
+
+export interface ResponseContinueParamsNonStreaming extends ResponseOptionsBase {
+  model: string;
+  previous_response_id: string;
+  input: string;
+  stream: false;
+}
+
+export interface ResponseContinueParamsStreaming extends ResponseOptionsBase {
+  model: string;
+  previous_response_id: string;
+  input: string;
+  stream: true;
+}
+
+export interface ResponseToolCall {
+  id: string;
+  type: string;
+  function: {
+    name: string;
+    arguments: string;
+  };
+}
+
+export interface ResponseResult {
+  id: string;
+  output_text: string;
+  tool_calls?: ResponseToolCall[];
+  usage?: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+  };
 }
 
 export class UnifiedOpenAIService {
@@ -405,6 +465,21 @@ export class UnifiedOpenAIService {
   }
 
   /**
+   * Loads the assistant prompt from the file system
+   * @returns The content of the assistant prompt file
+   */
+  private loadAssistantPrompt(): string {
+    try {
+      const promptPath = path.join(process.cwd(), 'utils', 'openai', 'assistant_prompt.md');
+      return fs.readFileSync(promptPath, 'utf-8');
+    } catch (error) {
+      logger.error(`[OPENAI] Error loading assistant prompt: ${error.message}`);
+      // Return a minimal fallback prompt if file can't be loaded
+      return 'You are an expert analyst and narrative synthesizer for workforce trends. Your primary function is to transform structured data and statistics into a compelling, insightful, and human-readable narrative.';
+    }
+  }
+
+  /**
    * Create chat completion with enhanced error handling and fallbacks
    */
   public async createChatCompletion(
@@ -587,110 +662,159 @@ export class UnifiedOpenAIService {
   /**
    * Create a new thread
    */
-  public async createThread(): Promise<OpenAIResponse<Thread>> {
+  public async createThread(): Promise<OpenAIResponse<string>> {
     await this.initialize();
     return this.executeWithMonitoring('createThread', async () => {
-      const thread = await this.client.beta.threads.create();
+      // Use Responses API to create a new response session
+      const response = await this.client.responses.create({
+        model: 'gpt-4o',
+        input: '',
+        stream: false,
+      });
+      // The response ID acts as the thread ID
       return {
-        data: thread
+        data: response.id,
       };
     });
   }
 
   /**
-   * List messages in a thread
+   * Create a response using OpenAI's Responses API
    */
-  public async listMessages(threadId: string, options: { limit?: number } = {}): Promise<OpenAIResponse<{ data: Message[] }>> {
+  public async createResponse(
+    input: string,
+    options: any = {}
+  ): Promise<OpenAIResponse<any>> {
+    await this.initialize();
+    return this.executeWithMonitoring('createResponse', async () => {
+      const requestOptions = {
+        model: options.model || 'gpt-4o',
+        input,
+        ...options,
+        stream: Boolean(options.stream)
+      };
+      const response = await (this.client.responses as any).create(requestOptions);
+      return { data: response };
+    });
+  }
+
+  /**
+   * Continue a conversation using a previous response ID
+   */
+  public async continueConversation(
+    previousResponseId: string,
+    input: string,
+    options: any = {}
+  ): Promise<OpenAIResponse<any>> {
+    await this.initialize();
+    return this.executeWithMonitoring('continueConversation', async () => {
+      const requestOptions = {
+        model: options.model || 'gpt-4o',
+        previous_response_id: previousResponseId,
+        input,
+        ...options,
+        stream: Boolean(options.stream)
+      };
+      const response = await (this.client.responses as any).create(requestOptions);
+      return { data: response };
+    });
+  }
+
+  /**
+   * List messages in a response session
+   */
+  public async listMessages(threadId: string, options: { limit?: number } = {}): Promise<OpenAIResponse<any[]>> {
     await this.initialize();
     return this.executeWithMonitoring('listMessages', async () => {
-      const messages = await this.client.beta.threads.messages.list(threadId, options);
-      return {
-        data: messages
-      };
+      // Use legacy threads API for listing messages
+      const response = await this.client.beta.threads.messages.list(threadId);
+      const messages = response.data || [];
+      if (options.limit) {
+        return { data: messages.slice(-options.limit) };
+      }
+      return { data: messages };
     });
   }
 
   /**
-   * Create a message in a thread
+   * Create a message in a response session
    */
-  public async createMessage(threadId: string, message: { role: 'user' | 'assistant'; content: string }): Promise<OpenAIResponse<Message>> {
+  public async createMessage(
+    threadId: string,
+    message: { role: 'user' | 'assistant'; content: string }
+  ): Promise<OpenAIResponse<any>> {
     await this.initialize();
     return this.executeWithMonitoring('createMessage', async () => {
+      // Use legacy threads API to create a message
       const result = await this.client.beta.threads.messages.create(threadId, message);
-      return {
-        data: result
-      };
+      return { data: result };
     });
   }
 
   /**
-   * Create a run in a thread
+   * Create a run in a response session
    */
-  public async createRun(threadId: string, options: { assistant_id: string; instructions?: string }): Promise<OpenAIResponse<Run>> {
+  public async createRun(threadId: string, options: { instructions?: string }): Promise<OpenAIResponse<any>> {
     await this.initialize();
     return this.executeWithMonitoring('createRun', async () => {
-      const run = await this.client.beta.threads.runs.create(threadId, options);
+      // Combine instructions with default prompt into input for Responses API
+      const systemInstruction = options.instructions as string | undefined;
+      delete options.instructions;
+      const defaultInstruction = 'Please analyze the context of our conversation and provide your response.';
+      const promptInput = systemInstruction
+        ? `${systemInstruction}\n\n${defaultInstruction}`
+        : defaultInstruction;
+      // Don't add assistant prompt here - it should be added by the controller
+      const response = await this.client.responses.create({
+        model: 'gpt-4o',
+        input: promptInput,
+        previous_response_id: threadId,
+        stream: false,
+        ...options
+      } as any);
+
       return {
-        data: run
+        data: response,
       };
     });
   }
 
   /**
-   * Retrieve a run's status
+   * Retrieve a response by ID
    */
-  public async retrieveRun(threadId: string, runId: string): Promise<OpenAIResponse<Run>> {
+  public async retrieveRun(responseId: string): Promise<OpenAIResponse<any>> {
     await this.initialize();
     return this.executeWithMonitoring('retrieveRun', async () => {
-      const run = await this.client.beta.threads.runs.retrieve(threadId, runId);
-      return {
-        data: run
-      };
+      const response = await (this.client.responses as any).retrieve(responseId);
+      return { data: response };
     });
   }
 
   /**
-   * Submit tool outputs for a run
+   * Submit tool outputs for a run in a response session
    */
-  public async submitToolOutputs(threadId: string, runId: string, toolOutputs: { tool_outputs: Array<{ tool_call_id: string; output: string }> }): Promise<OpenAIResponse<Run>> {
+  public async submitToolOutputs(
+    threadId: string,
+    runId: string,
+    toolOutputs: { tool_outputs: Array<{ tool_call_id: string; output: string }> }
+  ): Promise<OpenAIResponse<any>> {
     await this.initialize();
     return this.executeWithMonitoring('submitToolOutputs', async () => {
+      // Use legacy runs API to submit tool outputs
       const result = await this.client.beta.threads.runs.submitToolOutputs(threadId, runId, toolOutputs);
-      return {
-        data: result
-      };
+      return { data: result };
     });
   }
 
   /**
-   * Wait for no active runs on a thread
+   * Wait for no active runs on a response session
+   * NOTE: With the Responses API, there are no separate "runs" to wait for,
+   * so this method is now just a compatibility layer that immediately resolves
    */
-  public async waitForNoActiveRuns(threadId: string, pollInterval: number = 250, timeoutMs: number = 60000): Promise<void> {
-    await this.initialize();
-    return this.executeWithMonitoring('waitForNoActiveRuns', async () => {
-      const activeStatuses = new Set(["queued", "in_progress", "requires_action"]);
-      
-      await pollingManager.poll(
-        async () => {
-          const runs = await this.client.beta.threads.runs.list(threadId, { limit: 10 });
-          const activeRun = runs.data.find((run) => activeStatuses.has(run.status));
-          
-          if (activeRun) {
-            // Return the active run to continue polling
-            return activeRun;
-          }
-          
-          // Return null to indicate no active runs (polling complete)
-          return null;
-        },
-        {
-          maxPollingTime: timeoutMs,
-          pollingInterval: pollInterval,
-          context: 'THREAD_RUN',
-          stopCondition: (result) => result === null,
-        }
-      );
-    });
+  public async waitForNoActiveRuns(): Promise<void> {
+    // This method is now just a no-op that immediately resolves
+    logger.info('[OPENAI] waitForNoActiveRuns: No-op with Responses API');
+    return Promise.resolve();
   }
 }
 
@@ -724,4 +848,4 @@ export async function createImage(
   options?: Partial<OpenAI.Images.ImageGenerateParams>
 ): Promise<OpenAIResponse<string[]>> {
   return unifiedOpenAIService.createImage(prompt, options);
-} 
+}
