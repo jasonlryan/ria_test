@@ -45,7 +45,6 @@ logs/
 # and their contents.
 **/archive/
 **/2025_DATA/
-RIA25_Documentation/temp_build/
 
 # Legacy scripts
 scripts/legacy/
