@@ -16,7 +16,7 @@ logs/
 *.temp
 *.tmp
 .cache/
-**/temp_build/ # Ignore all temp_build directories
+**/temp_build/
 
 # Cursor IDE files
 .cursor/
