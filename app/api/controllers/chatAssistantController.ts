@@ -1381,25 +1381,6 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
   }
 }
 
-export async function putHandler(request: NextRequest) {
-  const apiStartTime = Date.now();
-  try {
-    const body = await request.json();
-    const { threadId, runId, toolOutputs } = body;
-
-    if (!threadId || !runId || !toolOutputs) {
-      return formatBadRequestResponse("Missing required fields");
-    }
-
-    await unifiedOpenAIService.submitToolOutputs(threadId, runId, { tool_outputs: toolOutputs });
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    logger.error('[CHAT_ASSISTANT] Error in putHandler:', error);
-    return formatErrorResponse(error);
-  }
-}
-
 /**
  * Resets thread compatibility metadata for comparison queries or new topics
  * This preserves cached files but forces a fresh compatibility check

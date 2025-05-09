@@ -791,22 +791,6 @@ export class UnifiedOpenAIService {
   }
 
   /**
-   * Submit tool outputs for a run in a response session
-   */
-  public async submitToolOutputs(
-    threadId: string,
-    runId: string,
-    toolOutputs: { tool_outputs: Array<{ tool_call_id: string; output: string }> }
-  ): Promise<OpenAIResponse<any>> {
-    await this.initialize();
-    return this.executeWithMonitoring('submitToolOutputs', async () => {
-      // Use legacy runs API to submit tool outputs
-      const result = await this.client.beta.threads.runs.submitToolOutputs(threadId, runId, toolOutputs);
-      return { data: result };
-    });
-  }
-
-  /**
    * Wait for no active runs on a response session
    * NOTE: With the Responses API, there are no separate "runs" to wait for,
    * so this method is now just a compatibility layer that immediately resolves
