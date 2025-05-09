@@ -1,65 +1,61 @@
+# Node.js / Next.js
 node_modules
 .next
-
 .env
-
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # macOS system files
 .DS_Store
 **/.DS_Store
 
-# Data directories with intermediate and backup files
-/2025_DATA/
-/2025_DATA/**
-/2025_DATA_PROCESSING/*.csv
-/tests/data/*.csv
-RIA25_Documentation/temp_build/
-RIA25_Documentation/temp_build/**
-
-# Archive folders (ensure none make it into the repo)
-**/archive/
-**/archive/**
-archive/
-archive/**
-
-# Data files (ensure none make it into the repo)
-*.csv
-*.xlsx
-*.xls
-*.tsv
-*.json.backup
-*.json.bak
-
-# Microsoft Office files (large binary files)
-*.docx
-*.xlsx
-*.pptx
-*.doc
-*.xls
-*.ppt
-
-# Explicitly include important files
-!2025_DATA_PROCESSING/generate_consolidated_csv.js
-!scripts/data/2024/2024_global_data.csv
-!scripts/data/2025/2025_global_data.csv
-
 # Logs
 logs/
-*.txt
 *.log
+*.txt # If .txt files are generally logs/temp, otherwise be more specific
 
 # Temporary files
 *.temp
 *.tmp
 .cache/
 
-.DS_Store
-
-# Ignore all legacy scripts
-scripts/legacy/
-
 # Cursor IDE files
 .cursor/
-**/.cursor/
-.cursor
+
+# Data - Generally ignore common data file extensions
+# Be careful with broad patterns; ensure you're not accidentally ignoring needed files.
+# Consider if these are too broad or if specific directories are better.
+*.csv
+*.xlsx
+*.xls
+*.tsv
+# *.json # CAUTION: This would ignore ALL json files. Usually too broad.
+*.json.backup
+*.json.bak
+
+# Microsoft Office files (large binary files)
+*.docx
+# *.xlsx # Already covered above
+*.pptx
+*.doc
+# *.xls # Already covered above
+*.ppt
+
+# Specific Data Directories & Archives
+# These will ignore any directory named 'archive' or '2025_DATA' anywhere
+# and their contents.
+**/archive/
+**/2025_DATA/
+RIA25_Documentation/temp_build/
+
+# Legacy scripts
+scripts/legacy/
+
+# IMPORTANT: Explicitly include (un-ignore) necessary files
+# These files would have been ignored by broader patterns above, so we re-include them.
+# Ensure the paths are correct relative to your project root.
+!scripts/data/2024/2024_global_data.csv
+!scripts/data/2025/2025_global_data.csv
+# If generate_consolidated_csv.js is inside 2025_DATA_PROCESSING, and 2025_DATA_PROCESSING
+# is inside a directory that might be ignored (e.g. if 2025_DATA contained it),
+# then you might need to be more specific or un-ignore parent dirs too.
+# For now, assuming 2025_DATA_PROCESSING is at the root or not otherwise ignored.
+!2025_DATA_PROCESSING/generate_consolidated_csv.js
