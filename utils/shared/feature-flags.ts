@@ -22,12 +22,7 @@ export interface FeatureFlagConfig {
  * Type-safe feature flag definitions
  */
 export interface FeatureFlags {
-  USE_RESPONSES_API: FeatureFlagConfig;
-  UNIFIED_OPENAI_SERVICE: FeatureFlagConfig;
-  UNIFIED_POLLING: FeatureFlagConfig;
   ENHANCED_ERROR_HANDLING: FeatureFlagConfig;
-  ENABLE_GRADUAL_MIGRATION: FeatureFlagConfig;
-  FALLBACK_TO_LEGACY: FeatureFlagConfig;
   MONITOR_MIGRATION: FeatureFlagConfig;
 }
 
@@ -35,35 +30,10 @@ export interface FeatureFlags {
  * Feature flag definitions with their default values and descriptions
  */
 export const featureFlags: FeatureFlags = {
-  USE_RESPONSES_API: {
-    enabled: false,
-    envKey: 'USE_RESPONSES_API',
-    description: 'Controls whether to use the new OpenAI Responses API',
-  },
-  UNIFIED_OPENAI_SERVICE: {
-    enabled: false,
-    envKey: 'UNIFIED_OPENAI_SERVICE',
-    description: 'Controls whether to use the unified OpenAI service implementation',
-  },
-  UNIFIED_POLLING: {
-    enabled: false,
-    envKey: 'UNIFIED_POLLING',
-    description: 'Controls whether to use the centralized polling manager',
-  },
   ENHANCED_ERROR_HANDLING: {
     enabled: true,
     envKey: 'ENHANCED_ERROR_HANDLING',
     description: 'Controls whether to use enhanced error handling and fallback mechanisms',
-  },
-  ENABLE_GRADUAL_MIGRATION: {
-    enabled: true,
-    envKey: 'ENABLE_GRADUAL_MIGRATION',
-    description: 'Controls whether to enable gradual migration to unified service',
-  },
-  FALLBACK_TO_LEGACY: {
-    enabled: true,
-    envKey: 'FALLBACK_TO_LEGACY',
-    description: 'Controls whether to fall back to legacy services if unified service fails',
   },
   MONITOR_MIGRATION: {
     enabled: true,

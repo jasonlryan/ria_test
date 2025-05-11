@@ -9,18 +9,12 @@ const fs = require("fs");
 const path = require("path");
 
 // Set environment variables for OpenAI monitoring
-process.env.USE_RESPONSES_API = "true";
-process.env.UNIFIED_OPENAI_SERVICE = "true";
 process.env.MONITOR_MIGRATION = "true";
 
 console.log("Feature flags set in environment:");
-console.log("- USE_RESPONSES_API=true");
-console.log("- UNIFIED_OPENAI_SERVICE=true");
 console.log("- MONITOR_MIGRATION=true");
 console.log("\nTo make these changes permanent, add them to your .env file:");
 console.log(`
-USE_RESPONSES_API=true
-UNIFIED_OPENAI_SERVICE=true
 MONITOR_MIGRATION=true
 `);
 
@@ -41,8 +35,6 @@ try {
 
   // Add or update feature flag variables
   const flags = {
-    USE_RESPONSES_API: "true",
-    UNIFIED_OPENAI_SERVICE: "true",
     MONITOR_MIGRATION: "true",
   };
 

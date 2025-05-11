@@ -17,7 +17,6 @@
 
 import OpenAI from 'openai';
 import { ChatCompletion, ChatCompletionChunk } from 'openai/resources/chat';
-import { isFeatureEnabled } from '../../../utils/shared/feature-flags';
 import { pollingManager } from '../../../utils/shared/polling-manager';
 import logger from '../../../utils/shared/logger';
 import { migrationMonitor } from '../../../utils/shared/monitoring';
@@ -259,7 +258,7 @@ export class UnifiedOpenAIService {
         
       case OpenAIErrorType.MODEL_OVERLOADED:
         // Fall back to a less capable model
-        if (isFeatureEnabled('USE_RESPONSES_API') && retryCount < 1) {
+        if (retryCount < 1) {
           logger.info(`[OPENAI] Model overloaded. Falling back to simpler model`);
           return Promise.reject({ 
             shouldFallback: true, 
@@ -290,8 +289,7 @@ export class UnifiedOpenAIService {
         // Some invalid requests can be retried with modified parameters
         if (
           error.message?.includes('content filter') && 
-          retryCount < 1 && 
-          isFeatureEnabled('USE_RESPONSES_API')
+          retryCount < 1
         ) {
           logger.info(`[OPENAI] Content filter triggered. Retrying with modified content.`);
           return Promise.reject({
@@ -303,7 +301,7 @@ export class UnifiedOpenAIService {
     }
     
     // If we reach here, we couldn't recover
-    if (errorType === OpenAIErrorType.SERVER && isFeatureEnabled('USE_RESPONSES_API')) {
+    if (errorType === OpenAIErrorType.SERVER) {
       // For server errors, consider rolling back to legacy implementation
       await rollbackManager.checkAndRollbackIfNeeded();
     }
@@ -388,7 +386,7 @@ export class UnifiedOpenAIService {
       if (hasTimedOut) {
         logger.error(`[OPENAI] Operation timeout: ${method} exceeded ${timeoutMs}ms limit`);
         
-        if (fallbackFn && isFeatureEnabled('USE_RESPONSES_API')) {
+        if (fallbackFn) {
           logger.info(`[OPENAI] Attempting fallback after timeout on ${method}`);
           try {
             return await fallbackFn();
@@ -517,60 +515,8 @@ export class UnifiedOpenAIService {
     };
 
     return this.executeWithMonitoring('createChatCompletion', async () => {
-      const useResponsesApi = isFeatureEnabled('USE_RESPONSES_API');
-      
-      if (useResponsesApi) {
-        try {
-          // Use streaming with response API
-          const stream = await this.client.chat.completions.create({
-            messages,
-            model: options.model || 'gpt-3.5-turbo',
-            stream: true,
-            ...options,
-          });
-
-          // Enhanced stream handling with timeout
-          const chunks: string[] = [];
-          try {
-            for await (const chunk of stream as AsyncIterable<ChatCompletionChunk>) {
-              chunks.push(chunk.choices[0]?.delta?.content || '');
-            }
-            
-            return {
-              data: {
-                content: chunks.join(''),
-                role: 'assistant',
-              },
-            };
-          } catch (streamError) {
-            // If stream fails partway through but we have content
-            if (chunks.length > 0) {
-              logger.warn(`[OPENAI] Streaming interrupted but partial content available: ${streamError.message}`);
-              return {
-                data: {
-                  content: chunks.join(''),
-                  role: 'assistant',
-                },
-                error: `Streaming error: ${streamError.message}`
-              };
-            }
-            
-            // If stream fails with no content, try without streaming
-            logger.warn(`[OPENAI] Streaming failed, falling back to non-streaming: ${streamError.message}`);
-            throw { shouldTryWithoutStreaming: true, originalError: streamError };
-          }
-        } catch (apiError) {
-          // If streaming fails completely or we get shouldTryWithoutStreaming
-          if (apiError.shouldTryWithoutStreaming) {
-            return await createNonStreamingCompletion();
-          }
-          // Other errors are handled by executeWithMonitoring
-          throw apiError;
-        }
-      } else {
-        // Use regular completion API
-        return await createNonStreamingCompletion();
-      }
+      // Use regular completion API
+      return await createNonStreamingCompletion();
     }, { fallbackFn });
   }
 
