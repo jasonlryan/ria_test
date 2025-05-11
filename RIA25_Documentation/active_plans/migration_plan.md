@@ -81,7 +81,7 @@
 - [x] Remove old controller logic for threads/runs (all threadId, runId, threadContext, polling, and related logic removed from controllers)
 - [x] Delete or archive redundant files as .bak (e.g., testOpenAIController.ts.bak, route.ts.bak, queryProcessing.ts.bak, legacy code in /utils/openai/)
 - [x] Remove feature flags for API switching (USE_RESPONSES_API, UNIFIED_OPENAI_SERVICE, etc.); all code and config for these flags have been removed
-- [ ] Update or remove legacy tests and migration scripts
+- [x] Update or remove legacy tests and migration scripts (all obsolete test files have been deleted or archived)
 - [ ] Refactor cache/session logic to use only response/session IDs
 - [ ] Update documentation to reflect the new architecture
 
