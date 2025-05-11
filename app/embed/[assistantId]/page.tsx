@@ -168,6 +168,8 @@ function Embed(props) {
     "Explore insights from our comprehensive workforce survey with RIA, your AI research assistant";
 
   const [loading, setLoading] = useState(false);
+  // Debug: log parent loading state
+  console.log("Embed render, loading:", loading);
   // Message being streamed
   const [streamingMessage, setStreamingMessage] = useState(null);
   // Whole chat
@@ -185,14 +187,8 @@ function Embed(props) {
   // User prompt
   const [prompt, setPrompt] = useState("");
   // Get the thread id from the response, and then can pass it back to the next request to continue the conversation.
-  const [threadId, setThreadId] = useState(() => {
-    // Initialize from localStorage if available, but only in client side
-    if (typeof window !== "undefined") {
-      const savedThreadId = localStorage.getItem("chatThreadId");
-      return savedThreadId || null;
-    }
-    return null;
-  });
+  const [threadId, setThreadId] = useState<string | null>(null);
+  const [lastResponseId, setLastResponseId] = useState<string | null>(null);
 
   // Thread data cache to track files loaded per thread
   const [threadDataCache, setThreadDataCache] = useState(() => {
@@ -317,729 +313,668 @@ function Embed(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Reset chat
-  const refreshChat = () => {
-    console.log("Refreshing chat, clearing messages and thread ID");
+  // At the top of Embed component, after other useRef declarations:
+  const sendPromptCallId = useRef(0);
+  const isSendingPrompt = useRef(false); // New ref to guard re-entrancy
+  const animationFrameId = useRef<number | null>(null);
 
-    // Reset messages to just the welcome message
-    setMessages([
-      {
-        id: "welcome",
-        role: "assistant",
-        content: chatConfig.welcomeMessage,
-        createdAt: new Date(),
-      },
-    ]);
-
-    // Reset thread ID and remove from localStorage
-    setThreadId(null);
-    localStorage.removeItem("chatThreadId");
-
-    // Clear thread data cache for this session
-    if (threadId) {
-      setThreadDataCache((prevCache) => {
-        const updatedCache = { ...prevCache };
-        delete updatedCache[threadId];
-        localStorage.setItem("threadDataCache", JSON.stringify(updatedCache));
-        return updatedCache;
-      });
+  useEffect(() => {
+    console.log(
+      `[LOADING_STATE_CHANGED] loading is now: ${loading}, currentCallId: ${sendPromptCallId.current}, isSendingRef: ${isSendingPrompt.current}`
+    );
+    if (!loading && isSendingPrompt.current && sendPromptCallId.current > 0) {
+      console.error(
+        `[LOADING_STATE_ERROR] Call ID: ${sendPromptCallId.current}, loading became false prematurely! isSendingPrompt.current is true. This likely means an earlier/nested finalizeStream call (e.g., from an error handler) concluded sendPrompt for this callId, or an unexpected setLoading(false) occurred elsewhere.`
+      );
+      // Potentially try to ensure the UI reflects the end of sending if text was accumulated
+      // but this indicates a logic flaw elsewhere that needs fixing primarily.
+      // Example: if (accumulatedText.current.trim()) {
+      //    console.warn("[LOADING_STATE_ERROR_RECOVERY_ATTEMPT] Trying to finalize with accumulated text due to premature loading=false.");
+      //    finalizeStream(`premature_loading_false_for_call_${sendPromptCallId.current}`);
+      // }
     }
+  }, [loading]);
 
-    // Reset any in-progress messages
-    setStreamingMessage(null);
-
-    // Reset loading state
-    setLoading(false);
-
-    // Reset the prompt if there's any text in it
-    if (prompt) {
-      setPrompt("");
+  // useEffect for clearing localStorage on mount (KEEP THIS)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("chatThreadId");
+      localStorage.removeItem("chatLastResponseId");
+      localStorage.removeItem("threadDataCache");
+      console.log(
+        "[INITIAL_MOUNT_EFFECT] Cleared session IDs & cache from localStorage."
+      );
     }
+  }, []);
 
-    console.log("Chat reset complete");
-  };
+  const sendPrompt = async (
+    clientThreadId_param?: string,
+    immediateQuestion?: string
+  ) => {
+    const localThreadId = clientThreadId_param || threadId; // Use this for calls needing a threadId context from client state
+    const currentCallId = ++sendPromptCallId.current;
+    console.log(
+      `[SEND_PROMPT_ENTER] Call ID: ${currentCallId}, Query: "${(
+        immediateQuestion ||
+        prompt ||
+        ""
+      ).substring(0, 30)}...", Current loading: ${loading}, isSendingRef: ${
+        isSendingPrompt.current
+      }, localThreadId: ${localThreadId}, lastResponseId: ${lastResponseId}`
+    );
 
-  // TODO: Move this into a helper function.
-  const sendPrompt = async (threadId?: string, immediateQuestion?: string) => {
-    // Use immediateQuestion if provided, otherwise use prompt state
-    const questionText = immediateQuestion || prompt || "";
-
-    // Don't send if question is empty
-    if (!questionText.trim()) return;
-
-    // Track analytics
-    track("Question", { question: questionText });
-
-    // Reset prompt immediately to prevent double submissions
-    if (!immediateQuestion) {
-      setPrompt("");
+    if (isSendingPrompt.current) {
+      console.warn(
+        `[SEND_PROMPT_RE_ENTRANCY_BLOCKED] Call ID: ${currentCallId} blocked.`
+      );
+      return;
     }
-
-    // Set loading state
+    isSendingPrompt.current = true;
     setLoading(true);
 
-    // Set up the initial streaming message
+    const OPENAI_ASSISTANT_TIMEOUT_MS = 90000;
+    let streamFinalizedThisCall = false;
+    let watchdogThisCall: NodeJS.Timeout | null = null;
+
+    const finalizeStream = (reason = "unknown") => {
+      const localCallId_finalize = currentCallId; // Use currentCallId from sendPrompt's scope
+      console.log(
+        `[FINALIZE_STREAM_ENTER] Call ID: ${localCallId_finalize}, Reason: ${reason}, streamFinalizedThisCall: ${streamFinalizedThisCall}, Comp loading state: ${loading}`
+      );
+      if (streamFinalizedThisCall) {
+        console.log(
+          `[FINALIZE_STREAM_BAIL_ALREADY_FINALIZED] Call ID: ${localCallId_finalize}, Reason: ${reason}.`
+        );
+        if (
+          watchdogThisCall &&
+          reason !== "watchdog_STREAM_HANDLER" &&
+          reason !== "watchdog"
+        ) {
+          clearTimeout(watchdogThisCall);
+        }
+        return;
+      }
+      streamFinalizedThisCall = true;
+      if (watchdogThisCall) {
+        clearTimeout(watchdogThisCall);
+        watchdogThisCall = null;
+        console.log(
+          `[FINALIZE_STREAM_CLEARED_WATCHDOG] Call ID: ${localCallId_finalize} (Reason: ${reason})`
+        );
+      }
+      if (
+        !loading &&
+        (reason.includes("messageDone") ||
+          reason.includes("eof_STREAM_HANDLER") ||
+          reason.includes("errorEvent_STREAM_HANDLER") ||
+          reason.includes("streamLoopError_STREAM_HANDLER"))
+      ) {
+        console.error(
+          `[FINALIZE_STREAM_UNEXPECTED_LOADING_FALSE] Call ID: ${localCallId_finalize}, Reason: ${reason}. Loading was false! Proceeding.`
+        );
+      } else if (!loading && !isPreStreamErrorReason(reason)) {
+        console.warn(
+          `[FINALIZE_STREAM_WARN_BAIL_STALE] Call ID: ${localCallId_finalize}, Reason: ${reason}. Loading false. Bailing out.`
+        );
+        return;
+      }
+      try {
+        const finalContent = accumulatedText.current.trim();
+        console.log(
+          `[FINALIZE_STREAM_CONTENT] Call ID: ${localCallId_finalize}, Content (len ${
+            finalContent.length
+          }): "${finalContent.substring(0, 100)}..."`
+        );
+        console.log(
+          `[FINALIZE_STREAM_PRE_SET_MESSAGES] Call ID: ${localCallId_finalize}, msgId.current: ${messageId.current}`
+        );
+        if (finalContent || reason === "messageDone_STREAM_HANDLER") {
+          const newMessageId = (messageId.current + 1).toString();
+          setMessages((prevMessages) => {
+            if (prevMessages.find((msg) => msg.id === newMessageId)) {
+              console.warn(
+                `[FINALIZE_STREAM_DUPLICATE_GUARD] Call ID: ${localCallId_finalize}, Msg ID ${newMessageId} exists. Not adding.`
+              );
+              return prevMessages;
+            }
+            messageId.current++;
+            const newMessage = {
+              id: newMessageId,
+              role: "assistant" as const,
+              content: finalContent,
+              createdAt: new Date(),
+            };
+            console.log(
+              `[FINALIZE_STREAM_SET_MESSAGES] Call ID: ${localCallId_finalize}, ADDING (Reason: ${reason}):`,
+              JSON.parse(JSON.stringify(newMessage))
+            );
+            const updatedMessages = [...prevMessages, newMessage];
+            console.log(
+              `[FINALIZE_STREAM_SET_MESSAGES] Call ID: ${localCallId_finalize}, New count: ${updatedMessages.length}. IDs:`,
+              updatedMessages.map((m) => m.id)
+            );
+            return updatedMessages;
+          });
+        } else {
+          console.log(
+            `[FINALIZE_STREAM_SET_MESSAGES] Call ID: ${localCallId_finalize}, No content for '${reason}'. Skipping.`
+          );
+        }
+      } catch (error) {
+        console.error(
+          `[FINALIZE_STREAM_ERROR] Call ID: ${localCallId_finalize}, Error (Reason: ${reason}):`,
+          error
+        );
+      } finally {
+        console.log(
+          `[FINALIZE_STREAM_FINALLY] Call ID: ${localCallId_finalize}, Resetting states (Reason: ${reason}).`
+        );
+        setStreamingMessage(null);
+        setLoading(false);
+        accumulatedText.current = "";
+        if (animationFrameId.current) {
+          cancelAnimationFrame(animationFrameId.current);
+          animationFrameId.current = null;
+          console.log(
+            `[FINALIZE_STREAM_CLEANUP] Call ID: ${localCallId_finalize}, Cancelled anim frame.`
+          );
+        }
+        if (localCallId_finalize === sendPromptCallId.current) {
+          isSendingPrompt.current = false;
+          console.log(
+            `[FINALIZE_STREAM_FINALLY] Call ID: ${localCallId_finalize}, Reset isSendingPrompt.`
+          );
+        } else {
+          console.warn(
+            `[FINALIZE_STREAM_FINALLY_STALE_CALL] Call ID: ${localCallId_finalize} not current ${sendPromptCallId.current}. Not resetting isSendingPrompt.`
+          );
+        }
+        setTimeout(scrollToBottom, 0);
+      }
+    };
+    const isPreStreamErrorReason = (reason: string) => {
+      return [
+        "dataRetrievalError",
+        "outOfScope",
+        "dataResultError",
+        "errorNoContext",
+        "jsonResponse",
+        "assistantApiError",
+        "overallSendPromptError",
+      ].some((prefix) => reason.startsWith(prefix));
+    };
+
+    const questionText = immediateQuestion || prompt || "";
+    if (!questionText.trim()) {
+      setLoading(false);
+      isSendingPrompt.current = false;
+      console.log(
+        `[SEND_PROMPT_EXIT_NO_TEXT] Call ID: ${currentCallId}, Reset isSendingPrompt.`
+      );
+      return;
+    }
+    track("Question", { question: questionText });
+    if (!immediateQuestion) setPrompt("");
+    messageId.current++;
+    const userMessage = {
+      id: messageId.current.toString(),
+      role: "user" as const,
+      content: questionText,
+      createdAt: new Date(),
+    };
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+    console.log("[UI] Added user message:", userMessage);
     setStreamingMessage({
       id: "processing",
       role: "assistant",
-      content:
-        "<span class='loading-message'>Understanding your question...</span>",
+      content: "<span class='loading-message'>Retrieving data...</span>",
       createdAt: new Date(),
-      stage: "querying",
+      stage: "retrieving",
     });
 
-    // Set up a loading animation sequence with more informative messages
-    const loadingStages = [
-      {
-        stage: "retrieving",
-        message: "Searching through workforce survey data...",
-      },
-      { stage: "analyzing", message: "Examining trends and statistics..." },
-      {
-        stage: "processing",
-        message: "Identifying key patterns in the data...",
-      },
-      {
-        stage: "connecting",
-        message: "Connecting insights across demographics...",
-      },
-      { stage: "finalizing", message: "Formulating a comprehensive answer..." },
-    ];
-
-    let currentStage = 0;
-    // Create a stable reference to the interval ID
-    const intervalRef = { current: null };
-
-    intervalRef.current = setInterval(() => {
-      // Extra safety check to ensure the component is still mounted
-      if (!loading) {
-        if (intervalRef.current) clearInterval(intervalRef.current);
-        return;
-      }
-
-      // Safety check that the array element exists
-      if (currentStage < loadingStages.length && loadingStages[currentStage]) {
-        setStreamingMessage((prev) => ({
-          ...prev,
-          content: `<span class='loading-message'>${loadingStages[currentStage].message}</span>`,
-          stage: loadingStages[currentStage].stage,
-        }));
-
-        currentStage = (currentStage + 1) % loadingStages.length;
-      }
-    }, 4000);
-
-    // Record the ID of the message we're sending for user display
-    messageId.current += 1;
-    const msgId = messageId.current;
-
-    // We'll determine the user message content after the /api/query call
-    let userMessageContent = questionText;
-
     try {
-      console.log("Processing query:", questionText);
-
-      // Get cached files for this thread
-      const cachedFiles = threadId
-        ? getCachedFilesForThread(threadId)
-        : { fileIds: [] };
-
-      // Log thread information
-      console.log("🧵 THREAD INFO:");
-      console.log(`- Thread ID: ${threadId || "none"}`);
-      console.log(
-        `- Query: "${questionText.substring(0, 30)}${
-          questionText.length > 30 ? "..." : ""
-        }"`
-      );
-      console.log(
-        `- Has cached data: ${
-          Boolean(threadId) && cachedFiles.fileIds.length > 0
-        }`
-      );
-      console.log(`- Cached files: ${cachedFiles.fileIds.length}`);
-
-      // STAGE 1: Data Retrieval
-      // Update streaming message to show retrieval status
-      setStreamingMessage((prev) => ({
-        ...prev,
-        content: `<span class='loading-message'>Retrieving data...</span>`,
-        stage: "retrieving",
-      }));
-
-      console.log(
-        `📊 Retrieving data for query with ${cachedFiles.fileIds.length} cached files`
-      );
-
-      // Send request to query API, including cached file IDs
-      const dataRetrievalResponse = await fetch("/api/query", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      let dataResult;
+      try {
+        console.log("[SEND_PROMPT_API_QUERY] Preparing to call /api/query.");
+        const cachedFiles = localThreadId
+          ? getCachedFilesForThread(localThreadId)
+          : { fileIds: [] };
+        const queryApiBody: any = {
           query: questionText,
           context: "all-sector",
-          cachedFileIds: cachedFiles.fileIds,
-        }),
-      });
+          cachedFileIds:
+            localThreadId && cachedFiles.fileIds.length > 0
+              ? cachedFiles.fileIds
+              : [],
+        };
+        if (lastResponseId) {
+          queryApiBody.previous_response_id = lastResponseId;
+          if (localThreadId) queryApiBody.threadId = localThreadId;
+          console.log(
+            `[UI_TO_QUERY_API] Follow-up call to /api/query with prev_resp_id: ${lastResponseId}, threadId: ${localThreadId}`
+          );
+        } else {
+          console.log(
+            "[UI_TO_QUERY_API] New chat call to /api/query. No prev_resp_id or threadId sent."
+          );
+          delete queryApiBody.threadId;
+          delete queryApiBody.previous_response_id;
+        }
+        console.log(
+          "[SEND_PROMPT_API_QUERY] Body for /api/query:",
+          JSON.stringify(queryApiBody)
+        );
+        const dataRetrievalResponse = await fetch("/api/query", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(queryApiBody),
+        });
+        if (!dataRetrievalResponse.ok) {
+          const errorText = await dataRetrievalResponse.text();
+          throw new Error(
+            `Data retrieval failed: ${dataRetrievalResponse.status} ${errorText}`
+          );
+        }
 
-      if (!dataRetrievalResponse.ok) {
-        setStreamingMessage((prev) => ({
-          ...prev,
-          content: `<span class='loading-message'>Data retrieval failed with status ${dataRetrievalResponse.status}</span>`,
-          stage: "error",
-        }));
+        dataResult = await dataRetrievalResponse.json();
+        console.log(
+          "[UI] dataResult from /api/query (raw full object):",
+          JSON.parse(JSON.stringify(dataResult))
+        );
+        if (
+          dataResult.finalAssistantPrompt &&
+          typeof dataResult.finalAssistantPrompt === "string"
+        ) {
+          console.log(
+            "[UI] Received finalAssistantPrompt. Length:",
+            dataResult.finalAssistantPrompt.length
+          );
+          console.log(
+            "[UI] finalAssistantPrompt (first 500 chars):",
+            dataResult.finalAssistantPrompt.substring(0, 500)
+          );
+          if (dataResult.finalAssistantPrompt.length < 200) {
+            console.warn(
+              "[UI] WARNING: finalAssistantPrompt from backend is very short."
+            );
+          }
+        } else {
+          console.error(
+            "[UI] CRITICAL ERROR: finalAssistantPrompt missing/invalid in dataResult!",
+            dataResult
+          );
+          accumulatedText.current = "Error: Failed to prepare prompt.";
+          finalizeStream("missingBackendFinalPrompt");
+          return;
+        }
+        if (dataResult.stats && Array.isArray(dataResult.stats)) {
+          console.log(
+            `[UI] dataResult also contains .stats with ${dataResult.stats.length} items.`
+          );
+        }
+        if (dataResult.files_used && Array.isArray(dataResult.files_used)) {
+          console.log(
+            `[UI] dataResult.files_used contains: ${JSON.stringify(
+              dataResult.files_used
+            )}`
+          );
+        } else {
+          console.warn(
+            "[UI] dataResult.files_used is missing or not an array:",
+            dataResult.files_used
+          );
+        }
+      } catch (dataRetrievalError) {
         console.error(
-          "Error in data retrieval:",
-          dataRetrievalResponse.statusText
+          "[SEND_PROMPT_ERROR] Stage 1 Data Retrieval Error:",
+          dataRetrievalError
         );
-        throw new Error(
-          `Data retrieval failed with status ${dataRetrievalResponse.status}`
-        );
+        accumulatedText.current = `Error retrieving data: ${dataRetrievalError.message}`;
+        finalizeStream("dataRetrievalError");
+        return;
       }
 
-      const dataResult = await dataRetrievalResponse.json();
-      console.log("Data retrieval result:", {
-        status: dataResult.status,
-        files: dataResult.file_ids?.length || 0,
-        error: dataResult.error,
-      });
-
-      // If the backend returned a naturalLanguageQuery (e.g., for starter questions), use that as the user message
-      if (dataResult.naturalLanguageQuery) {
-        userMessageContent = dataResult.naturalLanguageQuery;
-      }
-
-      // Add user message to chat (after knowing the real content)
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          id: msgId.toString(),
-          role: "user",
-          content: userMessageContent,
-          createdAt: new Date(),
-        },
-      ]);
-
-      // For starter questions, update the questionText variable to match the backend's question for the assistant prompt
-      let assistantPromptQuestion = userMessageContent;
-
-      // === PATCH: Intercept out-of-scope queries ===
       if (dataResult.out_of_scope) {
-        const outOfScopeMessage = {
-          role: "assistant",
-          content:
-            dataResult.out_of_scope_message ||
-            "Sorry, your query is outside the scope of what I can answer.",
-          id: `out-of-scope-${Date.now()}`,
-          createdAt: new Date(),
-        };
-        setMessages((prevMessages) => [...prevMessages, outOfScopeMessage]);
-        setStreamingMessage(null);
-        setLoading(false);
-        clearInterval(intervalRef.current);
+        accumulatedText.current =
+          dataResult.out_of_scope_message || "Query outside scope.";
+        finalizeStream("outOfScope");
         return;
       }
-      // Check for errors in the data retrieval response
       if (dataResult.error) {
-        setStreamingMessage((prev) => ({
-          ...prev,
-          content: `I'm sorry, I encountered an error retrieving the relevant data: ${dataResult.error}`,
-          stage: "error",
-        }));
-        setLoading(false);
-        clearInterval(intervalRef.current);
+        accumulatedText.current = `Data error: ${dataResult.error}`;
+        finalizeStream("dataResultError");
+        return;
+      }
+      if (dataResult.status === "error_no_context") {
+        accumulatedText.current = dataResult.error || "Context needed.";
+        finalizeStream("errorNoContext");
         return;
       }
 
-      // Check for special error cases
-      if (dataResult && dataResult.status === "error_no_context") {
-        console.log("Error - no context available");
-
-        // Create a user-friendly error message
-        const errorMessage = {
-          role: "assistant",
-          content: `I need some context first. ${
-            dataResult.error ||
-            "Please ask me a question about workforce trends before requesting content transformations like articles or summaries."
-          }`,
-          id: `error-${Date.now()}`,
-          createdAt: new Date(),
-        };
-
-        // Add the error message to the chat
-        setMessages((prevMessages) => [...prevMessages, errorMessage]);
-        setStreamingMessage(null);
-        setLoading(false);
-        clearInterval(intervalRef.current);
-
-        // Log the error
-        console.error("Error:", dataResult.error);
-
-        // End the function here
-        return;
-      }
-
-      // Update thread cache with file IDs if new files were retrieved
-      if (threadId && dataResult?.file_ids && dataResult.file_ids.length > 0) {
-        const newFileIds = dataResult.file_ids;
-        const newData = { raw_data: dataResult.raw_data };
-
-        // Update the cache
-        updateThreadCache(threadId, newFileIds, newData);
-      }
-
-      // STAGE 2: After data retrieval, before sending to assistant
-      // Update the streaming message to show we're generating insights
       setStreamingMessage((prev) => ({
         ...prev,
-        content: `<span class='loading-message'>Generating insights...</span>`,
+        content: "<span class='loading-message'>Generating insights...</span>",
         stage: "analyzing",
       }));
 
-      // Add more detailed logging
-      console.log("Starting stage 2: Generating insights from retrieved data");
+      const assistantPrompt = dataResult.finalAssistantPrompt;
+      console.log(
+        "[UI] Using assistantPrompt for /api/chat-assistant (first 500 chars):",
+        assistantPrompt?.substring(0, 500)
+      );
+      console.log("[UI] assistantPrompt FULL LENGTH:", assistantPrompt?.length);
 
-      // Prepare content for the assistant with safety checks
-      // Use the real question from the backend if available (for starter questions)
-      // If statsPreview is present (starter question), include it in the prompt
-      const assistantPrompt = dataResult?.statsPreview
-        ? `
-Query: ${assistantPromptQuestion}
-
-Analysis Summary: ${dataResult?.analysis || "No analysis available"}
-
-Sector Data:
-${dataResult.statsPreview}
-`
-        : `
-Query: ${assistantPromptQuestion}
-
-Analysis Summary: ${dataResult?.analysis || "No analysis available"}
-
-${
-  dataResult?.files_used
-    ? `Files Used: ${dataResult.files_used.join(", ")}`
-    : ""
-}
-${dataResult?.data_points ? `Data Points: ${dataResult.data_points}` : ""}
-${dataResult?.status ? `Status: ${dataResult.status}` : ""}
-
-${
-  dataResult?.raw_data
-    ? `Raw Survey Data:
-\`\`\`json
-${
-  typeof dataResult.raw_data === "string"
-    ? dataResult.raw_data
-    : JSON.stringify(dataResult.raw_data, null, 2)
-}
-\`\`\`
-`
-    : "NO RAW DATA AVAILABLE"
-}
-`;
-
-      // TEMPORARY: Log the full data being sent to the assistant (USER REQUESTED)
-      console.log("==== FULL DATA SENT TO ASSISTANT ====");
-      console.log(assistantPrompt);
-      console.log("==== END FULL DATA ====");
-
-      // Add concise logging
-      console.log("------- Sending to assistant -------");
-      console.log("Query:", questionText);
-      console.log("Topics:", dataResult.matched_topics);
-      console.log("Files:", dataResult.files_used);
-      console.log("Data points:", dataResult.data_points);
-      console.log("Raw data included:", !!dataResult.raw_data);
-
-      // Add timeout handling for the API call
+      const assistantApiCallStart = Date.now();
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => {
+      const assistantTimeoutId = setTimeout(() => {
+        console.warn("[SEND_PROMPT_TIMEOUT] Assistant API request timed out.");
         controller.abort();
-        throw new Error("Assistant API request timed out after 30 seconds");
-      }, 30000); // 30 second timeout
+      }, OPENAI_ASSISTANT_TIMEOUT_MS);
 
       try {
-        // Send request to API for assistant processing
+        // VERIFY dataResult.files_used BEFORE assigning filesForChatAssistant
+        console.log(
+          "[UI_PRE_FILES_FOR_CHAT_ASSISTANT] Verifying dataResult.files_used:",
+          dataResult.files_used
+        );
+        console.log(
+          "[UI_PRE_FILES_FOR_CHAT_ASSISTANT] typeof dataResult.files_used:",
+          typeof dataResult.files_used
+        );
+        console.log(
+          "[UI_PRE_FILES_FOR_CHAT_ASSISTANT] Array.isArray(dataResult.files_used):",
+          Array.isArray(dataResult.files_used)
+        );
+
+        const filesForChatAssistant =
+          dataResult.files_used && Array.isArray(dataResult.files_used)
+            ? dataResult.files_used
+            : [];
+
+        console.log(
+          "[UI_POST_FILES_FOR_CHAT_ASSISTANT] filesForChatAssistant assigned as:",
+          JSON.parse(JSON.stringify(filesForChatAssistant))
+        );
+
+        if (
+          filesForChatAssistant.length === 0 &&
+          dataResult.stats &&
+          dataResult.stats.length > 0
+        ) {
+          console.warn(
+            "[UI_WARN_FILES_USED] dataResult.files_used was empty, but dataResult.stats was not. This might indicate an issue in /api/query response structure if files were indeed used for those stats."
+          );
+        }
+
+        const assistantApiBody = {
+          assistantId: assistantId,
+          previous_response_id: lastResponseId,
+          content: assistantPrompt,
+          original_user_query: questionText,
+          files_used_for_this_prompt: filesForChatAssistant, // Use the verified/defaulted list
+        };
+
+        console.log(
+          "[UI_TO_CHAT_ASSISTANT_RAW_BODY_PRE_STRINGIFY] assistantApiBody object:",
+          JSON.parse(JSON.stringify(assistantApiBody)) // Deep copy for reliable logging before stringify
+        );
+
+        console.log(
+          "[UI_TO_CHAT_ASSISTANT] Body for /api/chat-assistant (stringified preview):",
+          JSON.stringify(assistantApiBody, (key, value) =>
+            key === "content"
+              ? `${String(value).substring(0, 100)}... (length ${
+                  String(value).length
+                })`
+              : value
+          )
+        );
+
         const assistantResponse = await fetch("/api/chat-assistant", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            assistantId: assistantId,
-            threadId: threadId,
-            content: assistantPrompt,
-          }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(assistantApiBody),
           signal: controller.signal,
         });
-
-        // Add message update after 5 seconds of waiting
-        // Set a delayed message update to indicate processing
-        const processingUpdateTimeout = setTimeout(() => {
-          if (loading) {
-            setStreamingMessage((prev) => ({
-              ...prev,
-              content: `<span class='loading-message'>Processing complex data patterns and preparing your answer...</span>`,
-              stage: "finalizing",
-            }));
-          }
-        }, 5000);
-
-        // Clear the timeout since we got a response
-        clearTimeout(timeoutId);
-        clearTimeout(processingUpdateTimeout);
-
-        console.log("API response status:", assistantResponse.status);
-
+        clearTimeout(assistantTimeoutId);
+        console.log(
+          `[ASSISTANT_API_CALL_DURATION] ${
+            Date.now() - assistantApiCallStart
+          }ms`
+        );
         if (!assistantResponse.ok) {
-          console.error(
-            "Error response from OpenAI API:",
-            assistantResponse.status
-          );
-
-          try {
-            // Try to get the error message from the response
-            const errorData = await assistantResponse.json();
-            console.error("Error details:", errorData);
-
-            // Display out-of-scope errors differently
-            if (errorData.error_type === "out_of_scope") {
-              setStreamingMessage((prev) => ({
-                ...prev,
-                stage: "error",
-                content: `<span class='error-message'>${
-                  errorData.message ||
-                  "I'm sorry, but that appears to be outside the scope of what I can help with based on the available data."
-                }</span>`,
-              }));
-            } else {
-              setStreamingMessage((prev) => ({
-                ...prev,
-                stage: "error",
-                content: `<span class='error-message'>${
-                  errorData.message ||
-                  "Error contacting AI assistant. Please try again later."
-                }</span>`,
-              }));
-            }
-          } catch (e) {
-            // Fallback if we can't parse the error
-            setStreamingMessage((prev) => ({
-              ...prev,
-              stage: "error",
-              content: `<span class='error-message'>Error contacting AI assistant. Please try again later.</span>`,
-            }));
-          }
-
+          const errorText = await assistantResponse.text();
           throw new Error(
-            `API response not OK: ${assistantResponse.status} ${assistantResponse.statusText}`
+            `Assistant API error: ${assistantResponse.status} ${errorText}`
           );
         }
 
-        // --- START NEW LOGIC: Check Content-Type before assuming stream ---
         const contentType = assistantResponse.headers.get("content-type");
-
-        if (contentType && contentType.includes("application/json")) {
+        if (contentType?.includes("application/json")) {
+          console.log("[STREAM_HANDLER] Received JSON from assistant API.");
+          const jsonData = await assistantResponse.json();
+          accumulatedText.current =
+            jsonData.message || "Received non-streamed JSON.";
+          finalizeStream("jsonResponse");
+          return;
+        } else if (contentType?.includes("text/event-stream")) {
           console.log(
-            "[FRONTEND] Received JSON response from /api/chat-assistant"
+            "[STREAM_HANDLER] Received text/event-stream. Processing."
           );
-          try {
-            const data = await assistantResponse.json();
-            // console.log("[FRONTEND] Parsed JSON data:", data); // Removed verbose log
-
-            // Check for specific direct message flags
-            if (
-              data.incompatible_comparison === true ||
-              data.out_of_scope === true
-            ) {
-              const messageContent =
-                data.message ||
-                (data.incompatible_comparison
-                  ? "Comparison not possible due to data limitations."
-                  : "Query is outside the scope of available data.");
-              console.log(
-                "[FRONTEND] Direct message flag detected. Displaying message:",
-                messageContent
-              );
-
-              // Safely add the complete message to the chat display
-              messageId.current++; // Increment message ID for unique key
-              setMessages((prevMessages) => [
-                ...prevMessages,
-                {
-                  id: messageId.current.toString(), // Use incremented ID
-                  role: "assistant",
-                  content: messageContent, // Use the message from JSON
-                  createdAt: new Date(),
-                },
-              ]);
-
-              // Reset loading/streaming states
-              setLoading(false);
-              setStreamingMessage(null);
-              accumulatedText.current = "";
-              if (intervalRef.current) {
-                clearInterval(intervalRef.current);
-              }
-
-              // IMPORTANT: Stop further processing for this response
-              return;
-            } else {
-              // Handle unexpected JSON structure
-              console.warn(
-                "[FRONTEND] Received unexpected JSON structure:",
-                data
-              );
-              throw new Error("Received an unexpected response format."); // Throw error to be caught below
-            }
-          } catch (jsonError) {
-            console.error("[FRONTEND] Error parsing JSON response:", jsonError);
-            // Handle JSON parsing error by throwing it to the main catch block
-            throw new Error(`Failed to process response: ${jsonError.message}`);
-          }
-        }
-        // --- END NEW LOGIC ---
-        // --- EXISTING STREAM LOGIC MOVED INTO ELSE IF ---
-        else if (contentType && contentType.includes("text/event-stream")) {
-          console.log(
-            "[FRONTEND] Received stream response. Starting stream processing."
-          );
-          if (!assistantResponse.body) {
-            throw new Error("No response body received for stream");
-          }
-
-          // Use a manual event source approach instead of AssistantStream
+          if (!assistantResponse.body)
+            throw new Error("No response body for stream");
           const reader = assistantResponse.body.getReader();
           const decoder = new TextDecoder();
           let buffer = "";
-
-          // Reset accumulated text at the start of streaming
           accumulatedText.current = "";
+          streamFinalizedThisCall = false;
 
-          // Function to process SSE events
-          const processEvents = async (chunk) => {
-            // Add the new chunk to our buffer
-            buffer += chunk;
-
-            // Log raw buffer for debugging - REMOVED
-            // console.log(`Raw chunk received (${chunk.length} chars)`);
-
-            // First look for text delta events and accumulate them
-            const textDeltaRegex = /event: textDelta\ndata: ({.*?})\n\n/g;
-            let match;
-
-            while ((match = textDeltaRegex.exec(buffer)) !== null) {
-              try {
-                const eventData = JSON.parse(match[1]);
-
-                if (eventData.value) {
-                  // console.log( // Removed verbose log
-                  //  `📝 Accumulating text delta: ${eventData.value.substring(
-                  //    0,
-                  //    20
-                  //  )}...`
-                  // );
-
-                  // CRITICAL: Accumulate text in the ref first
-                  accumulatedText.current += eventData.value;
-
-                  // Then update React state once with the complete accumulated text
-                  setStreamingMessage({
-                    id: "streaming",
-                    role: "assistant",
-                    content: accumulatedText.current,
-                    createdAt: new Date(),
-                  });
-                }
-              } catch (e) {
-                console.error("Error processing text delta:", e);
-              }
-            }
-
-            // Look for message done events
-            const messageDoneRegex = /event: messageDone\ndata: ({.*?})\n\n/g;
-            let doneMatch;
-
-            while ((doneMatch = messageDoneRegex.exec(buffer)) !== null) {
-              try {
-                const eventData = JSON.parse(doneMatch[1]);
-                console.log("✅ Message completed, adding to chat");
-
-                // Set the thread ID if available
-                if (eventData.threadId) {
-                  setThreadId(eventData.threadId);
-                }
-
-                // Use the accumulated text for the final message
-                const finalContent =
-                  eventData.content || accumulatedText.current || "";
-
-                // *** ADDED FOR DEBUGGING *** - REMOVED
-                // console.log(
-                //  "DEBUG: Final content being added to messages:",
-                //  JSON.stringify(finalContent)
-                // );
-                // *** END DEBUGGING ***
-
-                // Add the final message
-                messageId.current++;
-                setMessages((prevMessages) => [
-                  ...prevMessages,
-                  {
-                    id: messageId.current.toString(),
-                    role: "assistant",
-                    content: finalContent,
-                    createdAt: new Date(eventData.createdAt || Date.now()),
-                  },
-                ]);
-
-                // Reset states
-                setLoading(false);
-                setStreamingMessage(null);
-                accumulatedText.current = "";
-
-                // Clear loading interval
-                if (intervalRef.current) {
-                  clearInterval(intervalRef.current);
-                }
-
-                // Scroll to bottom
-                setTimeout(scrollToBottom, 100);
-              } catch (e) {
-                console.error("Error processing message done:", e);
-              }
-            }
-
-            // Check for error events
-            const errorRegex = /event: error\ndata: ({.*?})\n\n/g;
-            let errorMatch;
-
-            while ((errorMatch = errorRegex.exec(buffer)) !== null) {
-              try {
-                const eventData = JSON.parse(errorMatch[1]);
-                console.error(
-                  "🛑 Error event:",
-                  eventData.message || eventData.error
-                );
-
-                // Add error message
-                messageId.current++;
-                setMessages((prevMessages) => [
-                  ...prevMessages,
-                  {
-                    id: messageId.current.toString(),
-                    role: "assistant",
-                    content: `I apologize, but I encountered an error: ${
-                      eventData.message || eventData.error || "Unknown error"
-                    }`,
-                    createdAt: new Date(),
-                  },
-                ]);
-
-                // Reset states
-                setLoading(false);
-                setStreamingMessage(null);
-
-                // Clear loading interval
-                if (intervalRef.current) {
-                  clearInterval(intervalRef.current);
-                }
-
-                // Scroll to bottom
-                setTimeout(scrollToBottom, 100);
-              } catch (e) {
-                console.error("Error processing error event:", e);
-              }
-            }
-
-            // Trim buffer to avoid memory issues
-            const lastCompleteEvent = buffer.lastIndexOf("\n\n");
-            if (lastCompleteEvent > 0) {
-              buffer = buffer.substring(lastCompleteEvent + 2);
-            }
-          };
-
-          // Start reading the stream
-          // Removed try/catch here, moved to outer block
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) {
-              console.log("Stream complete");
-              break;
-            }
-            await processEvents(decoder.decode(value, { stream: true }));
+          if (animationFrameId.current) {
+            cancelAnimationFrame(animationFrameId.current);
+            animationFrameId.current = null;
+            console.log(
+              "[STREAM_HANDLER_CLEANUP] Cancelled pre-existing animation frame."
+            );
           }
-          // --- END EXISTING STREAM LOGIC ---
-        } else {
-          // Handle unexpected Content-Type
-          console.error("[FRONTEND] Unexpected Content-Type:", contentType);
-          throw new Error("Received an unexpected response type from server.");
-        }
-      } catch (error) {
-        console.error("Error processing assistant response:", error);
-
-        // Clear the timeout if there was an error
-        clearTimeout(timeoutId);
-
-        // Determine the type of error for a more helpful message
-        let errorMessage =
-          "I apologize, but I encountered an issue while processing your request.";
-
-        if (error.name === "AbortError") {
-          errorMessage =
-            "I apologize for the delay. Your request took longer than expected to process. Please try asking a more specific question or try again later.";
-        } else if (
-          error.message?.includes("network") ||
-          error.message?.includes("fetch")
-        ) {
-          errorMessage =
-            "I'm having trouble connecting to the server. Please check your internet connection and try again.";
-        } else if (error.message?.includes("API")) {
-          errorMessage =
-            "I'm experiencing some temporary technical difficulties. Our team has been notified and is working to resolve this. Please try again in a few minutes.";
-        }
-
-        // Add error message to chat
-        messageId.current++;
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            id: messageId.current.toString(),
+          const initialStreamCreatedAt = new Date();
+          setStreamingMessage({
+            id: "streaming_message_active",
             role: "assistant",
-            content: errorMessage,
-            createdAt: new Date(),
-          },
-        ]);
+            content: "",
+            createdAt: initialStreamCreatedAt,
+            stage: "streaming",
+          });
 
-        // Reset states
-        setLoading(false);
-        setStreamingMessage(null);
+          if (watchdogThisCall) {
+            console.log(
+              `[STREAM_HANDLER_PRE_WATCHDOG_CLEAR] Call ID: ${currentCallId}, Clearing existing watchdog ID: ${watchdogThisCall}`
+            );
+            clearTimeout(watchdogThisCall);
+            watchdogThisCall = null;
+          }
+          watchdogThisCall = setTimeout(
+            () => finalizeStream("watchdog_STREAM_HANDLER"),
+            45000
+          );
+          console.log(
+            `[STREAM_HANDLER_WATCHDOG_SET] Call ID: ${currentCallId}, Watchdog SET: ID ${watchdogThisCall}`
+          );
 
-        // Scroll to bottom
-        setTimeout(scrollToBottom, 100);
+          try {
+            while (true) {
+              const { value, done } = await reader.read();
+              if (value) {
+                const rawChunkForLogging = decoder.decode(value, {
+                  stream: false,
+                });
+                console.log(
+                  `[RAW_STREAM_CHUNK_IN_HANDLER] Decoded (len ${
+                    rawChunkForLogging.length
+                  }): "${rawChunkForLogging.substring(0, 100)}..."`
+                );
+              }
+              if (done) {
+                console.log(
+                  `[STREAM_HANDLER_LOOP] Call ID: ${currentCallId}, Stream reported done: true.`
+                );
+                if (!streamFinalizedThisCall)
+                  finalizeStream("eof_STREAM_HANDLER");
+                break;
+              }
+              buffer += decoder.decode(value, { stream: true });
+              const textDeltaRegex = /event: textDelta\ndata: ({.*?})\n\n/g;
+              let match;
+              textDeltaRegex.lastIndex = 0;
+              while ((match = textDeltaRegex.exec(buffer)) !== null) {
+                try {
+                  const eventData = JSON.parse(match[1]);
+                  if (eventData.value) {
+                    accumulatedText.current += eventData.value;
+                    if (animationFrameId.current === null) {
+                      animationFrameId.current = requestAnimationFrame(() => {
+                        setStreamingMessage((prev) => {
+                          if (!prev || prev.id !== "streaming_message_active") {
+                            console.warn(
+                              `[RAF_SET_STREAMING_MSG] Call ID: ${currentCallId}, prev streamingMessage was null/unexpected. Re-initializing.`,
+                              prev
+                            );
+                            return {
+                              id: "streaming_message_active",
+                              role: "assistant",
+                              content: accumulatedText.current,
+                              createdAt: initialStreamCreatedAt,
+                              stage: "streaming",
+                            };
+                          }
+                          return { ...prev, content: accumulatedText.current };
+                        });
+                        animationFrameId.current = null;
+                      });
+                    }
+                  }
+                } catch (e) {
+                  console.error(
+                    `[STREAM_LOOP_ERROR] Call ID: ${currentCallId}, textDelta:`,
+                    e
+                  );
+                }
+              }
+              const messageDoneRegex = /event: messageDone\ndata: ({.*?})\n\n/g;
+              let doneMatch;
+              messageDoneRegex.lastIndex = 0;
+              while ((doneMatch = messageDoneRegex.exec(buffer)) !== null) {
+                try {
+                  const eventData = JSON.parse(doneMatch[1]);
+                  console.log(
+                    `[STREAM_LOOP_EVENT] Call ID: ${currentCallId}, ✅ MessageDone:`,
+                    eventData
+                  );
+                  if (eventData.threadId) setThreadId(eventData.threadId);
+                  if (eventData.id) setLastResponseId(eventData.id);
+                  accumulatedText.current =
+                    eventData.content || accumulatedText.current;
+                  finalizeStream("messageDone_STREAM_HANDLER");
+                } catch (e) {
+                  console.error(
+                    `[STREAM_LOOP_ERROR] Call ID: ${currentCallId}, messageDone:`,
+                    e
+                  );
+                  if (!streamFinalizedThisCall)
+                    finalizeStream("messageDoneError_STREAM_HANDLER");
+                }
+              }
+              const errorEventRegex = /event: error\ndata: ({.*?})\n\n/g;
+              let errorMatch;
+              errorEventRegex.lastIndex = 0;
+              while ((errorMatch = errorEventRegex.exec(buffer)) !== null) {
+                try {
+                  const eventData = JSON.parse(errorMatch[1]);
+                  console.error(
+                    `[STREAM_LOOP_EVENT] Call ID: ${currentCallId}, 🛑 ErrorEvent:`,
+                    eventData
+                  );
+                  accumulatedText.current = `Error: ${
+                    eventData.message ||
+                    eventData.error ||
+                    "Unknown stream error"
+                  }`;
+                  if (!streamFinalizedThisCall)
+                    finalizeStream("errorEvent_STREAM_HANDLER");
+                } catch (e) {
+                  console.error(
+                    `[STREAM_LOOP_ERROR] Call ID: ${currentCallId}, errorEvent:`,
+                    e
+                  );
+                  if (!streamFinalizedThisCall)
+                    finalizeStream("errorEventParseError_STREAM_HANDLER");
+                }
+              }
+              const lastCompleteEventIdx = buffer.lastIndexOf("\n\n");
+              if (lastCompleteEventIdx >= 0) {
+                buffer = buffer.substring(lastCompleteEventIdx + 2);
+              } else if (buffer.length > 4096) {
+                console.warn(
+                  "[STREAM_BUFFER_TRIM] Buffer too large, trimming."
+                );
+                buffer = buffer.substring(buffer.length - 2048);
+              }
+            }
+          } catch (streamError) {
+            console.error(
+              `[STREAM_HANDLER_LOOP_CATCH_ERROR] Call ID: ${currentCallId}, Error during stream read:`,
+              streamError
+            );
+            if (!streamFinalizedThisCall)
+              finalizeStream("streamLoopError_STREAM_HANDLER");
+          } finally {
+            console.log(
+              `[STREAM_HANDLER_LOOP_FINALLY] Call ID: ${currentCallId}, Exited stream processing loop.`
+            );
+            if (!streamFinalizedThisCall && watchdogThisCall) {
+              console.warn(
+                `[STREAM_HANDLER_LOOP_FINALLY_WARN] Call ID: ${currentCallId}, Clearing watchdog (ID: ${watchdogThisCall}), loop not finalized.`
+              );
+              clearTimeout(watchdogThisCall);
+              watchdogThisCall = null;
+            }
+            if (animationFrameId.current) {
+              cancelAnimationFrame(animationFrameId.current);
+              animationFrameId.current = null;
+              console.log(
+                "[STREAM_HANDLER_LOOP_FINALLY_CLEANUP] Cancelled animation frame."
+              );
+            }
+            if (!streamFinalizedThisCall && loading) {
+              console.warn(
+                `[STREAM_HANDLER_LOOP_FINALLY_WARN] Call ID: ${currentCallId}, Attempting EOF finalization post-loop.`
+              );
+              finalizeStream("loopFinallyEof_STREAM_HANDLER");
+            }
+          }
+        } else {
+          const responseText = await assistantResponse.text();
+          throw new Error(
+            `Unexpected Content-Type: ${contentType} ${responseText}`
+          );
+        }
+      } catch (assistantApiError) {
+        clearTimeout(assistantTimeoutId);
+        console.error(
+          "[SEND_PROMPT_ERROR] Stage 2 Assistant API Call Error:",
+          assistantApiError
+        );
+        accumulatedText.current = `Assistant API error: ${assistantApiError.message}`;
+        finalizeStream("assistantApiError");
+        return;
       }
-    } catch (error) {
-      console.error("Request error:", error);
-
-      // Add error message to chat
-      messageId.current++;
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          id: messageId.current.toString(),
-          role: "assistant",
-          content: "Sorry, an error occurred while sending your request.",
-          createdAt: new Date(),
-        },
-      ]);
-
-      // Reset states
-      setLoading(false);
-      setStreamingMessage(null);
-
-      // Scroll to bottom
-      setTimeout(scrollToBottom, 100);
+    } catch (overallError) {
+      console.error(
+        `[SEND_PROMPT_FATAL] Call ID: ${currentCallId}, Overall error:`,
+        overallError
+      );
+      accumulatedText.current =
+        accumulatedText.current || "An unexpected error occurred.";
+      finalizeStream(`overallSendPromptError_callId_${currentCallId}`);
     }
   };
 
@@ -1084,6 +1019,51 @@ ${
 
     // Don't set prompt for starter questions, send directly
     sendPrompt(threadId, question);
+  };
+
+  // Reset chat
+  const refreshChat = () => {
+    console.log("Refreshing chat, clearing messages and thread ID");
+
+    // Reset messages to just the welcome message
+    setMessages([
+      {
+        id: "welcome",
+        role: "assistant",
+        content: chatConfig.welcomeMessage,
+        createdAt: new Date(),
+      },
+    ]);
+
+    // Reset thread ID and remove from localStorage
+    setThreadId(null);
+    localStorage.removeItem("chatThreadId");
+
+    // Clear thread data cache for this session
+    if (threadId) {
+      setThreadDataCache((prevCache) => {
+        const updatedCache = { ...prevCache };
+        delete updatedCache[threadId];
+        localStorage.setItem("threadDataCache", JSON.stringify(updatedCache));
+        return updatedCache;
+      });
+    }
+
+    // Reset any in-progress messages
+    setStreamingMessage(null);
+
+    // Reset loading state
+    setLoading(false);
+
+    // Reset the prompt if there's any text in it
+    if (prompt) {
+      setPrompt("");
+    }
+
+    // Reset lastResponseId
+    setLastResponseId(null);
+
+    console.log("Chat reset complete");
   };
 
   return (

@@ -133,6 +133,45 @@ export class SmartFilteringProcessor implements FilterProcessor {
     
     logger.info(`[FILTER] Files with valid responses: ${filesWithResponses}/${files.length}`);
 
+    // First pass: scan files to find ALL available segments
+    const availableSegments = new Set<string>(["overall"]);
+    
+    // Process each file to discover all segments present in the data
+    for (const file of files) {
+      if (!file) continue;
+      
+      const responses = Array.isArray(file.responses)
+        ? file.responses
+        : Array.isArray((file as any).data?.responses)
+        ? (file as any).data.responses
+        : [];
+      
+      for (const responseObj of responses) {
+        if (!responseObj || typeof responseObj !== "object") continue;
+        
+        const dataObj = responseObj.data || responseObj;
+        if (!dataObj || typeof dataObj !== "object") continue;
+        
+        // Add any segment key found in the data
+        for (const segmentKey of Object.keys(dataObj)) {
+          if (CANONICAL_SEGMENTS.includes(segmentKey)) {
+            availableSegments.add(segmentKey);
+          }
+        }
+      }
+    }
+
+    // Special handling for segments of high interest
+    const HIGH_INTEREST_SEGMENTS = ['sector', 'industry', 'education'];
+    const hasHighInterestSegments = [...availableSegments].some(segment => 
+      HIGH_INTEREST_SEGMENTS.includes(segment));
+
+    // Log available segments
+    logger.info(`[FILTER] Available segments in data: ${[...availableSegments].join(', ')}`);
+    if (hasHighInterestSegments) {
+      logger.info(`[FILTER] Found high-interest segments (sector/industry/education)`);
+    }
+
     // Map any non-canonical segment names and ensure overall is included
     let segmentsToUse = segments.length > 0
       ? segments
@@ -146,6 +185,15 @@ export class SmartFilteringProcessor implements FilterProcessor {
     // Always include "overall" in segmentsToUse
     if (!segmentsToUse.includes("overall")) {
       segmentsToUse = ["overall", ...segmentsToUse];
+    }
+
+    // IMPORTANT: Always include high-interest segments if they're available in the data
+    // This ensures sector/industry/education data is never filtered out if present
+    for (const segment of HIGH_INTEREST_SEGMENTS) {
+      if (availableSegments.has(segment) && !segmentsToUse.includes(segment)) {
+        segmentsToUse.push(segment);
+        logger.info(`[FILTER] Adding high-interest segment to processing: ${segment}`);
+      }
     }
 
     logger.info("[FILTER] segmentsToUse:", segmentsToUse);

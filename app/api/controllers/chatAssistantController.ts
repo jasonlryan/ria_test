@@ -82,132 +82,102 @@ function processResult(result: any): ProcessedQueryResult {
 }
 
 // Modify handleResponseStream definition to accept new parameters
-async function handleResponseStream(responseStream, controller, threadId, threadContext, getStreamClosed, setStreamClosed, encoder, perfTimings, startTime, apiStartTime) {
-  if (!responseStream) {
-    throw new Error("Response stream not available");
-  }
-  
+async function handleResponseStream(
+  responseStreamFromOpenAI: any, 
+  sseController: ReadableStreamDefaultController,
+  conversationKeyForKV: string, // e.g., previous_response_id or new response_id for a new chat
+  existingThreadContext: any, // Context fetched from KV before OpenAI call
+  textEncoder: TextEncoder
+) {
+  logger.info(`[HANDLE_RESPONSE_STREAM_CAC] Entered for conversationKeyForKV: ${conversationKeyForKV}`);
   let fullText = '';
-  let responseId = null;
-  let chunkCount = 0;
+  let currentOpenAIResponseId: string | null = null;
 
-  for await (const chunk of responseStream) {
-    chunkCount++;
-    // Remove verbose logging, keep only the brief log for the first two chunks
-    // logger.info(`[STREAM_DEBUG_VERBOSE] Chunk ${chunkCount} type: ${chunk.type}, Keys: ${Object.keys(chunk)}`);
-    // if (chunk.type === 'response.output_text.delta') {
-    //   logger.info(`[STREAM_DEBUG_VERBOSE] Delta content: ${(chunk as any).delta || (chunk.data?.delta)}`);
-    // }
-    if (chunkCount <= 2) { 
-      logger.info(`[STREAM_DEBUG] Chunk ${chunkCount}: ${JSON.stringify(chunk).substring(0,300)}`);
-    }
-    // Handle the response ID that comes at the beginning
-    if (chunk.id && !responseId) {
-      responseId = chunk.id;
-      
-      // Update thread with response ID for future continuations
-      await updateThreadWithContext(threadId, {
-        ...(threadContext || {}),
-        responseId: responseId
-      });
-      logger.info(`[THREAD] Updated thread with response ID: ${responseId}`);
-      
-      // Use getStreamClosed() before enqueueing
-      if (!getStreamClosed()) {
-        controller.enqueue(
-          encoder.encode(
-            `event: responseId\ndata: ${JSON.stringify({ id: responseId })}\n\n`
-          )
-        );
-      } else {
-        logger.warn('[STREAM_LIFECYCLE] Attempted to enqueue responseId to a closed controller. Chunk skipped.');
-      }
-    }
-    
-    // Handle response.output_text.delta (various shapes)
-    let textChunk: string | undefined;
-    // New-style raw event
-    if (chunk.type === 'response.output_text.delta') {
-      textChunk = (chunk as any).delta || (chunk.data?.delta);
-    }
-    // Legacy nested format
-    else if (chunk.response && chunk.response.output_text && chunk.response.output_text.delta) {
-      textChunk = chunk.response.output_text.delta;
-    } else if (chunk.output_text && chunk.output_text.delta) {
-      textChunk = chunk.output_text.delta;
-    }
-
-    if (textChunk !== undefined) {
-      fullText += textChunk;
-      if (!getStreamClosed()) {
-        controller.enqueue(
-          encoder.encode(
-            `event: textDelta\ndata: ${JSON.stringify({ value: textChunk })}\n\n`
-          )
-        );
-      } else {
-        logger.warn('[STREAM_LIFECYCLE] Attempted to enqueue textDelta to a closed controller. Chunk skipped.');
-      }
-    }
-    
-    // Check if this is a finish chunk
-    else if (chunk.finish_reason) {
-      if (!getStreamClosed()) {
-        controller.enqueue(
-          encoder.encode(
-            `event: status\ndata: ${JSON.stringify({ status: "completed" })}\n\n`
-          )
-        );
-      } else {
-        logger.warn('[STREAM_LIFECYCLE] Attempted to enqueue status to a closed controller. Chunk skipped.');
-      }
-    }
-    
-    // Handle tool calls
-    if (chunk.response && chunk.response.tool_call) {
-      if (!getStreamClosed()) {
-        controller.enqueue(
-          encoder.encode(
-            `event: toolCall\ndata: ${JSON.stringify(chunk.response.tool_call)}\n\n`
-          )
-        );
-      } else {
-        logger.warn('[STREAM_LIFECYCLE] Attempted to enqueue toolCall to a closed controller. Chunk skipped.');
-      }
-    } else if (chunk.tool_call) {
-      if (!getStreamClosed()) {
-        controller.enqueue(
-          encoder.encode(
-            `event: toolCall\ndata: ${JSON.stringify(chunk.tool_call)}\n\n`
-          )
-        );
-      } else {
-        logger.warn('[STREAM_LIFECYCLE] Attempted to enqueue toolCall to a closed controller. Chunk skipped.');
-      }
-    }
+  // Attempt to get response ID from the initial stream object if available
+  if (responseStreamFromOpenAI?.id && typeof responseStreamFromOpenAI.id === 'string') {
+    currentOpenAIResponseId = responseStreamFromOpenAI.id;
+    logger.info(`[HANDLE_RESPONSE_STREAM_CAC] Initial OpenAI Response ID from stream object: ${currentOpenAIResponseId}`);
+    // Send responseId event early if we have it
+    sseController.enqueue(textEncoder.encode(`event: responseId\ndata: ${JSON.stringify({ id: currentOpenAIResponseId })}\n\n`));
+    // Update KV with this as the latest responseId for this conversation key
+    await updateThreadWithContext(conversationKeyForKV, { 
+      ...(existingThreadContext || {}), 
+      responseId: currentOpenAIResponseId 
+    });
   }
-  
-  // Send final message when we have content
-  if (!getStreamClosed() && responseId && fullText) {
-    perfTimings.messageReceived = Date.now();
-    logger.info(`[ASSISTANT] Response received in ${perfTimings.messageReceived - startTime}ms`);
-    
-    if (!getStreamClosed()) {
-      controller.enqueue(
-        encoder.encode(
-          `event: messageDone\ndata: ${JSON.stringify({
-            id: responseId,
-            threadId: threadId,
-            role: "assistant",
-            content: fullText,
-            createdAt: Date.now(),
-          })}\n\n`
+
+  try {
+    for await (const chunk of responseStreamFromOpenAI) {
+      // logger.info(`[HANDLE_RESPONSE_STREAM_CAC] Raw OpenAI chunk: ${JSON.stringify(chunk).substring(0,100)}`);
+      if (!currentOpenAIResponseId) {
+        const chunkId = chunk.id || chunk.response?.id;
+        if (chunkId && typeof chunkId === 'string') {
+          currentOpenAIResponseId = chunkId;
+          logger.info(`[HANDLE_RESPONSE_STREAM_CAC] Extracted OpenAI Response ID from chunk: ${currentOpenAIResponseId}`);
+          sseController.enqueue(textEncoder.encode(`event: responseId\ndata: ${JSON.stringify({ id: currentOpenAIResponseId })}\n\n`));
+          await updateThreadWithContext(conversationKeyForKV, { 
+            ...(existingThreadContext || {}), 
+            responseId: currentOpenAIResponseId 
+          });
+        }
+      }
+
+      let textChunk: string | undefined;
+      if (chunk.type === 'response.output_text.delta') {
+        textChunk = (chunk as any).delta || (chunk.data?.delta);
+      } else if (chunk.response?.output_text?.delta) {
+        textChunk = chunk.response.output_text.delta;
+      } // Add other legacy formats if necessary
+
+      if (textChunk !== undefined) {
+        fullText += textChunk;
+        sseController.enqueue(textEncoder.encode(`event: textDelta\ndata: ${JSON.stringify({ value: textChunk })}\n\n`));
+      }
+
+      if (chunk.finish_reason) {
+        logger.info(`[HANDLE_RESPONSE_STREAM_CAC] OpenAI stream finished. Reason: ${chunk.finish_reason}`);
+        // This is a good place to ensure the final messageDone is sent.
+        break; // Exit loop as OpenAI stream is done.
+      }
+    }
+    logger.info("[HANDLE_RESPONSE_STREAM_CAC] Iteration over OpenAI stream completed.");
+  } catch (error) {
+    logger.error("[HANDLE_RESPONSE_STREAM_CAC_ERROR] Error during OpenAI stream iteration:", error);
+    // Propagate the error so the main controller can send an SSE error event and close.
+    throw error;
+  }
+
+  // Always send messageDone after loop, using accumulated text
+  if (currentOpenAIResponseId) {
+    const finalContent = fullText.trim() || "No textual answer was generated.";
+    logger.info(`[HANDLE_RESPONSE_STREAM_CAC] Sending messageDone. Response ID: ${currentOpenAIResponseId}, Content length: ${finalContent.length}`);
+    sseController.enqueue(
+      textEncoder.encode(
+        `event: messageDone\ndata: ${JSON.stringify({
+          id: currentOpenAIResponseId,
+          threadId: conversationKeyForKV, // The original key used for this conversation context
+          role: "assistant",
+          content: finalContent,
+          createdAt: Date.now(),
+        })}\n\n`
+      )
+    );
+  } else {
+    logger.error("[HANDLE_RESPONSE_STREAM_CAC_ERROR] No OpenAI Response ID was extracted. Cannot send messageDone.");
+    // If no ID, we can't form a proper messageDone. The stream will still be closed by the main handler.
+    // Consider sending a generic error event if this state is reached.
+     sseController.enqueue(
+        textEncoder.encode(
+          `event: error\ndata: ${JSON.stringify({ message: "Critical error: Could not determine response ID from OpenAI." })}\n\n`
         )
       );
-    } else {
-      logger.warn('[STREAM_LIFECYCLE] Attempted to enqueue messageDone to a closed controller. Chunk skipped.');
-    }
   }
+  logger.info("[HANDLE_RESPONSE_STREAM_CAC] Exiting.");
+}
+
+// Helper to check for legacy thread_ IDs if still needed by unifiedOpenAIService logic
+function isLegacyOpenAIThreadId(id: string): boolean {
+    return typeof id === 'string' && (id.startsWith('thread_') || !id.startsWith('resp_'));
 }
 
 /**
@@ -243,1054 +213,188 @@ function isNewTopicQuery(currentQuery: string, previousQuery: string): boolean {
 
 export async function postHandler(request: NextRequest) {
   const startTime = Date.now();
-  const apiStartTime = Date.now();
-  const encoder = new TextEncoder();
-  let perfTimings = {
-    requestStart: apiStartTime,
-    runCreated: 0,
-    pollStart: 0,
-    firstPoll: 0,
-    messageReceived: 0,
-    totalTime: 0,
-    pollingInterval: 250,
-  };
+  const textEncoder = new TextEncoder();
   let threadContextCached: any = null;
-  const dataRetrievalService = new DataRetrievalService();
 
   try {
     const body = await request.json();
-    let { threadId, content } = body;
+    const {
+        content, 
+        previous_response_id, 
+        original_user_query,  
+        files_used_for_this_prompt // Array of file ID strings used for the `content` prompt
+    } = body;
 
-    if (!content) {
-      return formatBadRequestResponse("Missing required field: content");
+    logger.info(
+      `[CHAT_ASSISTANT_CTRL_ENTER] Request: previous_response_id: ${previous_response_id}, files_used_for_this_prompt (received): ${JSON.stringify(files_used_for_this_prompt)}, original_user_query (received): "${original_user_query}", content (start): "${String(content).substring(0,100)}..."`
+    );
+
+    if (!content) { return formatBadRequestResponse("Missing 'content' (assistantPrompt)"); }
+    if (!original_user_query) { logger.warn("[CHAT_ASSISTANT_CTRL] original_user_query not provided in request body."); /* Proceed but log */ }
+    if (!files_used_for_this_prompt || !Array.isArray(files_used_for_this_prompt)) { 
+        logger.warn("[CHAT_ASSISTANT_CTRL] files_used_for_this_prompt not provided or not an array. File context for KV might be incomplete."); 
     }
 
-    // Only use responseId for continuation in Responses API
-    let previousResponseId = body.previous_response_id;
-    let isFollowUp = typeof previousResponseId === 'string' && previousResponseId.startsWith('resp_');
-    let context = {
-      normalizedCurrentQuery: normalizeQueryText(content),
-      normalizedPreviousQuery: "",
-      previousResponse: "",
-      isFollowUp,
-      systemPrompt: "",
-      tools: []
-    };
+    const isFollowUp = !!(previous_response_id && typeof previous_response_id === 'string' && previous_response_id.startsWith('resp_'));
+    logger.info(`[CHAT_ASSISTANT_CTRL_ROUTING] isFollowUp: ${isFollowUp}`);
 
-    logger.info(`[QUERY] Raw query: "${content.substring(0, 50)}..."`);
-    logger.info(`[QUERY] Normalized: "${context.normalizedCurrentQuery.substring(0, 50)}..."`);
-
-    const isDirectStarterQuestion = typeof content === "string" && /^SQ\d+$/i.test(content.trim());
-
-    if (isDirectStarterQuestion || (typeof content === "string" && isStarterQuestion(content))) {
-      const starterCode = typeof content === "string" ? content.trim().toUpperCase() : content;
-      const precompiled = getPrecompiledStarterData(starterCode);
-
-      if (precompiled) {
-        const starterPromptPath = path.join(process.cwd(), "prompts", "starter_prompt_template.md");
-        let starterPromptTemplate = "";
-        try {
-          starterPromptTemplate = await fs.promises.readFile(starterPromptPath, "utf8");
-        } catch {
-          starterPromptTemplate = "You are answering a precompiled starter question. Use the provided summary and stats to generate a narrative response.";
-        }
-
-        try {
-          const fullPrompt = `${starterPromptTemplate}
-
----
-Starter Question: ${precompiled.question || starterCode}
-Summary: ${precompiled.summary}
-Stats: ${JSON.stringify(precompiled.stats, null, 2)}
-Matched Topics: ${precompiled.matched_topics ? precompiled.matched_topics.join(", ") : ""}
-Data Files: ${precompiled.data_files ? precompiled.data_files.join(", ") : ""}
-${precompiled.notes ? "Notes: " + precompiled.notes : ""}
-`;
-          body.content = fullPrompt;
-          content = body.content;
-        } catch {
-          // Use original content if prompt construction fails
-        }
-      }
-    }
-
-    logger.info(`[REQUEST] New ${isFollowUp ? "follow-up" : "initial"} request`);
-
-    let finalThreadId = threadId;
-    if (!finalThreadId) {
-      // Replace thread creation with response creation
-      // Instead of creating an empty thread first, we'll create a response directly
-      const initialMessage = {
-        role: "user",
-        content: content
-      };
-      
-      // Create the initial system message if needed
-      const systemMessage = {
-        role: "system",
-        content: context.systemPrompt
-      };
-      
-      const messages = [systemMessage, initialMessage];
-      
-      try {
-        // Create response with the full content immediately
-        const { data: responseResult } = await unifiedOpenAIService.createResponse(
-          content,
-          {
-            model: "gpt-4.1-mini",
-            tools: context.tools || [],
-          }
-        );
-        
-        // Extract response ID from the response result
-        const responseId = responseResult && typeof responseResult === 'object' && 'id' in responseResult
-          ? String(responseResult.id)
-          : `response_${Date.now()}`;
-        
-        // Use responseId as finalThreadId for consistency with existing code
-        finalThreadId = responseId;
-        
-        logger.info(`[RESPONSE] Created new response with ID: ${responseId}`);
-        migrationMonitor.trackCall('unified', 'createResponse', startTime);
-        
-        // Store the thread context with the response ID
-        await updateThreadWithContext(finalThreadId, {
-          previousQueries: [context.normalizedCurrentQuery],
-          rawQueries: [content],
-          isFollowUp: false,
-          lastQueryTime: Date.now(),
-          responseId: responseId // Explicitly store response ID for continuation
-        });
-        
-        logger.info(`[THREAD] Initialized context with first query and response ID: ${responseId}`);
-      } catch (error) {
-        logger.error(`[RESPONSE] Error creating initial response: ${error.message}`);
-        throw error;
+    let openAIResponseIdToContinueFrom = null;
+    if (isFollowUp && previous_response_id) {
+      threadContextCached = await getThreadContext(previous_response_id); // Fetch context of the PREVIOUS turn
+      if (threadContextCached?.responseId && !isLegacyOpenAIThreadId(threadContextCached.responseId)) {
+        openAIResponseIdToContinueFrom = threadContextCached.responseId; // This is OpenAI's ID from PREVIOUS turn
+        logger.info(`[CHAT_ASSISTANT_CTRL_ROUTING] Follow-up. Will continue OpenAI conversation from: ${openAIResponseIdToContinueFrom}.`);
+      } else {
+        logger.warn(`[CHAT_ASSISTANT_CTRL_ROUTING] Follow-up for ${previous_response_id}, but no valid OpenAI continue_id in its KV context. Will start new OpenAI response stream.`);
       }
     } else {
-      logger.info(`[THREAD] Reusing existing thread ID: ${finalThreadId}`);
-      
-      // All thread context and continuation logic should now use responseId only, not threadId or threadContextCached.
+      logger.info("[CHAT_ASSISTANT_CTRL_ROUTING] New conversation flow for OpenAI call.");
     }
-
-    // Flag and variable for early return
-    let earlyResponse: NextResponse | null = null;
-
-    // ===== START: Follow-up Comparison Incompatibility Check =====
-    if (isFollowUp && finalThreadId) {
-      // Check if this is a comparison query or a new topic
-      const isComparison = detectComparisonQuery(context.normalizedCurrentQuery);
-      const isNewTopic = isNewTopicQuery(context.normalizedCurrentQuery, context.normalizedPreviousQuery);
-      
-      if (isComparison) {
-        logger.warn(
-          `[CONTROLLER_COMPAT_CHECK] Detected follow-up comparison query for thread: ${finalThreadId}`
-        );
-        
-        // Clear the thread compatibility metadata for comparison queries to force fresh check
-        await clearThreadCacheForComparison(finalThreadId);
-        
-        try {
-          const cachedFiles = await getCachedFilesForThread(finalThreadId);
-          const cachedFileIds = Array.isArray(cachedFiles) ? cachedFiles.map((f) => f.id) : [];
-          logger.info(
-            `[CONTROLLER_COMPAT_CHECK] Found ${
-              cachedFileIds.length
-            } cached files: ${cachedFileIds.join(", ")}`
-          );
-          const incompatibleFilesInfo = [];
-          let checkPerformed = false;
-          if (
-            cachedFileIds.length > 0 &&
-            loadCompatibilityMapping()?.files
-          ) {
-            checkPerformed = true;
-            const compatMapping = loadCompatibilityMapping();
-            for (const fileId of cachedFileIds) {
-              const normalizedId = String(fileId).replace(/\.json$/, "");
-              const compatInfo =
-                compatMapping.files[normalizedId];
-              if (compatInfo && compatInfo.comparable === false) {
-                 if (
-                  compatInfo.topicId &&
-                  !incompatibleFilesInfo.some(
-                    (item) => item.topic === compatInfo.topicId
-                  )
-                ) {
-                  incompatibleFilesInfo.push({
-                    topic: compatInfo.topicId,
-                    message: compatInfo.userMessage || "Comparison not available due to methodology changes.",
-                  });
-                }
-              }
-            }
-          } else {
-             if (cachedFileIds.length === 0) {
-                logger.warn(`[CONTROLLER_COMPAT_CHECK] Skipping check: No cached files found for thread ${finalThreadId}.`);
-             } else {
-                logger.error(`[CONTROLLER_COMPAT_CHECK] Skipping check: Compatibility mapping not loaded or invalid!`);
-             }
-          }
-
-          if (checkPerformed && incompatibleFilesInfo.length > 0) {
-            const incompatibleTopics = incompatibleFilesInfo.map((f) => f.topic);
-            logger.warn(
-              `[CONTROLLER_COMPAT_GATE] Incompatible topics found: ${incompatibleTopics.join(", ")}. Using 2_data_incomparable.md prompt.`
-            );
-
-            try {
-              const promptPath = path.join(process.cwd(), "utils", "openai", "2_data_incomparable.md");
-              let promptTemplate = "";
-              try {
-                promptTemplate = fs.readFileSync(promptPath, "utf8");
-              } catch (promptReadError) {
-                logger.error(`[CONTROLLER_COMPAT_GATE] CRITICAL: Failed to read prompt file ${promptPath}: ${promptReadError.message}`);
-                const fallbackMessage = `Comparison cannot be performed for topics: ${incompatibleTopics.join(', ')}. Data methodology has changed. [Error: Prompt file missing]`;
-                earlyResponse = NextResponse.json({
-                  incompatible_comparison: true,
-                  message: fallbackMessage
-                }, { status: 200 });
-                logger.info(`[CONTROLLER_COMPAT_GATE] Prepared early JSON response (prompt read error).`);
-              }
-              
-              if (promptTemplate && !earlyResponse) {
-                const topicsListString = incompatibleTopics.map(topic => `- ${topic}`).join("\n");
-                const formattedPrompt = promptTemplate.replace("{{INCOMPATIBLE_TOPICS_LIST}}", topicsListString);
-
-                logger.info(`[CONTROLLER_COMPAT_GATE] Calling Chat Completions with 2_data_incomparable prompt.`);
-                
-                const completion = await unifiedOpenAIService.createChatCompletion([
-                  {"role": "system", "content": "You are an AI assistant explaining data limitations."},
-                  {"role": "user", "content": formattedPrompt}
-                ], {
-                  temperature: 0.2,
-                  max_tokens: 150
-                });
-
-                const generatedMessage = completion.data.content?.trim() || 
-                  "Comparison cannot be performed for the requested topics due to data methodology changes. [Error: Could not generate message]";
-                
-                logger.info(`[CONTROLLER_COMPAT_GATE] LLM generated warning: "${generatedMessage.substring(0,100)}..."`);
-
-                earlyResponse = NextResponse.json({
-                  incompatible_comparison: true, 
-                  message: generatedMessage
-                }, { status: 200 });
-                
-                logger.info(`[CONTROLLER_COMPAT_GATE] Prepared early JSON response (LLM success).`);
-              }
-
-            } catch (llmError) {
-              logger.error(`[CONTROLLER_COMPAT_GATE] Error during LLM call for incompatibility message: ${llmError.message}`);
-              const fallbackMessage = `Comparison cannot be performed for topics: ${incompatibleTopics.join(', ')}. Data methodology has changed. [Error: Failed to generate explanation]`;
-              earlyResponse = NextResponse.json({
-                incompatible_comparison: true,
-                message: fallbackMessage
-              }, { status: 200 });
-              logger.info(`[CONTROLLER_COMPAT_GATE] Prepared early JSON response (LLM error).`);
-            }
-          } else {
-            logger.info(
-              `[CONTROLLER_COMPAT_CHECK] Check ran: ${checkPerformed}. Incompatible files found: ${incompatibleFilesInfo.length}. Proceeding with normal flow.`
-            );
-          }
-
-        } catch (error) {
-          logger.error(
-            `[CONTROLLER_COMPAT_CHECK] Error during follow-up compatibility check logic: ${error.message}`,
-            error
-          );
-        }
-      } else if (isNewTopic) {
-        // For new topics, we should reset the compatibility metadata but preserve files
-        // This allows for a fresh topic assessment without breaking early returns
-        logger.info(`[CONTROLLER_COMPAT_CHECK] Detected new topic query in existing thread: ${finalThreadId}`);
-        await clearThreadCacheForComparison(finalThreadId);
-      }
-    }
-
-    if (earlyResponse) {
-      logger.info(`[CONTROLLER_FLOW] Executing early return due to compatibility gate.`);
-      return earlyResponse;
-    }
-    logger.info(`[CONTROLLER_FLOW] Compatibility check passed or not applicable, proceeding to main flow.`);
-
-    let usedFileIds: string[] = [];
-    let cachedFileIds: string[] = [];
-    let originalUserContent = content;
-    let result;
-
-    // LLM-driven file discovery
-    let fileDiscoveryResult;
-    try {
-      // Load canonical mapping (assume from existing utility or file)
-      const canonicalMapping = require("../../../scripts/reference files/2025/canonical_topic_mapping.json");
-      const contextString = typeof context === 'string' ? context : '';
-      fileDiscoveryResult = await dataRetrievalService.identifyRelevantFiles(
-        content, // user query
-        contextString, // context as string
-        isFollowUp,
-        context.normalizedPreviousQuery || '',
-        context.previousResponse || ''
-      );
-      logger.info(`[LLM_FILE_DISCOVERY] Used LLM-driven file discovery for query.`);
-    } catch (err) {
-      logger.error(`[LLM_FILE_DISCOVERY] LLM file discovery failed, falling back to repository: ${err.message}`);
-      // Fallback to repository implementation if LLM fails
-      fileDiscoveryResult = await dataRetrievalService.identifyRelevantFiles(
-        content,
-        '', // fallback context as string
-        isFollowUp,
-        context.normalizedPreviousQuery || '',
-        context.previousResponse || ''
-      );
-    }
-
-    if (!isStarterQuestion(content) && !(isDirectMode && !forceStandardMode)) {
-      if (!isFollowUp) {
-        const relevantFilesResult = await identifyRelevantFiles(
-          context.normalizedCurrentQuery,
-          "all-sector",
-          context.isFollowUp,
-          context.normalizedPreviousQuery,
-          context.previousResponse
-        );
-        const fileIdArray = relevantFilesResult?.file_ids || [];
-
-        const dataDir = path.join(process.cwd(), "scripts", "output", "split_data");
-        const loadedFiles: CachedFile[] = [];
-
-        for (const fileId of fileIdArray) {
-          const fileName = fileId.endsWith(".json") ? fileId : `${fileId}.json`;
-          const filePath = path.join(dataDir, fileName);
-
-          try {
-            if (!fs.existsSync(filePath)) {
-              logger.error(`[DATA LOAD] File not found: ${filePath}`);
-              continue;
-            }
-
-            const fileContent = fs.readFileSync(filePath, "utf8");
-            let jsonData;
-            try {
-              jsonData = JSON.parse(fileContent);
-            } catch (parseErr) {
-              logger.error(`[DATA LOAD] JSON parse error for file ${filePath}:`, parseErr);
-              continue;
-            }
-
-            const segments = DEFAULT_SEGMENTS;
-            const cachedFile: CachedFile = {
-              id: fileId,
-              data: {},
-              loadedSegments: new Set(segments),
-              availableSegments: new Set(segments)
-            };
-
-            for (const segment of segments) {
-              if (jsonData[segment]) {
-                cachedFile.data[segment] = jsonData[segment];
-              } else if (jsonData.responses) {
-                cachedFile.data[segment] = { responses: jsonData.responses };
-              } else {
-                cachedFile.data[segment] = jsonData;
-              }
-            }
-
-            loadedFiles.push(cachedFile);
-          } catch (error) {
-            logger.error(`[DATA LOAD] Error loading file ${filePath}:`, error);
-          }
-        }
-
-        const cachedFilesForUpdate: CachedFile[] = loadedFiles.map(file => ({
-          id: file.id,
-          data: {},
-          loadedSegments: file.loadedSegments,
-          availableSegments: file.availableSegments
-        }));
-
-        await updateThreadWithFiles(finalThreadId, cachedFilesForUpdate);
-        cachedFileIds = cachedFilesForUpdate.map(f => f.id);
-
-        // === NEW: Inline compatibility gate for cached file sets ===
-        if (cachedFileIds.length > 1) {
-          try {
-            const fileMetaCheck = lookupFiles(cachedFileIds);
-            const pairRes = getComparablePairs(fileMetaCheck);
-            if (pairRes.invalid.length > 0) {
-              logger.warn(`[CONTROLLER_COMPAT_GATE] Cached file set non-comparable. Blocking.`);
-              return NextResponse.json({
-                incompatible_comparison: true,
-                message: pairRes.message || "Year-on-year comparisons are not available due to methodology changes."
-              }, { status: 200 });
-            }
-          } catch (compatErr) {
-            logger.error(`[CONTROLLER_COMPAT_GATE] Error during cached-file compatibility check: ${compatErr instanceof Error ? compatErr.message : String(compatErr)}`);
-          }
-        }
-
-        result = processResult(await processQueryWithData(
-          context.normalizedCurrentQuery,
-          "all-sector",
-          fileIdArray,
-          finalThreadId,
-          context.isFollowUp,
-          context.normalizedPreviousQuery,
-          context.previousResponse
-        ));
-
-        if (result && result.out_of_scope === true) {
-          return NextResponse.json({
-            out_of_scope: true,
-            message: result.out_of_scope_message || "Your query is outside the scope of workforce survey data.",
-          });
-        }
-
-        usedFileIds = fileIdArray;
-      } else {
-        // Critical fix: Get cached files but ensure we actually have their IDs
-        let cachedFiles = await getCachedFilesForThread(finalThreadId);
-        cachedFileIds = cachedFiles.map(file => file.id);
-        
-        logger.info(`[FOLLOW-UP] Retrieved ${cachedFileIds.length} cached file IDs for thread ${finalThreadId}: ${cachedFileIds.join(', ')}`);
-        
-        // If no cached files, we need to identify them again - this is likely the root cause of follow-up failures
-        if (cachedFileIds.length === 0) {
-          logger.warn(`[FOLLOW-UP] No cached files found for thread ${finalThreadId}, re-identifying files`);
-          const relevantFilesResult = await identifyRelevantFiles(
-            context.normalizedCurrentQuery,
-            "all-sector",
-            true, // Force isFollowUp to true
-            context.normalizedPreviousQuery,
-            context.previousResponse
-          );
-          cachedFileIds = relevantFilesResult?.file_ids || [];
-          logger.info(`[FOLLOW-UP] Re-identified ${cachedFileIds.length} files: ${cachedFileIds.join(', ')}`);
-          
-          // === NEW: respect adapter-level incompatibility flag ===
-          if (relevantFilesResult?.incompatible === true) {
-            logger.warn(`[CONTROLLER_COMPAT_GATE] Adapter flagged non-comparable files (follow-up). Returning early.`);
-            return NextResponse.json({
-              incompatible_comparison: true,
-              message: relevantFilesResult.incompatibleMessage ||
-                "Year-on-year comparisons are not available due to methodology changes."
-            }, { status: 200 });
-          }
-          
-          // Add these files to the thread cache
-          if (cachedFileIds.length > 0) {
-            const cachedFilesForUpdate: CachedFile[] = cachedFileIds.map(id => ({
-              id,
-              data: {},
-              loadedSegments: new Set(),
-              availableSegments: new Set()
-            }));
-            await updateThreadWithFiles(finalThreadId, cachedFilesForUpdate);
-            cachedFileIds = cachedFilesForUpdate.map(f => f.id);
-            logger.info(`[FOLLOW-UP] Updated thread cache with ${cachedFileIds.length} files`);
-          }
-        }
-
-        // === NEW: Inline compatibility gate for cached file sets ===
-        if (cachedFileIds.length > 1) {
-          try {
-            const fileMetaCheck = lookupFiles(cachedFileIds);
-            const pairRes = getComparablePairs(fileMetaCheck);
-            if (pairRes.invalid.length > 0) {
-              logger.warn(`[CONTROLLER_COMPAT_GATE] Cached file set non-comparable. Blocking.`);
-              return NextResponse.json({
-                incompatible_comparison: true,
-                message: pairRes.message || "Year-on-year comparisons are not available due to methodology changes."
-              }, { status: 200 });
-            }
-          } catch (compatErr) {
-            logger.error(`[CONTROLLER_COMPAT_GATE] Error during cached-file compatibility check: ${compatErr instanceof Error ? compatErr.message : String(compatErr)}`);
-          }
-        }
-
-        result = processResult(await processQueryWithData(
-          context.normalizedCurrentQuery,
-          "all-sector",
-          cachedFileIds,
-          finalThreadId,
-          true, // Force isFollowUp to true
-          context.normalizedPreviousQuery,
-          context.previousResponse
-        ));
-
-        if (result && result.out_of_scope === true) {
-          return NextResponse.json({
-            out_of_scope: true,
-            message: result.out_of_scope_message || "Your query is outside the scope of workforce survey data.",
-          });
-        }
-
-        if (result.dataScope && result.dataScope.fileIds && result.dataScope.fileIds.size > 0) {
-          usedFileIds = Array.from(result.dataScope.fileIds).map(String);
-          const cachedFiles: CachedFile[] = usedFileIds.map(id => ({
-            id,
-            data: {},
-            loadedSegments: new Set(),
-            availableSegments: new Set()
-          }));
-          await updateThreadWithFiles(finalThreadId, cachedFiles);
-          cachedFileIds = cachedFiles.map(f => f.id);
-        }
-      }
-
-      const statCount = result.filteredData?.stats?.length || 0;
-      const fileSet = new Set(result.filteredData?.stats?.map(stat => stat.fileId));
-      const summaryText = result.filteredData?.summary || "No summary available.";
-      logger.info(`[DATA] Data files used: ${Array.from(fileSet).join(", ")}`);
-
-      const segmentsUsed = (result.segments && Array.isArray(result.segments))
-        ? result.segments.join(", ")
-        : DEFAULT_SEGMENTS.join(", ");
-      logger.info(`[DATA] Segments selected: ${segmentsUsed}`);
-      logger.info(`[DATA] Summary: ${summaryText}`);
-
-      let filteredStats = [];
-      if (result.stats && Array.isArray(result.stats) && result.stats.length > 0) {
-        filteredStats = result.stats;
-      } else if (result.filteredData?.filteredData && Array.isArray(result.filteredData.filteredData) && result.filteredData.filteredData.length > 0) {
-        filteredStats = result.filteredData.filteredData;
-      } else if (result.filteredData?.stats && Array.isArray(result.filteredData.stats) && result.filteredData.stats.length > 0) {
-        filteredStats = result.filteredData.stats;
-      }
-
-      if (!Array.isArray(filteredStats) || filteredStats.length === 0) {
-        logger.error(`[ERROR] Failed to get valid filteredStats from result: ${JSON.stringify({
-          resultKeys: Object.keys(result),
-          filteredDataType: typeof result.filteredData,
-          filteredDataKeys: result.filteredData ? Object.keys(result.filteredData).join(", ") : "N/A",
-          statsType: typeof result.stats,
-        })}`);
-        
-        // Check if there are relevantFiles with data that we can use directly
-        if (result.relevantFiles && Array.isArray(result.relevantFiles) && result.relevantFiles.length > 0) {
-          logger.warn(`[DATA] No structured stats found, but ${result.relevantFiles.length} relevantFiles exist. Extracting data directly.`);
-          
-          // Create direct file data for OpenAI prompt
-          const directFileData = result.relevantFiles.map((file: any) => {
-            // Get responses from the file if available
-            const fileResponses = file.responses || [];
-            
-            // Extract a sample of responses
-            const exampleResponses = fileResponses.slice(0, 5).map((resp: any) => {
-              const responseText = resp.response || "No response text";
-              const segments: Record<string, any> = {};
-              
-              // Extract segment data from response
-              if (resp.data) {
-                Object.entries(resp.data).forEach(([segKey, segValue]: [string, any]) => {
-                  if (segKey !== 'overall' && typeof segValue === 'object') {
-                    segments[segKey] = segValue;
-                  } else if (segKey === 'overall') {
-                    segments.overall = segValue;
-                  }
-                });
-              }
-              
-              return { response: responseText, segments };
-            });
-            
-            return {
-              id: file.id,
-              responseCount: fileResponses.length,
-              examples: exampleResponses,
-            };
-          });
-          
-          // Add the direct data to our filtered data for the prompt
-          if (!result.filteredData) {
-            result.filteredData = {};
-          }
-          result.filteredData.directFileData = directFileData;
-          logger.info(`[DATA] Added direct file data with ${directFileData.length} files and ${directFileData.reduce((sum, file) => sum + file.responseCount, 0)} responses`);
-        }
-      }
-
-      // Load the assistant prompt
-      const assistantPromptPath = path.join(process.cwd(), 'utils', 'openai', 'assistant_prompt.md');
-      const assistantPrompt = fs.readFileSync(assistantPromptPath, 'utf-8');
-      logger.info(`[PROMPT] Loaded assistant prompt from ${assistantPromptPath}`);
-
-      // Create structured data for the prompt builder
-      const filteredDataObj = {
-        stats: filteredStats,
-        segments: result.segments || DEFAULT_SEGMENTS
-      };
-
-      // Build the prompt with the dedicated utility function
-      const standardModePrompt = buildPromptWithFilteredData(
-        originalUserContent,
-        filteredDataObj,
-        {
-          // Add explicit instruction in the query to use exact statistics
-          prefixInstruction: "IMPORTANT: Use ONLY the exact percentage statistics provided below. Do not use your own statistics or knowledge about the data.",
-          // Add metadata if available
-          compatibilityMetadata: result.compatibilityMetadata
-        }
-      );
-
-      // Combine the assistant prompt with the filtered data prompt
-      const fullPrompt = `${assistantPrompt}\n\n${standardModePrompt}`;
-
-      // Log this for debugging (truncated)
-      logger.info(`[PROMPT] Combined assistant prompt with filtered data prompt: ${fullPrompt.substring(0, 200)}...`);
-
-      // Set content to the full prompt for use in the stream
-      content = fullPrompt;
-
-      // Add debug info for follow-up queries
-      logger.info(`=== FOLLOW-UP DEBUG ===`);
-      logger.info(`THREAD ID: ${finalThreadId}`);
-      logger.info(`IS FOLLOW-UP FLAG: ${isFollowUp}`);
-      logger.info(`CACHED FILE IDS: ${JSON.stringify(cachedFileIds)}`);
-      logger.info(`HAS PREVIOUS QUERY: ${context.normalizedPreviousQuery ? 'YES' : 'NO'}`);
-      logger.info(`QUERY: "${context.normalizedCurrentQuery.substring(0, 50)}..."`);
-      if (context.normalizedPreviousQuery) {
-        logger.info(`PREV QUERY: "${context.normalizedPreviousQuery.substring(0, 50)}..."`);
-      }
-      logger.info(`=======================`);
-
-      // Track context for all threads right after message creation
-      // Store both the raw and normalized queries for future reference
-      const queryContext = {
-        rawQuery: content,
-        normalizedQuery: context.normalizedCurrentQuery,
-        timestamp: Date.now(),
-      };
-
-      // Ensure we store query context in thread metadata
-      try {
-        // Reuse cached thread context if we already fetched it
-        if (!threadContextCached) {
-          threadContextCached = await getThreadContext(finalThreadId);
-        }
-        const existingQueries = threadContextCached.previousQueries || [];
-        
-        // Store both current normalized query and raw query for future reference
-        await updateThreadWithContext(finalThreadId, {
-          previousQueries: [context.normalizedCurrentQuery, ...existingQueries].slice(0, 5),
-          rawQueries: [content, ...(threadContextCached.rawQueries || [])].slice(0, 5),
-          isFollowUp: true,
-          lastQueryTime: Date.now()
-        });
-        
-        logger.info(`[THREAD] Updated thread ${finalThreadId} with query context (total queries: ${existingQueries.length + 1})`);
-      } catch (err) {
-        logger.error(`[THREAD] Failed to update thread context: ${err.message}`);
-      }
-
-      perfTimings.runCreated = Date.now();
-
-      // Create a response directly using the Responses API instead of the Assistants API
-      // No need for createRun, we directly create a response
-      const encoder = new TextEncoder();
-      const stream = new ReadableStream({
-        async start(controller) {
-          let streamClosed = false;
-          const originalControllerClose = controller.close.bind(controller);
-          controller.close = () => {
-            if (!streamClosed) {
-              streamClosed = true;
-              originalControllerClose();
-              logger.info('[STREAM_LIFECYCLE] Controller explicitly closed.');
-            }
-          };
-
-          try {
-            let messageReceived = false;
-            perfTimings.pollStart = Date.now();
-
-            // For follow-up queries, use the continueConversation method
-            if (isFollowUp && threadContextCached && threadContextCached.responseId) {
-              // Check if the response ID is an old thread ID (starts with thread_)
-              const isLegacyThreadId = typeof threadContextCached.responseId === 'string' && 
-                (threadContextCached.responseId.startsWith('thread_') || !threadContextCached.responseId.startsWith('resp_'));
-              
-              if (isLegacyThreadId) {
-                logger.info(`[RESPONSE] Legacy or invalid response ID detected (${threadContextCached.responseId}). Creating new response instead.`);
-                
-                // Create a new streaming response with the full prompt content
-                const { data: responseStream } = await unifiedOpenAIService.createResponse(
-                  content,
-                  {
-                    model: "gpt-4.1-mini",
-                    tools: context.tools || [],
-                    stream: true
-                  }
-                );
-                
-                // Store the new response ID for future continuations
-                if (responseStream && typeof responseStream === 'object' && 'id' in responseStream) {
-                  await updateThreadWithContext(finalThreadId, {
-                    ...threadContextCached,
-                    responseId: responseStream.id
-                  });
-                  logger.info(`[RESPONSE] Updated thread with new response ID: ${responseStream.id}`);
-                }
-                
-                // Pass controller and the streamClosed tracker to handleResponseStream
-                await handleResponseStream(responseStream, controller, finalThreadId, threadContextCached, () => streamClosed, (val) => streamClosed = val, encoder, perfTimings, startTime, apiStartTime);
-              } else {
-                logger.info(`[RESPONSE] Continuing conversation with response ID: ${threadContextCached.responseId}`);
-                
-                // Create a streaming response using continueConversation
-                try {
-                  const { data: responseStream } = await unifiedOpenAIService.continueConversation(
-                    threadContextCached.responseId,
-                    content,
-                    {
-                      model: "gpt-4.1-mini",
-                      tools: context.tools || [],
-                      stream: true
-                    }
-                  );
-                  
-                  // Store the new response ID if it changed
-                  if (responseStream && typeof responseStream === 'object' && 'id' in responseStream && 
-                      responseStream.id !== threadContextCached.responseId) {
-                    await updateThreadWithContext(finalThreadId, {
-                      ...threadContextCached,
-                      responseId: responseStream.id
-                    });
-                    logger.info(`[RESPONSE] Updated thread with new response ID: ${responseStream.id}`);
-                  }
-                  
-                  // Pass controller and the streamClosed tracker to handleResponseStream
-                  await handleResponseStream(responseStream, controller, finalThreadId, threadContextCached, () => streamClosed, (val) => streamClosed = val, encoder, perfTimings, startTime, apiStartTime);
-                } catch (error) {
-                  logger.error(`[RESPONSE] Error continuing conversation: ${error.message}. Falling back to new response.`);
-                  
-                  // Fall back to creating a new response
-                  const { data: responseStream } = await unifiedOpenAIService.createResponse(
-                    content,
-                    {
-                      model: "gpt-4.1-mini",
-                      tools: context.tools || [],
-                      stream: true
-                    }
-                  );
-                  
-                  // Store the new response ID for future continuations
-                  if (responseStream && typeof responseStream === 'object' && 'id' in responseStream) {
-                    await updateThreadWithContext(finalThreadId, {
-                      ...threadContextCached,
-                      responseId: responseStream.id
-                    });
-                    logger.info(`[RESPONSE] Updated thread with new response ID: ${responseStream.id}`);
-                  }
-                  
-                  // Pass controller and the streamClosed tracker to handleResponseStream
-                  await handleResponseStream(responseStream, controller, finalThreadId, threadContextCached, () => streamClosed, (val) => streamClosed = val, encoder, perfTimings, startTime, apiStartTime);
-                }
-              }
-            } else {
-              // For initial queries or queries without a previous response ID, create a new response
-              logger.info(`[RESPONSE] Creating new response for content length: ${content.length}`);
-              
-              // Create a streaming response with the full prompt content
-              const { data: responseStream } = await unifiedOpenAIService.createResponse(
-                content,
-                {
-                  model: "gpt-4.1-mini",
-                  tools: context.tools || [],
-                  stream: true
-                }
-              );
-              
-              // Store the response ID for future continuations
-              if (responseStream && typeof responseStream === 'object' && 'id' in responseStream) {
-                await updateThreadWithContext(finalThreadId, {
-                  ...(threadContextCached || {}),
-                  responseId: responseStream.id
-                });
-                logger.info(`[RESPONSE] Updated thread with new response ID: ${responseStream.id}`);
-              }
-              
-              // Pass controller and the streamClosed tracker to handleResponseStream
-              await handleResponseStream(responseStream, controller, finalThreadId, threadContextCached, () => streamClosed, (val) => streamClosed = val, encoder, perfTimings, startTime, apiStartTime);
-            }
-            
-            perfTimings.totalTime = Date.now() - apiStartTime;
-          } catch (error) {
-            logger.error("Stream start error:", error);
-            if (!streamClosed) {
-              logger.info('[STREAM_LIFECYCLE] Controller closing in stream finally block.');
-              controller.close(); // This will now call our wrapper
-            }
-          }
-        },
-      });
-
-      return new Response(stream, {
-        headers: {
-          "Content-Type": "text/event-stream",
-          "Cache-Control": "no-cache",
-          "Connection": "keep-alive",
-        },
-      });
-    } else if (!isStarterQuestion(content) && isDirectMode && !forceStandardMode) {
-      let cachedFiles = await getCachedFilesForThread(finalThreadId);
-      cachedFileIds = cachedFiles.map(file => file.id);
-      const relevantFilesResult = await identifyRelevantFiles(
-        context.normalizedCurrentQuery,
-        "all-sector",
-        context.isFollowUp,
-        context.normalizedPreviousQuery,
-        context.previousResponse
-      );
-      if (relevantFilesResult?.file_ids) {
-        usedFileIds = Array.from(new Set([...(cachedFileIds || []), ...(relevantFilesResult.file_ids || [])])).map(String);
-      }
-    }
-
-    // Add debug info for follow-up queries
-    logger.info(`=== FOLLOW-UP DEBUG ===`);
-    logger.info(`THREAD ID: ${finalThreadId}`);
-    logger.info(`IS FOLLOW-UP FLAG: ${isFollowUp}`);
-    logger.info(`CACHED FILE IDS: ${JSON.stringify(cachedFileIds)}`);
-    logger.info(`HAS PREVIOUS QUERY: ${context.normalizedPreviousQuery ? 'YES' : 'NO'}`);
-    logger.info(`QUERY: "${context.normalizedCurrentQuery.substring(0, 50)}..."`);
-    if (context.normalizedPreviousQuery) {
-      logger.info(`PREV QUERY: "${context.normalizedPreviousQuery.substring(0, 50)}..."`);
-    }
-    logger.info(`=======================`);
-
-    // Track context for all threads right after message creation
-    // Store both the raw and normalized queries for future reference
-    const queryContext = {
-      rawQuery: content,
-      normalizedQuery: context.normalizedCurrentQuery,
-      timestamp: Date.now(),
-    };
-
-    // Ensure we store query context in thread metadata
-    try {
-      // Reuse cached thread context if we already fetched it
-      if (!threadContextCached) {
-        threadContextCached = await getThreadContext(finalThreadId);
-      }
-      const existingQueries = threadContextCached.previousQueries || [];
-      
-      // Store both current normalized query and raw query for future reference
-      await updateThreadWithContext(finalThreadId, {
-        previousQueries: [context.normalizedCurrentQuery, ...existingQueries].slice(0, 5),
-        rawQueries: [content, ...(threadContextCached.rawQueries || [])].slice(0, 5),
-        isFollowUp: true,
-        lastQueryTime: Date.now()
-      });
-      
-      logger.info(`[THREAD] Updated thread ${finalThreadId} with query context (total queries: ${existingQueries.length + 1})`);
-    } catch (err) {
-      logger.error(`[THREAD] Failed to update thread context: ${err.message}`);
-    }
-
-    perfTimings.runCreated = Date.now();
-
-    // Create a response directly using the Responses API instead of the Assistants API
-    // No need for createRun, we directly create a response
-    const encoder = new TextEncoder();
+    
     const stream = new ReadableStream({
-      async start(controller) {
-        let streamClosed = false;
-        const originalControllerClose = controller.close.bind(controller);
-        controller.close = () => {
-          if (!streamClosed) {
-            streamClosed = true;
-            originalControllerClose();
-            logger.info('[STREAM_LIFECYCLE] Controller explicitly closed.');
-          }
+      async start(sseController) {
+        let clientStreamClosed = false;
+        const originalControllerClose = sseController.close.bind(sseController);
+        sseController.close = () => {
+          if (!clientStreamClosed) { clientStreamClosed = true; originalControllerClose(); logger.info('[STREAM_LIFECYCLE_CAC] Client SSE stream controller closed.'); }
         };
 
-        try {
-          let messageReceived = false;
-          perfTimings.pollStart = Date.now();
+        let actualOpenAIResponseIdFromStream: string | null = null;
+        let fullAssistantReplyText = '';
 
-          // For follow-up queries, use the continueConversation method
-          if (isFollowUp && threadContextCached && threadContextCached.responseId) {
-            // Check if the response ID is an old thread ID (starts with thread_)
-            const isLegacyThreadId = typeof threadContextCached.responseId === 'string' && 
-              (threadContextCached.responseId.startsWith('thread_') || !threadContextCached.responseId.startsWith('resp_'));
-            
-            if (isLegacyThreadId) {
-              logger.info(`[RESPONSE] Legacy or invalid response ID detected (${threadContextCached.responseId}). Creating new response instead.`);
-              
-              // Create a new streaming response with the full prompt content
-              const { data: responseStream } = await unifiedOpenAIService.createResponse(
-                content,
-                {
-                  model: "gpt-4.1-mini",
-                  tools: context.tools || [],
-                  stream: true
-                }
-              );
-              
-              // Store the new response ID for future continuations
-              if (responseStream && typeof responseStream === 'object' && 'id' in responseStream) {
-                await updateThreadWithContext(finalThreadId, {
-                  ...threadContextCached,
-                  responseId: responseStream.id
-                });
-                logger.info(`[RESPONSE] Updated thread with new response ID: ${responseStream.id}`);
-              }
-              
-              // Pass controller and the streamClosed tracker to handleResponseStream
-              await handleResponseStream(responseStream, controller, finalThreadId, threadContextCached, () => streamClosed, (val) => streamClosed = val, encoder, perfTimings, startTime, apiStartTime);
-            } else {
-              logger.info(`[RESPONSE] Continuing conversation with response ID: ${threadContextCached.responseId}`);
-              
-              // Create a streaming response using continueConversation
-              try {
-                const { data: responseStream } = await unifiedOpenAIService.continueConversation(
-                  threadContextCached.responseId,
-                  content,
-                  {
-                    model: "gpt-4.1-mini",
-                    tools: context.tools || [],
-                    stream: true
-                  }
-                );
-                
-                // Store the new response ID if it changed
-                if (responseStream && typeof responseStream === 'object' && 'id' in responseStream && 
-                    responseStream.id !== threadContextCached.responseId) {
-                  await updateThreadWithContext(finalThreadId, {
-                    ...threadContextCached,
-                    responseId: responseStream.id
-                  });
-                  logger.info(`[RESPONSE] Updated thread with new response ID: ${responseStream.id}`);
-                }
-                
-                // Pass controller and the streamClosed tracker to handleResponseStream
-                await handleResponseStream(responseStream, controller, finalThreadId, threadContextCached, () => streamClosed, (val) => streamClosed = val, encoder, perfTimings, startTime, apiStartTime);
-              } catch (error) {
-                logger.error(`[RESPONSE] Error continuing conversation: ${error.message}. Falling back to new response.`);
-                
-                // Fall back to creating a new response
-                const { data: responseStream } = await unifiedOpenAIService.createResponse(
-                  content,
-                  {
-                    model: "gpt-4.1-mini",
-                    tools: context.tools || [],
-                    stream: true
-                  }
-                );
-                
-                // Store the new response ID for future continuations
-                if (responseStream && typeof responseStream === 'object' && 'id' in responseStream) {
-                  await updateThreadWithContext(finalThreadId, {
-                    ...threadContextCached,
-                    responseId: responseStream.id
-                  });
-                  logger.info(`[RESPONSE] Updated thread with new response ID: ${responseStream.id}`);
-                }
-                
-                // Pass controller and the streamClosed tracker to handleResponseStream
-                await handleResponseStream(responseStream, controller, finalThreadId, threadContextCached, () => streamClosed, (val) => streamClosed = val, encoder, perfTimings, startTime, apiStartTime);
-              }
-            }
+        try {
+          let openAIStreamPromise;
+          if (openAIResponseIdToContinueFrom) {
+            logger.info(`[CHAT_ASSISTANT_CTRL_OPENAI] Calling continueConversation (OpenAI ID: ${openAIResponseIdToContinueFrom}). Prompt length: ${String(content).length}`);
+            openAIStreamPromise = unifiedOpenAIService.continueConversation(openAIResponseIdToContinueFrom, content, { model: "gpt-4.1-mini", stream: true });
           } else {
-            // For initial queries or queries without a previous response ID, create a new response
-            logger.info(`[RESPONSE] Creating new response for content length: ${content.length}`);
-            
-            // Create a streaming response with the full prompt content
-            const { data: responseStream } = await unifiedOpenAIService.createResponse(
-              content,
-              {
-                model: "gpt-4.1-mini",
-                tools: context.tools || [],
-                stream: true
+            logger.info(`[CHAT_ASSISTANT_CTRL_OPENAI] Calling createResponse. Prompt length: ${String(content).length}`);
+            openAIStreamPromise = unifiedOpenAIService.createResponse(content, { model: "gpt-4.1-mini", stream: true });
+          }
+
+          const { data: responseStreamFromOpenAI, error: openAIError } = await openAIStreamPromise;
+          if (openAIError || !responseStreamFromOpenAI) { throw new Error(openAIError?.message || "Failed to get stream from OpenAI."); }
+
+          // --- Iterating through the OpenAI stream --- 
+          // This simplified loop directly extracts needed info and forwards events.
+          // The more complex handleResponseStream is no longer needed here if this controller is purely for this.
+          logger.info("[CHAT_ASSISTANT_CTRL] Iterating OpenAI stream...");
+          for await (const chunk of responseStreamFromOpenAI) {
+            if (!actualOpenAIResponseIdFromStream) {
+              const chunkId = chunk.id || chunk.response?.id;
+              if (chunkId && typeof chunkId === 'string') {
+                actualOpenAIResponseIdFromStream = chunkId;
+                logger.info(`[CHAT_ASSISTANT_CTRL] OpenAI Response ID for THIS turn: ${actualOpenAIResponseIdFromStream}`);
+                if (!clientStreamClosed) sseController.enqueue(textEncoder.encode(`event: responseId\ndata: ${JSON.stringify({ id: actualOpenAIResponseIdFromStream })}\n\n`));
               }
-            );
-            
-            // Store the response ID for future continuations
-            if (responseStream && typeof responseStream === 'object' && 'id' in responseStream) {
-              await updateThreadWithContext(finalThreadId, {
-                ...(threadContextCached || {}),
-                responseId: responseStream.id
-              });
-              logger.info(`[RESPONSE] Updated thread with new response ID: ${responseStream.id}`);
             }
-            
-            // Pass controller and the streamClosed tracker to handleResponseStream
-            await handleResponseStream(responseStream, controller, finalThreadId, threadContextCached, () => streamClosed, (val) => streamClosed = val, encoder, perfTimings, startTime, apiStartTime);
+            let textChunk: string | undefined;
+            if (chunk.type === 'response.output_text.delta') { textChunk = (chunk as any).delta || (chunk.data?.delta); }
+            else if (chunk.response?.output_text?.delta) { textChunk = chunk.response.output_text.delta; }
+            if (textChunk !== undefined) {
+              fullAssistantReplyText += textChunk;
+              if (!clientStreamClosed) sseController.enqueue(textEncoder.encode(`event: textDelta\ndata: ${JSON.stringify({ value: textChunk })}\n\n`));
+            }
+            if (chunk.finish_reason) {
+              logger.info(`[CHAT_ASSISTANT_CTRL] OpenAI stream finished. Reason: ${chunk.finish_reason}`);
+              break;
+            }
+          }
+          logger.info("[CHAT_ASSISTANT_CTRL] OpenAI stream iteration completed.");
+          // --- End of OpenAI stream iteration --- 
+
+          if (!actualOpenAIResponseIdFromStream) {
+            logger.error("[CHAT_ASSISTANT_CTRL] CRITICAL: No response ID from OpenAI stream. Cannot save context or send proper messageDone.");
+            throw new Error("Failed to obtain response ID from OpenAI stream.");
+          }
+
+          // Store context for the NEXT turn using the ID of THIS turn's OpenAI response
+          let fileMetadataForKV: any[] = [];
+          if (files_used_for_this_prompt && Array.isArray(files_used_for_this_prompt)) {
+            fileMetadataForKV = files_used_for_this_prompt.map((fileId: string) => ({
+              fileId,
+              // Attempt to carry over topics if they were in the previous turn's context for these files
+              // This part is complex as threadContextCached.fileMetadata might not be perfectly aligned or have topics
+              topics: threadContextCached?.fileMetadata?.find((fm: any) => fm.fileId === fileId)?.topics || [],
+            }));
+            logger.info(`[CHAT_ASSISTANT_CTRL_KV_PREP] Constructed fileMetadataForKV with ${fileMetadataForKV.length} items from files_used_for_this_prompt.`);
+          } else if (threadContextCached?.fileMetadata && Array.isArray(threadContextCached.fileMetadata)) {
+            fileMetadataForKV = threadContextCached.fileMetadata;
+            logger.warn(`[CHAT_ASSISTANT_CTRL_KV_PREP] files_used_for_this_prompt was missing or not an array. Falling back to fileMetadata from threadContextCached (${fileMetadataForKV.length} items).`);
+          } else {
+            logger.warn("[CHAT_ASSISTANT_CTRL_KV_PREP] No file information available (neither files_used_for_this_prompt nor cached fileMetadata) to store in KV.");
           }
           
-          perfTimings.totalTime = Date.now() - apiStartTime;
-        } catch (error) {
-          logger.error("Stream start error:", error);
-          if (!streamClosed) {
-            logger.info('[STREAM_LIFECYCLE] Controller closing in stream finally block.');
-            controller.close(); // This will now call our wrapper
+          const contextToSave = {
+            previousQueries: [original_user_query || "(Query not provided)", ...(threadContextCached?.previousQueries || [])].slice(0, 5),
+            fileMetadata: fileMetadataForKV, 
+            assistantResponseContent: fullAssistantReplyText, 
+            responseId: actualOpenAIResponseIdFromStream, 
+            lastUpdated: Date.now(),
+            // Optionally, include the prompt that LED to this response for debugging/history
+            promptSentToOpenAI: content.substring(0, 1000) + (content.length > 1000 ? "... (truncated)" : "") 
+          };
+          logger.info("[CHAT_ASSISTANT_CTRL_KV_SAVE_OBJECT] Object to be saved in KV:", JSON.stringify(contextToSave, null, 2));
+
+          await updateThreadWithContext(actualOpenAIResponseIdFromStream, contextToSave);
+          logger.info(`[CHAT_ASSISTANT_CTRL_KV_STORE] Stored context for THIS turn under key: ${actualOpenAIResponseIdFromStream}`);
+
+          // Send messageDone event to client
+          if (!clientStreamClosed) {
+            const finalContent = fullAssistantReplyText.trim() || "Assistant response generated.";
+            logger.info(`[CHAT_ASSISTANT_CTRL_SSE] Sending messageDone. ID: ${actualOpenAIResponseIdFromStream}, Content length: ${finalContent.length}`);
+            sseController.enqueue(
+              textEncoder.encode(
+                `event: messageDone\ndata: ${JSON.stringify({
+                  id: actualOpenAIResponseIdFromStream,
+                  threadId: actualOpenAIResponseIdFromStream, // For client, this is the ID of the current interaction
+                  role: "assistant",
+                  content: finalContent,
+                  createdAt: Date.now(),
+                })}\n\n`
+              )
+            );
           }
+          
+          if (!clientStreamClosed) {
+            logger.info('[STREAM_LIFECYCLE_CAC] Client SSE stream closing cleanly after messageDone.');
+            sseController.close();
+          }
+
+        } catch (error) {
+          logger.error("[STREAM_ERROR_PRIMARY_CAC] Error during OpenAI call or stream handling:", error);
+          if (!clientStreamClosed) { 
+            try {
+              sseController.enqueue(
+                textEncoder.encode(
+                  `event: error\ndata: ${JSON.stringify({ message: "[CAC_ERR] " + error.message })}\n\n`
+                )
+              );
+              logger.info('[STREAM_LIFECYCLE_CAC] Sent error event to client.');
+            } catch (enqueueError) {
+              logger.error("[STREAM_LIFECYCLE_ERROR_CAC] Failed to enqueue error event:", enqueueError);
+            }
+            sseController.close(); // Always close on error
+          }
+        } finally {
+          if (!clientStreamClosed) {
+              logger.warn("[STREAM_LIFECYCLE_WARN_CAC] Stream controller still open in start()'s final `finally`. Forcing close.");
+              sseController.close();
+          }
+          logger.info("[STREAM_LIFECYCLE_INFO_CAC] Exited ReadableStream start() function.");
         }
       },
     });
 
-    return new Response(stream, {
-      headers: {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        "Connection": "keep-alive",
-      },
-    });
+    return new Response(stream, { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", "Connection": "keep-alive" } });
+
   } catch (error) {
-    logger.error("Error processing request:", error);
-    return formatErrorResponse("An error occurred while processing the request.");
+    logger.error("[CHAT_ASSISTANT_CTRL_FATAL] Overall fatal error: ", error);
+    return formatErrorResponse(error.message || "An unexpected error occurred.");
   }
 }
 
-/**
- * Resets thread compatibility metadata for comparison queries or new topics
- * This preserves cached files but forces a fresh compatibility check
- * @param threadId Thread ID to reset compatibility metadata for
- */
-async function clearThreadCacheForComparison(threadId: string): Promise<void> {
-  try {
-    logger.info(`[COMPAT_CACHE] Resetting thread compatibility metadata for thread ${threadId}`);
-    
-    // Get existing thread cache
-    const metaKey = threadMetaKey(threadId);
-    const existingCache = await kvClient.get(metaKey);
-    
-    if (!existingCache) {
-      logger.info(`[COMPAT_CACHE] No existing cache found for thread ${threadId}`);
-      return;
-    }
-    
-    // Re-derive fileMetadata so the compatibility gate has something to work with
-    let derivedFileMeta = [];
-    try {
-      const { lookupFiles } = await import(
-        "../../../utils/compatibility/compatibility"
-      );
-      if (Array.isArray(existingCache.files) && existingCache.files.length > 0) {
-        const ids = existingCache.files.map((f: any) =>
-          typeof f === "string" ? f : f.id
-        );
-        derivedFileMeta = lookupFiles(ids);
-      }
-    } catch (e) {
-      // fail silently – we just won't have metadata
-    }
-
-    const updatedCache = {
-      ...existingCache,
-      compatibilityMetadata: undefined,
-      fileMetadata: derivedFileMeta,
-      lastUpdated: Date.now(),
-    };
-    
-    // Update the thread cache with reset compatibility metadata
-    await kvClient.set(metaKey, updatedCache, { ex: 60 * 60 * 24 }); // 24 hour TTL
-    
-    logger.info(`[COMPAT_CACHE] Successfully reset compatibility metadata while preserving cached files for thread ${threadId}`);
-  } catch (error) {
-    logger.error(`[COMPAT_CACHE] Error resetting compatibility metadata: ${error.message}`);
-  }
-}
+// Ensure isLegacyThreadId helper is defined (it was at the end of the previous file snippet)
+// function isLegacyThreadId(id: string): boolean {
+//     return typeof id === 'string' && (id.startsWith('thread_') || !id.startsWith('resp_'));
+// }

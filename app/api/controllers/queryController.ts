@@ -14,6 +14,8 @@ import { threadMetaKey, TTL } from "../../../utils/cache/key-schema";
 import { getComparablePairs, FileMetadata } from "../../../utils/compatibility/compatibility";
 // Import detectComparisonQuery from the adapter where it's re-exported
 import { detectComparisonQuery } from "../../../utils/data/repository/adapters/retrieval-adapter";
+import fs from "fs/promises"; // Use promises version of fs
+import path from "path";
 
 const dataRetrievalService = new DataRetrievalService();
 
@@ -26,11 +28,68 @@ interface ThreadMetadata {
   [key: string]: any;
 }
 
+// Helper function to load and render the assistant prompt template
+async function renderAssistantPrompt(userQuestion: string, dataResult: any): Promise<string> {
+  try {
+    const promptPath = path.join(process.cwd(), "utils", "openai", "assistant_prompt.md");
+    let template = await fs.readFile(promptPath, "utf-8");
+    logger.info("[PROMPT_RENDER] Successfully loaded assistant_prompt.md template.");
+
+    const segmentLabel = dataResult?.segments?.map((s: string) => s.charAt(0).toUpperCase() + s.slice(1)).join(", ") || "Overall";
+    
+    let statsPreviewString = "NO STATISTICAL DATA WAS PROCESSED OR INCLUDED.";
+    const actualStatsArray = dataResult?.stats;
+    if (actualStatsArray && Array.isArray(actualStatsArray) && actualStatsArray.length > 0) {
+      const statsToInclude = actualStatsArray.slice(0, 150);
+      statsPreviewString = JSON.stringify(statsToInclude, null, 2);
+      logger.info(`[PROMPT_RENDER] Included ${statsToInclude.length} (out of ${actualStatsArray.length}) stats in prompt from dataResult.stats.`);
+    } else {
+      logger.warn("[PROMPT_RENDER] No 'dataResult.stats' array found or it was empty. Check dataResult structure.", dataResult);
+    }
+
+    let rawDataJsonString = "NO RAW DATA AVAILABLE";
+    if (dataResult?.raw_data) {
+      rawDataJsonString = `\`\`\`json\n${typeof dataResult.raw_data === 'string' ? dataResult.raw_data : JSON.stringify(dataResult.raw_data, null, 2)}\n\`\`\``;
+      logger.info("[PROMPT_RENDER] Included raw_data in prompt.");
+    }
+
+    template = template.replace(/{{{USER_QUESTION}}}/g, userQuestion || "Not specified.");
+    template = template.replace(/{{{ANALYSIS_SUMMARY}}}/g, dataResult?.analysis || "No analysis summary available.");
+    template = template.replace(/{{{FILES_USED}}}/g, dataResult?.files_used?.join(", ") || "None listed.");
+    template = template.replace(/{{{DATA_POINTS_SOURCE}}}/g, String(dataResult?.data_points) || "N/A");
+    template = template.replace(/{{{QUERY_STATUS}}}/g, dataResult?.status || "N/A");
+    template = template.replace(/{{{SEGMENT_LABEL}}}/g, segmentLabel);
+    template = template.replace(/{{{STATS_PREVIEW_STRING}}}/g, statsPreviewString);
+    template = template.replace(/{{{RAW_DATA_JSON}}}/g, rawDataJsonString);
+
+    logger.info(`[PROMPT_RENDER] Final rendered assistant prompt length: ${template.length}. Preview (first 200): ${template.substring(0,200)}`);
+    return template;
+
+  } catch (error) {
+    logger.error("[PROMPT_RENDER_ERROR] Failed to load or render assistant_prompt.md:", error);
+    return `User Question: ${userQuestion}\nData: ${JSON.stringify(dataResult?.stats?.slice(0,10) || dataResult?.raw_data || "Error: Prompt template rendering failed. No data available.")}`;
+  }
+}
+
 export async function postHandler(request) {
   const startTime = Date.now();
   try {
     const body = await request.json();
-    const { query, threadId, previousQuery, previousAssistantResponse } = body;
+    let { query, threadId, previousQuery, previousAssistantResponse, previous_response_id } = body;
+    const originalUserQuery = query;
+
+    logger.info(`[QUERY_CTRL_INIT] Received request. Original threadId: ${threadId}, previous_response_id: ${previous_response_id}`);
+
+    // If threadId is not provided OR if previous_response_id is provided (indicating a follow-up in Responses API flow),
+    // prioritize previous_response_id as the source of truth for the current operation's context.
+    if (previous_response_id && typeof previous_response_id === "string" && previous_response_id.startsWith("resp_")) {
+      threadId = previous_response_id;
+      logger.info(`[QUERY_CTRL_INIT] Using previous_response_id as threadId: ${threadId}`);
+    } else if (threadId) {
+      logger.info(`[QUERY_CTRL_INIT] Using provided threadId: ${threadId}`);
+    } else {
+      logger.info(`[QUERY_CTRL_INIT] No threadId or previous_response_id provided. Treating as new conversation.`);
+    }
 
     if (!query || typeof query !== "string") {
       return formatBadRequestResponse("Missing or invalid 'query' field");
@@ -42,42 +101,47 @@ export async function postHandler(request) {
       ? normalizeQueryText(previousQuery) 
       : "";
 
-    // Get thread metadata from KV
+    // Get thread metadata from KV. This should use the potentially updated threadId.
     let threadMetadata: ThreadMetadata | null = null;
     if (threadId) {
       threadMetadata = await UnifiedCache.get<ThreadMetadata>(threadMetaKey(threadId));
+      logger.info(threadMetadata ? `[QUERY_CTRL_KV] Fetched threadMetadata for ${threadId}` : `[QUERY_CTRL_KV] No threadMetadata for ${threadId}`);
     }
 
-    // Determine if this is a follow-up query based on previous queries in the thread
-    const isFollowUp = !!(threadMetadata?.previousQueries?.length > 0);
+    // Determine if this is a follow-up query
+    // A query is a follow-up if a valid previous_response_id was passed,
+    // or if we have a threadId and that thread has previous queries in its metadata.
+    const isFollowUp = !!(previous_response_id && typeof previous_response_id === 'string' && previous_response_id.startsWith('resp_')) ||
+                       !!(threadId && threadMetadata?.previousQueries?.length > 0);
     
-    logger.info(`[QUERY] Raw query: "${query.substring(0, 50)}..."`);
-    logger.info(`[QUERY] Normalized query: "${normalizedQuery.substring(0, 50)}..."`);
-    logger.info(`[QUERY] Processing normalized query: "${normalizedQuery.substring(0, 50)}..." | ThreadId: ${threadId || 'none'} | IsFollowUp: ${isFollowUp}`);
+    if (isFollowUp) {
+      logger.info(`[FOLLOW-UP_DETECT] Detected as FOLLOW-UP. Reason: ${
+        (previous_response_id && typeof previous_response_id === 'string' && previous_response_id.startsWith('resp_')) ? 'prev_resp_id' :
+        (threadId && threadMetadata?.previousQueries?.length > 0) ? 'metadata' : 'Unknown'
+      }. Context ID: ${threadId}`);
+    } else {
+      logger.info(`[FOLLOW-UP_DETECT] Detected as NEW query. Context ID: ${threadId || 'none'}`);
+    }
 
-    // Check if this is a comparison query
-    // Note: In the current implementation, detectComparisonQuery just returns a boolean
+    logger.info(`[QUERY_CTRL_MAIN] Processing: "${normalizedQuery.substring(0, 50)}..." | Thread: ${threadId || 'none'} | FollowUp: ${isFollowUp}`);
+
+    let dataProcessingResult;
     const isComparisonQuery = detectComparisonQuery(normalizedQuery);
     
-    // Compatibility check for follow-up comparison queries
     if (isFollowUp && isComparisonQuery) {
       const comparisonResult = await handleComparisonCompatibility(
         normalizedQuery,
-        threadId,
+        threadId!, // threadId will be set if isFollowUp is true from prev_resp_id
         threadMetadata
       );
       
       if (comparisonResult.error) {
-        // Fix the parameter type error - pass error message as string
         return formatBadRequestResponse(comparisonResult.message || "Incompatible comparison");
       }
       
-      // If we have a valid comparison, use the filtered file IDs
       if (comparisonResult.fileIds && comparisonResult.fileIds.length > 0) {
         logger.info(`[COMPATIBILITY] Using filtered file IDs for compatible comparison: ${comparisonResult.fileIds.join(', ')}`);
-        
-        // Pass normalized context to the data retrieval service with overridden file IDs
-        const result = await dataRetrievalService.processQueryWithData(
+        dataProcessingResult = await dataRetrievalService.processQueryWithData(
           normalizedQuery,
           "all-sector",
           comparisonResult.fileIds, // Use validated compatible file IDs
@@ -86,46 +150,57 @@ export async function postHandler(request) {
           normalizedPreviousQuery,
           previousAssistantResponse || ""
         );
-        
-        // Log processing time
-        const processingTime = Date.now() - startTime;
-        logger.info(`[QUERY] Comparison query processed in ${processingTime}ms`);
-        
-        // Update thread metadata with the new query
-        await updateThreadMetadata(threadId, normalizedQuery, result?.fileMetadata);
-        
-        return NextResponse.json(result);
+      } else {
+        // If comparison check passed but no specific files (e.g. non-explicit year comparison), proceed with normal follow-up discovery
+        const fileIdsForDiscovery = (threadMetadata?.fileMetadata?.length > 0) ? threadMetadata.fileMetadata.map(fm => fm.fileId) : [];
+        logger.info(`[QUERY_CTRL_FILES] Comparison follow-up, using ${fileIdsForDiscovery.length} cached file IDs.`);
+        dataProcessingResult = await dataRetrievalService.processQueryWithData(
+          normalizedQuery,
+          "all-sector",
+          fileIdsForDiscovery, // IMPORTANT: Use these for follow-ups
+          threadId || "default", // session/thread identifier for the service
+          isFollowUp,
+          normalizedPreviousQuery,
+          previousAssistantResponse || ""
+        );
       }
+    } else {
+      const fileIdsForDiscovery = (isFollowUp && threadMetadata?.fileMetadata?.length > 0)
+        ? threadMetadata.fileMetadata.map(fm => fm.fileId)
+        : [];
+      logger.info(`[QUERY_CTRL_FILES] Using ${fileIdsForDiscovery.length} cached file IDs for discovery (if follow-up).`);
+      dataProcessingResult = await dataRetrievalService.processQueryWithData(
+        normalizedQuery,
+        "all-sector", // context for data retrieval service
+        fileIdsForDiscovery, // IMPORTANT: Use these for follow-ups
+        threadId || "default", // session/thread identifier for the service
+        isFollowUp,
+        normalizedPreviousQuery,
+        previousAssistantResponse || ""
+      );
     }
-
-    // Regular query processing (non-comparison or first query)
-    // Pass normalized context to the data retrieval service
-    const result = await dataRetrievalService.processQueryWithData(
-      normalizedQuery,
-      "all-sector",
-      [], // No cached file IDs for regular processing
-      threadId || "default",
-      isFollowUp,
-      normalizedPreviousQuery,
-      previousAssistantResponse || ""
-    );
     
-    // Check if result is valid before returning
-    if (!result) {
-      logger.error(`[ERROR] Data retrieval service returned null or undefined result`);
-      return formatErrorResponse(new Error("Failed to process query"));
+    if (!dataProcessingResult) {
+      logger.error(`[ERROR] Data retrieval service returned null/undefined for processQueryWithData`);
+      return formatErrorResponse(new Error("Failed to process query data."));
     }
 
-    // For first query, store file metadata in KV
-    if (!isFollowUp && result?.fileMetadata) {
-      await updateThreadMetadata(threadId, normalizedQuery, result.fileMetadata);
-    }
+    const finalAssistantPrompt = await renderAssistantPrompt(originalUserQuery, dataProcessingResult);
 
-    // Log processing time
+    const responseToFrontend = {
+      ...dataProcessingResult,
+      finalAssistantPrompt: finalAssistantPrompt,
+      isFollowUp: isFollowUp,
+      query: originalUserQuery,
+      currentContextId: threadId,
+    };
+
+    logger.info(`[QUERY_CTRL_NO_KV_UPDATE] Deferring KV update to chatAssistantController.`);
+
     const processingTime = Date.now() - startTime;
-    logger.info(`[QUERY] Query processed in ${processingTime}ms`);
+    logger.info(`[QUERY_CTRL_END] Query processed in ${processingTime}ms. Returning data with rendered prompt.`);
 
-    return NextResponse.json(result);
+    return NextResponse.json(responseToFrontend);
   } catch (error) {
     logger.error(`[ERROR] Query controller error: ${error.message}`);
     return formatErrorResponse(error);
@@ -221,54 +296,5 @@ async function handleComparisonCompatibility(
   } catch (error) {
     logger.error(`[COMPATIBILITY] Error handling comparison compatibility: ${error.message}`);
     return { error: false }; // Continue with normal processing on error
-  }
-}
-
-/**
- * Update thread metadata in KV
- * @param threadId Thread ID
- * @param query Current query
- * @param fileMetadata File metadata to store
- */
-async function updateThreadMetadata(
-  threadId: string, 
-  query: string, 
-  fileMetadata?: FileMetadata[]
-): Promise<void> {
-  try {
-    if (!threadId) return;
-    
-    const key = threadMetaKey(threadId);
-    
-    // Get existing metadata or create new with proper type casting
-    const existingMeta = await UnifiedCache.get<ThreadMetadata>(key) || {
-      previousQueries: [],
-      fileMetadata: [],
-      lastUpdated: Date.now()
-    } as ThreadMetadata;
-    
-    // Update previous queries
-    if (!existingMeta.previousQueries) {
-      existingMeta.previousQueries = [];
-    }
-    
-    // Add current query to previous queries
-    existingMeta.previousQueries.push(query);
-    
-    // Update file metadata if provided
-    if (fileMetadata && Array.isArray(fileMetadata)) {
-      existingMeta.fileMetadata = fileMetadata;
-      logger.info(`[CACHE] Updated file metadata for thread ${threadId} with ${fileMetadata.length} files`);
-    }
-    
-    // Update timestamp
-    existingMeta.lastUpdated = Date.now();
-    
-    // Write updated meta back to KV with TTL
-    await UnifiedCache.set(key, existingMeta, TTL.THREAD_DATA);
-    
-    logger.info(`[CACHE] Updated thread metadata for ${threadId}`);
-  } catch (error) {
-    logger.error(`[CACHE] Error updating thread metadata: ${error.message}`);
   }
 }

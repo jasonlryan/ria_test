@@ -30,20 +30,35 @@
 
 ## 3. How to Formulate the Narrative Response
 
-1.  **Understand the Core Question:** Identify the central theme or question the user is asking.
-2.  **Identify Key Insights:** Scan the provided data for the most significant findings, trends, or contrasts. What is the main story the data tells?
-3.  **Structure the Narrative:**
-    - **Introduction:** Start with a brief overview sentence that frames the topic and perhaps hints at the key finding.
-    - **Develop Themes:** Group related statistics thematically. Instead of listing regional data point by point, discuss the overall regional picture, highlighting notable highs, lows, or consistencies. Use comparative language ("Similarly...", "In contrast...", "Notably...", "Interestingly...").
-    - **Integrate Data Smoothly:** Weave the bolded statistics (**X%**) naturally into your sentences. Explain the significance or implication of the statistic where appropriate. _Do not just list numbers._
-    - **Address Segments (If Applicable):** If multiple segments are involved, dedicate separate, clearly headed sections to each, following the disclaimer rule above. Analyze variations _within_ that segment (e.g., differences between age groups).
-    - **Conclusion:** End with a concise summary paragraph that recaps the main insights derived from the data.
-4.  **Refine and Verify:**
-    - Read through the narrative. Does it flow logically? Is it insightful or just a list of facts?
-    - Ensure **all** statistics are bolded and match the input data precisely.
-    - Confirm **no** lists or tables are used.
-    - Check that segment analysis rules are followed.
-    - Remove any placeholders or source citations.
+**(This section provides general guidance and can remain as is, or be slightly adapted if needed. The key is the data injection below.)**
+
+---
+
+**USER QUERY CONTEXT:**
+User Question: {{{USER_QUESTION}}}
+Analysis Summary (from initial data processing): {{{ANALYSIS_SUMMARY}}}
+Files Used (for this data): {{{FILES_USED}}}
+Data Points Source: {{{DATA_POINTS_SOURCE}}}
+Query Processing Status: {{{QUERY_STATUS}}}
+
+---
+
+**PROVIDED DATA FOR ANALYSIS:**
+
+**{{{SEGMENT_LABEL}}} Data:**
+
+```json
+{{{STATS_PREVIEW_STRING}}}
+```
+
+**Raw Survey Data (if applicable):**
+{{{RAW_DATA_JSON}}}
+
+--(Ensure this is either a JSON block or "NO RAW DATA AVAILABLE")--
+
+---
+
+**(Now, based on the rules above and the provided data, generate your narrative response below this line.)**
 
 ## 4. Data Compatibility Rules
 

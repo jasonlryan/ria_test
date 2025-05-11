@@ -416,11 +416,14 @@ export async function processQueryWithData(
         logger.warn(`[ADAPTER] No file data available for SmartFiltering – stats array will be empty`);
       }
       
+      const filesActuallyUsedIds = dataFiles.map(df => df.id);
+
       const enhancedResult = {
         processedData: Array.isArray(processedData) ? processedData : [],
         stats,
         enhancedContext: [],
         relevantFiles: dataFiles.length > 0 ? dataFiles : relevantFiles,
+        files_used: filesActuallyUsedIds,
         isComparison: result.isComparison || false,
         dataVersion: 2,
         metrics: {}

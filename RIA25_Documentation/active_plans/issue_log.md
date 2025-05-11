@@ -176,3 +176,97 @@ This duplicate implementation likely occurred during the migration from JavaScri
 ### Additional Notes
 
 This should be handled as part of the ongoing repository pattern migration, following the same approach used for dataRetrievalService. The migration log shows a clear pattern of moving from JavaScript to TypeScript implementations while maintaining backward compatibility.
+
+## 2025-05-11: Critical Chat/Follow-up Bugs (Responses API Migration)
+
+### 1. User message delay
+
+- User messages are only added to the chat after the backend responds, causing a laggy/unresponsive UI. Should be added immediately on submit.
+
+### 2. Conversation thread disappears on follow-up
+
+- When a follow-up question is asked, the entire chat thread disappears. Likely due to state reset (messages/threadId) or an error in async flow.
+
+### 3. Education segment not loaded on follow-up
+
+- Even with previousResponseId passed, backend does not load cached fileIds/segments for follow-up, so smart filtering for education fails.
+
+### 4. General context loss on follow-up
+
+- If frontend or backend loses previousResponseId/threadId, follow-up queries are treated as new conversations, breaking continuity and segment filtering.
+
+---
+
+Each of these must be addressed for a robust, conversational survey assistant experience.
+
+## 2025-05-11: UI/UX Bugs (Chat Experience)
+
+### 5. Duplicate user messages in chat
+
+- User message appears twice for each submission. Likely due to being added both immediately and after backend response.
+
+### 6. Responses disappear or are duplicated
+
+- Assistant responses sometimes disappear or appear twice. Likely due to state reset or duplicate message addition.
+
+### 7. Chat resets or loses context after follow-up
+
+- After a follow-up, the chat thread sometimes resets or loses all previous messages. State reset or context loss suspected.
+
+### 8. Answers do not match the user's question (context loss)
+
+- Sometimes the answer shown is for a different question, indicating context is not maintained between turns.
+
+---
+
+These UI/UX issues must be addressed for a robust, reliable chat experience.
+
+### 2025-05-11: Persistent UI Message Disappearance Bug
+
+- Assistant responses or chat messages intermittently disappear from the chat UI after submission or after a follow-up.
+- Backend logs and analytics confirm the system has worked reliably in the past (2000+ successful cases), so this is likely a regression or intermittent bug, not a fundamental design flaw.
+- User reports high frustration and requests urgent, robust fix.
+- Root cause is likely in the frontend state management (setMessages, message IDs, or streaming handler), not in the backend or data pipeline.
+
+---
+
+## 2025-05-11 16:25: Streaming Completion & Segment Persistence Bugs
+
+### A. Disappearing First-Answer Bubble / Lost threadId
+
+**Symptoms**
+
+- First assistant answer streams OK but vanishes as soon as user submits follow-up.
+- Backend logs for follow-up show `ThreadId: none | IsFollowUp: false` even though a response-id was created.
+
+**Root Cause**
+
+- Server occasionally ends SSE without emitting `messageDone`, so `loading` never flips to `false` and `threadId`/`lastResponseId` never reach React state.
+- Client replaces the temp streaming bubble on next submit, effectively deleting the first answer.
+
+**Fix Plan**
+
+1. In `handleResponseStream` emit a fallback `messageDone` if stream ends and `fullText` contains data.
+2. Add 45-second watchdog on the client to finalise the message if `loading` never flips.
+3. Re-enable guard so user cannot submit while `loading === true` (or queue the question).
+
+### B. Segment Data Ignored on Follow-Ups
+
+**Symptoms**
+
+- SmartFiltering extracts sector / education stats (hundreds of items) but assistant replies "segment not available".
+- Prompt builder logs show `Segments selected: country, age, gender` even when sector stats exist.
+
+**Root Cause**
+
+- Because `IsFollowUp` is false the LLM's file-discovery falls back to default segment list, so controller discards sector stats.
+
+**Fix Plan**
+
+1. Keyword-scan user query for explicit segment terms and union them into `segments` before prompt build.
+2. Persist `lastSegments` in thread meta and reuse when `isFollowUp === true`.
+3. In prompt builder auto-add any segment that has stats even if not in `segments` array.
+
+**Status:** OPEN – awaiting implementation of server fallback emit + segment union logic.
+
+---

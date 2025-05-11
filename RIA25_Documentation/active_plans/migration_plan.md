@@ -87,6 +87,37 @@
 
 ---
 
+## Phase 6: Performance Optimisation (Initial Pass)
+
+The Responses-API migration uncovered redundant work that now dominates latency. We will tackle this in three quick iterations before deeper refactor.
+
+### 6.1 Eliminate Duplicate File-Discovery
+
+1.  Trust the **LLM** result when `file_ids.length > 0` and the query is **not** a comparison. Skip the second repository `identifyRelevantFiles` call.
+2.  On **follow-ups** (`isFollowUp === true`) use cached `fileIds` from KV; only re-run file discovery when either:
+    • `detectComparisonQuery()` returns `true`, **or**
+    • The new query introduces previously unseen segments.
+
+### 6.2 In-Memory JSON Cache for Repository Loads
+
+- Maintain a process-level `Map<filePath,{mtime,parsedJson}>` in `FileSystemRepository`.
+- Reload from disk only when `fs.statSync(filePath).mtimeMs` differs from the cached value.
+- Expected win: 3-10 s of JSON parse time per request drops to < 100 ms after warm-up.
+
+### 6.3 KV Round-Trip Reduction
+
+- Coalesce thread-meta updates into a single `UnifiedCache.set` at the end of the controller flow.
+- Store heavy `fileMetadata` only on the first query or when it changes.
+
+### 6.4 Measure & Iterate
+
+- Add simple `console.time()` wrappers around: `identifyRelevantFiles`, `processQueryWithData`, repository JSON parse, Redis read/write.
+- Target P95 latency: **≤ 4 s** for follow-up questions with warm cache.
+
+_Implementation of 6.1 and 6.2 provides the biggest near-term gain, removing redundant discovery (~6-10 s) and disk parses._
+
+---
+
 ## Benefits
 
 - **Maximum flexibility:** All mapping and business rules are in the prompt.
