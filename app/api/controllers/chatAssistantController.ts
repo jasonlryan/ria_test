@@ -28,7 +28,7 @@ import {
   UnifiedCache
 } from "../../../utils/cache/cache-utils";
 import { buildPromptWithFilteredData } from "../../../utils/openai/promptUtils";
-import { unifiedOpenAIService, RunStatus } from "../services/unifiedOpenAIService";
+import { unifiedOpenAIService } from "../services/unifiedOpenAIService";
 import { isFeatureEnabled } from "../../../utils/shared/feature-flags";
 import { migrationMonitor } from "../../../utils/shared/monitoring";
 import { threadMetaKey } from "../../../utils/cache/key-schema";
@@ -248,12 +248,12 @@ async function logStarterQuestionInvocation({
   }
 }
 
-function isTerminalStatus(status: RunStatus): boolean {
+function isTerminalStatus(status: string): boolean {
   return status === "completed" || status === "failed" || status === "cancelled" || status === "expired";
 }
 
-function shouldContinuePolling(status: RunStatus, messageReceived: boolean): boolean {
-  const terminalStatuses: RunStatus[] = ["completed", "failed", "cancelled", "expired"];
+function shouldContinuePolling(status: string, messageReceived: boolean): boolean {
+  const terminalStatuses: string[] = ["completed", "failed", "cancelled", "expired"];
   return !messageReceived && !terminalStatuses.includes(status);
 }
 
@@ -582,13 +582,12 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
       // Load canonical mapping (assume from existing utility or file)
       const canonicalMapping = require("../../../scripts/reference files/2025/canonical_topic_mapping.json");
       const contextString = typeof context === 'string' ? context : '';
-      fileDiscoveryResult = await dataRetrievalService.identifyRelevantFilesWithLLM(
+      fileDiscoveryResult = await dataRetrievalService.identifyRelevantFiles(
         content, // user query
         contextString, // context as string
         isFollowUp,
         context.normalizedPreviousQuery || '',
-        context.previousResponse || '',
-        canonicalMapping
+        context.previousResponse || ''
       );
       logger.info(`[LLM_FILE_DISCOVERY] Used LLM-driven file discovery for query.`);
     } catch (err) {

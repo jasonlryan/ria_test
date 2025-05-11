@@ -1,6 +1,6 @@
 # RIA25 Responses API Migration - Redundancy Report
 
-**Last Updated:** June 21, 2025
+**Last Updated:** Sun May 11 2025
 
 ## 1. Overview
 
@@ -8,127 +8,22 @@ This document identifies redundant code after the migration from OpenAI's Assist
 
 ## 2. Redundant Areas
 
-### 2.1 Legacy Imports and Types
+- [x] **Linter error for 'identifyRelevantFilesWithLLM'**: Resolved. All controller and service logic now uses the correct method signature (`identifyRelevantFiles`).
+- [x] Remove legacy Assistants API types, methods, and imports. (All RunStatus, Thread, Message, and related types/imports have been removed from the codebase.)
+- [ ] Remove old controller logic for threads/runs.
+- [ ] Remove feature flags for API switching.
+- [ ] Remove legacy test files and migration artifacts.
+- [ ] Delete or refactor unused or legacy service files (e.g., `openaiController.ts`, `/utils/openai/` legacy code).
+- [ ] Refactor cache/session logic to use only response/session IDs.
+- [ ] Update documentation to reflect the new, streamlined architecture.
 
-- Imports from `openai/resources/beta/threads/threads`
-- Imports from `openai/resources/beta/threads/messages`
-- Imports from `openai/resources/beta/threads/runs`
-- `Thread`, `Message`, `MessageContent`, and `Run` type definitions
+## 3. Codebase Cleanup & Optimization Checklist
 
-### 2.2 Redundant Service Methods
-
-| Method                                            | Reason for Redundancy                                  |
-| ------------------------------------------------- | ------------------------------------------------------ |
-| `listMessages(threadId)`                          | Responses API doesn't use separate messages            |
-| `createMessage(threadId, message)`                | Not needed with conversational model                   |
-| `createRun(threadId, options)`                    | No purpose with Responses API                          |
-| `retrieveRun(threadId, runId)`                    | Not used with Responses API                            |
-| `submitToolOutputs(threadId, runId, toolOutputs)` | Should be replaced with Responses API pattern          |
-| `waitForNoActiveRuns(threadId)`                   | Already converted to no-op but can be removed entirely |
-
-### 2.3 Thread/Run Status Handling
-
-- `RunStatus` type and `isTerminalStatus()` function
-- `shouldContinuePolling()` function tailored to Assistants API
-- Polling logic for run status in controllers
-
-### 2.4 Cache Structure
-
-- Legacy thread/run fields in `ThreadCache` interface
-- Methods tied to thread/run model in cache utilities
-
-### 2.5 Controller Logic
-
-- All `retrieveRun()` calls in `chatAssistantController.ts`
-- Complex streaming response handling expecting run-specific events
-- Thread creation/management logic redundant with direct Responses API
-
-### 2.6 Redundant Files
-
-- `openaiController.ts` (can be simplified or removed)
-- Legacy code in `/utils/openai/` related to Assistants API
-- Test files specific to Assistants API functionality
-
-### 2.7 Feature Flags
-
-- `USE_RESPONSES_API` flag (can be hardcoded to true)
-- `UNIFIED_OPENAI_SERVICE` flag (no longer needed)
-
-## 3. Optimization Plan
-
-### Phase 1: Core Service Cleanup (1 week)
-
-1. **Type Refinement**
-
-   - Create proper TypeScript interfaces for Responses API
-   - Replace `Partial<any>` with specific types
-   - Update method signatures
-
-2. **Service Method Cleanup**
-
-   - Remove unused Assistants API methods
-   - Update JSDoc comments to reflect Responses API concepts
-   - Simplify error handling for Responses API
-
-3. **Tool Calling Update**
-   - Reimplement tool calling with Responses API native format
-   - Remove run-specific tool processing logic
-
-### Phase 2: Controller and Cache Optimization (1 week)
-
-1. **Controller Streamlining**
-
-   - Remove all thread/run management code
-   - Simplify response streaming logic
-   - Update error handling for Responses API patterns
-
-2. **Cache Layer Refinement**
-
-   - Update `ThreadCache` interface to focus on `responseId`
-   - Simplify caching logic to work with response IDs
-   - Optimize TTL settings for Responses API patterns
-
-3. **Feature Flag Cleanup**
-   - Replace feature flags with direct implementation
-   - Update configuration to remove redundant settings
-
-### Phase 3: Testing and Final Cleanup (1 week)
-
-1. **Test Suite Updates**
-
-   - Remove tests specific to Assistants API
-   - Update integration tests for Responses API
-   - Add new tests for streamlined functionality
-
-2. **Documentation Updates**
-
-   - Update all comments and documentation
-   - Remove references to threads/runs
-   - Create new architecture documentation
-
-3. **File Removal**
-   - Delete unused files
-   - Archive legacy code
-   - Clean up imports throughout codebase
-
-### Phase 4: Performance Optimization (1 week)
-
-1. **Caching Strategy Improvement**
-
-   - Optimize local caching for Responses API
-   - Implement more efficient KV storage patterns
-   - Tune TTL values based on usage patterns
-
-2. **Network Optimization**
-
-   - Reduce API calls by batching requests
-   - Implement more efficient streaming
-   - Add compression for large payloads
-
-3. **Error Recovery**
-   - Enhance error handling for specific Responses API errors
-   - Implement smart retry logic
-   - Add graceful degradation for partial failures
+- [ ] Delete all code, tests, and documentation referencing the legacy Assistants API, thread/run/assistantId, or related patterns.
+- [ ] Refactor any remaining code that uses threadId as an OpenAI object to use responseId/sessionId.
+- [ ] Remove feature flag logic for toggling between Assistants and Responses API.
+- [ ] Update or remove legacy tests and migration scripts.
+- [ ] Update documentation and comments to reflect the new architecture.
 
 ## 4. Implementation Timeline
 

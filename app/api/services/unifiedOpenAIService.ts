@@ -17,9 +17,6 @@
 
 import OpenAI from 'openai';
 import { ChatCompletion, ChatCompletionChunk } from 'openai/resources/chat';
-import { Thread } from 'openai/resources/beta/threads/threads';
-import { Message, MessageContent } from 'openai/resources/beta/threads/messages';
-import { Run } from 'openai/resources/beta/threads/runs';
 import { isFeatureEnabled } from '../../../utils/shared/feature-flags';
 import { pollingManager } from '../../../utils/shared/polling-manager';
 import logger from '../../../utils/shared/logger';
@@ -66,8 +63,6 @@ interface ExecuteOptions {
   fallbackFn?: () => Promise<any>;
   timeoutMs?: number;
 }
-
-export type RunStatus = Run['status'];
 
 /**
  * Response types for different OpenAI operations

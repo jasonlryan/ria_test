@@ -75,6 +75,17 @@
 
 ---
 
+## Phase 5: Codebase Cleanup and Optimization
+
+- Remove all legacy Assistants API code, types, and imports
+- Delete or refactor redundant files (e.g., openaiController.ts, legacy code in /utils/openai/)
+- Remove feature flags for API switching (Responses API is now canonical)
+- Update or remove legacy tests and migration scripts
+- Refactor cache/session logic to use only response/session IDs
+- Update documentation and comments to reflect the new, streamlined architecture
+
+---
+
 ## Benefits
 
 - **Maximum flexibility:** All mapping and business rules are in the prompt.
