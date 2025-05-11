@@ -12,21 +12,21 @@ export const TTL = {
 };
 
 /**
- * Generate key for thread file data
- * @param threadId Thread identifier
+ * Generate key for response file data (canonical)
+ * @param responseId Response identifier
  * @param fileId File identifier
  * @returns Formatted cache key
  */
-export const threadFileKey = (threadId: string, fileId: string): string => 
-  `thread:${threadId}:file:${fileId}`;
+export const responseFileKey = (responseId: string, fileId: string): string => 
+  `response:${responseId}:file:${fileId}`;
 
 /**
- * Generate key for thread metadata
- * @param threadId Thread identifier
+ * Generate key for response metadata (canonical)
+ * @param responseId Response identifier
  * @returns Formatted cache key
  */
-export const threadMetaKey = (threadId: string): string => 
-  `thread:${threadId}:meta`;
+export const responseMetaKey = (responseId: string): string => 
+  `response:${responseId}:meta`;
 
 /**
  * Generate key for analytics data
@@ -61,4 +61,14 @@ export const userSessionKey = (userId: string): string =>
  * @returns Formatted cache key
  */
 export const tempDataKey = (type: string, id: string): string =>
-  `temp:${type}:${id}`; 
+  `temp:${type}:${id}`;
+
+// [DEPRECATED] Thread-based keys (for migration only)
+/**
+ * @deprecated Use responseFileKey instead
+ */
+export const threadFileKey = responseFileKey;
+/**
+ * @deprecated Use responseMetaKey instead
+ */
+export const threadMetaKey = responseMetaKey; 

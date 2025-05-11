@@ -82,7 +82,7 @@
 - [x] Delete or archive redundant files as .bak (e.g., testOpenAIController.ts.bak, route.ts.bak, queryProcessing.ts.bak, legacy code in /utils/openai/)
 - [x] Remove feature flags for API switching (USE_RESPONSES_API, UNIFIED_OPENAI_SERVICE, etc.); all code and config for these flags have been removed
 - [x] Update or remove legacy tests and migration scripts (all obsolete test files have been deleted or archived)
-- [ ] Refactor cache/session logic to use only response/session IDs
+- [x] Refactor cache/session logic to use only response/session IDs (key schema now uses responseId/sessionId; threadId-based keys are deprecated)
 - [ ] Update documentation to reflect the new architecture
 
 ---
