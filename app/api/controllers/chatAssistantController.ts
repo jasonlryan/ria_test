@@ -40,6 +40,7 @@ import {
   lookupFiles,
   getComparablePairs
 } from "../../../utils/compatibility/compatibility";
+import { DataRetrievalService } from "../services/dataRetrievalService";
 // // TEMPORARILY COMMENTED - Will fix these imports in phase 4
 // // import { CompatibilityMetadata } from "../../../utils/compatibility/compatibilityTypes";
 // // import { SystemMessage, UserMessage, AssistantMessage } from "../../../utils/message/messageTypes";
@@ -300,6 +301,8 @@ export async function postHandler(request: NextRequest) {
     totalTime: 0,
     pollingInterval: 250,
   };
+  let threadContextCached: any = null;
+  const dataRetrievalService = new DataRetrievalService();
 
   try {
     const body = await request.json();
@@ -309,67 +312,17 @@ export async function postHandler(request: NextRequest) {
       return formatBadRequestResponse("Missing required field: content");
     }
 
-    let previousQuery = "";
-
-    // We'll keep a local copy of thread context to avoid duplicate KV hits
-    let threadContextCached: {
-      previousQueries: string[];
-      rawQueries: string[];
-      isFollowUp: boolean;
-      lastQueryTime?: number;
-      responseId?: string;
-    } | null = null;
-
-    // Initialize context object
+    // Only use responseId for continuation in Responses API
+    let previousResponseId = body.previous_response_id;
+    let isFollowUp = typeof previousResponseId === 'string' && previousResponseId.startsWith('resp_');
     let context = {
       normalizedCurrentQuery: normalizeQueryText(content),
       normalizedPreviousQuery: "",
       previousResponse: "",
-      isFollowUp: !!threadId,
+      isFollowUp,
       systemPrompt: "",
       tools: []
     };
-
-    // Retrieve messages for context when this is a follow-up
-    if (context.isFollowUp) {
-      try {
-        const messagesResponse = await unifiedOpenAIService.listMessages(
-          threadId,
-          { limit: 4 }
-        );
-        
-        // Fix the type error by checking if data exists and handling it properly
-        const messages = messagesResponse && 
-          typeof messagesResponse === 'object' && 
-          'data' in messagesResponse ? 
-          (Array.isArray(messagesResponse.data) ? messagesResponse.data : []) : 
-          [];
-
-        // Extract previous query and response
-        for (let i = 0; i < messages.length - 1; i++) {
-          if (messages[i].role === "assistant" && messages[i + 1].role === "user") {
-            const assistantContent = messages[i].content?.[0];
-            const userContent = messages[i + 1].content?.[0];
-
-            if (assistantContent?.type === "text" && userContent?.type === "text") {
-              context.previousResponse = assistantContent.text.value;
-              const rawPreviousQuery = userContent.text.value;
-              context.normalizedPreviousQuery = normalizeQueryText(rawPreviousQuery);
-              previousQuery = context.normalizedPreviousQuery; // For compatibility with existing code
-              
-              logger.info(`[CONTEXT] Raw previous query: "${rawPreviousQuery.substring(0, 50)}..."`);
-              logger.info(`[CONTEXT] Normalized previous query: "${context.normalizedPreviousQuery.substring(0, 50)}..."`);
-              break;
-            }
-          }
-        }
-        
-        logger.info(`[CONTEXT] Raw current query: "${content.substring(0, 50)}..."`);
-        logger.info(`[CONTEXT] Normalized current query: "${context.normalizedCurrentQuery.substring(0, 50)}..."`);
-      } catch (error) {
-        logger.error("Error retrieving and normalizing context:", error);
-      }
-    }
 
     logger.info(`[QUERY] Raw query: "${content.substring(0, 50)}..."`);
     logger.info(`[QUERY] Normalized: "${context.normalizedCurrentQuery.substring(0, 50)}..."`);
@@ -416,7 +369,6 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
       }
     }
 
-    const isFollowUp = !!threadId; // Determine if this is a follow-up based on threadId presence
     logger.info(`[REQUEST] New ${isFollowUp ? "follow-up" : "initial"} request`);
 
     let finalThreadId = threadId;
@@ -441,7 +393,7 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
         const { data: responseResult } = await unifiedOpenAIService.createResponse(
           content,
           {
-            model: "gpt-4o",
+            model: "gpt-4.1-mini",
             tools: context.tools || [],
           }
         );
@@ -474,63 +426,7 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
     } else {
       logger.info(`[THREAD] Reusing existing thread ID: ${finalThreadId}`);
       
-      // Get existing thread context once and cache it
-      threadContextCached = await getThreadContext(finalThreadId);
-      // Don't override context.isFollowUp if there are previous queries
-      if (threadContextCached.previousQueries.length > 0) {
-        context.isFollowUp = true;
-        
-        // For continuing conversations, we need the previous response ID from cache
-        const previousResponseIdFromCache = threadContextCached.responseId || finalThreadId;
-        
-        const isLegacyId = typeof previousResponseIdFromCache === 'string' && 
-                           (previousResponseIdFromCache.startsWith('thread_') || !previousResponseIdFromCache.startsWith('resp_'));
-
-        let resultFromOpenAI;
-
-        if (isLegacyId) {
-          logger.info(`[RESPONSE] chatAssistantController (pre-stream context setup): Legacy ID (${previousResponseIdFromCache}) detected for thread ${finalThreadId}. Creating new response.`);
-          const { data: newResponseData } = await unifiedOpenAIService.createResponse(
-            content, // Current user query
-            {
-              model: "gpt-4o",
-              // tools: context.tools || [], // context.tools is likely empty at this stage, can be omitted or confirmed
-            }
-          );
-          resultFromOpenAI = newResponseData;
-        } else {
-          logger.info(`[RESPONSE] chatAssistantController (pre-stream context setup): Continuing conversation with response ID: ${previousResponseIdFromCache} for thread ${finalThreadId}.`);
-          const { data: continuedResponseData } = await unifiedOpenAIService.continueConversation(
-            previousResponseIdFromCache,
-            content, // Current user query
-            {
-              model: "gpt-4o",
-              // tools: context.tools || [],
-            }
-          );
-          resultFromOpenAI = continuedResponseData;
-        }
-        
-        const newResponseIdToCache = resultFromOpenAI && typeof resultFromOpenAI === 'object' && 'id' in resultFromOpenAI && typeof resultFromOpenAI.id === 'string'
-                                      ? resultFromOpenAI.id
-                                      : null;
-
-        if (newResponseIdToCache) {
-          await updateThreadWithContext(finalThreadId, { // finalThreadId is the original 'thread_...' key
-            ...threadContextCached,
-            previousQueries: [...threadContextCached.previousQueries, context.normalizedCurrentQuery],
-            rawQueries: [...(threadContextCached.rawQueries || []), content],
-            lastQueryTime: Date.now(),
-            responseId: newResponseIdToCache // Store the new 'resp_...' ID
-          });
-          logger.info(`[THREAD] chatAssistantController (pre-stream context setup): Updated context for ${finalThreadId} with new response ID: ${newResponseIdToCache}`);
-          // Update the locally cached threadContext for the current request
-          threadContextCached.responseId = newResponseIdToCache;
-        } else {
-          logger.error(`[THREAD] chatAssistantController (pre-stream context setup): Failed to get a valid new response ID from OpenAI. Context for ${finalThreadId} not updated with new responseId. OpenAI result: ${JSON.stringify(resultFromOpenAI)}`);
-          // Potentially throw an error or handle this case, as follow-up logic might depend on a valid responseId
-        }
-      }
+      // All thread context and continuation logic should now use responseId only, not threadId or threadContextCached.
     }
 
     // Flag and variable for early return
@@ -675,13 +571,37 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
     }
     logger.info(`[CONTROLLER_FLOW] Compatibility check passed or not applicable, proceeding to main flow.`);
 
-    await unifiedOpenAIService.waitForNoActiveRuns();
-
     let usedFileIds: string[] = [];
     let cachedFileIds: string[] = [];
     let originalUserContent = content;
-    
     let result;
+
+    // LLM-driven file discovery
+    let fileDiscoveryResult;
+    try {
+      // Load canonical mapping (assume from existing utility or file)
+      const canonicalMapping = require("../../../scripts/reference files/2025/canonical_topic_mapping.json");
+      const contextString = typeof context === 'string' ? context : '';
+      fileDiscoveryResult = await dataRetrievalService.identifyRelevantFilesWithLLM(
+        content, // user query
+        contextString, // context as string
+        isFollowUp,
+        context.normalizedPreviousQuery || '',
+        context.previousResponse || '',
+        canonicalMapping
+      );
+      logger.info(`[LLM_FILE_DISCOVERY] Used LLM-driven file discovery for query.`);
+    } catch (err) {
+      logger.error(`[LLM_FILE_DISCOVERY] LLM file discovery failed, falling back to repository: ${err.message}`);
+      // Fallback to repository implementation if LLM fails
+      fileDiscoveryResult = await dataRetrievalService.identifyRelevantFiles(
+        content,
+        '', // fallback context as string
+        isFollowUp,
+        context.normalizedPreviousQuery || '',
+        context.previousResponse || ''
+      );
+    }
 
     if (!isStarterQuestion(content) && !(isDirectMode && !forceStandardMode)) {
       if (!isFollowUp) {
@@ -1055,7 +975,7 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
                 const { data: responseStream } = await unifiedOpenAIService.createResponse(
                   content,
                   {
-                    model: "gpt-4o",
+                    model: "gpt-4.1-mini",
                     tools: context.tools || [],
                     stream: true
                   }
@@ -1081,7 +1001,7 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
                     threadContextCached.responseId,
                     content,
                     {
-                      model: "gpt-4o",
+                      model: "gpt-4.1-mini",
                       tools: context.tools || [],
                       stream: true
                     }
@@ -1106,7 +1026,7 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
                   const { data: responseStream } = await unifiedOpenAIService.createResponse(
                     content,
                     {
-                      model: "gpt-4o",
+                      model: "gpt-4.1-mini",
                       tools: context.tools || [],
                       stream: true
                     }
@@ -1133,7 +1053,7 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
               const { data: responseStream } = await unifiedOpenAIService.createResponse(
                 content,
                 {
-                  model: "gpt-4o",
+                  model: "gpt-4.1-mini",
                   tools: context.tools || [],
                   stream: true
                 }
@@ -1260,7 +1180,7 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
               const { data: responseStream } = await unifiedOpenAIService.createResponse(
                 content,
                 {
-                  model: "gpt-4o",
+                  model: "gpt-4.1-mini",
                   tools: context.tools || [],
                   stream: true
                 }
@@ -1286,7 +1206,7 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
                   threadContextCached.responseId,
                   content,
                   {
-                    model: "gpt-4o",
+                    model: "gpt-4.1-mini",
                     tools: context.tools || [],
                     stream: true
                   }
@@ -1311,7 +1231,7 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
                 const { data: responseStream } = await unifiedOpenAIService.createResponse(
                   content,
                   {
-                    model: "gpt-4o",
+                    model: "gpt-4.1-mini",
                     tools: context.tools || [],
                     stream: true
                   }
@@ -1338,7 +1258,7 @@ ${precompiled.notes ? "Notes: " + precompiled.notes : ""}
             const { data: responseStream } = await unifiedOpenAIService.createResponse(
               content,
               {
-                model: "gpt-4o",
+                model: "gpt-4.1-mini",
                 tools: context.tools || [],
                 stream: true
               }

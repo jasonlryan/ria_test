@@ -49,8 +49,8 @@ export default class PromptRepository implements FileRepository {
         context.previousResponse || ''
       );
 
-      // Get file IDs from the result
-      const fileIds = result?.file_ids ?? [];
+      // Normalize file IDs by stripping any .json extension
+      const fileIds = (result?.file_ids ?? []).map((id: string) => id.replace(/\.json$/i, ''));
 
       // Enrich the file IDs with compatibility metadata
       const fileMetadata = lookupFiles(fileIds);

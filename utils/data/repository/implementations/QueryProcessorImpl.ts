@@ -33,7 +33,7 @@ import { QueryIntent, FilterResult } from '../interfaces/FilterProcessor';
 /**
  * Implementation of the QueryProcessor interface
  */
-export class QueryProcessorImpl implements QueryProcessor {
+export default class QueryProcessorImpl implements QueryProcessor {
   private fileRepository: FileRepository;
   private startTime: number = 0;
 
@@ -99,7 +99,20 @@ export class QueryProcessorImpl implements QueryProcessor {
       
       // Early return if no relevant files found
       if (relevantFiles.length === 0) {
-        return this.createEmptyResult(enhancedContext, 'No relevant files found');
+        return {
+          processedData: {
+            empty: true,
+            reason: 'No relevant data files were found for your query. Please try rephrasing your question or ask about a different topic.'
+          },
+          relevantFiles: [],
+          enhancedContext,
+          dataVersion: "v2",
+          metrics: {
+            processingTimeMs: Date.now() - this.startTime,
+            fileCount: 0,
+            segmentCount: 0
+          }
+        };
       }
       
       // Load detailed file data for processing
@@ -788,6 +801,4 @@ export class QueryProcessorImpl implements QueryProcessor {
     
     return count;
   }
-}
-
-export default QueryProcessorImpl; 
+} 

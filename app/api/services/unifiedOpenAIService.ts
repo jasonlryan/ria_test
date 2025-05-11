@@ -660,25 +660,6 @@ export class UnifiedOpenAIService {
   }
 
   /**
-   * Create a new thread
-   */
-  public async createThread(): Promise<OpenAIResponse<string>> {
-    await this.initialize();
-    return this.executeWithMonitoring('createThread', async () => {
-      // Use Responses API to create a new response session
-      const response = await this.client.responses.create({
-        model: 'gpt-4o',
-        input: '',
-        stream: false,
-      });
-      // The response ID acts as the thread ID
-      return {
-        data: response.id,
-      };
-    });
-  }
-
-  /**
    * Create a response using OpenAI's Responses API
    */
   public async createResponse(
@@ -688,7 +669,7 @@ export class UnifiedOpenAIService {
     await this.initialize();
     return this.executeWithMonitoring('createResponse', async () => {
       const requestOptions = {
-        model: options.model || 'gpt-4o',
+        model: options.model || 'gpt-4.1-mini',
         input,
         ...options,
         stream: Boolean(options.stream)
@@ -709,7 +690,7 @@ export class UnifiedOpenAIService {
     await this.initialize();
     return this.executeWithMonitoring('continueConversation', async () => {
       const requestOptions = {
-        model: options.model || 'gpt-4o',
+        model: options.model || 'gpt-4.1-mini',
         previous_response_id: previousResponseId,
         input,
         ...options,
@@ -718,87 +699,6 @@ export class UnifiedOpenAIService {
       const response = await (this.client.responses as any).create(requestOptions);
       return { data: response };
     });
-  }
-
-  /**
-   * List messages in a response session
-   */
-  public async listMessages(threadId: string, options: { limit?: number } = {}): Promise<OpenAIResponse<any[]>> {
-    await this.initialize();
-    return this.executeWithMonitoring('listMessages', async () => {
-      // Use legacy threads API for listing messages
-      const response = await this.client.beta.threads.messages.list(threadId);
-      const messages = response.data || [];
-      if (options.limit) {
-        return { data: messages.slice(-options.limit) };
-      }
-      return { data: messages };
-    });
-  }
-
-  /**
-   * Create a message in a response session
-   */
-  public async createMessage(
-    threadId: string,
-    message: { role: 'user' | 'assistant'; content: string }
-  ): Promise<OpenAIResponse<any>> {
-    await this.initialize();
-    return this.executeWithMonitoring('createMessage', async () => {
-      // Use legacy threads API to create a message
-      const result = await this.client.beta.threads.messages.create(threadId, message);
-      return { data: result };
-    });
-  }
-
-  /**
-   * Create a run in a response session
-   */
-  public async createRun(threadId: string, options: { instructions?: string }): Promise<OpenAIResponse<any>> {
-    await this.initialize();
-    return this.executeWithMonitoring('createRun', async () => {
-      // Combine instructions with default prompt into input for Responses API
-      const systemInstruction = options.instructions as string | undefined;
-      delete options.instructions;
-      const defaultInstruction = 'Please analyze the context of our conversation and provide your response.';
-      const promptInput = systemInstruction
-        ? `${systemInstruction}\n\n${defaultInstruction}`
-        : defaultInstruction;
-      // Don't add assistant prompt here - it should be added by the controller
-      const response = await this.client.responses.create({
-        model: 'gpt-4o',
-        input: promptInput,
-        previous_response_id: threadId,
-        stream: false,
-        ...options
-      } as any);
-
-      return {
-        data: response,
-      };
-    });
-  }
-
-  /**
-   * Retrieve a response by ID
-   */
-  public async retrieveRun(responseId: string): Promise<OpenAIResponse<any>> {
-    await this.initialize();
-    return this.executeWithMonitoring('retrieveRun', async () => {
-      const response = await (this.client.responses as any).retrieve(responseId);
-      return { data: response };
-    });
-  }
-
-  /**
-   * Wait for no active runs on a response session
-   * NOTE: With the Responses API, there are no separate "runs" to wait for,
-   * so this method is now just a compatibility layer that immediately resolves
-   */
-  public async waitForNoActiveRuns(): Promise<void> {
-    // This method is now just a no-op that immediately resolves
-    logger.info('[OPENAI] waitForNoActiveRuns: No-op with Responses API');
-    return Promise.resolve();
   }
 }
 
