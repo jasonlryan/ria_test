@@ -212,52 +212,6 @@ async function handleResponseStream(responseStream, controller, threadId, thread
 }
 
 /**
- * Log starter question invocations to a file
- */
-async function logStarterQuestionInvocation({
-  starterQuestionCode,
-  question,
-  threadId,
-  dataFiles,
-  stats,
-  timestamp = new Date().toISOString()
-}: {
-  starterQuestionCode: string;
-  question: string;
-  threadId: string;
-  dataFiles: string[];
-  stats: any;
-  timestamp?: string;
-}) {
-  if (process.env.VERCEL) return;
-  try {
-    const logDir = path.join(process.cwd(), 'logs');
-    const logFile = path.join(logDir, 'starter_question_invocations.log');
-    const logEntry = JSON.stringify({
-      timestamp,
-      starterQuestionCode,
-      question,
-      threadId,
-      dataFiles,
-      stats
-    }) + '\n';
-    await fs.promises.mkdir(logDir, { recursive: true });
-    await fs.promises.appendFile(logFile, logEntry, 'utf8');
-  } catch (err) {
-    logger.error('Error writing starter question invocation log:', err);
-  }
-}
-
-function isTerminalStatus(status: string): boolean {
-  return status === "completed" || status === "failed" || status === "cancelled" || status === "expired";
-}
-
-function shouldContinuePolling(status: string, messageReceived: boolean): boolean {
-  const terminalStatuses: string[] = ["completed", "failed", "cancelled", "expired"];
-  return !messageReceived && !terminalStatuses.includes(status);
-}
-
-/**
  * Determines if a query represents a completely new topic
  * rather than a follow-up on the existing topic
  * @param currentQuery Current user query
@@ -334,14 +288,6 @@ export async function postHandler(request: NextRequest) {
       const precompiled = getPrecompiledStarterData(starterCode);
 
       if (precompiled) {
-        logStarterQuestionInvocation({
-          starterQuestionCode: precompiled.starterQuestionCode || starterCode,
-          question: precompiled.question,
-          threadId,
-          dataFiles: precompiled.data_files,
-          stats: precompiled.stats,
-        });
-
         const starterPromptPath = path.join(process.cwd(), "prompts", "starter_prompt_template.md");
         let starterPromptTemplate = "";
         try {
