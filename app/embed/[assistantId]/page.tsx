@@ -320,19 +320,8 @@ function Embed(props) {
 
   useEffect(() => {
     console.log(
-      `[LOADING_STATE_CHANGED] loading is now: ${loading}, currentCallId: ${sendPromptCallId.current}, isSendingRef: ${isSendingPrompt.current}`
+      `[EFFECT_LOADING_CHANGED] loading is now: ${loading}, isSendingPrompt.current: ${isSendingPrompt.current}`
     );
-    if (!loading && isSendingPrompt.current && sendPromptCallId.current > 0) {
-      console.error(
-        `[LOADING_STATE_ERROR] Call ID: ${sendPromptCallId.current}, loading became false prematurely! isSendingPrompt.current is true. This likely means an earlier/nested finalizeStream call (e.g., from an error handler) concluded sendPrompt for this callId, or an unexpected setLoading(false) occurred elsewhere.`
-      );
-      // Potentially try to ensure the UI reflects the end of sending if text was accumulated
-      // but this indicates a logic flaw elsewhere that needs fixing primarily.
-      // Example: if (accumulatedText.current.trim()) {
-      //    console.warn("[LOADING_STATE_ERROR_RECOVERY_ATTEMPT] Trying to finalize with accumulated text due to premature loading=false.");
-      //    finalizeStream(`premature_loading_false_for_call_${sendPromptCallId.current}`);
-      // }
-    }
   }, [loading]);
 
   // useEffect for clearing localStorage on mount (KEEP THIS)
@@ -351,24 +340,41 @@ function Embed(props) {
     clientThreadId_param?: string,
     immediateQuestion?: string
   ) => {
-    const localThreadId = clientThreadId_param || threadId; // Use this for calls needing a threadId context from client state
+    const localThreadId = clientThreadId_param || threadId;
     const currentCallId = ++sendPromptCallId.current;
     console.log(
       `[SEND_PROMPT_ENTER] Call ID: ${currentCallId}, Query: "${(
         immediateQuestion ||
         prompt ||
         ""
-      ).substring(0, 30)}...", Current loading: ${loading}, isSendingRef: ${
+      ).substring(
+        0,
+        30
+      )}...", Current loading state: ${loading}, isSendingPrompt ref: ${
         isSendingPrompt.current
       }, localThreadId: ${localThreadId}, lastResponseId: ${lastResponseId}`
     );
 
-    if (isSendingPrompt.current) {
+    // Primary guard: if the main loading state is true, block immediately.
+    if (loading) {
       console.warn(
-        `[SEND_PROMPT_RE_ENTRANCY_BLOCKED] Call ID: ${currentCallId} blocked.`
+        `[SEND_PROMPT_BLOCKED_BY_LOADING_STATE] Call ID: ${currentCallId}. 'loading' is true. isSendingPrompt.current was: ${isSendingPrompt.current}`
       );
       return;
     }
+
+    // Secondary/Defensive guard for the ref.
+    // If loading was false, isSendingPrompt.current should ideally also be false.
+    // If it's true, it implies a mismatch or incomplete reset from a previous call for the ref specifically.
+    if (isSendingPrompt.current) {
+      console.warn(
+        `[SEND_PROMPT_BLOCKED_BY_REF_MISMATCH] Call ID: ${currentCallId}. 'loading' was false, but 'isSendingPrompt.current' was true. Blocking and resetting ref.`
+      );
+      isSendingPrompt.current = false; // Reset it to prevent getting stuck if this state is ever reached.
+      return; // Still block if this inconsistent state is found.
+    }
+
+    // If we passed both guards, we can proceed.
     isSendingPrompt.current = true;
     setLoading(true);
 
@@ -425,9 +431,6 @@ function Embed(props) {
             finalContent.length
           }): "${finalContent.substring(0, 100)}..."`
         );
-        console.log(
-          `[FINALIZE_STREAM_PRE_SET_MESSAGES] Call ID: ${localCallId_finalize}, msgId.current: ${messageId.current}`
-        );
         if (finalContent || reason === "messageDone_STREAM_HANDLER") {
           const newMessageId = (messageId.current + 1).toString();
           setMessages((prevMessages) => {
@@ -467,10 +470,12 @@ function Embed(props) {
         );
       } finally {
         console.log(
-          `[FINALIZE_STREAM_FINALLY] Call ID: ${localCallId_finalize}, Resetting states (Reason: ${reason}).`
+          `[FINALIZE_STREAM_FINALLY] Call ID: ${localCallId_finalize}, Resetting states (Reason: ${reason}). Current loading state before setLoading(false): ${loading}`
         );
-        setStreamingMessage(null);
         setLoading(false);
+        console.log(
+          `[FINALIZE_STREAM_FINALLY] Call ID: ${localCallId_finalize}, Called setLoading(false). isSendingPrompt.current is about to be set.`
+        );
         accumulatedText.current = "";
         if (animationFrameId.current) {
           cancelAnimationFrame(animationFrameId.current);
@@ -482,7 +487,7 @@ function Embed(props) {
         if (localCallId_finalize === sendPromptCallId.current) {
           isSendingPrompt.current = false;
           console.log(
-            `[FINALIZE_STREAM_FINALLY] Call ID: ${localCallId_finalize}, Reset isSendingPrompt.`
+            `[FINALIZE_STREAM_FINALLY] Call ID: ${localCallId_finalize}, Reset isSendingPrompt to false.`
           );
         } else {
           console.warn(

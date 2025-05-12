@@ -64,6 +64,8 @@ export interface ThreadCache {
     }>;
     [key: string]: any;
   };
+  assistantResponseContent?: string;
+  promptSentToOpenAI?: string;
 }
 
 // Simple short-lived in-process cache to dedupe KV GETs made in quick succession
@@ -589,25 +591,42 @@ export class UnifiedCache {
       isFollowUp?: boolean;
       lastQueryTime?: number;
       responseId?: string;
+      fileMetadata?: import("../compatibility/compatibility").FileMetadata[];
+      assistantResponseContent?: string;
+      promptSentToOpenAI?: string;
     }
   ): Promise<boolean> {
     try {
       const key = threadMetaKey(threadId);
       const existing = await this.get<ThreadCache>(key) || {
         files: [],
-        lastUpdated: Date.now()
-      };
+        fileMetadata: [],
+        lastUpdated: Date.now(),
+        previousQueries: [],
+        rawQueries: [],
+        assistantResponseContent: "",
+        promptSentToOpenAI: "",
+      } as ThreadCache;
 
-      // Merge with existing data
       const updated: ThreadCache = {
         ...existing,
-        previousQueries: contextData.previousQueries || existing.previousQueries || [],
-        rawQueries: contextData.rawQueries || existing.rawQueries || [],
+        previousQueries: contextData.previousQueries || existing.previousQueries,
+        rawQueries: contextData.rawQueries || existing.rawQueries,
         isFollowUp: contextData.isFollowUp ?? existing.isFollowUp,
         lastQueryTime: contextData.lastQueryTime || Date.now(),
         responseId: contextData.responseId || existing.responseId,
+        fileMetadata: contextData.fileMetadata || existing.fileMetadata,
+        assistantResponseContent: contextData.assistantResponseContent || existing.assistantResponseContent,
+        promptSentToOpenAI: contextData.promptSentToOpenAI || existing.promptSentToOpenAI,
         lastUpdated: Date.now()
       };
+
+      if (!updated.files) {
+        updated.files = [];
+      }
+      if (!updated.fileMetadata) {
+        updated.fileMetadata = [];
+      }
 
       return this.set(key, updated, TTL.THREAD_DATA);
     } catch (error) {

@@ -13,7 +13,7 @@
  * Last Updated: Mon May 06 2025
  */
 
-import { FileRepository, QueryProcessor, QueryContext, FileIdentificationResult } from '../interfaces';
+import { FileRepository, QueryProcessor, QueryContext, FileIdentificationResult, DataFile } from '../interfaces';
 import { FileSystemRepository, QueryProcessorImpl, PromptRepository } from '../implementations';
 import logger from '../../../shared/logger';
 import { startTimer, endTimer, recordError } from '../monitoring';
@@ -21,6 +21,7 @@ import { QueryContext as QueryContextImpl } from '../implementations/QueryContex
 import path from 'path';
 import { DEFAULT_SEGMENTS } from '../../../../utils/cache/segment_keys';
 import { SmartFilteringProcessor } from '../implementations/SmartFiltering';
+import kvClient from '../../../cache/kvClient'; // CORRECTED Import
 
 // Import utility functions from the TypeScript implementation
 import {
@@ -336,91 +337,155 @@ export async function processQueryWithData(
 ) {
   try {
     logger.info(`[ADAPTER] processQueryWithData called - always using repository implementation`);
-    
-    // Start timer
     const timer = startTimer('repository', 'processQueryWithData');
     
     try {
-      // Map options to QueryContext
       const queryContext = new QueryContextImpl({
         query,
-        threadId: threadId,
-        isFollowUp: isFollowUp,
-        previousQuery: previousQuery,
+        threadId,
+        isFollowUp,
+        previousQuery,
         previousResponse: previousAssistantResponse,
         cachedFileIds: cachedFileIds,
       });
       
-      // Use provided processor or get default
+      logger.debug('[ADAPTER_PROCESS_QUERY_DATA_INPUT] queryContext.cachedFileIds:', queryContext.cachedFileIds);
       const processor = customProcessor || getDefaultImplementations().processor;
-      // Use correct method name from QueryProcessor interface
       const result = await processor.processQueryWithData(queryContext);
       
-      // End timer with success
       endTimer(timer, true);
-      
       logger.info(`[ADAPTER] Successfully processed query with repository`);
       
-      // Add legacy v2 contract fields for backward compatibility
       const processedData = result.processedData || [];
       const relevantFiles = result.relevantFiles || [];
       
-      /**
-       * STEP 1 – Load full file data (segments & responses) if not already available
-       * -------------------------------------------------------------------------
-       * SmartFiltering requires each file to expose either `segments` or
-       * `data.responses` structure.  `relevantFiles` coming from the
-       * QueryProcessorImpl may only contain file‐level metadata (ids). We need
-       * to ensure the complete file objects are in memory before filtering.
-       */
-      let dataFiles: any[] = [];
+      let dataFiles: DataFile[] = [];
       if (relevantFiles.length > 0) {
         const idsToLoad = relevantFiles.map((f: any) => (typeof f === 'string' ? f : f.id));
-        dataFiles = await retrieveDataFiles(idsToLoad);
+        dataFiles = await retrieveDataFiles(idsToLoad) as DataFile[];
         logger.info(`[ADAPTER] Loaded ${dataFiles.length} files for SmartFiltering`);
       }
 
-      /**
-       * STEP 2 – Work out which segments to include
-       * -------------------------------------------
-       * If the query explicitly asked for certain segments (tracked inside
-       * QueryContext.segmentTracking.requestedSegments) we keep those; otherwise we
-       * fall back to the DEFAULT_SEGMENTS constant (overall, region, age, gender, ...)
-       */
-      const requestedSegments: string[] = (queryContext.segmentTracking?.requestedSegments &&
+      const baseRequestedSegments: string[] = (queryContext.segmentTracking?.requestedSegments &&
         queryContext.segmentTracking.requestedSegments.length > 0)
         ? queryContext.segmentTracking.requestedSegments
         : DEFAULT_SEGMENTS;
 
-      /**
-       * STEP 3 – Run SmartFilteringProcessor to obtain filtered stats
-       */
-      let stats: any[] = [];
+      let combinedStats: any[] = [];
+      const RAW_SEGMENTS_CACHE_TTL = 60 * 60 * 24 * 7;
+      const STATS_CACHE_TTL = 60 * 60 * 24;
+
+      const statsServedFromCache: any[] = [];
+      const filesAndSegmentsForProcessing: { file: DataFile; segments: string[] }[] = [];
+
       if (dataFiles.length > 0) {
-        const sfProcessor = new SmartFilteringProcessor();
-        try {
-          // Create a consistent context object for the processor
-          const filterContext = {
-            ...queryContext,
-            segments: requestedSegments
-          };
-          
-          // Direct call to SmartFilteringProcessor with DataFile[] array
-          const filterRes = sfProcessor.filterDataBySegments(dataFiles, filterContext);
-          stats = filterRes.stats || filterRes.filteredData || [];
-          logger.info(`[ADAPTER] SmartFiltering produced ${stats.length} stats (segments used: ${requestedSegments.join(', ')})`);
-        } catch (sfErr) {
-          logger.error(`[ADAPTER] SmartFiltering error: ${sfErr instanceof Error ? sfErr.message : String(sfErr)}`);
+        for (const dataFile of dataFiles) {
+          const segmentsToPotentiallyProcessForFile: string[] = [];
+          for (const segmentId of baseRequestedSegments) {
+            const cacheKey = `stats:${dataFile.id}:${segmentId}`;
+            try {
+              const cachedSegmentStatsJson = await kvClient.get<string>(cacheKey);
+              if (cachedSegmentStatsJson) {
+                const cachedSegmentStats = JSON.parse(cachedSegmentStatsJson);
+                if (Array.isArray(cachedSegmentStats) && cachedSegmentStats.length > 0) {
+                  statsServedFromCache.push(...cachedSegmentStats);
+                  logger.info(`[ADAPTER_CACHE_HIT] Served stats for file ${dataFile.id}, segment ${segmentId} from cache.`);
+                } else {
+                  segmentsToPotentiallyProcessForFile.push(segmentId);
+                }
+              } else {
+                segmentsToPotentiallyProcessForFile.push(segmentId);
+              }
+            } catch (cacheError) {
+              logger.error(`[ADAPTER_CACHE_READ_ERROR] Error reading stats cache for file ${dataFile.id}, segment ${segmentId}: ${cacheError.message}`);
+              segmentsToPotentiallyProcessForFile.push(segmentId);
+            }
+          }
+          if (segmentsToPotentiallyProcessForFile.length > 0) {
+            filesAndSegmentsForProcessing.push({ file: dataFile, segments: segmentsToPotentiallyProcessForFile });
+          }
         }
-      } else {
-        logger.warn(`[ADAPTER] No file data available for SmartFiltering – stats array will be empty`);
       }
       
-      const filesActuallyUsedIds = dataFiles.map(df => df.id);
+      let statsFromProcessing: any[] = [];
+      if (filesAndSegmentsForProcessing.length > 0) {
+        const filesToFilter = filesAndSegmentsForProcessing.map(item => item.file);
+        const segmentsForSfProcessor = new Set<string>();
+        filesAndSegmentsForProcessing.forEach(item => item.segments.forEach(seg => segmentsForSfProcessor.add(seg)));
 
+        if (filesToFilter.length > 0 && segmentsForSfProcessor.size > 0) {
+            const sfProcessor = new SmartFilteringProcessor();
+            try {
+            const filterContextForProcessing = {
+                ...queryContext,
+                segments: Array.from(segmentsForSfProcessor)
+            };
+            
+            const filterRes = sfProcessor.filterDataBySegments(filesToFilter, filterContextForProcessing);
+            statsFromProcessing = filterRes.stats || filterRes.filteredData || [];
+            logger.info(`[ADAPTER] SmartFiltering (post-cache check) produced ${statsFromProcessing.length} new stats.`);
+
+            if (filterRes.allAvailableSegmentsInFiles) {
+                for (const fileId in filterRes.allAvailableSegmentsInFiles) {
+                    const rawSegments = filterRes.allAvailableSegmentsInFiles[fileId];
+                    const cacheKeyMeta = `filemeta:${fileId}:available_raw_segments`;
+                    try {
+                      await kvClient.set(cacheKeyMeta, JSON.stringify(rawSegments), { ex: RAW_SEGMENTS_CACHE_TTL });
+                      logger.info(`[ADAPTER_CACHE] Cached available raw segments for file ${fileId}`);
+                    } catch (cacheError) {
+                      logger.error(`[ADAPTER_CACHE] Error caching available raw segments for file ${fileId}: ${cacheError.message}`);
+                    }
+                }
+            }
+
+            if (statsFromProcessing && statsFromProcessing.length > 0) {
+                const groupedStats: Record<string, Record<string, any[]>> = {};
+                statsFromProcessing.forEach((statItem: any) => { 
+                if (statItem && statItem.fileId && statItem.category) {
+                    if (!groupedStats[statItem.fileId]) groupedStats[statItem.fileId] = {};
+                    if (!groupedStats[statItem.fileId][statItem.category]) groupedStats[statItem.fileId][statItem.category] = [];
+                    groupedStats[statItem.fileId][statItem.category].push(statItem);
+                }
+                });
+                for (const fileId in groupedStats) {
+                for (const segmentId in groupedStats[fileId]) {
+                    const segmentStatsToCache = groupedStats[fileId][segmentId];
+                    const cacheKeyStats = `stats:${fileId}:${segmentId}`;
+                    try {
+                      // logger.debug(`[ADAPTER_CACHE_WRITE] Caching stats for ${cacheKeyStats}:`, segmentStatsToCache); // Keep original log for comparison
+                      const jsonStringToCache = JSON.stringify(segmentStatsToCache);
+                      logger.debug(`[ADAPTER_CACHE_WRITE_PRE_SET] Stringified stats for ${cacheKeyStats} (length: ${jsonStringToCache.length}, first 100 chars):`, jsonStringToCache.substring(0, 100));
+                      if (jsonStringToCache === "\"[object Object]\"" || (jsonStringToCache.startsWith("\"") && !jsonStringToCache.startsWith("[{"))) { // More robust check for bad stringify
+                          logger.error(`[ADAPTER_CACHE_WRITE_ERROR] Bad JSON stringify for ${cacheKeyStats}! Value: ${jsonStringToCache}. Original object:`, segmentStatsToCache);
+                          // Potentially do not cache if stringification is bad, or try alternative stringifier
+                      }
+                      await kvClient.set(cacheKeyStats, jsonStringToCache, { ex: STATS_CACHE_TTL });
+                      logger.info(`[ADAPTER_CACHE] Cached newly processed stats for file ${fileId}, segment ${segmentId}`);
+                    } catch (cacheError) {
+                      logger.error(`[ADAPTER_CACHE] Error caching newly processed stats for file ${fileId}, segment ${segmentId}: ${cacheError.message}`);
+                    }
+                }
+                }
+            }
+            } catch (sfErr) {
+            logger.error(`[ADAPTER] SmartFiltering error (post-cache check): ${sfErr instanceof Error ? sfErr.message : String(sfErr)}`);
+            }
+        } else {
+          logger.info(`[ADAPTER] No further processing needed by SmartFiltering after cache check.`);
+        }
+      } else if (dataFiles.length > 0 && statsServedFromCache.length > 0) {
+        logger.info(`[ADAPTER] All requested stats served from cache. No SmartFiltering needed.`);
+      } else {
+        logger.warn(`[ADAPTER] No data files to process and nothing served from cache.`);
+      }
+      
+      combinedStats = [...statsServedFromCache, ...statsFromProcessing];
+      logger.info(`[ADAPTER] Total combined stats (cache + processed): ${combinedStats.length}`);
+
+      const filesActuallyUsedIds = dataFiles.map(df => df.id);
       const enhancedResult = {
         processedData: Array.isArray(processedData) ? processedData : [],
-        stats,
+        stats: combinedStats,
         enhancedContext: [],
         relevantFiles: dataFiles.length > 0 ? dataFiles : relevantFiles,
         files_used: filesActuallyUsedIds,
@@ -431,9 +496,8 @@ export async function processQueryWithData(
       
       return enhancedResult;
     } catch (error) {
-      // End timer with failure
       endTimer(timer, false, { error: error.message });
-      logger.error(`[ADAPTER] Error processing query: ${error.message}`);
+      logger.error(`[ADAPTER] Error processing query with repository: ${error.message}`);
       throw error;
     }
   } catch (error) {
@@ -453,4 +517,4 @@ export default {
   isStarterQuestion,
   getPrecompiledStarterData,
   detectComparisonQuery
-}; 
+};

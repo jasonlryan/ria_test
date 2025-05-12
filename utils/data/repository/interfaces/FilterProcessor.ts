@@ -75,6 +75,13 @@ export interface FilterResult {
    * Segments that were requested but not found in the data
    */
   missingSegments: string[];
+
+  /**
+   * All unique canonical segment keys found within each processed input file.
+   * Maps file_id to an array of segment strings.
+   * Optional, as older implementations might not provide this.
+   */
+  allAvailableSegmentsInFiles?: Record<string, string[]>;
 }
 
 /**

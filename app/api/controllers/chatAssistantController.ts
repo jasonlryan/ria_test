@@ -310,19 +310,23 @@ export async function postHandler(request: NextRequest) {
 
           // Store context for the NEXT turn using the ID of THIS turn's OpenAI response
           let fileMetadataForKV: any[] = [];
-          if (files_used_for_this_prompt && Array.isArray(files_used_for_this_prompt)) {
-            fileMetadataForKV = files_used_for_this_prompt.map((fileId: string) => ({
+          const filesUsedInThisTurn = files_used_for_this_prompt; // From the body, which is from /api/query output
+
+          if (filesUsedInThisTurn && Array.isArray(filesUsedInThisTurn) && filesUsedInThisTurn.length > 0) {
+            fileMetadataForKV = filesUsedInThisTurn.map((fileId: string) => ({
               fileId,
-              // Attempt to carry over topics if they were in the previous turn's context for these files
-              // This part is complex as threadContextCached.fileMetadata might not be perfectly aligned or have topics
-              topics: threadContextCached?.fileMetadata?.find((fm: any) => fm.fileId === fileId)?.topics || [],
+              // Topics are not strictly necessary to carry in this minimal fileMetadata for context continuity;
+              // they can be re-derived. Focus is on preserving the list of active file IDs.
+              topics: [], 
             }));
-            logger.info(`[CHAT_ASSISTANT_CTRL_KV_PREP] Constructed fileMetadataForKV with ${fileMetadataForKV.length} items from files_used_for_this_prompt.`);
-          } else if (threadContextCached?.fileMetadata && Array.isArray(threadContextCached.fileMetadata)) {
+            logger.info(`[CHAT_ASSISTANT_CTRL_KV_PREP] Constructed fileMetadataForKV with ${fileMetadataForKV.length} items from files_used_for_this_prompt: ${JSON.stringify(filesUsedInThisTurn)}`);
+          } else if (isFollowUp && threadContextCached?.fileMetadata && Array.isArray(threadContextCached.fileMetadata) && threadContextCached.fileMetadata.length > 0) {
+            // If files_used_for_this_prompt is empty, BUT it's a follow-up and the PREVIOUS turn had file context, carry that forward.
+            // This handles cases where 1_data_retrieval might return file_ids:[] for a follow-up if it intends to use existing file context.
             fileMetadataForKV = threadContextCached.fileMetadata;
-            logger.warn(`[CHAT_ASSISTANT_CTRL_KV_PREP] files_used_for_this_prompt was missing or not an array. Falling back to fileMetadata from threadContextCached (${fileMetadataForKV.length} items).`);
+            logger.warn(`[CHAT_ASSISTANT_CTRL_KV_PREP] files_used_for_this_prompt was empty for this turn. Carrying over fileMetadata from PREVIOUS turn's context (${fileMetadataForKV.length} items): ${JSON.stringify(fileMetadataForKV.map(fm => fm.fileId))}`);
           } else {
-            logger.warn("[CHAT_ASSISTANT_CTRL_KV_PREP] No file information available (neither files_used_for_this_prompt nor cached fileMetadata) to store in KV.");
+            logger.warn("[CHAT_ASSISTANT_CTRL_KV_PREP] No file information available (neither files_used_for_this_prompt nor cached fileMetadata from previous turn) to store in KV.");
           }
           
           const contextToSave = {
@@ -331,11 +335,12 @@ export async function postHandler(request: NextRequest) {
             assistantResponseContent: fullAssistantReplyText, 
             responseId: actualOpenAIResponseIdFromStream, 
             lastUpdated: Date.now(),
-            // Optionally, include the prompt that LED to this response for debugging/history
             promptSentToOpenAI: content.substring(0, 1000) + (content.length > 1000 ? "... (truncated)" : "") 
           };
           logger.info("[CHAT_ASSISTANT_CTRL_KV_SAVE_OBJECT] Object to be saved in KV:", JSON.stringify(contextToSave, null, 2));
 
+          const kvKeyForSavingContext = threadMetaKey(actualOpenAIResponseIdFromStream); // Generate key to log
+          logger.debug(`[CHAT_ASSISTANT_CTRL_KV_KEY] Saving context with effective key: ${kvKeyForSavingContext}`);
           await updateThreadWithContext(actualOpenAIResponseIdFromStream, contextToSave);
           logger.info(`[CHAT_ASSISTANT_CTRL_KV_STORE] Stored context for THIS turn under key: ${actualOpenAIResponseIdFromStream}`);
 

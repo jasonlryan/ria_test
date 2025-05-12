@@ -120,7 +120,8 @@ export class SmartFilteringProcessor implements FilterProcessor {
         filteredData: [],
         stats: [],
         foundSegments: [],
-        missingSegments: segments
+        missingSegments: segments,
+        allAvailableSegmentsInFiles: {},
       };
     }
 
@@ -133,12 +134,18 @@ export class SmartFilteringProcessor implements FilterProcessor {
     
     logger.info(`[FILTER] Files with valid responses: ${filesWithResponses}/${files.length}`);
 
-    // First pass: scan files to find ALL available segments
-    const availableSegments = new Set<string>(["overall"]);
-    
+    // Initialize objects to store segment information
+    const allAvailableSegmentsOverall = new Set<string>(["overall"]);
+    const allAvailableSegmentsPerFile: Record<string, Set<string>> = {}; 
+
     // Process each file to discover all segments present in the data
     for (const file of files) {
-      if (!file) continue;
+      if (!file || !file.id) continue; // Ensure file and file.id exist
+
+      // Initialize segment set for the current file if it doesn't exist
+      if (!allAvailableSegmentsPerFile[file.id]) {
+        allAvailableSegmentsPerFile[file.id] = new Set<string>(["overall"]);
+      }
       
       const responses = Array.isArray(file.responses)
         ? file.responses
@@ -155,7 +162,8 @@ export class SmartFilteringProcessor implements FilterProcessor {
         // Add any segment key found in the data
         for (const segmentKey of Object.keys(dataObj)) {
           if (CANONICAL_SEGMENTS.includes(segmentKey)) {
-            availableSegments.add(segmentKey);
+            allAvailableSegmentsOverall.add(segmentKey);
+            allAvailableSegmentsPerFile[file.id].add(segmentKey);
           }
         }
       }
@@ -163,11 +171,11 @@ export class SmartFilteringProcessor implements FilterProcessor {
 
     // Special handling for segments of high interest
     const HIGH_INTEREST_SEGMENTS = ['sector', 'industry', 'education'];
-    const hasHighInterestSegments = [...availableSegments].some(segment => 
+    const hasHighInterestSegments = [...allAvailableSegmentsOverall].some(segment => 
       HIGH_INTEREST_SEGMENTS.includes(segment));
 
     // Log available segments
-    logger.info(`[FILTER] Available segments in data: ${[...availableSegments].join(', ')}`);
+    logger.info(`[FILTER] Available segments in data (overall): ${[...allAvailableSegmentsOverall].join(', ')}`);
     if (hasHighInterestSegments) {
       logger.info(`[FILTER] Found high-interest segments (sector/industry/education)`);
     }
@@ -190,7 +198,7 @@ export class SmartFilteringProcessor implements FilterProcessor {
     // IMPORTANT: Always include high-interest segments if they're available in the data
     // This ensures sector/industry/education data is never filtered out if present
     for (const segment of HIGH_INTEREST_SEGMENTS) {
-      if (availableSegments.has(segment) && !segmentsToUse.includes(segment)) {
+      if (allAvailableSegmentsOverall.has(segment) && !segmentsToUse.includes(segment)) {
         segmentsToUse.push(segment);
         logger.info(`[FILTER] Adding high-interest segment to processing: ${segment}`);
       }
@@ -201,10 +209,10 @@ export class SmartFilteringProcessor implements FilterProcessor {
     const filteredStats: FilteredDataItem[] = [];
     const foundSegments: string[] = [];
 
-    // Process each file
+    // Process each file for stats generation
     for (const file of files) {
-      if (!file) {
-        logger.warn("[FILTER] Invalid file object");
+      if (!file || !file.id) { // Ensure file and file.id exist for stats generation too
+        logger.warn("[FILTER] Invalid file object or missing file.id during stats generation");
         continue;
       }
 
@@ -306,6 +314,12 @@ export class SmartFilteringProcessor implements FilterProcessor {
       (seg) => !foundSegments.includes(seg) && seg !== "overall"
     );
 
+    // Convert Set<string> to string[] for each file in allAvailableSegmentsPerFile
+    const allAvailableSegmentsInFilesResult: Record<string, string[]> = {};
+    for (const fileId in allAvailableSegmentsPerFile) {
+      allAvailableSegmentsInFilesResult[fileId] = Array.from(allAvailableSegmentsPerFile[fileId]);
+    }
+
     // Return the filtered data result
     return {
       filteredData: filteredStats,
@@ -313,6 +327,7 @@ export class SmartFilteringProcessor implements FilterProcessor {
       summary: `Extracted ${filteredStats.length} statistics from ${files.length} files across ${foundSegments.length} segments.`,
       foundSegments,
       missingSegments,
+      allAvailableSegmentsInFiles: allAvailableSegmentsInFilesResult, 
     };
   }
 
@@ -372,7 +387,8 @@ export function filterDataBySegments(data: any, segments: string[]): FilterResul
     filteredData: [],
     stats: [],
     foundSegments: [],
-    missingSegments: segments || []
+    missingSegments: segments || [],
+    allAvailableSegmentsInFiles: {},
   };
 }
 

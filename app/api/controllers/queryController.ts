@@ -95,17 +95,20 @@ export async function postHandler(request) {
       return formatBadRequestResponse("Missing or invalid 'query' field");
     }
 
-    // Normalize queries
-    const normalizedQuery = normalizeQueryText(query);
-    const normalizedPreviousQuery = previousQuery 
-      ? normalizeQueryText(previousQuery) 
-      : "";
-
     // Get thread metadata from KV. This should use the potentially updated threadId.
     let threadMetadata: ThreadMetadata | null = null;
     if (threadId) {
-      threadMetadata = await UnifiedCache.get<ThreadMetadata>(threadMetaKey(threadId));
-      logger.info(threadMetadata ? `[QUERY_CTRL_KV] Fetched threadMetadata for ${threadId}` : `[QUERY_CTRL_KV] No threadMetadata for ${threadId}`);
+      const kvKeyForThreadMeta = threadMetaKey(threadId);
+      logger.debug(`[QUERY_CTRL_KV_KEY] Attempting to fetch thread metadata with key: ${kvKeyForThreadMeta}`);
+      threadMetadata = await UnifiedCache.get<ThreadMetadata>(kvKeyForThreadMeta);
+      if (threadMetadata) {
+        logger.info(`[QUERY_CTRL_KV] Fetched threadMetadata for ${threadId}`);
+        logger.debug(`[QUERY_CTRL_KV_CONTENT] Full fetched threadMetadata content:`, threadMetadata);
+        logger.debug(`[QUERY_CTRL_KV_CONTENT_FILEMETADATA] threadMetadata.fileMetadata:`, threadMetadata.fileMetadata);
+        logger.debug(`[QUERY_CTRL_KV_CONTENT_FILES] threadMetadata.files:`, (threadMetadata as any).files); // Log 'files' field if it exists
+      } else {
+        logger.info(`[QUERY_CTRL_KV] No threadMetadata for ${threadId}`);
+      }
     }
 
     // Determine if this is a follow-up query
@@ -114,14 +117,35 @@ export async function postHandler(request) {
     const isFollowUp = !!(previous_response_id && typeof previous_response_id === 'string' && previous_response_id.startsWith('resp_')) ||
                        !!(threadId && threadMetadata?.previousQueries?.length > 0);
     
+    // Initialize with potentially client-sent values
+    let currentPreviousQuery = previousQuery || "";
+    let currentPreviousAssistantResponse = previousAssistantResponse || "";
+
     if (isFollowUp) {
       logger.info(`[FOLLOW-UP_DETECT] Detected as FOLLOW-UP. Reason: ${
         (previous_response_id && typeof previous_response_id === 'string' && previous_response_id.startsWith('resp_')) ? 'prev_resp_id' :
         (threadId && threadMetadata?.previousQueries?.length > 0) ? 'metadata' : 'Unknown'
       }. Context ID: ${threadId}`);
+      // If it's a follow-up and we have threadMetadata, use that as the source of truth for previous Q&A
+      if (threadMetadata) {
+        currentPreviousQuery = threadMetadata.previousQueries?.[0] || "";
+        currentPreviousAssistantResponse = threadMetadata.assistantResponseContent || "";
+        logger.debug("[QUERY_CTRL_FOLLOWUP_CONTEXT] Using context from fetched threadMetadata:", { 
+            previousQuery: currentPreviousQuery.substring(0,50) + "...", 
+            previousAssistantResponse: currentPreviousAssistantResponse.substring(0,50) + "..." 
+        });
+      }
     } else {
       logger.info(`[FOLLOW-UP_DETECT] Detected as NEW query. Context ID: ${threadId || 'none'}`);
     }
+
+    // Normalize queries using the potentially updated previous query
+    const normalizedQuery = normalizeQueryText(query);
+    const normalizedPreviousQuery = currentPreviousQuery 
+      ? normalizeQueryText(currentPreviousQuery) 
+      : "";
+    // Use currentPreviousAssistantResponse directly as it should be the raw content
+    const finalPreviousAssistantResponse = currentPreviousAssistantResponse;
 
     logger.info(`[QUERY_CTRL_MAIN] Processing: "${normalizedQuery.substring(0, 50)}..." | Thread: ${threadId || 'none'} | FollowUp: ${isFollowUp}`);
 
@@ -148,7 +172,7 @@ export async function postHandler(request) {
           threadId || "default",
           isFollowUp,
           normalizedPreviousQuery,
-          previousAssistantResponse || ""
+          finalPreviousAssistantResponse
         );
       } else {
         // If comparison check passed but no specific files (e.g. non-explicit year comparison), proceed with normal follow-up discovery
@@ -161,22 +185,23 @@ export async function postHandler(request) {
           threadId || "default", // session/thread identifier for the service
           isFollowUp,
           normalizedPreviousQuery,
-          previousAssistantResponse || ""
+          finalPreviousAssistantResponse
         );
       }
     } else {
-      const fileIdsForDiscovery = (isFollowUp && threadMetadata?.fileMetadata?.length > 0)
+      const fileIdsForDiscovery = (isFollowUp && threadMetadata?.fileMetadata && Array.isArray(threadMetadata.fileMetadata) && threadMetadata.fileMetadata.length > 0)
         ? threadMetadata.fileMetadata.map(fm => fm.fileId)
         : [];
       logger.info(`[QUERY_CTRL_FILES] Using ${fileIdsForDiscovery.length} cached file IDs for discovery (if follow-up).`);
+      logger.debug('[QUERY_CTRL_CACHED_FILES_TO_SERVICE] fileIdsForDiscovery:', fileIdsForDiscovery);
       dataProcessingResult = await dataRetrievalService.processQueryWithData(
         normalizedQuery,
-        "all-sector", // context for data retrieval service
-        fileIdsForDiscovery, // IMPORTANT: Use these for follow-ups
-        threadId || "default", // session/thread identifier for the service
+        "all-sector", 
+        fileIdsForDiscovery, 
+        threadId || "default", 
         isFollowUp,
-        normalizedPreviousQuery,
-        previousAssistantResponse || ""
+        normalizedPreviousQuery, // Use the one derived from threadMetadata if follow-up
+        finalPreviousAssistantResponse // Use the one derived from threadMetadata if follow-up
       );
     }
     
