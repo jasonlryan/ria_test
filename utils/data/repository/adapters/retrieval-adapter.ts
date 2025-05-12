@@ -385,8 +385,23 @@ export async function processQueryWithData(
             const cacheKey = `stats:${dataFile.id}:${segmentId}`;
             try {
               const cachedSegmentStatsJson = await kvClient.get<string>(cacheKey);
+              let cachedSegmentStats;
               if (cachedSegmentStatsJson) {
-                const cachedSegmentStats = JSON.parse(cachedSegmentStatsJson);
+                // Defensive: handle both string and object
+                if (typeof cachedSegmentStatsJson === 'string') {
+                  try {
+                    cachedSegmentStats = JSON.parse(cachedSegmentStatsJson);
+                  } catch (parseErr) {
+                    logger.error(`[ADAPTER_CACHE_READ_ERROR] Failed to parse JSON for file ${dataFile.id}, segment ${segmentId}: ${parseErr.message}`);
+                    cachedSegmentStats = null;
+                  }
+                } else if (Array.isArray(cachedSegmentStatsJson)) {
+                  cachedSegmentStats = cachedSegmentStatsJson;
+                } else if (typeof cachedSegmentStatsJson === 'object' && cachedSegmentStatsJson !== null) {
+                  cachedSegmentStats = [cachedSegmentStatsJson];
+                } else {
+                  cachedSegmentStats = null;
+                }
                 if (Array.isArray(cachedSegmentStats) && cachedSegmentStats.length > 0) {
                   statsServedFromCache.push(...cachedSegmentStats);
                   logger.info(`[ADAPTER_CACHE_HIT] Served stats for file ${dataFile.id}, segment ${segmentId} from cache.`);
