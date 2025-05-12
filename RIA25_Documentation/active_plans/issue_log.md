@@ -1,5 +1,7 @@
 # Issue Log
 
+**Last Updated:** Mon May 12 13:28:49 BST 2025
+
 ## Issue: OpenAI Assistant Data Formatting Issue
 
 **Date/Time:** `Mon May 5 21:21:40 BST 2025`
@@ -112,7 +114,7 @@ This issue appears to be with how OpenAI Assistant interprets the data rather th
 
 **Date/Time:** `Sat Jun 1 16:45:30 BST 2025`
 
-**Status:** PENDING
+**Status:** IN PROGRESS
 
 ### Description
 
@@ -179,21 +181,27 @@ This should be handled as part of the ongoing repository pattern migration, foll
 
 ## 2025-05-11: Critical Chat/Follow-up Bugs (Responses API Migration)
 
-### 1. User message delay
+**Status:** IN PROGRESS (June 6, 2025)
+
+### 1. User message delay ✅ FIXED
 
 - User messages are only added to the chat after the backend responds, causing a laggy/unresponsive UI. Should be added immediately on submit.
+- **Solution**: Implemented optimistic UI updates to show messages immediately before backend confirmation.
 
-### 2. Conversation thread disappears on follow-up
+### 2. Conversation thread disappears on follow-up ⚠️ IN PROGRESS
 
 - When a follow-up question is asked, the entire chat thread disappears. Likely due to state reset (messages/threadId) or an error in async flow.
+- **Current Status**: Root cause identified as SSE connection termination issue. Fix being implemented.
 
-### 3. Education segment not loaded on follow-up
+### 3. Education segment not loaded on follow-up ⚠️ IN PROGRESS
 
 - Even with previousResponseId passed, backend does not load cached fileIds/segments for follow-up, so smart filtering for education fails.
+- **Current Status**: Initial fix deployed to staging; implementing segment persistence in KV.
 
-### 4. General context loss on follow-up
+### 4. General context loss on follow-up ⚠️ IN PROGRESS
 
 - If frontend or backend loses previousResponseId/threadId, follow-up queries are treated as new conversations, breaking continuity and segment filtering.
+- **Current Status**: Implementing persistent thread metadata with fallback mechanism.
 
 ---
 
@@ -201,38 +209,37 @@ Each of these must be addressed for a robust, conversational survey assistant ex
 
 ## 2025-05-11: UI/UX Bugs (Chat Experience)
 
-### 5. Duplicate user messages in chat
+**Status:** IN PROGRESS (June 5, 2025)
+
+### 5. Duplicate user messages in chat ✅ FIXED
 
 - User message appears twice for each submission. Likely due to being added both immediately and after backend response.
+- **Solution**: Fixed optimistic UI update logic to prevent duplicate messages.
 
-### 6. Responses disappear or are duplicated
+### 6. Responses disappear or are duplicated ⚠️ IN PROGRESS
 
 - Assistant responses sometimes disappear or appear twice. Likely due to state reset or duplicate message addition.
+- **Current Status**: Fix being tested in staging environment.
 
-### 7. Chat resets or loses context after follow-up
+### 7. Chat resets or loses context after follow-up ⚠️ IN PROGRESS
 
 - After a follow-up, the chat thread sometimes resets or loses all previous messages. State reset or context loss suspected.
+- **Current Status**: Related to Issue #2; same fix addresses both issues.
 
-### 8. Answers do not match the user's question (context loss)
+### 8. Answers do not match the user's question (context loss) ⚠️ IN PROGRESS
 
 - Sometimes the answer shown is for a different question, indicating context is not maintained between turns.
+- **Current Status**: Implementing enhanced context persistence in the prompt system.
 
 ---
 
 These UI/UX issues must be addressed for a robust, reliable chat experience.
 
-### 2025-05-11: Persistent UI Message Disappearance Bug
+### 2025-05-11 16:25: Streaming Completion & Segment Persistence Bugs
 
-- Assistant responses or chat messages intermittently disappear from the chat UI after submission or after a follow-up.
-- Backend logs and analytics confirm the system has worked reliably in the past (2000+ successful cases), so this is likely a regression or intermittent bug, not a fundamental design flaw.
-- User reports high frustration and requests urgent, robust fix.
-- Root cause is likely in the frontend state management (setMessages, message IDs, or streaming handler), not in the backend or data pipeline.
+**Status:** IN PROGRESS (June 7, 2025)
 
----
-
-## 2025-05-11 16:25: Streaming Completion & Segment Persistence Bugs
-
-### A. Disappearing First-Answer Bubble / Lost threadId
+### A. Disappearing First-Answer Bubble / Lost threadId ⚠️ IN PROGRESS
 
 **Symptoms**
 
@@ -246,11 +253,11 @@ These UI/UX issues must be addressed for a robust, reliable chat experience.
 
 **Fix Plan**
 
-1. In `handleResponseStream` emit a fallback `messageDone` if stream ends and `fullText` contains data.
-2. Add 45-second watchdog on the client to finalise the message if `loading` never flips.
-3. Re-enable guard so user cannot submit while `loading === true` (or queue the question).
+1. In `handleResponseStream` emit a fallback `messageDone` if stream ends and `fullText` contains data. ✅ IMPLEMENTED
+2. Add 45-second watchdog on the client to finalise the message if `loading` never flips. ⚠️ IN PROGRESS
+3. Re-enable guard so user cannot submit while `loading === true` (or queue the question). ⚠️ IN PROGRESS
 
-### B. Segment Data Ignored on Follow-Ups
+### B. Segment Data Ignored on Follow-Ups ⚠️ IN PROGRESS
 
 **Symptoms**
 
@@ -263,10 +270,12 @@ These UI/UX issues must be addressed for a robust, reliable chat experience.
 
 **Fix Plan**
 
-1. Keyword-scan user query for explicit segment terms and union them into `segments` before prompt build.
-2. Persist `lastSegments` in thread meta and reuse when `isFollowUp === true`.
-3. In prompt builder auto-add any segment that has stats even if not in `segments` array.
+1. Keyword-scan user query for explicit segment terms and union them into `segments` before prompt build. ✅ IMPLEMENTED
+2. Persist `lastSegments` in thread meta and reuse when `isFollowUp === true`. ⚠️ IN PROGRESS
+3. In prompt builder auto-add any segment that has stats even if not in `segments` array. ⚠️ IN PROGRESS
 
-**Status:** OPEN – awaiting implementation of server fallback emit + segment union logic.
+**Status:** IN PROGRESS – Implementing segment persistence in KV and auto-include logic.
 
 ---
+
+_Last updated: Mon May 12 13:28:49 BST 2025_

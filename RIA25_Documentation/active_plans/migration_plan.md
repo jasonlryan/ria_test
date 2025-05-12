@@ -1,4 +1,4 @@
-**Last Updated:** Sun May 11 2025
+**Last Updated:** Mon May 12 13:28:49 BST 2025
 
 # OpenAI Responses API Migration Plan (LLM-Driven Two-Step Pipeline)
 
@@ -24,7 +24,7 @@
 
 ---
 
-## Phase 1: Implement LLM-Driven File Discovery
+## Phase 1: Implement LLM-Driven File Discovery ✅ COMPLETED
 
 - **Service Layer:**
   - Add a method to call the Responses API with the `1_data_retrieval.md` prompt, filling in the user query, previous context, and canonical mapping.
@@ -33,7 +33,7 @@
   - On each user query, call the LLM file discovery method.
   - Use the returned file IDs for data retrieval.
 
-### Phase 1.1: Implement LLM-Driven File Discovery in DataRetrievalService
+### Phase 1.1: Implement LLM-Driven File Discovery in DataRetrievalService ✅ COMPLETED
 
 - **Location:** `app/api/services/dataRetrievalService.ts` (`DataRetrievalService` class)
 - **Method:** `async identifyRelevantFilesWithLLM(query: string, context: string, isFollowUp: boolean, previousQuery: string, previousAssistantResponse: string, canonicalMapping: object): Promise<any>`
@@ -52,7 +52,7 @@
 
 ---
 
-## Phase 2: Data Retrieval and Report Generation
+## Phase 2: Data Retrieval and Report Generation ✅ COMPLETED
 
 - Load the content of the files identified by the LLM.
 - Build a prompt for the LLM with the user query and loaded data.
@@ -61,21 +61,21 @@
 
 ---
 
-## Phase 3: Error Handling and Fallbacks
+## Phase 3: Error Handling and Fallbacks ✅ COMPLETED
 
 - If the LLM output is not valid JSON, handle gracefully (retry, fallback, or error message).
 - Optionally, use backend file selection as a fallback only.
 
 ---
 
-## Phase 4: Testing and Documentation
+## Phase 4: Testing and Documentation ✅ COMPLETED
 
 - Add tests for both LLM steps.
 - Update documentation to reflect the LLM-driven pipeline.
 
 ---
 
-## Phase 5: Codebase Cleanup and Optimization
+## Phase 5: Codebase Cleanup and Optimization ✅ COMPLETED
 
 - [x] Remove all legacy Assistants API code, types, and imports
 - [x] Remove old controller logic for threads/runs (all threadId, runId, threadContext, polling, and related logic removed from controllers)
@@ -83,38 +83,44 @@
 - [x] Remove feature flags for API switching (USE_RESPONSES_API, UNIFIED_OPENAI_SERVICE, etc.); all code and config for these flags have been removed
 - [x] Update or remove legacy tests and migration scripts (all obsolete test files have been deleted or archived)
 - [x] Refactor cache/session logic to use only response/session IDs (key schema now uses responseId/sessionId; threadId-based keys are deprecated)
-- [ ] Update documentation to reflect the new architecture
+- [x] Update documentation to reflect the new architecture
 
 ---
 
-## Phase 6: Performance Optimisation (Initial Pass)
+## Phase 6: Performance Optimisation (Initial Pass) ⚠️ IN PROGRESS
 
 The Responses-API migration uncovered redundant work that now dominates latency. We will tackle this in three quick iterations before deeper refactor.
 
-### 6.1 Eliminate Duplicate File-Discovery
+### 6.1 Eliminate Duplicate File-Discovery ✅ COMPLETED
 
 1.  Trust the **LLM** result when `file_ids.length > 0` and the query is **not** a comparison. Skip the second repository `identifyRelevantFiles` call.
 2.  On **follow-ups** (`isFollowUp === true`) use cached `fileIds` from KV; only re-run file discovery when either:
     • `detectComparisonQuery()` returns `true`, **or**
     • The new query introduces previously unseen segments.
 
-### 6.2 In-Memory JSON Cache for Repository Loads
+### 6.2 In-Memory JSON Cache for Repository Loads ✅ COMPLETED
 
 - Maintain a process-level `Map<filePath,{mtime,parsedJson}>` in `FileSystemRepository`.
 - Reload from disk only when `fs.statSync(filePath).mtimeMs` differs from the cached value.
 - Expected win: 3-10 s of JSON parse time per request drops to < 100 ms after warm-up.
 
-### 6.3 KV Round-Trip Reduction
+### 6.3 KV Round-Trip Reduction ⚠️ IN PROGRESS
 
 - Coalesce thread-meta updates into a single `UnifiedCache.set` at the end of the controller flow.
 - Store heavy `fileMetadata` only on the first query or when it changes.
 
-### 6.4 Measure & Iterate
+### 6.4 Measure & Iterate ⚠️ IN PROGRESS
 
 - Add simple `console.time()` wrappers around: `identifyRelevantFiles`, `processQueryWithData`, repository JSON parse, Redis read/write.
 - Target P95 latency: **≤ 4 s** for follow-up questions with warm cache.
 
 _Implementation of 6.1 and 6.2 provides the biggest near-term gain, removing redundant discovery (~6-10 s) and disk parses._
+
+### 6.5 Segment Persistence Improvements ⚠️ IN PROGRESS (NEW)
+
+- Persist `lastSegments` in thread meta and reuse when `isFollowUp === true`.
+- Auto-add any segment that has available statistics even if not in the originally requested `segments` array.
+- Implement segment caching with proper TTL to avoid re-processing segments for repeated queries.
 
 ---
 
@@ -124,4 +130,4 @@ _Implementation of 6.1 and 6.2 provides the biggest near-term gain, removing red
 - **Easier updates:** Change logic by editing the prompt, not the code.
 - **Better query understanding:** LLM can handle ambiguous or novel queries.
 
-_Last updated: Sun May 11 2025_
+_Last updated: Mon May 12 13:28:49 BST 2025_
