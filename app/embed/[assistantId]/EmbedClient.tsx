@@ -2,7 +2,13 @@
 
 // Tracking in Analytics for the question asked
 import { track } from "@vercel/analytics";
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  Suspense,
+  useCallback,
+} from "react";
 import { AssistantStream } from "openai/lib/AssistantStream";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -280,11 +286,58 @@ const EmbedClient: React.FC<EmbedClientProps> = ({ assistantId }) => {
     // paste the entire sendPrompt function body from remote_page.tsx.
   };
 
-  // ... (rest of the component code, including JSX return)
-  // (Paste the full JSX return from remote_page.tsx here)
+  // Add user scrolled ref for scroll handling
+  const userScrolledRef = useRef(false);
+  // Add state for tracking if user is at bottom of chat
+  const [isAtBottom, setIsAtBottom] = useState(true);
 
-  // For brevity, not repeating the full code block here, but in your implementation,
-  // paste the entire JSX return from remote_page.tsx.
+  // Add scroll position detection
+  useEffect(() => {
+    const container = messageListRef.current;
+    if (!container) return;
+
+    const checkScrollPosition = () => {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      const scrolledToBottom = scrollHeight - scrollTop - clientHeight < 50;
+
+      // Only update if the value changes to minimize renders
+      if (scrolledToBottom !== isAtBottom) {
+        setIsAtBottom(scrolledToBottom);
+      }
+
+      // When user scrolls up, pause auto-scroll
+      if (!scrolledToBottom && userScrolledRef.current === false) {
+        userScrolledRef.current = true;
+      }
+    };
+
+    // Check on scroll events
+    container.addEventListener("scroll", checkScrollPosition);
+
+    // Also periodically check when content might be changing
+    const intervalId = setInterval(checkScrollPosition, 500);
+
+    return () => {
+      container.removeEventListener("scroll", checkScrollPosition);
+      clearInterval(intervalId);
+    };
+  }, [isAtBottom]);
+
+  // Define or update the scrollToBottom function to respect user scrolling
+  const scrollToBottom = useCallback(() => {
+    if (!messageListRef.current || userScrolledRef.current) return;
+
+    messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+  }, []);
+
+  // Add manual scroll to bottom function
+  const scrollToBottomManually = useCallback(() => {
+    if (messageListRef.current) {
+      // Reset userScrolledRef so auto-scroll works again
+      userScrolledRef.current = false;
+      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+    }
+  }, []);
 
   return (
     <div className="min-h-screen w-full bg-white flex flex-col">
@@ -341,7 +394,7 @@ const EmbedClient: React.FC<EmbedClientProps> = ({ assistantId }) => {
             {/* Chat Container - THE ONLY SCROLLABLE ELEMENT */}
             <div className="chat-container flex-1 overflow-hidden flex flex-col bg-gray-50">
               <div
-                className="chat-messages flex-1"
+                className="chat-messages flex-1 relative"
                 ref={messageListRef}
                 style={{
                   scrollBehavior: "smooth",
@@ -382,7 +435,7 @@ const EmbedClient: React.FC<EmbedClientProps> = ({ assistantId }) => {
                   );
                 })}
 
-                {loading && streamingMessage && (
+                {loading && streamingMessage && streamingMessage.content && (
                   <div
                     className="message-bubble message-bubble-assistant"
                     ref={lastMessageRef}
@@ -405,6 +458,32 @@ const EmbedClient: React.FC<EmbedClientProps> = ({ assistantId }) => {
                   </div>
                 )}
               </div>
+
+              {/* Scroll button - floating at bottom of viewport within chat area */}
+              {!isAtBottom && (
+                <div className="sticky bottom-0 w-full flex justify-center pb-2 pointer-events-none">
+                  <button
+                    onClick={scrollToBottomManually}
+                    className="bg-white shadow-md rounded-full p-3 transition-opacity duration-300 ease-in-out z-10 hover:bg-gray-100 pointer-events-auto"
+                    aria-label="Scroll to bottom"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="text-primary"
+                    >
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Input Container - STICKY BOTTOM */}

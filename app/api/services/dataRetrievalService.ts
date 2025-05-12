@@ -519,7 +519,16 @@ export class DataRetrievalService {
 
           // Store incomparable topic messages for the prompt
           if (context) {
-            (context as any).incomparableTopicMessages = incomparableTopicMessages;
+            // Ensure we are attaching to an object, not a primitive string
+            let ctx: any =
+              typeof context === "object" && context !== null
+                ? context
+                : { originalContext: context };
+
+            ctx.incomparableTopicMessages = incomparableTopicMessages;
+
+            // Re-assign for downstream logic (keeps type consistency)
+            context = ctx as any;
           }
         }
       }

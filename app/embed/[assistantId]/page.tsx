@@ -322,6 +322,11 @@ function Embed(props) {
   const userScrolledRef = useRef(false);
   const scrollResumeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Add this state to control button visibility
+  const [showScrollButton, setShowScrollButton] = useState(false);
+
+  const [isAtBottom, setIsAtBottom] = useState(true);
+
   useEffect(() => {
     console.log(
       `[EFFECT_LOADING_CHANGED] loading is now: ${loading}, isSendingPrompt.current: ${isSendingPrompt.current}`
@@ -998,46 +1003,45 @@ function Embed(props) {
     messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
   }, []);
 
-  // Add scroll detection
+  // Define a clean scroll detection function that doesn't interfere with auto-scroll
   useEffect(() => {
     const container = messageListRef.current;
     if (!container) return;
 
-    let lastScrollTop = container.scrollTop;
-    let lastScrollHeight = container.scrollHeight;
+    const checkScrollPosition = () => {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      const scrolledToBottom = scrollHeight - scrollTop - clientHeight < 50;
 
-    const onScroll = () => {
-      // Only consider manual scrolling if:
-      // 1. The scroll wasn't caused by content being added (height change)
-      // 2. The user scrolled up (not down to bottom)
-      if (
-        container.scrollHeight === lastScrollHeight &&
-        container.scrollTop < lastScrollTop
-      ) {
+      // Only update if the value changes to minimize renders
+      if (scrolledToBottom !== isAtBottom) {
+        setIsAtBottom(scrolledToBottom);
+      }
+
+      // When user scrolls up, pause auto-scroll
+      if (!scrolledToBottom && userScrolledRef.current === false) {
         userScrolledRef.current = true;
-
-        // Reset auto-scroll block after 4 seconds of no scrolling
-        if (scrollResumeTimeoutRef.current) {
-          clearTimeout(scrollResumeTimeoutRef.current);
-        }
-
-        scrollResumeTimeoutRef.current = setTimeout(() => {
-          userScrolledRef.current = false;
-          scrollResumeTimeoutRef.current = null;
-        }, 4000);
       }
-
-      lastScrollTop = container.scrollTop;
-      lastScrollHeight = container.scrollHeight;
     };
 
-    container.addEventListener("scroll", onScroll);
+    // Check on scroll events
+    container.addEventListener("scroll", checkScrollPosition);
+
+    // Also periodically check when content might be changing
+    const intervalId = setInterval(checkScrollPosition, 500);
+
     return () => {
-      container.removeEventListener("scroll", onScroll);
-      if (scrollResumeTimeoutRef.current) {
-        clearTimeout(scrollResumeTimeoutRef.current);
-      }
+      container.removeEventListener("scroll", checkScrollPosition);
+      clearInterval(intervalId);
     };
+  }, [isAtBottom]);
+
+  // Simplify scroll to bottom function
+  const scrollToBottomManually = useCallback(() => {
+    if (messageListRef.current) {
+      // Reset userScrolledRef so auto-scroll works again
+      userScrolledRef.current = false;
+      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+    }
   }, []);
 
   // Auto-scroll when messages change or during streaming
@@ -1166,7 +1170,7 @@ function Embed(props) {
             {/* Chat Container - THE ONLY SCROLLABLE ELEMENT */}
             <div className="chat-container flex-1 overflow-hidden flex flex-col bg-gray-50">
               <div
-                className="chat-messages flex-1"
+                className="chat-messages flex-1 relative"
                 ref={messageListRef}
                 style={{
                   scrollBehavior: "smooth",
@@ -1230,6 +1234,32 @@ function Embed(props) {
                   </div>
                 )}
               </div>
+
+              {/* Scroll button - floating at bottom of viewport within chat area */}
+              {!isAtBottom && (
+                <div className="sticky bottom-0 w-full flex justify-center pb-2 pointer-events-none">
+                  <button
+                    onClick={scrollToBottomManually}
+                    className="bg-white shadow-md rounded-full p-3 transition-opacity duration-300 ease-in-out z-10 hover:bg-gray-100 pointer-events-auto"
+                    aria-label="Scroll to bottom"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="text-primary"
+                    >
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Input Container - STICKY BOTTOM */}
