@@ -318,6 +318,10 @@ function Embed(props) {
   const isSendingPrompt = useRef(false); // New ref to guard re-entrancy
   const animationFrameId = useRef<number | null>(null);
 
+  // At top level, after other useRef declarations
+  const userScrolledRef = useRef(false);
+  const scrollResumeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     console.log(
       `[EFFECT_LOADING_CHANGED] loading is now: ${loading}, isSendingPrompt.current: ${isSendingPrompt.current}`
@@ -987,16 +991,53 @@ function Embed(props) {
   const messageListRef = useRef<HTMLDivElement>(null);
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
-  // Scroll function that ONLY affects the chat messages panel
+  // Define the scrollToBottom function to respect user scrolling
   const scrollToBottom = useCallback(() => {
-    if (!messageListRef.current) return;
+    if (!messageListRef.current || userScrolledRef.current) return;
 
-    // Directly scroll the chat messages container ONLY
     messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
-    console.log(
-      "Scrolling chat panel to:",
-      messageListRef.current.scrollHeight
-    );
+  }, []);
+
+  // Add scroll detection
+  useEffect(() => {
+    const container = messageListRef.current;
+    if (!container) return;
+
+    let lastScrollTop = container.scrollTop;
+    let lastScrollHeight = container.scrollHeight;
+
+    const onScroll = () => {
+      // Only consider manual scrolling if:
+      // 1. The scroll wasn't caused by content being added (height change)
+      // 2. The user scrolled up (not down to bottom)
+      if (
+        container.scrollHeight === lastScrollHeight &&
+        container.scrollTop < lastScrollTop
+      ) {
+        userScrolledRef.current = true;
+
+        // Reset auto-scroll block after 4 seconds of no scrolling
+        if (scrollResumeTimeoutRef.current) {
+          clearTimeout(scrollResumeTimeoutRef.current);
+        }
+
+        scrollResumeTimeoutRef.current = setTimeout(() => {
+          userScrolledRef.current = false;
+          scrollResumeTimeoutRef.current = null;
+        }, 4000);
+      }
+
+      lastScrollTop = container.scrollTop;
+      lastScrollHeight = container.scrollHeight;
+    };
+
+    container.addEventListener("scroll", onScroll);
+    return () => {
+      container.removeEventListener("scroll", onScroll);
+      if (scrollResumeTimeoutRef.current) {
+        clearTimeout(scrollResumeTimeoutRef.current);
+      }
+    };
   }, []);
 
   // Auto-scroll when messages change or during streaming
@@ -1092,17 +1133,16 @@ function Embed(props) {
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                fill="none"
                 viewBox="0 0 24 24"
-                strokeWidth={2}
+                fill="none"
                 stroke="currentColor"
-                className="w-5 h-5 sm:mr-2"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="w-4 h-4"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
-                />
+                <path d="M12 5v14" />
+                <polyline points="19 12 12 19 5 12" />
               </svg>
               <span className="hidden sm:inline text-base font-medium">
                 New Chat
@@ -1167,7 +1207,7 @@ function Embed(props) {
                   );
                 })}
 
-                {loading && streamingMessage && (
+                {loading && streamingMessage && streamingMessage.content && (
                   <div
                     className="message-bubble message-bubble-assistant"
                     ref={lastMessageRef}
