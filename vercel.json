@@ -62,10 +62,6 @@
             "memory": 1024,
             "maxDuration": 60
         },
-        "app/api/openai/route.ts": {
-            "memory": 1024,
-            "maxDuration": 60
-        },
         "app/api/query/route.ts": {
             "memory": 1024,
             "maxDuration": 60
