@@ -163,11 +163,3 @@ export class PollingManager {
 
 // Export singleton instance
 export const pollingManager = PollingManager.getInstance();
-
-// Export convenience function for polling
-export async function pollOperation<T>(
-  operation: () => Promise<T>,
-  config?: PollingConfig
-): Promise<T> {
-  return pollingManager.poll(operation, config);
-} 

@@ -378,7 +378,6 @@ This document provides a comprehensive mapping of all major files and functions 
       - `poll<T>(pollingFn, config)`: Execute a polling operation with retries and backoff
       - `pollAll<T>(pollingOperations, config)`: Execute multiple polling operations in parallel
   - **Helper Functions**:
-    - `pollOperation<T>(operation, config)`: Convenience function for polling
     - `pollingManager`: Exported singleton instance
 
 ### Monitoring System
