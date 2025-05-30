@@ -75,9 +75,8 @@ This document provides a comprehensive mapping of all major files and functions 
 
   - `postHandler(request)`: Handles query processing
 
-- `app/api/controllers/openaiController.ts`
-
-  - `postHandler(request)`: Handles OpenAI assistant interactions
+- `openaiController.ts` (removed; logic consolidated into
+  `chatAssistantController.ts` and `unifiedOpenAIService.ts`)
 
 - `app/api/controllers/retrieveDataController.ts`
 

@@ -275,7 +275,8 @@ export class UnifiedOpenAIService {
 #### File Changes:
 
 - Update `app/api/controllers/chatAssistantController.ts`
-- Update `app/api/controllers/openaiController.ts`
+- Remove `app/api/controllers/openaiController.ts` (logic moved to
+  `unifiedOpenAIService.ts`)
 
 ### 3.3 Responses API Streaming Implementation ✅ COMPLETED
 

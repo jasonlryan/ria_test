@@ -15,7 +15,7 @@ Key locations touched by this migration:
 
 | Layer          | Representative Paths                                                                                                                         |
 | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Controllers    | `app/api/controllers/chatAssistantController.ts`, `app/api/controllers/openaiController.ts`, `app/api/controllers/retrieveDataController.ts` |
+| Controllers    | `app/api/controllers/chatAssistantController.ts`, `app/api/controllers/retrieveDataController.ts` (former `openaiController.ts` removed) |
 | Services       | `app/api/services/unifiedOpenAIService.ts` (new canonical)                                                                                   |
 | OpenAI Helpers | `utils/openai/streaming.ts`, `utils/openai/responses-adapter.ts`                                                                             |
 | Feature Flags  | `utils/shared/feature-flags.ts`                                                                                                              |
@@ -30,7 +30,7 @@ Key locations touched by this migration:
 | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | OpenAI SDK    | Upgrade to `openai@>=1.5.0`. Remove legacy beta endpoints.                                                                                         |
 | Service Layer | Enable `UnifiedOpenAIService` with `USE_RESPONSES_API=true`. Delete legacy service imports after smoke tests.                                      |
-| Controllers   | `chatAssistantController`, `openaiController`, `retrieveDataController` now call **UnifiedOpenAIService** exclusively. Remove thread/run handling. |
+| Controllers   | `chatAssistantController` and `retrieveDataController` now call **UnifiedOpenAIService** exclusively. `openaiController` was removed. |
 | Streaming     | Replace SSE handling with `streamResponseToClient()` helper (already coded).                                                                       |
 | Tool Calls    | Use `responses.tools` array. Map file-search & web-search calls.                                                                                   |
 | Persistence   | Responses API can be stateless – keep thread metadata in KV only when `store=true`.                                                                |
@@ -55,7 +55,7 @@ Key locations touched by this migration:
 5. **Production flip (feature-flag no-op).** ⚠️ SCHEDULED
    - Remove fallback code in a follow-up PR. ⚠️ PENDING
 6. **Codebase cleanup** (Week +1): ⚠️ PENDING
-   - Delete legacy Assistants helpers: `openaiController.ts`, `utils/openai/legacy/*`.
+   - Delete legacy Assistants helpers: `utils/openai/legacy/*` (the former `openaiController.ts` has already been removed).
    - Remove deprecated feature-flags.
 
 ---
