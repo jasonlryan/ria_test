@@ -10,7 +10,7 @@ import { DataRetrievalService } from "../services/dataRetrievalService";
 import logger from "../../../utils/shared/logger";
 import { normalizeQueryText } from "../../../utils/shared/queryUtils";
 import { UnifiedCache } from "../../../utils/cache/cache-utils";
-import { threadMetaKey, TTL } from "../../../utils/cache/key-schema";
+import { threadMetaKey } from "../../../utils/cache/key-schema";
 import { getComparablePairs, FileMetadata } from "../../../utils/compatibility/compatibility";
 // Import detectComparisonQuery from the adapter where it's re-exported
 import { detectComparisonQuery } from "../../../utils/data/repository/adapters/retrieval-adapter";
