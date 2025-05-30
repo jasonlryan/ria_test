@@ -196,7 +196,7 @@ The repository pattern has been implemented in five phases:
 
 ### Phase 0: Quick Wins (Completed May 6, 2025)
 
-- Fixed unterminated template literal in dataRetrievalService.js
+- Fixed unterminated template literal in dataRetrievalService.ts
 - Corrected queryController import to use named DataRetrievalService
 - Fixed follow-up detection in thread metadata handling
 - Ensured unified compatibility mapping is loaded once with proper caching
@@ -204,7 +204,7 @@ The repository pattern has been implemented in five phases:
 ### Phase 1: Forced Repository Path (Completed May 6, 2025)
 
 - Set environment flags permanently in repository adapter code
-- Updated dataRetrievalService.js to import from repository adapter
+- Updated dataRetrievalService.ts to import from repository adapter
 - Fixed controllers/services to import only from repository adapter
 - Removed legacy fallbacks in adapter
 - Added comprehensive null-checking and defensive coding practices

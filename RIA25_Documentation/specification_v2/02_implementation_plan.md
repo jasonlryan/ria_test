@@ -128,7 +128,7 @@ This document outlines the implemented architecture, development workflow, and t
 
 ### Phase 0: Build Unblock & Quick Wins (Completed May 6, 2025)
 
-1. Fix unterminated template literal in dataRetrievalService.js
+1. Fix unterminated template literal in dataRetrievalService.ts
 2. Correct queryController import to use named DataRetrievalService
 3. Fix follow-up detection in thread metadata handling
 4. Ensure unified compatibility mapping is loaded once with proper caching
@@ -138,7 +138,7 @@ This document outlines the implemented architecture, development workflow, and t
 1. Set environment flags permanently in repository adapter code
    - USE_REPOSITORY_PATTERN=true
    - ENABLE_RETRIEVAL_ADAPTER=true
-2. Update dataRetrievalService.js to import from repository adapter
+2. Update dataRetrievalService.ts to import from repository adapter
 3. Fix controllers/services to import only from utils/data/repository/adapters/retrieval-adapter
    - Modify retrieval-adapter.ts to re-export needed functions
    - Fix method signatures to match expected usage
@@ -164,7 +164,7 @@ This document outlines the implemented architecture, development workflow, and t
 
 1. Remove conditional branches guarded by feature flags
    - Clean up retrieval-adapter.ts
-   - Remove legacy fallback paths in dataRetrievalService.js
+   - Remove legacy fallback paths in dataRetrievalService.ts
    - Consolidate logic path in queryController.ts
 2. Update repository-related imports to use explicit paths
 3. Maintain single rollback flag for safety
