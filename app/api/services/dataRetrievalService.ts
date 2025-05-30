@@ -196,20 +196,9 @@ export class DataRetrievalService {
         assessedAt: Date.now(),
       } as CompatibilityMetadata;
 
-      // Check topic compatibility
+      // Check topic compatibility using the prebuilt dictionary
       for (const topicId of topics) {
-        let foundTopic = null;
-
-        // Find the topic in the mapping
-        for (const theme of mapping.themes || []) {
-          for (const topic of theme.topics || []) {
-            if (topic.id === topicId) {
-              foundTopic = topic;
-              break;
-            }
-          }
-          if (foundTopic) break;
-        }
+        const foundTopic = mapping.topicDict?.[topicId] || null;
 
         if (!foundTopic) {
           // Topic not found in mapping
