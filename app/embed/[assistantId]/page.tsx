@@ -548,6 +548,8 @@ function Embed(props) {
       createdAt: new Date(),
       stage: "retrieving",
     });
+    // Reset manual scroll flag so auto-scroll resumes for this new question
+    userScrolledRef.current = false;
 
     try {
       let dataResult;
