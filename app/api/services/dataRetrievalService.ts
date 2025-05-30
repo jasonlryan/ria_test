@@ -30,6 +30,7 @@ import { unifiedOpenAIService } from "./unifiedOpenAIService";
 import { migrationMonitor } from "../../../utils/shared/monitoring";
 import { FilterResult } from "../../../utils/data/repository/interfaces/FilterProcessor";
 import OpenAI from 'openai';
+import { getCanonicalMapping } from "../../../utils/data/topicMapping";
 
 // Define our own CompatibilityMetadata type since we can't locate the import
 interface CompatibilityMetadata {
@@ -141,7 +142,7 @@ export class DataRetrievalService {
       fileIdentificationResult.segments || DEFAULT_SEGMENTS;
 
     // Assess compatibility for the identified topics and segments
-    const compatibilityMetadata = this.assessCompatibility(
+    const compatibilityMetadata = await this.assessCompatibility(
       relevantTopics,
       requestedSegments
     );
@@ -181,18 +182,9 @@ export class DataRetrievalService {
    * @param segments - Segment types to check for compatibility
    * @returns Compatibility metadata
    */
-  assessCompatibility(topics: string[], segments: string[]): CompatibilityMetadata {
+  async assessCompatibility(topics: string[], segments: string[]): Promise<CompatibilityMetadata> {
     try {
-      const mappingPath = path.join(
-        process.cwd(),
-        "scripts",
-        "reference files",
-        "2025",
-        "canonical_topic_mapping.json"
-      );
-
-      const mappingData = fs.readFileSync(mappingPath, "utf8");
-      const mapping = JSON.parse(mappingData);
+      const mapping = await getCanonicalMapping();
       const mappingVersion = mapping.metadata?.version || "1.0";
 
       // Initialize compatibility metadata

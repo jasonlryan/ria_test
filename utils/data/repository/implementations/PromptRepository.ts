@@ -7,6 +7,7 @@ import path from 'path';
 import logger from '../../../shared/logger';
 import OpenAI from 'openai';
 import kvClient from '../../../cache/kvClient';
+import { getCanonicalMapping } from '../../topicMapping';
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -87,14 +88,7 @@ export default class PromptRepository implements FileRepository {
       const normalizedQuery = query.toLowerCase().trim();
       
       // Load the canonical topic mapping
-      const mappingPath = path.join(
-        process.cwd(),
-        "scripts",
-        "reference files",
-        "2025",
-        "canonical_topic_mapping.json"
-      );
-      const mapping = JSON.parse(fs.readFileSync(mappingPath, "utf8"));
+      const mapping = await getCanonicalMapping();
 
       // --- BEGIN CACHE AWARENESS LOGIC FOR FOLLOW-UPS ---
       let cachedInfoForPromptString = "{}"; // Default to empty JSON object string
