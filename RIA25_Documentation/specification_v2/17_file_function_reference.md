@@ -29,10 +29,6 @@ This document provides a comprehensive mapping of all major files and functions 
   - `OPTIONS(request)`: Handles CORS preflight requests
   - `POST(request)`: Processes direct query requests
 
-- `app/api/openai/route.ts`
-
-  - `OPTIONS(request)`: Handles CORS preflight requests
-  - `POST(request)`: Alternative assistant API endpoint
 
 - `app/api/retrieve-data/route.ts`
 

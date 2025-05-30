@@ -92,7 +92,6 @@ The API layer follows a standardized controller-service architecture pattern:
   - `app/api/chat-assistant/route.ts`: Main endpoint for handling user queries
   - `app/api/query/route.ts`: Endpoint for direct data retrieval and analysis
   - `app/api/retrieve-data/route.ts`: Endpoint for retrieving specific data files
-  - `app/api/openai/route.ts`: Alternative OpenAI assistant integration
   - Additional utility endpoints for testing and diagnostics
 
 #### 3.2.2 Controllers
