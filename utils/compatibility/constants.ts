@@ -1,0 +1,1 @@
+export const DEFAULT_LATEST_YEAR = 2025;
