@@ -69,8 +69,8 @@ async function parseCSV(callback) {
 
 const getAnswer = async (
   openai,
-  threadId,
-  runId,
+  question,
+  responseId = null,
   retries = 3,
   startTime = Date.now()
 ) => {
@@ -83,12 +83,19 @@ const getAnswer = async (
       );
     }
 
-    const getRun = await openai.beta.threads.runs.retrieve(threadId, runId);
+    let response;
+    if (!responseId) {
+      response = await openai.responses.create({
+        assistant_id: assistantId,
+        input: question,
+      });
+    } else {
+      response = await openai.responses.retrieve(responseId);
+    }
 
-    if (getRun.status === "completed") {
+    if (response.status === "completed") {
       console.log("Response ready");
-      const messages = await openai.beta.threads.messages.list(threadId);
-      const responseText = messages.data[0].content[0].text.value;
+      const responseText = response.output_text;
 
       // Strip citation patterns from response
       const cleanedResponse = responseText.replace(
@@ -99,26 +106,20 @@ const getAnswer = async (
     }
 
     // Handle failed runs
-    if (getRun.status === "failed") {
-      const failureMessage = getRun.last_error
-        ? `${getRun.last_error.code}: ${getRun.last_error.message}`
+    if (response.status === "failed") {
+      const failureMessage = response.last_error
+        ? `${response.last_error.code}: ${response.last_error.message}`
         : "Unknown failure reason";
 
       console.log(`Run failed: ${failureMessage}`);
 
       if (retries > 0) {
-        console.log(`Creating new run... (${retries} attempts left)`);
+        console.log(`Creating new response... (${retries} attempts left)`);
         await new Promise((r) => setTimeout(r, 2000)); // Wait 2 seconds before retry
-
-        // Create a new run instead of checking the failed one
-        const newRun = await openai.beta.threads.runs.create(threadId, {
-          assistant_id: assistantId,
-        });
-
         return await getAnswer(
           openai,
-          threadId,
-          newRun.id,
+          question,
+          null,
           retries - 1,
           startTime
         );
@@ -130,7 +131,7 @@ const getAnswer = async (
     }
 
     // Handle runs requiring action (e.g., function calls)
-    if (getRun.status === "requires_action") {
+    if (response.status === "requires_action") {
       console.log("Run requires action - not supported in test mode");
       throw new Error(
         "Run requires action which is not supported in test mode"
@@ -138,19 +139,19 @@ const getAnswer = async (
     }
 
     // Only log status if it's not "in_progress"
-    if (getRun.status !== "in_progress") {
-      console.log(`Waiting for response... (status: ${getRun.status})`);
+    if (response.status !== "in_progress") {
+      console.log(`Waiting for response... (status: ${response.status})`);
     }
 
     await new Promise((r) => setTimeout(r, 1000));
-    return await getAnswer(openai, threadId, runId, retries, startTime);
+    return await getAnswer(openai, question, response.id, retries, startTime);
   } catch (error) {
     if (retries > 0) {
       console.log(
         `API error encountered. Retrying... (${retries} attempts left)`
       );
       await new Promise((r) => setTimeout(r, 2000)); // Wait 2 seconds before retry
-      return await getAnswer(openai, threadId, runId, retries - 1, startTime);
+      return await getAnswer(openai, question, responseId, retries - 1, startTime);
     } else {
       throw error;
     }
@@ -287,21 +288,7 @@ async function runQuestions(records) {
         apiKey: process.env.OPENAI_API_KEY,
       });
 
-      // Always start new thread
-      const thread = await openai.beta.threads.create();
-
-      // add new message to thread
-      await openai.beta.threads.messages.create(thread.id, {
-        role: "user",
-        content: question,
-      });
-
-      // run assistant
-      const run = await openai.beta.threads.runs.create(thread.id, {
-        assistant_id: assistantId,
-      });
-
-      const answer = await getAnswer(openai, thread.id, run.id);
+      const answer = await getAnswer(openai, question);
       console.log(`Got answer for question: ${question}`);
 
       // Format the line for CSV with proper escaping
