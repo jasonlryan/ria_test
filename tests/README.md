@@ -9,17 +9,11 @@ This directory contains test scripts for evaluating different aspects of the app
 ```
 tests/
 ├── data/              # Sample data files used in manual tests
-├── test-results/      # Generated test results with timestamps
 ├── repository/        # Repository pattern unit tests (Vitest)
 │   ├── test-factory.ts    # Test object factories
 │   ├── mocks.ts           # Mock implementations
 │   ├── adapters/          # Adapter tests
 │   └── implementations/   # Implementation tests
-├── manual_tests/      # Manual test scripts (not in automated test suite)
-│   ├── test_compatibility_pipeline.js # End-to-end compatibility tests
-│   └── README.md          # Test descriptions and status
-├── legacy/            # Deprecated test scripts kept for reference
-│   └── compatibility_smoke_test.js    # Legacy compatibility module tests
 ├── setup.ts           # Vitest setup configuration
 └── README.md          # This file
 ```
