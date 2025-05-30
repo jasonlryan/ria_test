@@ -5,7 +5,7 @@
  * Primary entry point for all assistant interactions.
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { handleOptions } from "../../../utils/shared/cors";
 import { formatErrorResponse } from "../../../utils/shared/errorHandler";
 import { postHandler } from '../controllers/chatAssistantController';
