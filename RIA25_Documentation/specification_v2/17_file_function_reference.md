@@ -59,10 +59,6 @@ This document provides a comprehensive mapping of all major files and functions 
   - `OPTIONS(request)`: Handles CORS preflight requests
   - `GET(request)`: Tests API key validity
 
-- `app/api/test-openai/route.ts`
-  - `OPTIONS(request)`: Handles CORS preflight requests
-  - `GET(request)`: Tests OpenAI API connectivity
-
 ### Controllers
 
 - `app/api/controllers/chatAssistantController.ts`
