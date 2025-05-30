@@ -466,8 +466,8 @@ This document provides a comprehensive mapping of all major files and functions 
 
 ## Data Processing Scripts
 
-- `scripts/process_2025_data.ts`: Processes 2025 data
-- `scripts/process_survey_data.ts`: Processes survey data
+- `scripts/process_2025_data.js`: Processes 2025 data
+- `scripts/process_survey_data.js`: Processes survey data
 
 ## Configuration Files
 

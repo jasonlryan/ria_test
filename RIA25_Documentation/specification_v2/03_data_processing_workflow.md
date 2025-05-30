@@ -35,8 +35,8 @@ Raw CSV Data → Data Validation → Column Mapping → JSON Transformation → 
 
 - **Purpose**: Ensure data integrity and harmonize structure across years before processing
 - **Implementation**:
-  - Initial data validation in `process_survey_data.ts`
-  - Advanced harmonization and validation in `process_2025_data.ts`
+  - Initial data validation in `process_survey_data.js`
+  - Advanced harmonization and validation in `process_2025_data.js`
   - Canonical topic mapping and normalization logic
 - **Checks**:
   - CSV format verification
@@ -48,7 +48,7 @@ Raw CSV Data → Data Validation → Column Mapping → JSON Transformation → 
 ### 3. Column Mapping
 
 - **Purpose**: Create flexible mapping between CSV columns and structured JSON
-- **Implementation**: Dynamic column mapping in `process_survey_data.ts` and harmonization in `process_2025_data.ts`
+- **Implementation**: Dynamic column mapping in `process_survey_data.js` and harmonization in `process_2025_data.js`
 - **Benefits**:
   - Resilience to column order changes
   - Adaptation to CSV format variations
@@ -57,7 +57,7 @@ Raw CSV Data → Data Validation → Column Mapping → JSON Transformation → 
 ### 4. JSON Transformation
 
 - **Purpose**: Convert raw CSV data into structured JSON
-- **Implementation**: Transformation logic in `process_survey_data.ts` and `process_2025_data.ts`
+- **Implementation**: Transformation logic in `process_survey_data.js` and `process_2025_data.js`
 - **Structure**:
   - Consistent metadata format
   - Demographic information categorization
@@ -68,7 +68,7 @@ Raw CSV Data → Data Validation → Column Mapping → JSON Transformation → 
 ### 5. Split by Question
 
 - **Purpose**: Create individual JSON files per question for optimized retrieval
-- **Implementation**: File creation in `process_survey_data.ts` and `process_2025_data.ts`
+- **Implementation**: File creation in `process_survey_data.js` and `process_2025_data.js`
 - **Output**:
   - Individual files named `2025_[question_number].json`, `2024_[question_number].json`
   - Located in `scripts/output/split_data/`
@@ -129,10 +129,10 @@ question_1,question_2,region,age_group,gender,org_size
 
 ## Key Scripts
 
-### process_survey_data.ts
+### process_survey_data.js
 
 - **Purpose**: Core data processing script for both 2024 and 2025 data
-- **Location**: `/scripts/process_survey_data.ts`
+- **Location**: `/scripts/process_survey_data.js`
 - **Functionality**:
   - CSV parsing
   - Data validation
@@ -140,10 +140,10 @@ question_1,question_2,region,age_group,gender,org_size
   - JSON transformation
   - File generation
 
-### process_2025_data.ts
+### process_2025_data.js
 
 - **Purpose**: Advanced harmonization and canonical topic mapping for 2025 data
-- **Location**: `/scripts/process_2025_data.ts`
+- **Location**: `/scripts/process_2025_data.js`
 - **Functionality**:
   - Data harmonization across years
   - Canonical topic mapping
