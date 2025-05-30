@@ -11,7 +11,6 @@ This directory contains cross-cutting utility functions and modules used across 
 - `feature-flags.ts` - Feature toggle system for gradual rollouts
 - `helpers.tsx` - General helper utilities for response parsing and timing operations
 - `logger.js` - Logging utilities
-- `loggerHelpers.js` - Helper functions for logging
 - `monitoring.ts` - Migration monitoring system
 - `polling.js` and `polling-manager.ts` - Utilities for data polling
 - `rollback.ts` - Rollback management for migrations
