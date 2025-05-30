@@ -345,11 +345,14 @@ export class DataRetrievalService {
       const filePath = path.join(dataDir, fileName);
 
       try {
-        if (!fs.existsSync(filePath)) {
-          logger.error(`File does not exist: ${filePath}`);
-          continue;
-        }
-        const fileContent = fs.readFileSync(filePath, "utf8");
+        await fs.promises.access(filePath);
+      } catch (err) {
+        logger.error(`File does not exist: ${filePath}`);
+        continue;
+      }
+
+      try {
+        const fileContent = await fs.promises.readFile(filePath, "utf8");
         const jsonData = JSON.parse(fileContent);
         files.push({
           id: fileId.replace(/\.json$/, ""),
