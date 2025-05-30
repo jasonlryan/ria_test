@@ -1,7 +1,5 @@
 "use client";
 
-// Tracking in Analytics for the question asked
-import { track } from "@vercel/analytics";
 import React, {
   useState,
   useRef,
@@ -9,14 +7,13 @@ import React, {
   Suspense,
   useCallback,
 } from "react";
-import { AssistantStream } from "openai/lib/AssistantStream";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import PromptInput from "../../../components/PromptInput";
-import { parseResponse } from "../../../utils/shared/helpers";
 import chatConfig from "../../../config/chat.config.json";
 import CollapsibleContent from "../../../components/CollapsibleContent";
 import { sendHeightToParent } from "../../../utils/shared/iframe/iframe-resizer";
+import { createSendPrompt } from "../../../utils/shared/sendPrompt";
 
 // Error boundary for markdown rendering during streaming
 class MarkdownErrorBoundary extends React.Component<
@@ -279,12 +276,6 @@ const EmbedClient: React.FC<EmbedClientProps> = ({ assistantId }) => {
     }
   };
 
-  // TODO: Move this into a helper function.
-  const sendPrompt = async (threadId?: string, immediateQuestion?: string) => {
-    // (Paste the full sendPrompt function from remote_page.tsx here)
-    // For brevity, not repeating the full code block here, but in your implementation,
-    // paste the entire sendPrompt function body from remote_page.tsx.
-  };
 
   // Add user scrolled ref for scroll handling
   const userScrolledRef = useRef(false);
@@ -338,6 +329,22 @@ const EmbedClient: React.FC<EmbedClientProps> = ({ assistantId }) => {
       messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
     }
   }, []);
+
+  const sendPrompt = createSendPrompt({
+    prompt,
+    setPrompt,
+    setLoading,
+    setStreamingMessage,
+    setMessages,
+    setThreadId,
+    getCachedFilesForThread,
+    updateThreadCache,
+    messageId,
+    accumulatedText,
+    scrollToBottom,
+    loading,
+    assistantId,
+  });
 
   return (
     <div className="min-h-screen w-full bg-white flex flex-col">
