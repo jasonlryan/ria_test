@@ -22,6 +22,7 @@ import path from 'path';
 import { DEFAULT_SEGMENTS } from '../../../../utils/cache/segment_keys';
 import { SmartFilteringProcessor } from '../implementations/SmartFiltering';
 import kvClient from '../../../cache/kvClient'; // CORRECTED Import
+import { DEFAULT_LATEST_YEAR } from '../../../../utils/compatibility/constants';
 
 // Import utility functions from the TypeScript implementation
 import {
@@ -143,7 +144,10 @@ export async function identifyRelevantFiles(
           // ====================================
           if (!isComparison) {
             // Always use the latest *numeric* year present in the set
-            const latestYear = numericYears.includes(2025) ? 2025 : Math.max(...numericYears);
+            const latestYear =
+              numericYears.includes(DEFAULT_LATEST_YEAR)
+                ? DEFAULT_LATEST_YEAR
+                : Math.max(...numericYears);
 
             if (isNaN(latestYear)) {
               logger.warn('[COMPATIBILITY GATE] Could not determine latest year – abandoning default-year filter');

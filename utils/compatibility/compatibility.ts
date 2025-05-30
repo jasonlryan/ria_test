@@ -9,6 +9,7 @@
 import fs from 'fs';
 import path from 'path';
 import logger from "../shared/logger";
+import { DEFAULT_LATEST_YEAR } from './constants';
 
 // In-memory cache with TTL
 let compatibilityCache: CompatibilityMapping | null = null;
@@ -624,23 +625,23 @@ export function getComparablePairs(files: FileMetadata[]): ComparablePairsResult
 /**
  * Extract year from file ID
  * @param fileId File ID to extract year from
- * @returns Extracted year or default (2025)
+ * @returns Extracted year or default (DEFAULT_LATEST_YEAR)
  */
 function extractYearFromFileId(fileId: string): number {
   if (fileId.startsWith('2024')) return 2024;
-  if (fileId.startsWith('2025')) return 2025;
+  if (fileId.startsWith(String(DEFAULT_LATEST_YEAR))) return DEFAULT_LATEST_YEAR;
   
   // Try to extract from more complex patterns
   const yearMatch = fileId.match(/^(\d{4})_/);
   if (yearMatch) {
     const year = parseInt(yearMatch[1]);
-    if (year === 2024 || year === 2025) {
+    if (year === 2024 || year === DEFAULT_LATEST_YEAR) {
       return year;
     }
   }
-  
+
   // Default to current year as fallback
-  return 2025;
+  return DEFAULT_LATEST_YEAR;
 }
 
 export default {
