@@ -326,10 +326,6 @@ function Embed(props) {
 
   // At top level, after other useRef declarations
   const userScrolledRef = useRef(false);
-  const scrollResumeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Add this state to control button visibility
-  const [showScrollButton, setShowScrollButton] = useState(false);
 
   const [isAtBottom, setIsAtBottom] = useState(true);
 
