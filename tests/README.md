@@ -8,7 +8,7 @@ This directory contains test scripts for evaluating different aspects of the app
 
 ```
 tests/
-├── data/              # Test data files (CSV format) for OpenAI Assistant tests
+├── data/              # Sample data files used in manual tests
 ├── test-results/      # Generated test results with timestamps
 ├── repository/        # Repository pattern unit tests (Vitest)
 │   ├── test-factory.ts    # Test object factories
@@ -21,26 +21,10 @@ tests/
 ├── legacy/            # Deprecated test scripts kept for reference
 │   └── compatibility_smoke_test.js    # Legacy compatibility module tests
 ├── setup.ts           # Vitest setup configuration
-├── index.js           # Main test runner for OpenAI Assistant tests
-├── index-tests.js     # OpenAI Assistant test implementation
 └── README.md          # This file
 ```
 
 ## Running Tests
-
-### OpenAI Assistant Tests
-
-To run OpenAI Assistant tests:
-
-```bash
-npm test
-```
-
-You can optionally specify a different assistant ID:
-
-```bash
-npm test -- --assistant=asst_your_assistant_id
-```
 
 ### Repository Pattern Unit Tests
 
@@ -110,42 +94,6 @@ A monitoring dashboard is available at `/repository-monitor` that provides:
 3. Operation-specific metrics for detailed analysis
 4. Automatic refresh with configurable interval
 
-## OpenAI Assistant Tests
-
-The test runner will:
-
-1. Show available test types based on CSV files in the data directory
-2. Let you select which test to run
-3. Process questions through the OpenAI Assistant
-4. Save results to a timestamped file in test-results/
-
-### Adding New OpenAI Tests
-
-To add a new type of test:
-
-1. Create a CSV file in `tests/data/` following the naming convention:
-
-   ```
-   [Test Type] Questions.csv
-   ```
-
-   For example:
-
-   - `Bias Evaluation Questions.csv`
-   - `Performance Testing Questions.csv`
-   - `Language Analysis Questions.csv`
-
-2. The CSV should have these columns:
-   - `Question No` - Unique identifier for the question
-   - `Category` - Question category or type
-   - `Question` - The actual question to test
-
-Results will be saved as:
-
-```
-test-results/[Original Filename]_YYYYMMDD_HHMMSS.csv
-```
-
 ## Repository Pattern Tests
 
 The repository pattern tests use Vitest and verify:
@@ -169,11 +117,6 @@ To add repository tests:
 4. Run the tests with `npm run test:unit`
 
 ## Environment Variables
-
-OpenAI tests use these environment variables from the root `.env` file:
-
-- `OPENAI_API_KEY` - Required for OpenAI API access
-- `OPENAI_ASSISTANT_ID` - Default assistant ID (can be overridden via CLI)
 
 Repository pattern uses these environment variables:
 
