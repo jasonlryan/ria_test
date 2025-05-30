@@ -1,7 +1,7 @@
 // Route handlers for test-key API endpoints
 // Delegates business logic to testKeyController
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { handleOptions } from "../../../utils/shared/cors";
 import { formatErrorResponse } from "../../../utils/shared/errorHandler";
 import { getHandler } from "../controllers/testKeyController";
