@@ -338,33 +338,26 @@ export class DataRetrievalService {
    */
   async loadDataFiles(fileIds: string[]): Promise<any[]> {
     const dataDir = path.join(process.cwd(), "scripts", "output", "split_data");
-    const files = [];
 
-    for (const fileId of fileIds) {
-      const fileName = fileId.endsWith(".json") ? fileId : fileId + ".json";
+    const readPromises = fileIds.map(async (fileId) => {
+      const fileName = fileId.endsWith(".json") ? fileId : `${fileId}.json`;
       const filePath = path.join(dataDir, fileName);
-
-      try {
-        await fs.promises.access(filePath);
-      } catch (err) {
-        logger.error(`File does not exist: ${filePath}`);
-        continue;
-      }
 
       try {
         const fileContent = await fs.promises.readFile(filePath, "utf8");
         const jsonData = JSON.parse(fileContent);
-        files.push({
+        return {
           id: fileId.replace(/\.json$/, ""),
           data: jsonData,
-        });
+        };
       } catch (error) {
         logger.error(`Error loading file ${filePath}:`, error);
-        continue;
+        return null;
       }
-    }
+    });
 
-    return files;
+    const results = await Promise.all(readPromises);
+    return results.filter((file): file is { id: string; data: any } => file !== null);
   }
 
   /**
