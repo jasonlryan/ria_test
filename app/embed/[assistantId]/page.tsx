@@ -321,6 +321,9 @@ function Embed(props) {
   const isSendingPrompt = useRef(false); // New ref to guard re-entrancy
   const animationFrameId = useRef<number | null>(null);
 
+  // Ref to hold the AbortController for the active streaming request
+  const streamAbortControllerRef = useRef<AbortController | null>(null);
+
   // At top level, after other useRef declarations
   const userScrolledRef = useRef(false);
   const scrollResumeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -393,6 +396,16 @@ function Embed(props) {
     const OPENAI_ASSISTANT_TIMEOUT_MS = 90000;
     let streamFinalizedThisCall = false;
     let watchdogThisCall: NodeJS.Timeout | null = null;
+    const interactionEvents = ["click", "keydown", "wheel", "touchstart"] as const;
+    let interactionHandler: (() => void) | null = null;
+    function detachInteractionListeners() {
+      if (messageListRef.current && interactionHandler) {
+        interactionEvents.forEach((evt) =>
+          messageListRef.current!.removeEventListener(evt, interactionHandler!)
+        );
+        interactionHandler = null;
+      }
+    }
 
     const finalizeStream = (reason = "unknown") => {
       const localCallId_finalize = currentCallId; // Use currentCallId from sendPrompt's scope
@@ -496,6 +509,9 @@ function Embed(props) {
             `[FINALIZE_STREAM_CLEANUP] Call ID: ${localCallId_finalize}, Cancelled anim frame.`
           );
         }
+        // Remove interaction listeners and clear controller reference
+        detachInteractionListeners();
+        streamAbortControllerRef.current = null;
         if (localCallId_finalize === sendPromptCallId.current) {
           isSendingPrompt.current = false;
           if (DEBUG_LOGS) console.log(
@@ -685,6 +701,7 @@ function Embed(props) {
 
       const assistantApiCallStart = Date.now();
       const controller = new AbortController();
+      streamAbortControllerRef.current = controller;
       const assistantTimeoutId = setTimeout(() => {
         if (DEBUG_LOGS) console.warn("[SEND_PROMPT_TIMEOUT] Assistant API request timed out.");
         controller.abort();
@@ -818,6 +835,18 @@ function Embed(props) {
           if (DEBUG_LOGS) console.log(
             `[STREAM_HANDLER_WATCHDOG_SET] Call ID: ${currentCallId}, Watchdog SET: ID ${watchdogThisCall}`
           );
+
+          // Attach user interaction listeners to allow aborting the stream
+          if (messageListRef.current) {
+            interactionHandler = () => {
+              if (DEBUG_LOGS) console.log("[STREAM_ABORT] User interaction detected, aborting stream");
+              streamAbortControllerRef.current?.abort();
+              finalizeStream("userInteractionAbort");
+            };
+            interactionEvents.forEach((evt) =>
+              messageListRef.current!.addEventListener(evt, interactionHandler!)
+            );
+          }
 
           try {
             while (true) {
