@@ -50,7 +50,7 @@ RIA25 (Research Insights Assistant 2025) is an AI-powered system designed to pro
 
 The system comprises:
 
-- **Data Processing Pipeline**: Transforms raw CSV survey data into structured JSON with harmonization and canonical topic mapping (see `process_survey_data.ts`, `process_2025_data.ts`)
+- **Data Processing Pipeline**: Transforms raw CSV survey data into structured JSON with harmonization and canonical topic mapping (see `process_survey_data.js`, `process_2025_data.js`)
 - **Vector Store**: OpenAI vector database for efficient retrieval of relevant survey data
 - **Prompt System**: Engineered prompts guiding AI responses and enforcing data integrity
 - **API Layer**: Next.js API endpoints orchestrating query handling, data retrieval, validation, and logging

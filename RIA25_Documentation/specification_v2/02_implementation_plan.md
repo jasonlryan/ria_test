@@ -18,10 +18,10 @@ This document outlines the implemented architecture, development workflow, and t
 
 ### 1. Data Processing Pipeline
 
-- **Implemented Solution**: TypeScript scripts to process CSV data into structured JSON
+- **Implemented Solution**: Node.js scripts (JavaScript) to process CSV data into structured JSON
 - **Key Scripts**:
-  - `process_survey_data.ts`: Transforms raw CSV data into structured JSON files
-  - `process_2025_data.ts`: Handles 2025-specific data harmonization
+  - `process_survey_data.js`: Transforms raw CSV data into structured JSON files
+  - `process_2025_data.js`: Handles 2025-specific data harmonization
 - **Output Format**: JSON files split by question number with consistent metadata structure
 - **Location**: `scripts/` directory
 
