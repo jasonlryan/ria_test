@@ -1,4 +1,4 @@
-import React, { useEffect, useState, KeyboardEvent } from "react";
+import React, { useEffect, useRef, KeyboardEvent } from "react";
 
 import Send from "./icons/Send";
 import { useSearchParams } from "next/navigation";
@@ -12,36 +12,37 @@ export default function PromptInput({
 }: {
   prompt: string;
   setPrompt: (prompt: string) => void;
-  sendPrompt: (threadId?: string) => void;
+  sendPrompt: (threadId?: string, prompt?: string) => void;
   threadId: string;
   loading: boolean;
 }) {
-  // State to check if the prompt button is clicked.
-  const [promptClicked, setPromptClicked] = useState(false);
-  // Track if the component has mounted to prevent auto-sending on first keystroke
-  const [hasMounted, setHasMounted] = useState(false);
+  // Remove local click/mount tracking – we will send the prompt directly on submit.
 
   // Check if a question has been passed in the URL, if so, run the question
   const searchParams = useSearchParams();
   const question = searchParams.get("question");
 
-  useEffect(() => {
-    // This runs only once on component mount
-    setHasMounted(true);
-    if (question) {
-      setPrompt(question);
-      setPromptClicked(true);
-    }
-  }, [question, setPrompt]);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // Focus textarea after response is received (loading goes from true to false)
+  const prevLoadingRef = useRef(loading);
   useEffect(() => {
-    // Only send prompt if explicitly clicked or from URL parameter
-    // Avoid sending on first keystroke when editing manually
-    if (prompt && promptClicked && hasMounted) {
-      sendPrompt(threadId);
-      setPromptClicked(false);
+    if (prevLoadingRef.current && !loading) {
+      // loading transitioned from true to false
+      textareaRef.current?.focus();
     }
-  }, [prompt, threadId, promptClicked, hasMounted, sendPrompt]);
+    prevLoadingRef.current = loading;
+  }, [loading]);
+
+  // Auto run a starter question passed via the URL
+  useEffect(() => {
+    if (!question) return;
+    setPrompt(question);
+    // fire once after initial render
+    // We call sendPrompt directly rather than relying on state side-effects to avoid duplicates.
+    sendPrompt(threadId, question);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [question]);
 
   // Handle keyboard events to support SHIFT+RETURN for new line
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -52,10 +53,17 @@ export default function PromptInput({
       }
       // If just ENTER without shift, submit the form
       e.preventDefault();
-      if (prompt && !loading) {
-        setPromptClicked(true);
-      }
+      handleSubmit();
     }
+  };
+
+  // Unified submit handler to avoid duplicate prompt dispatches
+  const handleSubmit = () => {
+    // If assistant is still producing a response, submitting now may be ignored by parent logic.
+    const currentPrompt = prompt.trim();
+    if (!currentPrompt) return;
+    sendPrompt(threadId, currentPrompt);
+    setPrompt("");
   };
 
   return (
@@ -63,11 +71,12 @@ export default function PromptInput({
       <form
         onSubmit={(event) => {
           event.preventDefault();
-          setPromptClicked(true);
+          handleSubmit();
         }}
         className="relative"
       >
         <textarea
+          ref={textareaRef}
           id="question"
           className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white border-2 border-tertiary rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors text-sm sm:text-base resize-none overflow-y-auto"
           placeholder="Ask RIA about the Workforce 2025 Survey... (Press SHIFT+RETURN for new line)"
@@ -75,14 +84,13 @@ export default function PromptInput({
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           onKeyDown={handleKeyDown}
-          disabled={loading}
           rows={2}
           style={{ minHeight: "80px", maxHeight: "300px" }}
         />
         <button
           type="submit"
           className="absolute right-1.5 sm:right-2 top-1/2 -translate-y-1/2 bg-primary text-white p-1.5 sm:p-2 rounded-full hover:bg-secondary transition-colors disabled:opacity-50 disabled:hover:bg-primary"
-          disabled={!prompt || loading}
+          disabled={!prompt}
         >
           <Send className="h-4 w-4 sm:h-5 sm:w-5 stroke-current" />
         </button>

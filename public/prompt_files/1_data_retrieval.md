@@ -82,12 +82,30 @@ After analyzing the query, you must review the entire file to:
 
    - **Thoroughly** detect any demographic segments mentioned in the query. Populate the `"segments"` array accordingly (`[]` if none).
    - **Allowed Segment Categories:** Only detect segments belonging to the following categories: `country`, `age`, `generation`, `gender`, `org_size`, `employment_status`, `sector`, `job_level`, `marital_status`, `education`. Do not detect other types of segments.
-   - **AI-Related Skills Queries:** For queries related to employee confidence, skills relevance in AI contexts, or AI attitudes, ALWAYS include file ids related to AI*Attitudes (2025_5*\* files) and prioritize file `2025_5_1.json` (skills relevance) and `2025_5_8.json` (AI bolstering value).
    - **Default Segments Rule:** If NO allowed segments are explicitly mentioned or detected in the `{{QUERY}}`, you MUST set the `"segments"` field in your output JSON to the default value: `["country", "age", "gender"]`. The `"segments"` array should never be empty unless explicitly specified by advanced instructions not present here.
    - If the query mentions multiple segments, determine whether it requests combined analysis.
      - **Allowed:** Reporting on segments independently (e.g., separate reports for "United Kingdom" and "CEOs").
      - **Forbidden:** Combining segments into a single analysis (e.g., "UK CEOs").
    - Flag any prohibited segment combinations for enforcement later.
+
+4a. **Temporal Context Rules:**
+
+- **Year References:**
+
+  - ALWAYS interpret "current year", "current data", "latest data", "now", "today" as "2025"
+  - ALWAYS interpret "last year", "previous year", "recent past" as "2024"
+  - ALWAYS interpret "over the past X years", "last X years", "how has X changed" to mean "comparing 2025 with 2024"
+  - NEVER reference or interpret years before 2024 in your analysis
+
+- **File Selection for Temporal Queries:**
+
+  - For queries about change/trends/comparisons over time, you MUST check if the data is comparable in the canonical data file. Only include BOTH 2025*\* AND 2024*\* files for the relevant topics if the data is comparable.
+  - For queries like "change over time", "trends", "evolution", "comparison", "difference", "shift" or similar temporal terms, ensure BOTH 2025 and 2024 data files are included in the file_ids array
+  - For queries explicitly asking for "2025" data only, prioritize 2025\_\* files
+  - For queries explicitly asking for "2024" data only, prioritize 2024\_\* files
+
+- **Time-based Topic Matching:**
+  - For ANY query that contains time-related terms (e.g., "changed", "over time", "compared to", "trend"), identify the core topic first, then ensure file_ids include both years for that topic
 
 5. **Determine Conversation State:**
 
@@ -119,30 +137,6 @@ Example:
   "out_of_scope": false,
   "conversation_state": "new_fetch",
   "explanation": "Query concepts (flexibility, location) mapped conceptually to Work_Life_Flexibility and Current_and_Preferred topics. Detected segments: country. State is new_fetch as this is an initial query requiring data."
-  // Improved Example (No Match): "Query concepts (office snacks) are relevant to workforce but not covered by specific topics in the mapping. No segments detected, defaulting segments output to [country, age, gender]."
-  // Example (No segments detected in query): {"file_ids": ["2025_1"], "matched_topics": ["Attraction_Factors"], "segments": ["country", "age", "gender"], "out_of_scope": false, "explanation": "Query about general job attraction factors matched Attraction_Factors topic. No specific segments detected, using default segments."}
-  // --- FOLLOW-UP EXAMPLES ---
-  // Follow-up Example (Relevant files found within previous context): "Follow-up treated as in-scope. Current query about 'commute times' relates to previous context of 'RTO resistance' and maps to existing relevant topic 'Attraction_Factors'. Using previously identified file_ids: ['2025_1']. Segments detected: none."
-  // Follow-up Example (Conceptually related, but no *new* files needed/found): "Follow-up treated as in-scope. Current query asks for 'summary' which relates to previous context. No new files mapped as query requests discussion of existing data. Using previously identified file_ids: ['2025_1', '2025_4']. Segments detected: none."
-  // Follow-up Example (Conceptually different from previous context): "Follow-up treated as in-scope. Current query about 'AI impact' is conceptually different from previous context ('RTO resistance'). Attempted mapping based on previous context found no relevant files/topics for AI. file_ids: []. segments: []."
-  // Follow-up Example (Requesting New Segments for Existing Data):
-  // {
-  //  "file_ids": ["2025_8", "2025_11"], // Files relevant to previous context (e.g., Compensation)
-  //  "matched_topics": ["Pay_and_Reward"], // Topic from previous context
-  //  "segments": ["sector"], // The NEW segment requested
-  //  "out_of_scope": false,
-  //  "conversation_state": "incremental_fetch",
-  //  "explanation": "Follow-up treated as in-scope. Current query requests breakdown by 'sector' for the previous context (Pay_and_Reward). State is incremental_fetch as new segment filtering is required for existing relevant files."
-  // }
-  // Follow-up Example (Conceptually related, but no *new* files needed/found - Reformatting):
-  // {
-  //  "file_ids": [], // Or potentially the previous context's file_ids
-  //  "matched_topics": ["Leadership_Confidence"], // Topic from previous context
-  //  "segments": ["country", "age", "gender"], // Default or previous
-  //  "out_of_scope": false,
-  //  "conversation_state": "discuss_only",
-  //  "explanation": "Follow-up treated as in-scope. Current query asks for reformatting ('blog post') related to previous context (Trust analysis). No new file mapping or segment filtering required. State is discuss_only."
-  // }
 }
 ```
 

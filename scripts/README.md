@@ -40,23 +40,18 @@ node process_survey_data.js --year=2024 --skip-global
 | `--verbose`     | Show detailed output during processing       |
 | `--help`, `-h`  | Display help message                         |
 
-## Legacy Scripts
+## Other Useful Scripts
 
-Older scripts that are no longer part of the main workflow have been moved to the `legacy/` directory to keep the main directory clean and focused.
+- `analyze-performance.js` - Analyzes performance metrics from logs
+- `repository-toggle.js` - Controls repository pattern rollout with feature flags
+- `process_2025_data.js` - Harmonizes 2025 data format with 2024 format
 
-### `legacy/split_to_files.js`
+## Test Scripts and Legacy Code
 
-> ⚠️ **DEPRECATED**: This script has been replaced by `process_survey_data.js`
+Test scripts have been relocated for better organization:
 
-`split_to_files.js` was previously used for splitting global JSON data into individual files. It has been deprecated in favor of the more comprehensive `process_survey_data.js`. The script now serves as a wrapper that redirects to the new script with appropriate warnings.
-
-If you need to run the legacy script for compatibility reasons, you can use the `--force` flag:
-
-```bash
-node legacy/split_to_files.js --force
-```
-
-However, this is not recommended as it will not provide the enhanced question identification and metadata handling available in the primary script.
+- Integration tests are now in `tests/integration/`
+- Legacy scripts have been moved to the top-level `legacy/` directory
 
 ## Directory Structure
 
@@ -67,7 +62,6 @@ However, this is not recommended as it will not provide the enhanced question id
   - `split_data/YYYY_file_index.json` - Index of all generated files
 - `reference files/` - Contains mapping files for question identification
   - `canonical_topic_mapping.json` - Maps questions to topics and themes
-- `legacy/` - Contains deprecated scripts that are no longer part of the main workflow
 
 ## Processing Workflow
 

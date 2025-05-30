@@ -23,11 +23,11 @@ import remarkGfm from "remark-gfm";
 // Components
 import PromptInput from "../../../components/PromptInput";
 // Helpers
-import { parseResponse } from "../../../utils/helpers";
+import { parseResponse } from "../../../utils/shared/helpers";
 import chatConfig from "../../../config/chat.config.json";
 import CollapsibleContent from "../../../components/CollapsibleContent";
 // Add the new AssistantSelector component
-import { sendHeightToParent } from "../../../utils/iframe-resizer";
+import { sendHeightToParent } from "../../../utils/shared/iframe/iframe-resizer";
 
 // Define interface for MarkdownErrorBoundary props and state
 interface MarkdownErrorBoundaryProps {
@@ -159,12 +159,17 @@ function StreamingMarkdown({ content }: StreamingMarkdownProps) {
   );
 }
 
-function Embed({ params: { assistantId } }) {
+function Embed(props) {
+  // Access assistantId through props.params to avoid Next.js 15 error
+  const assistantId = props.params.assistantId;
+
   const title = "WORKFORCE 2025";
   const description =
     "Explore insights from our comprehensive workforce survey with RIA, your AI research assistant";
 
   const [loading, setLoading] = useState(false);
+  // Debug: log parent loading state
+  console.log("Embed render, loading:", loading);
   // Message being streamed
   const [streamingMessage, setStreamingMessage] = useState(null);
   // Whole chat
@@ -182,14 +187,8 @@ function Embed({ params: { assistantId } }) {
   // User prompt
   const [prompt, setPrompt] = useState("");
   // Get the thread id from the response, and then can pass it back to the next request to continue the conversation.
-  const [threadId, setThreadId] = useState(() => {
-    // Initialize from localStorage if available, but only in client side
-    if (typeof window !== "undefined") {
-      const savedThreadId = localStorage.getItem("chatThreadId");
-      return savedThreadId || null;
-    }
-    return null;
-  });
+  const [threadId, setThreadId] = useState<string | null>(null);
+  const [lastResponseId, setLastResponseId] = useState<string | null>(null);
 
   // Thread data cache to track files loaded per thread
   const [threadDataCache, setThreadDataCache] = useState(() => {
@@ -314,6 +313,764 @@ function Embed({ params: { assistantId } }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // At the top of Embed component, after other useRef declarations:
+  const sendPromptCallId = useRef(0);
+  const isSendingPrompt = useRef(false); // New ref to guard re-entrancy
+  const animationFrameId = useRef<number | null>(null);
+
+  // At top level, after other useRef declarations
+  const userScrolledRef = useRef(false);
+  const scrollResumeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Add this state to control button visibility
+  const [showScrollButton, setShowScrollButton] = useState(false);
+
+  const [isAtBottom, setIsAtBottom] = useState(true);
+
+  useEffect(() => {
+    console.log(
+      `[EFFECT_LOADING_CHANGED] loading is now: ${loading}, isSendingPrompt.current: ${isSendingPrompt.current}`
+    );
+  }, [loading]);
+
+  // useEffect for clearing localStorage on mount (KEEP THIS)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("chatThreadId");
+      localStorage.removeItem("chatLastResponseId");
+      localStorage.removeItem("threadDataCache");
+      console.log(
+        "[INITIAL_MOUNT_EFFECT] Cleared session IDs & cache from localStorage."
+      );
+    }
+  }, []);
+
+  const sendPrompt = async (
+    clientThreadId_param?: string,
+    immediateQuestion?: string
+  ) => {
+    const localThreadId = clientThreadId_param || threadId;
+    const currentCallId = ++sendPromptCallId.current;
+    console.log(
+      `[SEND_PROMPT_ENTER] Call ID: ${currentCallId}, Query: "${(
+        immediateQuestion ||
+        prompt ||
+        ""
+      ).substring(
+        0,
+        30
+      )}...", Current loading state: ${loading}, isSendingPrompt ref: ${
+        isSendingPrompt.current
+      }, localThreadId: ${localThreadId}, lastResponseId: ${lastResponseId}`
+    );
+
+    // Primary guard: if the main loading state is true, block immediately.
+    if (loading) {
+      console.warn(
+        `[SEND_PROMPT_BLOCKED_BY_LOADING_STATE] Call ID: ${currentCallId}. 'loading' is true. isSendingPrompt.current was: ${isSendingPrompt.current}`
+      );
+      return;
+    }
+
+    // Secondary/Defensive guard for the ref.
+    // If loading was false, isSendingPrompt.current should ideally also be false.
+    // If it's true, it implies a mismatch or incomplete reset from a previous call for the ref specifically.
+    if (isSendingPrompt.current) {
+      console.warn(
+        `[SEND_PROMPT_BLOCKED_BY_REF_MISMATCH] Call ID: ${currentCallId}. 'loading' was false, but 'isSendingPrompt.current' was true. Blocking and resetting ref.`
+      );
+      isSendingPrompt.current = false; // Reset it to prevent getting stuck if this state is ever reached.
+      return; // Still block if this inconsistent state is found.
+    }
+
+    // If we passed both guards, we can proceed.
+    isSendingPrompt.current = true;
+    setLoading(true);
+
+    const OPENAI_ASSISTANT_TIMEOUT_MS = 90000;
+    let streamFinalizedThisCall = false;
+    let watchdogThisCall: NodeJS.Timeout | null = null;
+
+    const finalizeStream = (reason = "unknown") => {
+      const localCallId_finalize = currentCallId; // Use currentCallId from sendPrompt's scope
+      console.log(
+        `[FINALIZE_STREAM_ENTER] Call ID: ${localCallId_finalize}, Reason: ${reason}, streamFinalizedThisCall: ${streamFinalizedThisCall}, Comp loading state: ${loading}`
+      );
+      if (streamFinalizedThisCall) {
+        console.log(
+          `[FINALIZE_STREAM_BAIL_ALREADY_FINALIZED] Call ID: ${localCallId_finalize}, Reason: ${reason}.`
+        );
+        if (
+          watchdogThisCall &&
+          reason !== "watchdog_STREAM_HANDLER" &&
+          reason !== "watchdog"
+        ) {
+          clearTimeout(watchdogThisCall);
+        }
+        return;
+      }
+      streamFinalizedThisCall = true;
+      if (watchdogThisCall) {
+        clearTimeout(watchdogThisCall);
+        watchdogThisCall = null;
+        console.log(
+          `[FINALIZE_STREAM_CLEARED_WATCHDOG] Call ID: ${localCallId_finalize} (Reason: ${reason})`
+        );
+      }
+      if (
+        !loading &&
+        (reason.includes("messageDone") ||
+          reason.includes("eof_STREAM_HANDLER") ||
+          reason.includes("errorEvent_STREAM_HANDLER") ||
+          reason.includes("streamLoopError_STREAM_HANDLER"))
+      ) {
+        console.error(
+          `[FINALIZE_STREAM_UNEXPECTED_LOADING_FALSE] Call ID: ${localCallId_finalize}, Reason: ${reason}. Loading was false! Proceeding.`
+        );
+      } else if (!loading && !isPreStreamErrorReason(reason)) {
+        console.warn(
+          `[FINALIZE_STREAM_WARN_BAIL_STALE] Call ID: ${localCallId_finalize}, Reason: ${reason}. Loading false. Bailing out.`
+        );
+        return;
+      }
+      try {
+        const finalContent = accumulatedText.current.trim();
+        console.log(
+          `[FINALIZE_STREAM_CONTENT] Call ID: ${localCallId_finalize}, Content (len ${
+            finalContent.length
+          }): "${finalContent.substring(0, 100)}..."`
+        );
+        if (finalContent || reason === "messageDone_STREAM_HANDLER") {
+          const newMessageId = (messageId.current + 1).toString();
+          setMessages((prevMessages) => {
+            if (prevMessages.find((msg) => msg.id === newMessageId)) {
+              console.warn(
+                `[FINALIZE_STREAM_DUPLICATE_GUARD] Call ID: ${localCallId_finalize}, Msg ID ${newMessageId} exists. Not adding.`
+              );
+              return prevMessages;
+            }
+            messageId.current++;
+            const newMessage = {
+              id: newMessageId,
+              role: "assistant" as const,
+              content: finalContent,
+              createdAt: new Date(),
+            };
+            console.log(
+              `[FINALIZE_STREAM_SET_MESSAGES] Call ID: ${localCallId_finalize}, ADDING (Reason: ${reason}):`,
+              JSON.parse(JSON.stringify(newMessage))
+            );
+            const updatedMessages = [...prevMessages, newMessage];
+            console.log(
+              `[FINALIZE_STREAM_SET_MESSAGES] Call ID: ${localCallId_finalize}, New count: ${updatedMessages.length}. IDs:`,
+              updatedMessages.map((m) => m.id)
+            );
+            return updatedMessages;
+          });
+        } else {
+          console.log(
+            `[FINALIZE_STREAM_SET_MESSAGES] Call ID: ${localCallId_finalize}, No content for '${reason}'. Skipping.`
+          );
+        }
+      } catch (error) {
+        console.error(
+          `[FINALIZE_STREAM_ERROR] Call ID: ${localCallId_finalize}, Error (Reason: ${reason}):`,
+          error
+        );
+      } finally {
+        console.log(
+          `[FINALIZE_STREAM_FINALLY] Call ID: ${localCallId_finalize}, Resetting states (Reason: ${reason}). Current loading state before setLoading(false): ${loading}`
+        );
+        setLoading(false);
+        console.log(
+          `[FINALIZE_STREAM_FINALLY] Call ID: ${localCallId_finalize}, Called setLoading(false). isSendingPrompt.current is about to be set.`
+        );
+        accumulatedText.current = "";
+        if (animationFrameId.current) {
+          cancelAnimationFrame(animationFrameId.current);
+          animationFrameId.current = null;
+          console.log(
+            `[FINALIZE_STREAM_CLEANUP] Call ID: ${localCallId_finalize}, Cancelled anim frame.`
+          );
+        }
+        if (localCallId_finalize === sendPromptCallId.current) {
+          isSendingPrompt.current = false;
+          console.log(
+            `[FINALIZE_STREAM_FINALLY] Call ID: ${localCallId_finalize}, Reset isSendingPrompt to false.`
+          );
+        } else {
+          console.warn(
+            `[FINALIZE_STREAM_FINALLY_STALE_CALL] Call ID: ${localCallId_finalize} not current ${sendPromptCallId.current}. Not resetting isSendingPrompt.`
+          );
+        }
+        setTimeout(scrollToBottom, 0);
+      }
+    };
+    const isPreStreamErrorReason = (reason: string) => {
+      return [
+        "dataRetrievalError",
+        "outOfScope",
+        "dataResultError",
+        "errorNoContext",
+        "jsonResponse",
+        "assistantApiError",
+        "overallSendPromptError",
+      ].some((prefix) => reason.startsWith(prefix));
+    };
+
+    const questionText = immediateQuestion || prompt || "";
+    if (!questionText.trim()) {
+      setLoading(false);
+      isSendingPrompt.current = false;
+      console.log(
+        `[SEND_PROMPT_EXIT_NO_TEXT] Call ID: ${currentCallId}, Reset isSendingPrompt.`
+      );
+      return;
+    }
+    track("Question", { question: questionText });
+    if (!immediateQuestion) setPrompt("");
+    messageId.current++;
+    const userMessage = {
+      id: messageId.current.toString(),
+      role: "user" as const,
+      content: questionText,
+      createdAt: new Date(),
+    };
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+    console.log("[UI] Added user message:", userMessage);
+    setStreamingMessage({
+      id: "processing",
+      role: "assistant",
+      content: "<span class='loading-message'>Retrieving data...</span>",
+      createdAt: new Date(),
+      stage: "retrieving",
+    });
+
+    try {
+      let dataResult;
+      try {
+        console.log("[SEND_PROMPT_API_QUERY] Preparing to call /api/query.");
+        const cachedFiles = localThreadId
+          ? getCachedFilesForThread(localThreadId)
+          : { fileIds: [] };
+        const queryApiBody: any = {
+          query: questionText,
+          context: "all-sector",
+          cachedFileIds:
+            localThreadId && cachedFiles.fileIds.length > 0
+              ? cachedFiles.fileIds
+              : [],
+        };
+        if (lastResponseId) {
+          queryApiBody.previous_response_id = lastResponseId;
+          if (localThreadId) queryApiBody.threadId = localThreadId;
+          console.log(
+            `[UI_TO_QUERY_API] Follow-up call to /api/query with prev_resp_id: ${lastResponseId}, threadId: ${localThreadId}`
+          );
+        } else {
+          console.log(
+            "[UI_TO_QUERY_API] New chat call to /api/query. No prev_resp_id or threadId sent."
+          );
+          delete queryApiBody.threadId;
+          delete queryApiBody.previous_response_id;
+        }
+        console.log(
+          "[SEND_PROMPT_API_QUERY] Body for /api/query:",
+          JSON.stringify(queryApiBody)
+        );
+        const dataRetrievalResponse = await fetch("/api/query", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(queryApiBody),
+        });
+        if (!dataRetrievalResponse.ok) {
+          const errorText = await dataRetrievalResponse.text();
+          throw new Error(
+            `Data retrieval failed: ${dataRetrievalResponse.status} ${errorText}`
+          );
+        }
+
+        dataResult = await dataRetrievalResponse.json();
+        console.log(
+          "[UI] dataResult from /api/query (raw full object):",
+          JSON.parse(JSON.stringify(dataResult))
+        );
+        if (
+          dataResult.finalAssistantPrompt &&
+          typeof dataResult.finalAssistantPrompt === "string"
+        ) {
+          console.log(
+            "[UI] Received finalAssistantPrompt. Length:",
+            dataResult.finalAssistantPrompt.length
+          );
+          console.log(
+            "[UI] finalAssistantPrompt (first 500 chars):",
+            dataResult.finalAssistantPrompt.substring(0, 500)
+          );
+          if (dataResult.finalAssistantPrompt.length < 200) {
+            console.warn(
+              "[UI] WARNING: finalAssistantPrompt from backend is very short."
+            );
+          }
+        } else {
+          console.error(
+            "[UI] CRITICAL ERROR: finalAssistantPrompt missing/invalid in dataResult!",
+            dataResult
+          );
+          accumulatedText.current = "Error: Failed to prepare prompt.";
+          finalizeStream("missingBackendFinalPrompt");
+          return;
+        }
+        if (dataResult.stats && Array.isArray(dataResult.stats)) {
+          console.log(
+            `[UI] dataResult also contains .stats with ${dataResult.stats.length} items.`
+          );
+        }
+        if (dataResult.files_used && Array.isArray(dataResult.files_used)) {
+          console.log(
+            `[UI] dataResult.files_used contains: ${JSON.stringify(
+              dataResult.files_used
+            )}`
+          );
+        } else {
+          console.warn(
+            "[UI] dataResult.files_used is missing or not an array:",
+            dataResult.files_used
+          );
+        }
+      } catch (dataRetrievalError) {
+        console.error(
+          "[SEND_PROMPT_ERROR] Stage 1 Data Retrieval Error:",
+          dataRetrievalError
+        );
+        accumulatedText.current = `Error retrieving data: ${dataRetrievalError.message}`;
+        finalizeStream("dataRetrievalError");
+        return;
+      }
+
+      if (dataResult.out_of_scope) {
+        accumulatedText.current =
+          dataResult.out_of_scope_message || "Query outside scope.";
+        finalizeStream("outOfScope");
+        return;
+      }
+      if (dataResult.error) {
+        accumulatedText.current = `Data error: ${dataResult.error}`;
+        finalizeStream("dataResultError");
+        return;
+      }
+      if (dataResult.status === "error_no_context") {
+        accumulatedText.current = dataResult.error || "Context needed.";
+        finalizeStream("errorNoContext");
+        return;
+      }
+
+      setStreamingMessage((prev) => ({
+        ...prev,
+        content: "<span class='loading-message'>Generating insights...</span>",
+        stage: "analyzing",
+      }));
+
+      const assistantPrompt = dataResult.finalAssistantPrompt;
+      console.log(
+        "[UI] Using assistantPrompt for /api/chat-assistant (first 500 chars):",
+        assistantPrompt?.substring(0, 500)
+      );
+      console.log("[UI] assistantPrompt FULL LENGTH:", assistantPrompt?.length);
+
+      const assistantApiCallStart = Date.now();
+      const controller = new AbortController();
+      const assistantTimeoutId = setTimeout(() => {
+        console.warn("[SEND_PROMPT_TIMEOUT] Assistant API request timed out.");
+        controller.abort();
+      }, OPENAI_ASSISTANT_TIMEOUT_MS);
+
+      try {
+        // VERIFY dataResult.files_used BEFORE assigning filesForChatAssistant
+        console.log(
+          "[UI_PRE_FILES_FOR_CHAT_ASSISTANT] Verifying dataResult.files_used:",
+          dataResult.files_used
+        );
+        console.log(
+          "[UI_PRE_FILES_FOR_CHAT_ASSISTANT] typeof dataResult.files_used:",
+          typeof dataResult.files_used
+        );
+        console.log(
+          "[UI_PRE_FILES_FOR_CHAT_ASSISTANT] Array.isArray(dataResult.files_used):",
+          Array.isArray(dataResult.files_used)
+        );
+
+        const filesForChatAssistant =
+          dataResult.files_used && Array.isArray(dataResult.files_used)
+            ? dataResult.files_used
+            : [];
+
+        console.log(
+          "[UI_POST_FILES_FOR_CHAT_ASSISTANT] filesForChatAssistant assigned as:",
+          JSON.parse(JSON.stringify(filesForChatAssistant))
+        );
+
+        if (
+          filesForChatAssistant.length === 0 &&
+          dataResult.stats &&
+          dataResult.stats.length > 0
+        ) {
+          console.warn(
+            "[UI_WARN_FILES_USED] dataResult.files_used was empty, but dataResult.stats was not. This might indicate an issue in /api/query response structure if files were indeed used for those stats."
+          );
+        }
+
+        const assistantApiBody = {
+          assistantId: assistantId,
+          previous_response_id: lastResponseId,
+          content: assistantPrompt,
+          original_user_query: questionText,
+          files_used_for_this_prompt: filesForChatAssistant, // Use the verified/defaulted list
+        };
+
+        console.log(
+          "[UI_TO_CHAT_ASSISTANT_RAW_BODY_PRE_STRINGIFY] assistantApiBody object:",
+          JSON.parse(JSON.stringify(assistantApiBody)) // Deep copy for reliable logging before stringify
+        );
+
+        console.log(
+          "[UI_TO_CHAT_ASSISTANT] Body for /api/chat-assistant (stringified preview):",
+          JSON.stringify(assistantApiBody, (key, value) =>
+            key === "content"
+              ? `${String(value).substring(0, 100)}... (length ${
+                  String(value).length
+                })`
+              : value
+          )
+        );
+
+        const assistantResponse = await fetch("/api/chat-assistant", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(assistantApiBody),
+          signal: controller.signal,
+        });
+        clearTimeout(assistantTimeoutId);
+        console.log(
+          `[ASSISTANT_API_CALL_DURATION] ${
+            Date.now() - assistantApiCallStart
+          }ms`
+        );
+        if (!assistantResponse.ok) {
+          const errorText = await assistantResponse.text();
+          throw new Error(
+            `Assistant API error: ${assistantResponse.status} ${errorText}`
+          );
+        }
+
+        const contentType = assistantResponse.headers.get("content-type");
+        if (contentType?.includes("application/json")) {
+          console.log("[STREAM_HANDLER] Received JSON from assistant API.");
+          const jsonData = await assistantResponse.json();
+          accumulatedText.current =
+            jsonData.message || "Received non-streamed JSON.";
+          finalizeStream("jsonResponse");
+          return;
+        } else if (contentType?.includes("text/event-stream")) {
+          console.log(
+            "[STREAM_HANDLER] Received text/event-stream. Processing."
+          );
+          if (!assistantResponse.body)
+            throw new Error("No response body for stream");
+          const reader = assistantResponse.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = "";
+          accumulatedText.current = "";
+          streamFinalizedThisCall = false;
+
+          if (animationFrameId.current) {
+            cancelAnimationFrame(animationFrameId.current);
+            animationFrameId.current = null;
+            console.log(
+              "[STREAM_HANDLER_CLEANUP] Cancelled pre-existing animation frame."
+            );
+          }
+          const initialStreamCreatedAt = new Date();
+          setStreamingMessage({
+            id: "streaming_message_active",
+            role: "assistant",
+            content: "",
+            createdAt: initialStreamCreatedAt,
+            stage: "streaming",
+          });
+
+          if (watchdogThisCall) {
+            console.log(
+              `[STREAM_HANDLER_PRE_WATCHDOG_CLEAR] Call ID: ${currentCallId}, Clearing existing watchdog ID: ${watchdogThisCall}`
+            );
+            clearTimeout(watchdogThisCall);
+            watchdogThisCall = null;
+          }
+          watchdogThisCall = setTimeout(
+            () => finalizeStream("watchdog_STREAM_HANDLER"),
+            45000
+          );
+          console.log(
+            `[STREAM_HANDLER_WATCHDOG_SET] Call ID: ${currentCallId}, Watchdog SET: ID ${watchdogThisCall}`
+          );
+
+          try {
+            while (true) {
+              const { value, done } = await reader.read();
+              if (value) {
+                const rawChunkForLogging = decoder.decode(value, {
+                  stream: false,
+                });
+                console.log(
+                  `[RAW_STREAM_CHUNK_IN_HANDLER] Decoded (len ${
+                    rawChunkForLogging.length
+                  }): "${rawChunkForLogging.substring(0, 100)}..."`
+                );
+              }
+              if (done) {
+                console.log(
+                  `[STREAM_HANDLER_LOOP] Call ID: ${currentCallId}, Stream reported done: true.`
+                );
+                if (!streamFinalizedThisCall)
+                  finalizeStream("eof_STREAM_HANDLER");
+                break;
+              }
+              buffer += decoder.decode(value, { stream: true });
+              const textDeltaRegex = /event: textDelta\ndata: ({.*?})\n\n/g;
+              let match;
+              textDeltaRegex.lastIndex = 0;
+              while ((match = textDeltaRegex.exec(buffer)) !== null) {
+                try {
+                  const eventData = JSON.parse(match[1]);
+                  if (eventData.value) {
+                    accumulatedText.current += eventData.value;
+                    if (animationFrameId.current === null) {
+                      animationFrameId.current = requestAnimationFrame(() => {
+                        setStreamingMessage((prev) => {
+                          if (!prev || prev.id !== "streaming_message_active") {
+                            console.warn(
+                              `[RAF_SET_STREAMING_MSG] Call ID: ${currentCallId}, prev streamingMessage was null/unexpected. Re-initializing.`,
+                              prev
+                            );
+                            return {
+                              id: "streaming_message_active",
+                              role: "assistant",
+                              content: accumulatedText.current,
+                              createdAt: initialStreamCreatedAt,
+                              stage: "streaming",
+                            };
+                          }
+                          return { ...prev, content: accumulatedText.current };
+                        });
+                        animationFrameId.current = null;
+                      });
+                    }
+                  }
+                } catch (e) {
+                  console.error(
+                    `[STREAM_LOOP_ERROR] Call ID: ${currentCallId}, textDelta:`,
+                    e
+                  );
+                }
+              }
+              const messageDoneRegex = /event: messageDone\ndata: ({.*?})\n\n/g;
+              let doneMatch;
+              messageDoneRegex.lastIndex = 0;
+              while ((doneMatch = messageDoneRegex.exec(buffer)) !== null) {
+                try {
+                  const eventData = JSON.parse(doneMatch[1]);
+                  console.log(
+                    `[STREAM_LOOP_EVENT] Call ID: ${currentCallId}, ✅ MessageDone:`,
+                    eventData
+                  );
+                  if (eventData.threadId) setThreadId(eventData.threadId);
+                  if (eventData.id) setLastResponseId(eventData.id);
+                  accumulatedText.current =
+                    eventData.content || accumulatedText.current;
+                  finalizeStream("messageDone_STREAM_HANDLER");
+                } catch (e) {
+                  console.error(
+                    `[STREAM_LOOP_ERROR] Call ID: ${currentCallId}, messageDone:`,
+                    e
+                  );
+                  if (!streamFinalizedThisCall)
+                    finalizeStream("messageDoneError_STREAM_HANDLER");
+                }
+              }
+              const errorEventRegex = /event: error\ndata: ({.*?})\n\n/g;
+              let errorMatch;
+              errorEventRegex.lastIndex = 0;
+              while ((errorMatch = errorEventRegex.exec(buffer)) !== null) {
+                try {
+                  const eventData = JSON.parse(errorMatch[1]);
+                  console.error(
+                    `[STREAM_LOOP_EVENT] Call ID: ${currentCallId}, 🛑 ErrorEvent:`,
+                    eventData
+                  );
+                  accumulatedText.current = `Error: ${
+                    eventData.message ||
+                    eventData.error ||
+                    "Unknown stream error"
+                  }`;
+                  if (!streamFinalizedThisCall)
+                    finalizeStream("errorEvent_STREAM_HANDLER");
+                } catch (e) {
+                  console.error(
+                    `[STREAM_LOOP_ERROR] Call ID: ${currentCallId}, errorEvent:`,
+                    e
+                  );
+                  if (!streamFinalizedThisCall)
+                    finalizeStream("errorEventParseError_STREAM_HANDLER");
+                }
+              }
+              const lastCompleteEventIdx = buffer.lastIndexOf("\n\n");
+              if (lastCompleteEventIdx >= 0) {
+                buffer = buffer.substring(lastCompleteEventIdx + 2);
+              } else if (buffer.length > 4096) {
+                console.warn(
+                  "[STREAM_BUFFER_TRIM] Buffer too large, trimming."
+                );
+                buffer = buffer.substring(buffer.length - 2048);
+              }
+            }
+          } catch (streamError) {
+            console.error(
+              `[STREAM_HANDLER_LOOP_CATCH_ERROR] Call ID: ${currentCallId}, Error during stream read:`,
+              streamError
+            );
+            if (!streamFinalizedThisCall)
+              finalizeStream("streamLoopError_STREAM_HANDLER");
+          } finally {
+            console.log(
+              `[STREAM_HANDLER_LOOP_FINALLY] Call ID: ${currentCallId}, Exited stream processing loop.`
+            );
+            if (!streamFinalizedThisCall && watchdogThisCall) {
+              console.warn(
+                `[STREAM_HANDLER_LOOP_FINALLY_WARN] Call ID: ${currentCallId}, Clearing watchdog (ID: ${watchdogThisCall}), loop not finalized.`
+              );
+              clearTimeout(watchdogThisCall);
+              watchdogThisCall = null;
+            }
+            if (animationFrameId.current) {
+              cancelAnimationFrame(animationFrameId.current);
+              animationFrameId.current = null;
+              console.log(
+                "[STREAM_HANDLER_LOOP_FINALLY_CLEANUP] Cancelled animation frame."
+              );
+            }
+            if (!streamFinalizedThisCall && loading) {
+              console.warn(
+                `[STREAM_HANDLER_LOOP_FINALLY_WARN] Call ID: ${currentCallId}, Attempting EOF finalization post-loop.`
+              );
+              finalizeStream("loopFinallyEof_STREAM_HANDLER");
+            }
+          }
+        } else {
+          const responseText = await assistantResponse.text();
+          throw new Error(
+            `Unexpected Content-Type: ${contentType} ${responseText}`
+          );
+        }
+      } catch (assistantApiError) {
+        clearTimeout(assistantTimeoutId);
+        console.error(
+          "[SEND_PROMPT_ERROR] Stage 2 Assistant API Call Error:",
+          assistantApiError
+        );
+        accumulatedText.current = `Assistant API error: ${assistantApiError.message}`;
+        finalizeStream("assistantApiError");
+        return;
+      }
+    } catch (overallError) {
+      console.error(
+        `[SEND_PROMPT_FATAL] Call ID: ${currentCallId}, Overall error:`,
+        overallError
+      );
+      accumulatedText.current =
+        accumulatedText.current || "An unexpected error occurred.";
+      finalizeStream(`overallSendPromptError_callId_${currentCallId}`);
+    }
+  };
+
+  // Auto scroll to bottom of message list. Scroll as message is being streamed.
+  const messageListRef = useRef<HTMLDivElement>(null);
+  const lastMessageRef = useRef<HTMLDivElement>(null);
+
+  // Define the scrollToBottom function to respect user scrolling
+  const scrollToBottom = useCallback(() => {
+    if (!messageListRef.current || userScrolledRef.current) return;
+
+    messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+  }, []);
+
+  // Define a clean scroll detection function that doesn't interfere with auto-scroll
+  useEffect(() => {
+    const container = messageListRef.current;
+    if (!container) return;
+
+    const checkScrollPosition = () => {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      const scrolledToBottom = scrollHeight - scrollTop - clientHeight < 50;
+
+      // Only update if the value changes to minimize renders
+      if (scrolledToBottom !== isAtBottom) {
+        setIsAtBottom(scrolledToBottom);
+      }
+
+      // When user scrolls up, pause auto-scroll
+      if (!scrolledToBottom && userScrolledRef.current === false) {
+        userScrolledRef.current = true;
+      }
+    };
+
+    // Check on scroll events
+    container.addEventListener("scroll", checkScrollPosition);
+
+    // Also periodically check when content might be changing
+    const intervalId = setInterval(checkScrollPosition, 500);
+
+    return () => {
+      container.removeEventListener("scroll", checkScrollPosition);
+      clearInterval(intervalId);
+    };
+  }, [isAtBottom]);
+
+  // Simplify scroll to bottom function
+  const scrollToBottomManually = useCallback(() => {
+    if (messageListRef.current) {
+      // Reset userScrolledRef so auto-scroll works again
+      userScrolledRef.current = false;
+      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+    }
+  }, []);
+
+  // Auto-scroll when messages change or during streaming
+  useEffect(() => {
+    // Immediate scroll
+    scrollToBottom();
+
+    // Delayed scroll to catch rendering
+    setTimeout(scrollToBottom, 100);
+    setTimeout(scrollToBottom, 300); // Additional delayed scroll to catch late renders
+  }, [messages, streamingMessage, scrollToBottom]);
+
+  // Add effect for iframe resizing
+  useEffect(() => {
+    // Initial height update
+    sendHeightToParent();
+
+    // Update height whenever messages or streaming state changes
+    const updateTimeout = setTimeout(sendHeightToParent, 100);
+    return () => clearTimeout(updateTimeout);
+  }, [messages, streamingMessage]);
+
+  const handleStarterQuestion = (question: string) => {
+    if (loading) return;
+
+    // Don't set prompt for starter questions, send directly
+    sendPrompt(threadId, question);
+  };
+
   // Reset chat
   const refreshChat = () => {
     console.log("Refreshing chat, clearing messages and thread ID");
@@ -353,693 +1110,10 @@ function Embed({ params: { assistantId } }) {
       setPrompt("");
     }
 
+    // Reset lastResponseId
+    setLastResponseId(null);
+
     console.log("Chat reset complete");
-  };
-
-  // TODO: Move this into a helper function.
-  const sendPrompt = async (threadId?: string, immediateQuestion?: string) => {
-    // Use immediateQuestion if provided, otherwise use prompt state
-    const questionText = immediateQuestion || prompt || "";
-
-    // Don't send if question is empty
-    if (!questionText.trim()) return;
-
-    // Track analytics
-    track("Question", { question: questionText });
-
-    // Reset prompt immediately to prevent double submissions
-    if (!immediateQuestion) {
-      setPrompt("");
-    }
-
-    // Set loading state
-    setLoading(true);
-
-    // Set up the initial streaming message
-    setStreamingMessage({
-      id: "processing",
-      role: "assistant",
-      content:
-        "<span class='loading-message'>Understanding your question...</span>",
-      createdAt: new Date(),
-      stage: "querying",
-    });
-
-    // Set up a loading animation sequence with more informative messages
-    const loadingStages = [
-      {
-        stage: "retrieving",
-        message: "Searching through workforce survey data...",
-      },
-      { stage: "analyzing", message: "Examining trends and statistics..." },
-      {
-        stage: "processing",
-        message: "Identifying key patterns in the data...",
-      },
-      {
-        stage: "connecting",
-        message: "Connecting insights across demographics...",
-      },
-      { stage: "finalizing", message: "Formulating a comprehensive answer..." },
-    ];
-
-    let currentStage = 0;
-    // Create a stable reference to the interval ID
-    const intervalRef = { current: null };
-
-    intervalRef.current = setInterval(() => {
-      // Extra safety check to ensure the component is still mounted
-      if (!loading) {
-        if (intervalRef.current) clearInterval(intervalRef.current);
-        return;
-      }
-
-      // Safety check that the array element exists
-      if (currentStage < loadingStages.length && loadingStages[currentStage]) {
-        setStreamingMessage((prev) => ({
-          ...prev,
-          content: `<span class='loading-message'>${loadingStages[currentStage].message}</span>`,
-          stage: loadingStages[currentStage].stage,
-        }));
-
-        currentStage = (currentStage + 1) % loadingStages.length;
-      }
-    }, 4000);
-
-    // Record the ID of the message we're sending for user display
-    messageId.current += 1;
-    const msgId = messageId.current;
-
-    // We'll determine the user message content after the /api/query call
-    let userMessageContent = questionText;
-
-    try {
-      console.log("Processing query:", questionText);
-
-      // Get cached files for this thread
-      const cachedFiles = threadId
-        ? getCachedFilesForThread(threadId)
-        : { fileIds: [] };
-
-      // Log thread information
-      console.log("🧵 THREAD INFO:");
-      console.log(`- Thread ID: ${threadId || "none"}`);
-      console.log(
-        `- Query: "${questionText.substring(0, 30)}${
-          questionText.length > 30 ? "..." : ""
-        }"`
-      );
-      console.log(
-        `- Has cached data: ${
-          Boolean(threadId) && cachedFiles.fileIds.length > 0
-        }`
-      );
-      console.log(`- Cached files: ${cachedFiles.fileIds.length}`);
-
-      // STAGE 1: Data Retrieval
-      // Update streaming message to show retrieval status
-      setStreamingMessage((prev) => ({
-        ...prev,
-        content: `<span class='loading-message'>Retrieving data...</span>`,
-        stage: "retrieving",
-      }));
-
-      console.log(
-        `📊 Retrieving data for query with ${cachedFiles.fileIds.length} cached files`
-      );
-
-      // Send request to query API, including cached file IDs
-      const dataRetrievalResponse = await fetch("/api/query", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          query: questionText,
-          context: "all-sector",
-          cachedFileIds: cachedFiles.fileIds,
-        }),
-      });
-
-      if (!dataRetrievalResponse.ok) {
-        setStreamingMessage((prev) => ({
-          ...prev,
-          content: `<span class='loading-message'>Data retrieval failed with status ${dataRetrievalResponse.status}</span>`,
-          stage: "error",
-        }));
-        console.error(
-          "Error in data retrieval:",
-          dataRetrievalResponse.statusText
-        );
-        throw new Error(
-          `Data retrieval failed with status ${dataRetrievalResponse.status}`
-        );
-      }
-
-      const dataResult = await dataRetrievalResponse.json();
-      console.log("Data retrieval result:", {
-        status: dataResult.status,
-        files: dataResult.file_ids?.length || 0,
-        error: dataResult.error,
-      });
-
-      // If the backend returned a naturalLanguageQuery (e.g., for starter questions), use that as the user message
-      if (dataResult.naturalLanguageQuery) {
-        userMessageContent = dataResult.naturalLanguageQuery;
-      }
-
-      // Add user message to chat (after knowing the real content)
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          id: msgId.toString(),
-          role: "user",
-          content: userMessageContent,
-          createdAt: new Date(),
-        },
-      ]);
-
-      // For starter questions, update the questionText variable to match the backend's question for the assistant prompt
-      let assistantPromptQuestion = userMessageContent;
-
-      // === PATCH: Intercept out-of-scope queries ===
-      if (dataResult.out_of_scope) {
-        const outOfScopeMessage = {
-          role: "assistant",
-          content:
-            dataResult.out_of_scope_message ||
-            "Sorry, your query is outside the scope of what I can answer.",
-          id: `out-of-scope-${Date.now()}`,
-          createdAt: new Date(),
-        };
-        setMessages((prevMessages) => [...prevMessages, outOfScopeMessage]);
-        setStreamingMessage(null);
-        setLoading(false);
-        clearInterval(intervalRef.current);
-        return;
-      }
-
-      // Check for errors in the data retrieval response
-      if (dataResult.error) {
-        setStreamingMessage((prev) => ({
-          ...prev,
-          content: `I'm sorry, I encountered an error retrieving the relevant data: ${dataResult.error}`,
-          stage: "error",
-        }));
-        setLoading(false);
-        clearInterval(intervalRef.current);
-        return;
-      }
-
-      // Check for special error cases
-      if (dataResult && dataResult.status === "error_no_context") {
-        console.log("Error - no context available");
-
-        // Create a user-friendly error message
-        const errorMessage = {
-          role: "assistant",
-          content: `I need some context first. ${
-            dataResult.error ||
-            "Please ask me a question about workforce trends before requesting content transformations like articles or summaries."
-          }`,
-          id: `error-${Date.now()}`,
-          createdAt: new Date(),
-        };
-
-        // Add the error message to the chat
-        setMessages((prevMessages) => [...prevMessages, errorMessage]);
-        setStreamingMessage(null);
-        setLoading(false);
-        clearInterval(intervalRef.current);
-
-        // Log the error
-        console.error("Error:", dataResult.error);
-
-        // End the function here
-        return;
-      }
-
-      // Update thread cache with file IDs if new files were retrieved
-      if (threadId && dataResult?.file_ids && dataResult.file_ids.length > 0) {
-        const newFileIds = dataResult.file_ids;
-        const newData = { raw_data: dataResult.raw_data };
-
-        // Update the cache
-        updateThreadCache(threadId, newFileIds, newData);
-      }
-
-      // STAGE 2: After data retrieval, before sending to assistant
-      // Update the streaming message to show we're generating insights
-      setStreamingMessage((prev) => ({
-        ...prev,
-        content: `<span class='loading-message'>Generating insights...</span>`,
-        stage: "analyzing",
-      }));
-
-      // Add more detailed logging
-      console.log("Starting stage 2: Generating insights from retrieved data");
-
-      // Prepare content for the assistant with safety checks
-      // Use the real question from the backend if available (for starter questions)
-      // If statsPreview is present (starter question), include it in the prompt
-      const assistantPrompt = dataResult?.statsPreview
-        ? `
-Query: ${assistantPromptQuestion}
-
-Analysis Summary: ${dataResult?.analysis || "No analysis available"}
-
-Sector Data:
-${dataResult.statsPreview}
-`
-        : `
-Query: ${assistantPromptQuestion}
-
-Analysis Summary: ${dataResult?.analysis || "No analysis available"}
-
-${
-  dataResult?.files_used
-    ? `Files Used: ${dataResult.files_used.join(", ")}`
-    : ""
-}
-${dataResult?.data_points ? `Data Points: ${dataResult.data_points}` : ""}
-${dataResult?.status ? `Status: ${dataResult.status}` : ""}
-
-${
-  dataResult?.raw_data
-    ? `Raw Survey Data:
-\`\`\`json
-${
-  typeof dataResult.raw_data === "string"
-    ? dataResult.raw_data
-    : JSON.stringify(dataResult.raw_data, null, 2)
-}
-\`\`\`
-`
-    : "NO RAW DATA AVAILABLE"
-}
-`;
-
-      // TEMPORARY: Log the full data being sent to the assistant (USER REQUESTED)
-      console.log("==== FULL DATA SENT TO ASSISTANT ====");
-      console.log(assistantPrompt);
-      console.log("==== END FULL DATA ====");
-
-      // Add concise logging
-      console.log("------- Sending to assistant -------");
-      console.log("Query:", questionText);
-      console.log("Topics:", dataResult.matched_topics);
-      console.log("Files:", dataResult.files_used);
-      console.log("Data points:", dataResult.data_points);
-      console.log("Raw data included:", !!dataResult.raw_data);
-
-      // Add timeout handling for the API call
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => {
-        controller.abort();
-        throw new Error("Assistant API request timed out after 30 seconds");
-      }, 30000); // 30 second timeout
-
-      try {
-        // Send request to API for assistant processing
-        const assistantResponse = await fetch("/api/chat-assistant", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            assistantId: assistantId,
-            threadId: threadId,
-            content: assistantPrompt,
-          }),
-          signal: controller.signal,
-        });
-
-        // Add message update after 5 seconds of waiting
-        // Set a delayed message update to indicate processing
-        const processingUpdateTimeout = setTimeout(() => {
-          if (loading) {
-            setStreamingMessage((prev) => ({
-              ...prev,
-              content: `<span class='loading-message'>Processing complex data patterns and preparing your answer...</span>`,
-              stage: "finalizing",
-            }));
-          }
-        }, 5000);
-
-        // Clear the timeout since we got a response
-        clearTimeout(timeoutId);
-        clearTimeout(processingUpdateTimeout);
-
-        console.log("API response status:", assistantResponse.status);
-
-        if (!assistantResponse.ok) {
-          console.error(
-            "Error response from OpenAI API:",
-            assistantResponse.status
-          );
-
-          try {
-            // Try to get the error message from the response
-            const errorData = await assistantResponse.json();
-            console.error("Error details:", errorData);
-
-            // Display out-of-scope errors differently
-            if (errorData.error_type === "out_of_scope") {
-              setStreamingMessage((prev) => ({
-                ...prev,
-                stage: "error",
-                content: `<span class='error-message'>${
-                  errorData.message ||
-                  "I'm sorry, but that appears to be outside the scope of what I can help with based on the available data."
-                }</span>`,
-              }));
-            } else {
-              setStreamingMessage((prev) => ({
-                ...prev,
-                stage: "error",
-                content: `<span class='error-message'>${
-                  errorData.message ||
-                  "Error contacting AI assistant. Please try again later."
-                }</span>`,
-              }));
-            }
-          } catch (e) {
-            // Fallback if we can't parse the error
-            setStreamingMessage((prev) => ({
-              ...prev,
-              stage: "error",
-              content: `<span class='error-message'>Error contacting AI assistant. Please try again later.</span>`,
-            }));
-          }
-
-          throw new Error(
-            `API response not OK: ${assistantResponse.status} ${assistantResponse.statusText}`
-          );
-        }
-
-        if (!assistantResponse.body) {
-          throw new Error("No response body received");
-        }
-
-        // Add more detailed logging
-        console.log("Got response body, starting stream processing");
-
-        // Use a manual event source approach instead of AssistantStream
-        const reader = assistantResponse.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = "";
-
-        // Reset accumulated text at the start of streaming
-        accumulatedText.current = "";
-
-        // Function to process SSE events
-        const processEvents = async (chunk) => {
-          // Add the new chunk to our buffer
-          buffer += chunk;
-
-          // Log raw buffer for debugging
-          console.log(`Raw chunk received (${chunk.length} chars)`);
-
-          // First look for text delta events and accumulate them
-          const textDeltaRegex = /event: textDelta\ndata: ({.*?})\n\n/g;
-          let match;
-
-          while ((match = textDeltaRegex.exec(buffer)) !== null) {
-            try {
-              const eventData = JSON.parse(match[1]);
-
-              if (eventData.value) {
-                console.log(
-                  `📝 Accumulating text delta: ${eventData.value.substring(
-                    0,
-                    20
-                  )}...`
-                );
-
-                // CRITICAL: Accumulate text in the ref first
-                accumulatedText.current += eventData.value;
-
-                // Then update React state once with the complete accumulated text
-                setStreamingMessage({
-                  id: "streaming",
-                  role: "assistant",
-                  content: accumulatedText.current,
-                  createdAt: new Date(),
-                });
-              }
-            } catch (e) {
-              console.error("Error processing text delta:", e);
-            }
-          }
-
-          // Look for message done events
-          const messageDoneRegex = /event: messageDone\ndata: ({.*?})\n\n/g;
-          let doneMatch;
-
-          while ((doneMatch = messageDoneRegex.exec(buffer)) !== null) {
-            try {
-              const eventData = JSON.parse(doneMatch[1]);
-              console.log("✅ Message completed, adding to chat");
-
-              // Set the thread ID if available
-              if (eventData.threadId) {
-                setThreadId(eventData.threadId);
-              }
-
-              // Use the accumulated text for the final message
-              const finalContent =
-                eventData.content || accumulatedText.current || "";
-
-              // *** ADDED FOR DEBUGGING ***
-              console.log(
-                "DEBUG: Final content being added to messages:",
-                JSON.stringify(finalContent)
-              );
-              // *** END DEBUGGING ***
-
-              // Add the final message
-              messageId.current++;
-              setMessages((prevMessages) => [
-                ...prevMessages,
-                {
-                  id: messageId.current.toString(),
-                  role: "assistant",
-                  content: finalContent,
-                  createdAt: new Date(eventData.createdAt || Date.now()),
-                },
-              ]);
-
-              // Reset states
-              setLoading(false);
-              setStreamingMessage(null);
-              accumulatedText.current = "";
-
-              // Clear loading interval
-              if (intervalRef.current) {
-                clearInterval(intervalRef.current);
-              }
-
-              // Scroll to bottom
-              setTimeout(scrollToBottom, 100);
-            } catch (e) {
-              console.error("Error processing message done:", e);
-            }
-          }
-
-          // Check for error events
-          const errorRegex = /event: error\ndata: ({.*?})\n\n/g;
-          let errorMatch;
-
-          while ((errorMatch = errorRegex.exec(buffer)) !== null) {
-            try {
-              const eventData = JSON.parse(errorMatch[1]);
-              console.error(
-                "🛑 Error event:",
-                eventData.message || eventData.error
-              );
-
-              // Add error message
-              messageId.current++;
-              setMessages((prevMessages) => [
-                ...prevMessages,
-                {
-                  id: messageId.current.toString(),
-                  role: "assistant",
-                  content: `I apologize, but I encountered an error: ${
-                    eventData.message || eventData.error || "Unknown error"
-                  }`,
-                  createdAt: new Date(),
-                },
-              ]);
-
-              // Reset states
-              setLoading(false);
-              setStreamingMessage(null);
-
-              // Clear loading interval
-              if (intervalRef.current) {
-                clearInterval(intervalRef.current);
-              }
-
-              // Scroll to bottom
-              setTimeout(scrollToBottom, 100);
-            } catch (e) {
-              console.error("Error processing error event:", e);
-            }
-          }
-
-          // Trim buffer to avoid memory issues
-          const lastCompleteEvent = buffer.lastIndexOf("\n\n");
-          if (lastCompleteEvent > 0) {
-            buffer = buffer.substring(lastCompleteEvent + 2);
-          }
-        };
-
-        // Start reading the stream
-        try {
-          while (true) {
-            const { done, value } = await reader.read();
-
-            if (done) {
-              console.log("Stream complete");
-              break;
-            }
-
-            // Process this chunk
-            await processEvents(decoder.decode(value, { stream: true }));
-          }
-        } catch (streamError) {
-          console.error("Error reading stream:", streamError);
-
-          // Add error message to chat
-          messageId.current++;
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            {
-              id: messageId.current.toString(),
-              role: "assistant",
-              content:
-                "I apologize, but I encountered an issue with the connection. Please try again.",
-              createdAt: new Date(),
-            },
-          ]);
-
-          // Reset states
-          setLoading(false);
-          setStreamingMessage(null);
-
-          // Clear loading interval if it's still running
-          if (intervalRef.current) clearInterval(intervalRef.current);
-
-          // Scroll to bottom
-          setTimeout(scrollToBottom, 100);
-        }
-      } catch (error) {
-        console.error("Error processing assistant response:", error);
-
-        // Clear the timeout if there was an error
-        clearTimeout(timeoutId);
-
-        // Determine the type of error for a more helpful message
-        let errorMessage =
-          "I apologize, but I encountered an issue while processing your request.";
-
-        if (error.name === "AbortError") {
-          errorMessage =
-            "I apologize for the delay. Your request took longer than expected to process. Please try asking a more specific question or try again later.";
-        } else if (
-          error.message?.includes("network") ||
-          error.message?.includes("fetch")
-        ) {
-          errorMessage =
-            "I'm having trouble connecting to the server. Please check your internet connection and try again.";
-        } else if (error.message?.includes("API")) {
-          errorMessage =
-            "I'm experiencing some temporary technical difficulties. Our team has been notified and is working to resolve this. Please try again in a few minutes.";
-        }
-
-        // Add error message to chat
-        messageId.current++;
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            id: messageId.current.toString(),
-            role: "assistant",
-            content: errorMessage,
-            createdAt: new Date(),
-          },
-        ]);
-
-        // Reset states
-        setLoading(false);
-        setStreamingMessage(null);
-
-        // Scroll to bottom
-        setTimeout(scrollToBottom, 100);
-      }
-    } catch (error) {
-      console.error("Request error:", error);
-
-      // Add error message to chat
-      messageId.current++;
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          id: messageId.current.toString(),
-          role: "assistant",
-          content: "Sorry, an error occurred while sending your request.",
-          createdAt: new Date(),
-        },
-      ]);
-
-      // Reset states
-      setLoading(false);
-      setStreamingMessage(null);
-
-      // Scroll to bottom
-      setTimeout(scrollToBottom, 100);
-    }
-  };
-
-  // Auto scroll to bottom of message list. Scroll as message is being streamed.
-  const messageListRef = useRef<HTMLDivElement>(null);
-  const lastMessageRef = useRef<HTMLDivElement>(null);
-
-  // Scroll function that ONLY affects the chat messages panel
-  const scrollToBottom = useCallback(() => {
-    if (!messageListRef.current) return;
-
-    // Directly scroll the chat messages container ONLY
-    messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
-    console.log(
-      "Scrolling chat panel to:",
-      messageListRef.current.scrollHeight
-    );
-  }, []);
-
-  // Auto-scroll when messages change or during streaming
-  useEffect(() => {
-    // Immediate scroll
-    scrollToBottom();
-
-    // Delayed scroll to catch rendering
-    setTimeout(scrollToBottom, 100);
-    setTimeout(scrollToBottom, 300); // Additional delayed scroll to catch late renders
-  }, [messages, streamingMessage, scrollToBottom]);
-
-  // Add effect for iframe resizing
-  useEffect(() => {
-    // Initial height update
-    sendHeightToParent();
-
-    // Update height whenever messages or streaming state changes
-    const updateTimeout = setTimeout(sendHeightToParent, 100);
-    return () => clearTimeout(updateTimeout);
-  }, [messages, streamingMessage]);
-
-  const handleStarterQuestion = (question: string) => {
-    if (loading) return;
-
-    // Don't set prompt for starter questions, send directly
-    sendPrompt(threadId, question);
   };
 
   return (
@@ -1063,17 +1137,16 @@ ${
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                fill="none"
                 viewBox="0 0 24 24"
-                strokeWidth={2}
+                fill="none"
                 stroke="currentColor"
-                className="w-5 h-5 sm:mr-2"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="w-4 h-4"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
-                />
+                <path d="M12 5v14" />
+                <polyline points="19 12 12 19 5 12" />
               </svg>
               <span className="hidden sm:inline text-base font-medium">
                 New Chat
@@ -1097,7 +1170,7 @@ ${
             {/* Chat Container - THE ONLY SCROLLABLE ELEMENT */}
             <div className="chat-container flex-1 overflow-hidden flex flex-col bg-gray-50">
               <div
-                className="chat-messages flex-1"
+                className="chat-messages flex-1 relative"
                 ref={messageListRef}
                 style={{
                   scrollBehavior: "smooth",
@@ -1138,7 +1211,7 @@ ${
                   );
                 })}
 
-                {loading && streamingMessage && (
+                {loading && streamingMessage && streamingMessage.content && (
                   <div
                     className="message-bubble message-bubble-assistant"
                     ref={lastMessageRef}
@@ -1161,6 +1234,32 @@ ${
                   </div>
                 )}
               </div>
+
+              {/* Scroll button - floating at bottom of viewport within chat area */}
+              {!isAtBottom && (
+                <div className="sticky bottom-0 w-full flex justify-center pb-2 pointer-events-none">
+                  <button
+                    onClick={scrollToBottomManually}
+                    className="bg-white shadow-md rounded-full p-3 transition-opacity duration-300 ease-in-out z-10 hover:bg-gray-100 pointer-events-auto"
+                    aria-label="Scroll to bottom"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="text-primary"
+                    >
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Input Container - STICKY BOTTOM */}

@@ -1,0 +1,25 @@
+Shared utilities migration step 1: Verified adapter status for compatibility.js, compatibilityLogger.js, and compatibilityUtils.js pointing to utils/compatibility - Mon Apr 28 13:58:38 BST 2025
+Shared utilities migration step 2: Verified adapter status for key-schema.ts and kvClient.ts pointing to utils/cache - Mon Apr 28 13:58:38 BST 2025
+Shared utilities migration step 3: Added README.md with documentation of file structure and adapter relationships - Mon Apr 28 13:58:38 BST 2025
+Shared utilities migration step 4: Moved logger.js to utils/shared and created adapter in original location - Mon Apr 28 13:58:38 BST 2025
+Shared utilities migration step 5: Created utils/shared/iframe directory and moved iframe utilities - Mon Apr 28 13:58:38 BST 2025
+Shared utilities migration step 6: Moved feature-flags.ts to utils/shared and created adapter in original location - Mon Apr 28 13:58:38 BST 2025
+Shared utilities migration step 7: Moved monitoring.ts to utils/shared and created adapter in original location - Mon Apr 28 13:58:38 BST 2025
+Shared utilities migration step 8: Moved rollback.ts to utils/shared and created adapter in original location - Mon Apr 28 13:58:38 BST 2025
+Shared utilities migration step 9: Moved helpers.tsx to utils/shared and created adapter in original location - Mon Apr 28 13:58:38 BST 2025
+Shared utilities migration step 10: Added utilities for error handling and CORS - Apr 15 2025
+Shared utilities migration step 11: Added basic logger.js implementation - Apr 17 2025
+Shared utilities migration step 12: Added helpers.tsx for shared React components - Apr 20 2025
+Shared utilities migration step 13: Added feature-flags.ts for controlled feature rollout - Apr 22 2025
+Shared utilities migration step 14: Added monitoring.ts for performance tracking - Apr 25 2025
+Shared utilities migration step 15: Migrated unifiedOpenAIService to use polling-manager.ts instead of polling.js - Jun 1 2025
+Shared utilities migration step 16: Moved polling.js to legacy directory after confirming all usage migrated to polling-manager.ts - Jun 1 2025
+Shared utilities migration step 17: Restored controllers (queryController, retrieveDataController, saveToLogsController, createLogsDirController) to original location to maintain direct imports - Jun 1 2025
+Shared utilities migration step 18: Migrated cors.js to TypeScript with proper typing for NextRequest - Jun 1 2025
+Shared utilities migration step 19: Migrated errorHandler.js to TypeScript with improved type safety for error handling - Jun 1 2025
+Shared utilities migration step 20: Migrated remaining route files to TypeScript (query, retrieve-data, save-to-logs, create-logs-dir) - Jun 1 2025
+Shared utilities migration step 21: Migrated logger.js to TypeScript with Logger interface for better type safety - Jun 1 2025
+Shared utilities migration step 22: Migrated loggerHelpers.js to TypeScript with proper typing for performance metrics - Jun 1 2025
+Shared utilities migration step 23: Migrated utils.js to TypeScript with proper typing for string utility functions - Jun 1 2025
+Shared utilities migration step 24: Migrated compatibilityService.js to TypeScript with proper interfaces and type safety - May 27 2024
+Shared utilities migration verification: Confirmed all adapter files have appropriate warnings and documentation - Mon Apr 28 13:58:38 BST 2025 

@@ -20,7 +20,22 @@
     "scripts:country-json": "node scripts/index-country-json.js",
     "scripts:all-json": "node scripts/index-all-json.js",
     "scripts:global": "node scripts/index-global.js",
-    "test": "node tests/index.js"
+    "test": "node tests/index.js",
+    "test:unit": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "repo:status": "node scripts/repository-toggle.js",
+    "repo:shadow": "node scripts/repository-toggle.js shadow",
+    "repo:test5": "node scripts/repository-toggle.js test5",
+    "repo:test10": "node scripts/repository-toggle.js test10",
+    "repo:test25": "node scripts/repository-toggle.js test25",
+    "repo:test50": "node scripts/repository-toggle.js test50",
+    "repo:full": "node scripts/repository-toggle.js full",
+    "repo:off": "node scripts/repository-toggle.js off",
+    "repo:retrieval": "node scripts/repository-toggle.js retrieval_only",
+    "repo:service": "node scripts/repository-toggle.js service_only",
+    "repo:monitor": "echo \"Repository monitor is available at http://localhost:3000/repository-monitor on the main server\"",
+    "openai:monitor": "node scripts/enable-openai-monitoring.js"
   },
   "dependencies": {
     "@vercel/analytics": "^1.5.0",
@@ -33,12 +48,13 @@
     "csv-stringify": "^6.5.2",
     "dotenv": "^16.4.7",
     "glob": "^11.0.1",
-    "next": "^14.2.7",
+    "next": "^14.1.0",
     "openai": "^4.91.1",
     "react": "^18",
     "react-dom": "^18",
     "react-markdown": "^9.1.0",
     "remark-gfm": "^4.0.1",
+    "uuid": "^11.1.0",
     "winston": "^3.17.0"
   },
   "devDependencies": {
@@ -51,17 +67,23 @@
     "@babel/preset-typescript": "^7.27.0",
     "@jest/globals": "^29.7.0",
     "@tailwindcss/typography": "^0.5.16",
+    "@testing-library/react": "^16.3.0",
     "@types/jest": "^29.5.14",
     "@types/react": "18.3.3",
+    "@vitest/coverage-v8": "^3.1.2",
     "autoprefixer": "^10.0.1",
     "cross-env": "^7.0.3",
     "eslint": "^8",
     "eslint-config-next": "14.0.3",
+    "happy-dom": "^17.4.6",
     "jest": "^29.7.0",
     "postcss": "^8",
     "stylelint": "^16.16.0",
     "stylelint-config-standard": "^37.0.0",
     "tailwindcss": "^3.3.0",
-    "ts-jest": "^29.3.2"
+    "ts-jest": "^29.3.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.3"
   }
 }

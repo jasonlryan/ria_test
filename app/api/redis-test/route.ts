@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import kvClient from '../../../utils/shared/kvClient';
+import kvClient from '../../../utils/cache/kvClient';
 
 export async function GET() {
   const testKey = 'test-redis-' + Date.now();

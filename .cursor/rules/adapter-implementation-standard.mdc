@@ -1,0 +1,167 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Adapter Implementation Standard
+
+**Last Updated:** Wed Apr 30 2025
+
+## Overview
+This document defines standards for implementing adapters in the repository pattern. These standards ensure consistent adapter implementation, backward compatibility, and a smooth migration path for existing code.
+
+## Directory Structure
+- `/utils/data/repository/adapters/{service}-adapter.ts` - Adapter files for each service
+- `/utils/data/repository/adapters/types/` - Shared type definitions for adapters
+- `/utils/data/repository/adapters/utils/` - Shared utility functions for adapters
+
+## Adapter Naming and Location
+1. **Naming Convention**: All adapters must be named `{service}-adapter.ts`
+2. **File Location**: Adapters must be placed in `/utils/data/repository/adapters/`
+3. **Interface Adapters**: Adapters must implement interfaces matching the original API
+4. **Documentation**: All adapters must include JSDoc comments referencing original implementations
+
+Example adapter structure:
+```typescript
+/**
+ * Adapter for retrieval.js functions.
+ * Provides backward-compatible interfaces that delegate to repository implementations.
+ * 
+ * @see Original implementation: utils/openai/retrieval.js
+ */
+
+import { FileRepository } from '../interfaces/FileRepository';
+import { QueryProcessor } from '../interfaces/QueryProcessor';
+import logger from '../../../utils/logger';
+
+// Feature flag to control adapter usage
+const USE_REPOSITORY_IMPLEMENTATION = process.env.USE_REPOSITORY_PATTERN === 'true';
+
+/**
+ * Identifies relevant files based on a query
+ * @param {string} query - The user query
+ * @param {object} options - Original options object
+ * @returns {Promise<Array>} Array of file metadata
+ */
+export async function identifyRelevantFiles(query, options = {}) {
+  try {
+    logger.info(`[ADAPTER] identifyRelevantFiles called with feature flag: ${USE_REPOSITORY_IMPLEMENTATION}`);
+    
+    if (!USE_REPOSITORY_IMPLEMENTATION) {
+      // Call original implementation with deprecation warning
+      logger.warn(`[DEPRECATED] Using original identifyRelevantFiles implementation`);
+      return originalIdentifyRelevantFiles(query, options);
+    }
+    
+    // Map legacy options to repository pattern context
+    const context = mapToQueryContext(query, options);
+    
+    // Use repository implementation
+    const fileRepository = getFileRepository();
+    return await fileRepository.getFilesByQuery(context);
+  } catch (error) {
+    logger.error(`[ADAPTER] Error in identifyRelevantFiles: ${error.message}`);
+    // Fallback to original implementation
+    logger.warn(`[FALLBACK] Using original identifyRelevantFiles implementation`);
+    return originalIdentifyRelevantFiles(query, options);
+  }
+}
+```
+
+## Backward Compatibility Requirements
+1. **Function Signatures**: Adapter functions must maintain identical signatures to original functions
+2. **Return Values**: Return values must match original format exactly, including error cases
+3. **Side Effects**: Maintain any side effects the original functions had (e.g., cache updates)
+4. **Error Handling**: Must handle errors in a way that's compatible with original consumers
+5. **Thread Context**: Maintain thread context handling for follow-up queries
+
+## Feature Flagging Implementation
+1. **Flag Location**: Feature flags must be defined at the top of adapter files
+2. **Environment Variable**: Use `process.env.USE_REPOSITORY_PATTERN` as the primary flag
+3. **Granular Flags**: Implement per-function flags when needed for staged rollout
+4. **Logging**: Log feature flag state when adapters are called
+5. **Fallback**: Always implement fallback to original implementation on error
+
+Example feature flag implementation:
+```typescript
+// Global feature flag
+const USE_REPOSITORY_IMPLEMENTATION = process.env.USE_REPOSITORY_PATTERN === 'true';
+
+// Function-specific overrides for granular rollout
+const featureFlags = {
+  identifyRelevantFiles: process.env.USE_REPO_IDENTIFY_FILES === 'true' || USE_REPOSITORY_IMPLEMENTATION,
+  retrieveDataFiles: process.env.USE_REPO_RETRIEVE_FILES === 'true' || USE_REPOSITORY_IMPLEMENTATION,
+  processQueryWithData: process.env.USE_REPO_PROCESS_QUERY === 'true' || USE_REPOSITORY_IMPLEMENTATION
+};
+```
+
+## Deprecation Strategy
+1. **Warning Logs**: Include deprecation warnings for direct usage of original functions
+2. **Documentation**: Add JSDoc `@deprecated` tags to original functions
+3. **Migration Guide**: Create a migration guide for consumers
+4. **Timeline**: Include a deprecation timeline in documentation
+
+Example deprecation notice:
+```typescript
+/**
+ * @deprecated Use repository pattern implementation instead.
+ * This function will be removed in version 2.0.0.
+ * See migration guide at utils/data/repository/docs/MIGRATION.md
+ */
+```
+
+## Testing Requirements
+1. **Shadow Testing**: Implement tests that compare results between original and adapter
+2. **Compatibility Tests**: Create tests verifying adapter maintains backward compatibility
+3. **Feature Flag Tests**: Test behavior with feature flags in different states
+4. **Error Case Tests**: Verify adapter handles error conditions consistently with original
+5. **Performance Tests**: Benchmark adapter against original implementation
+
+Example shadow test:
+```typescript
+describe('identifyRelevantFiles adapter', () => {
+  it('should return identical results to original implementation', async () => {
+    // Arrange
+    const query = "What is the population of France?";
+    const options = { threadId: "test-thread" };
+    
+    // Act
+    const originalResult = await originalIdentifyRelevantFiles(query, options);
+    const adapterResult = await adapterIdentifyRelevantFiles(query, options);
+    
+    // Assert
+    expect(adapterResult).toEqual(originalResult);
+  });
+});
+```
+
+## Phased Migration Approach
+1. **Phase 1**: Implement adapters with 100% fallback to original code
+2. **Phase 2**: Enable adapters for non-critical paths with feature flags
+3. **Phase 3**: Enable adapters for all paths, keeping fallback available
+4. **Phase 4**: Remove fallback to original implementations
+5. **Phase 5**: Refactor to use repository pattern directly in consumers
+
+## Adapter Implementation Checklist
+- [ ] Create adapter file with appropriate naming
+- [ ] Implement feature flagging
+- [ ] Map parameters between original and repository format
+- [ ] Implement backward-compatible error handling
+- [ ] Add comprehensive logging
+- [ ] Create shadow tests comparing implementations
+- [ ] Document deprecation timeline for original
+
+## Monitoring and Observability
+1. **Performance Metrics**: Track and compare timing between original and adapter implementations
+2. **Error Rates**: Monitor adapter-specific error rates
+3. **Usage Tracking**: Track which implementation is being used
+4. **Flag Status**: Log feature flag status for debugging
+
+## Benefits
+- Consistent adapter implementation
+- Clear migration path from original to repository pattern
+- Reduced risk through feature flagging
+- Comprehensive testing strategy
+- Observable transition process
+
+_Last updated: Wed Apr 30 2025_
