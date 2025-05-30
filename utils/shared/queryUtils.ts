@@ -162,24 +162,3 @@ export function extractCleanQueryFromToolCall(toolCallArgs: any): string {
   }
 }
 
-/**
- * Creates a thread context object with normalized queries
- * @param currentQuery Current user query
- * @param previousQuery Previous user query
- * @param previousResponse Previous assistant response
- * @param isFollowUp Whether this is a follow-up query
- * @returns Context object with normalized queries
- */
-export function createThreadContext(
-  currentQuery: string,
-  previousQuery: string,
-  previousResponse: string,
-  isFollowUp: boolean
-) {
-  return {
-    normalizedCurrentQuery: normalizeQueryText(currentQuery),
-    normalizedPreviousQuery: normalizeQueryText(previousQuery),
-    previousResponse,
-    isFollowUp,
-  };
-}
