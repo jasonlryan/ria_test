@@ -538,46 +538,6 @@ export class UnifiedCache {
   }
 
   /**
-   * Update thread with files in cache
-   * @param threadId Thread ID
-   * @param data Thread data
-   * @param ttl TTL in seconds
-   */
-  async updateThreadWithFiles(threadId: string, data: any, ttl = TTL.THREAD_DATA): Promise<void> {
-    try {
-      const key = threadMetaKey(threadId);
-      
-      // Validate thread data before caching
-      const validation = validateThreadData(data);
-      if (!validation.valid) {
-        logger.warn(`Invalid thread data for ${threadId}: ${validation.error}`);
-        
-        // Store validation error in thread metadata for debugging
-        if (data && typeof data === 'object' && data.metadata) {
-          if (!data.metadata.cacheErrors) {
-            data.metadata.cacheErrors = [];
-          }
-          data.metadata.cacheErrors.push({
-            timestamp: new Date().toISOString(),
-            error: validation.error
-          });
-        }
-        
-        // FIXED: Initialize files as empty array if it's not valid
-        if (!Array.isArray(data.files)) {
-          data.files = [];
-          logger.info(`Initialized empty files array for thread ${threadId} in instance method`);
-        }
-      }
-      
-      await kvClient.set(key, data, { ex: ttl });
-      logger.info(`Updated thread ${threadId} in cache with TTL ${ttl}s`);
-    } catch (error) {
-      logger.error(`Failed to update thread ${threadId} in cache: ${error instanceof Error ? error.message : String(error)}`);
-    }
-  }
-
-  /**
    * Update thread with query context
    * @param threadId Thread ID
    * @param contextData Context data to update
