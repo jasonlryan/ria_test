@@ -40,7 +40,7 @@ The RIA25 testing approach focuses on:
 
 **Testing Tools**:
 
-- Jest for unit testing
+- Vitest for unit testing
 - TypeScript for compile-time validation
 - Mock implementations of repository interfaces
 
@@ -89,7 +89,7 @@ describe("FileSystemRepository", () => {
 **Testing Tools**:
 
 - TypeScript compiler
-- Jest with ts-jest
+- Vitest
 - Type assertion utilities
 
 **Example Test**:
@@ -127,7 +127,7 @@ describe("TypeScript Type Safety", () => {
 
 **Testing Tools**:
 
-- Jest for automated testing
+- Vitest for automated testing
 - Mock KV implementation for controlled testing
 - Local Redis instance for development
 - Vercel KV in testing environment
@@ -195,7 +195,7 @@ describe("VercelKVCacheManager", () => {
 **Testing Tools**:
 
 - Custom TypeScript validation scripts
-- Jest for automated testing
+- Vitest for automated testing
 - Manual data verification
 
 ### 5. Vector Store Testing
@@ -344,7 +344,7 @@ describe("VercelKVCacheManager", () => {
 ### Phase 1: Unit Testing
 
 1. Interface and implementation testing
-2. Automated test execution with Jest
+2. Automated test execution with Vitest
 3. TypeScript type validation
 4. Bug identification and fixing
 5. Regression testing
@@ -634,7 +634,7 @@ npm run test:assistant -- --assistant=asst_your_assistant_id
 
 Test results include:
 
-1. **Jest Test Reports**: Detailed reports of all unit and integration tests
+1. **Vitest Test Reports**: Detailed reports of all unit and integration tests
 2. **TypeScript Compilation Results**: Verification of type safety
 3. **Performance Metrics**: Response times and operation latency
 4. **Assistant Responses**: Saved to CSV files for manual review
