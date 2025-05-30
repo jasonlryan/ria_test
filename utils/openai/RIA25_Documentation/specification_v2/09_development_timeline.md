@@ -100,7 +100,7 @@ The repository pattern migration was implemented in five distinct phases:
 
 #### Phase 0: Build Unblock & Quick Wins (May 6, 2025)
 
-- Fixed unterminated template literal in `dataRetrievalService.js`
+- Fixed unterminated template literal in `dataRetrievalService.ts`
 - Corrected query controller imports to use named `DataRetrievalService`
 - Fixed follow-up detection in thread metadata handling
 - Ensured unified compatibility mapping with proper caching
@@ -108,7 +108,7 @@ The repository pattern migration was implemented in five distinct phases:
 #### Phase 1: Force Repository Path & Hardening (May 6, 2025)
 
 - Set environment flags to force repository pattern usage
-- Updated `dataRetrievalService.js` to import from repository adapter
+- Updated `dataRetrievalService.ts` to import from repository adapter
 - Fixed controllers and services to import from adapter
 - Added TypeScript type definitions for improved type safety
 - Enhanced adapter output for backward compatibility

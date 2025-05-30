@@ -72,7 +72,7 @@ The repository pattern has been fully implemented with a gradual rollout strateg
 2. **Adapters**:
 
    - retrieval-adapter.ts: Compatible wrapper for utils/openai/retrieval.js
-   - service-adapter.ts: Compatible wrapper for dataRetrievalService.js
+   - service-adapter.ts: Compatible wrapper for dataRetrievalService.ts
 
 3. **Feature Flag System**:
 

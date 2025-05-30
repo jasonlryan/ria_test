@@ -44,7 +44,7 @@ For the latest details on the repository implementation, refer to the migration 
 
 ## Executive Summary
 
-This audit examines code duplication in the RIA25 data retrieval system, identified as Issue #3 in the Codebase Redundancy Analysis. The analysis reveals significant duplication between `utils/openai/retrieval.js` and `app/api/services/dataRetrievalService.js`, with overlapping functionality particularly in file identification, data loading, and query processing functions.
+This audit examines code duplication in the RIA25 data retrieval system, identified as Issue #3 in the Codebase Redundancy Analysis. The analysis revealed significant duplication between `utils/openai/retrieval.js` and the former `app/api/services/dataRetrievalService.js`, with overlapping functionality particularly in file identification, data loading, and query processing functions. The service has since been migrated to TypeScript (`dataRetrievalService.ts`).
 
 ## Duplication Findings
 
@@ -53,7 +53,7 @@ This audit examines code duplication in the RIA25 data retrieval system, identif
 | File Path                                   | Role                                      | Duplication Issues                           |
 | ------------------------------------------- | ----------------------------------------- | -------------------------------------------- |
 | `/utils/openai/retrieval.js`                | Primary utility for data identification   | Contains duplicated core logic               |
-| `/app/api/services/dataRetrievalService.js` | Service implementation for data retrieval | Reimplements functionality from retrieval.js |
+| `/app/api/services/dataRetrievalService.ts` | Service implementation for data retrieval | Reimplements functionality from retrieval.js |
 | `/utils/data/smart_filtering.js`            | Filtering data based on segments          | Contains standalone filtering logic          |
 | `/utils/data/types.js`                      | Type definitions for data structures      | Types duplicated across files                |
 
@@ -61,15 +61,15 @@ This audit examines code duplication in the RIA25 data retrieval system, identif
 
 | Function                                | Implementation Locations                  | Duplication Level | Notes                                                   |
 | --------------------------------------- | ----------------------------------------- | ----------------- | ------------------------------------------------------- |
-| `identifyRelevantFiles()`               | retrieval.js, dataRetrievalService.js     | High              | Nearly identical implementations with slight variations |
-| `retrieveDataFiles()`/`loadDataFiles()` | retrieval.js, dataRetrievalService.js     | High              | Same functionality, different naming                    |
-| `processQueryWithData()`                | retrieval.js, dataRetrievalService.js     | Medium            | Core logic shared, with service-specific additions      |
-| `assessCompatibility()`                 | compatibility.ts, dataRetrievalService.js | Low               | Similar implementation but partially consolidated       |
-| `filterDataBySegments()`                | dataRetrievalService.js                   | None              | Placeholder in service, not actually implemented        |
+| `identifyRelevantFiles()`               | retrieval.js, dataRetrievalService.ts     | High              | Nearly identical implementations with slight variations |
+| `retrieveDataFiles()`/`loadDataFiles()` | retrieval.js, dataRetrievalService.ts     | High              | Same functionality, different naming                    |
+| `processQueryWithData()`                | retrieval.js, dataRetrievalService.ts     | Medium            | Core logic shared, with service-specific additions      |
+| `assessCompatibility()`                 | compatibility.ts, dataRetrievalService.ts | Low               | Similar implementation but partially consolidated       |
+| `filterDataBySegments()`                | dataRetrievalService.ts                   | None              | Placeholder in service, not actually implemented        |
 
 ### Critical Finding: Non-Functional Filtering
 
-The `filterDataBySegments()` method in `dataRetrievalService.js` is currently a non-functional placeholder:
+The `filterDataBySegments()` method in `dataRetrievalService.ts` is currently a non-functional placeholder:
 
 ```javascript
 filterDataBySegments(loadedData, segments) {

@@ -174,7 +174,7 @@ The repository pattern implementation consolidates duplicated data retrieval fun
 - **Purpose**: Provide backward compatibility with existing code
 - **Key Adapters**:
   - `retrieval-adapter.ts`: Adapter for retrieval.js functionality
-  - `service-adapter.ts`: Adapter for dataRetrievalService.js
+  - `service-adapter.ts`: Adapter for dataRetrievalService.ts
 - **Features**:
   - Shadow mode for performance comparison
   - Thread-consistent traffic assignment
@@ -434,7 +434,7 @@ The repository pattern was implemented in a carefully planned, phased approach t
   - Initial unit tests
   - Project structure
 - **Technical Solutions**:
-  - Fixed unterminated template literal in dataRetrievalService.js
+  - Fixed unterminated template literal in dataRetrievalService.ts
   - Corrected duplicate export issues
   - Fixed queryController imports to use named DataRetrievalService
   - Implemented proper follow-up detection in thread metadata handling
@@ -455,7 +455,7 @@ The repository pattern was implemented in a carefully planned, phased approach t
   - Set environment flags permanently in repository adapter code:
     - USE_REPOSITORY_PATTERN=true
     - ENABLE_RETRIEVAL_ADAPTER=true
-  - Updated dataRetrievalService.js to import from repository adapter
+  - Updated dataRetrievalService.ts to import from repository adapter
   - Fixed controllers/services to import only from utils/data/repository/adapters/retrieval-adapter
   - Modified retrieval-adapter.ts to re-export needed functions
   - Fixed method signatures to match expected usage
@@ -499,7 +499,7 @@ The repository pattern was implemented in a carefully planned, phased approach t
 - **Technical Solutions**:
   - Removed conditional branches guarded by feature flags in:
     - retrieval-adapter.ts (removed USE_REPOSITORY_PATTERN and ENABLE_RETRIEVAL_ADAPTER conditionals)
-    - dataRetrievalService.js (removed legacy fallback paths)
+    - dataRetrievalService.ts (removed legacy fallback paths)
     - queryController.ts (consolidated logic path)
   - Updated repository-related imports to use explicit paths
   - Maintained single rollback flag in retrieval-adapter.ts for safety
