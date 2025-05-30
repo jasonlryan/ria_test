@@ -16,8 +16,36 @@ import { getComparablePairs, FileMetadata } from "../../../utils/compatibility/c
 import { detectComparisonQuery } from "../../../utils/data/repository/adapters/retrieval-adapter";
 import fs from "fs/promises"; // Use promises version of fs
 import path from "path";
+import { readFileSync } from "fs";
 
 const dataRetrievalService = new DataRetrievalService();
+
+// Path and cache for the assistant prompt template
+const assistantPromptPath = path.join(
+  process.cwd(),
+  "utils",
+  "openai",
+  "assistant_prompt.md"
+);
+let assistantPromptCache = "";
+
+// Load the assistant prompt at module initialization
+try {
+  assistantPromptCache = readFileSync(assistantPromptPath, "utf-8");
+  if (assistantPromptCache) {
+    logger.info("[PROMPT_CACHE_INIT] Loaded assistant_prompt.md template.");
+  } else {
+    logger.warn(
+      "[PROMPT_CACHE_INIT_EMPTY] assistant_prompt.md loaded but empty."
+    );
+  }
+} catch (error) {
+  logger.error(
+    "[PROMPT_CACHE_INIT_ERROR] Failed to load assistant_prompt.md:",
+    error
+  );
+  assistantPromptCache = "";
+}
 
 // Thread metadata interface
 interface ThreadMetadata {
@@ -29,11 +57,20 @@ interface ThreadMetadata {
 }
 
 // Helper function to load and render the assistant prompt template
-async function renderAssistantPrompt(userQuestion: string, dataResult: any): Promise<string> {
+export async function renderAssistantPrompt(
+  userQuestion: string,
+  dataResult: any
+): Promise<string> {
   try {
-    const promptPath = path.join(process.cwd(), "utils", "openai", "assistant_prompt.md");
-    let template = await fs.readFile(promptPath, "utf-8");
-    logger.info("[PROMPT_RENDER] Successfully loaded assistant_prompt.md template.");
+    let template = assistantPromptCache;
+    if (!template) {
+      // Fallback load if cache was empty or failed during init
+      template = await fs.readFile(assistantPromptPath, "utf-8");
+      assistantPromptCache = template;
+      logger.info("[PROMPT_RENDER_FALLBACK] Reloaded assistant_prompt.md template.");
+    } else {
+      logger.info("[PROMPT_RENDER] Using cached assistant_prompt.md template.");
+    }
 
     const segmentLabel = dataResult?.segments?.map((s: string) => s.charAt(0).toUpperCase() + s.slice(1)).join(", ") || "Overall";
     
