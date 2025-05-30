@@ -183,26 +183,3 @@ export function createThreadContext(
     isFollowUp,
   };
 }
-
-// For testing purposes - can be removed in production
-if (require.main === module) {
-  // Test with sample queries from logs
-  const queries = [
-    "how does this compare with 2024?",
-    "Query: how does this compare to 2024 data?\n\nAnalysis Summary: Incomparable data detected",
-    "Query: What factors related to job choice, staying with a company?\n\nAnalysis: LLM-driven file identification",
-    "what is the level of trust employees have in their direct managers?",
-    "\nQuery: What are the primary reasons employees may be resistant to returning to the office full-time?\n\nAnalysis Summary: LLM-driven file identification",
-    "\n\nQuery: How does this compare to 2024?\n\nAnalysis Summary: Incomparable data detected for year-on-year comparison"
-  ];
-  
-  // Log normalized results
-  queries.forEach(q => {
-    console.log(`Original: "${q.substring(0, 40)}..."`);
-    console.log(`Normalized: "${normalizeQueryText(q)}"\n`);
-  });
-  
-  // Run the test function if invoked directly with Node
-  console.log("Running tests for normalizeQueryText...");
-  console.log("All tests completed.");
-} 
