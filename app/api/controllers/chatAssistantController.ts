@@ -5,41 +5,15 @@
  * and constructs appropriate prompts for the LLM.
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import { NextRequest } from "next/server";
 import logger from "../../../utils/shared/logger";
-import { logPerformanceMetrics, logPerformanceToFile } from "../../../utils/shared/loggerHelpers";
 import { formatErrorResponse, formatBadRequestResponse } from "../../../utils/shared/errorHandler";
-import { sanitizeOutput, isJsonContent } from "../../../utils/shared/utils";
 import {
-  processQueryWithData,
-  identifyRelevantFiles,
-  getPrecompiledStarterData,
-  isStarterQuestion,
-  detectComparisonQuery,
-} from "../../../utils/data/repository/adapters/retrieval-adapter";
-import {
-  getCachedFilesForThread,
-  updateThreadWithFiles,
-  CachedFile,
   updateThreadWithContext,
   getThreadContext,
-  UnifiedCache
 } from "../../../utils/cache/cache-utils";
-import { buildPromptWithFilteredData } from "../../../utils/openai/promptUtils";
 import { unifiedOpenAIService } from "../services/unifiedOpenAIService";
-import { migrationMonitor } from "../../../utils/shared/monitoring";
 import { threadMetaKey } from "../../../utils/cache/key-schema";
-import kvClient from "../../../utils/cache/kvClient";
-import { normalizeQueryText, createThreadContext } from "../../../utils/shared/queryUtils";
-import {
-  loadCompatibilityMapping,
-  filterIncomparableFiles,
-  lookupFiles,
-  getComparablePairs
-} from "../../../utils/compatibility/compatibility";
-import { DataRetrievalService } from "../services/dataRetrievalService";
 // // TEMPORARILY COMMENTED - Will fix these imports in phase 4
 // // import { CompatibilityMetadata } from "../../../utils/compatibility/compatibilityTypes";
 // // import { SystemMessage, UserMessage, AssistantMessage } from "../../../utils/message/messageTypes";
@@ -48,132 +22,7 @@ import { DataRetrievalService } from "../services/dataRetrievalService";
 
 type CompatibilityMetadata = any; // temporary type definition
 
-// Temporary interface to handle type mismatches during the migration
-// This will be replaced with proper types in Phase 4
-interface ProcessedQueryResult {
-  out_of_scope?: boolean;
-  out_of_scope_message?: string;
-  stats?: any[];
-  segments?: string[];
-  conversation_state?: string;
-  filteredData?: {
-    stats?: any[];
-    filteredData?: any[];
-    summary?: string;
-  };
-  // Additional properties accessed in the file
-  dataScope?: {
-    fileIds?: Set<string>;
-  };
-  queryIntent?: any;
-  cacheStatus?: any;
-  processing_time_ms?: number;
-}
-
-const OPENAI_TIMEOUT_MS = 90000;
-const isDirectMode = process.env.FILE_ACCESS_MODE === "direct";
-const forceStandardMode = true;
 const { DEFAULT_SEGMENTS, CANONICAL_SEGMENTS } = require("../../../utils/cache/segment_keys");
-
-// This will be called when filtering tool output results
-function processResult(result: any): ProcessedQueryResult {
-  // Cast the result to our temporary interface
-  return result as ProcessedQueryResult;
-}
-
-// Modify handleResponseStream definition to accept new parameters
-async function handleResponseStream(
-  responseStreamFromOpenAI: any, 
-  sseController: ReadableStreamDefaultController,
-  conversationKeyForKV: string, // e.g., previous_response_id or new response_id for a new chat
-  existingThreadContext: any, // Context fetched from KV before OpenAI call
-  textEncoder: TextEncoder
-) {
-  logger.info(`[HANDLE_RESPONSE_STREAM_CAC] Entered for conversationKeyForKV: ${conversationKeyForKV}`);
-  let fullText = '';
-  let currentOpenAIResponseId: string | null = null;
-
-  // Attempt to get response ID from the initial stream object if available
-  if (responseStreamFromOpenAI?.id && typeof responseStreamFromOpenAI.id === 'string') {
-    currentOpenAIResponseId = responseStreamFromOpenAI.id;
-    logger.info(`[HANDLE_RESPONSE_STREAM_CAC] Initial OpenAI Response ID from stream object: ${currentOpenAIResponseId}`);
-    // Send responseId event early if we have it
-    sseController.enqueue(textEncoder.encode(`event: responseId\ndata: ${JSON.stringify({ id: currentOpenAIResponseId })}\n\n`));
-    // Update KV with this as the latest responseId for this conversation key
-    await updateThreadWithContext(conversationKeyForKV, { 
-      ...(existingThreadContext || {}), 
-      responseId: currentOpenAIResponseId 
-    });
-  }
-
-  try {
-    for await (const chunk of responseStreamFromOpenAI) {
-      // logger.info(`[HANDLE_RESPONSE_STREAM_CAC] Raw OpenAI chunk: ${JSON.stringify(chunk).substring(0,100)}`);
-      if (!currentOpenAIResponseId) {
-        const chunkId = chunk.id || chunk.response?.id;
-        if (chunkId && typeof chunkId === 'string') {
-          currentOpenAIResponseId = chunkId;
-          logger.info(`[HANDLE_RESPONSE_STREAM_CAC] Extracted OpenAI Response ID from chunk: ${currentOpenAIResponseId}`);
-          sseController.enqueue(textEncoder.encode(`event: responseId\ndata: ${JSON.stringify({ id: currentOpenAIResponseId })}\n\n`));
-          await updateThreadWithContext(conversationKeyForKV, { 
-            ...(existingThreadContext || {}), 
-            responseId: currentOpenAIResponseId 
-          });
-        }
-      }
-
-      let textChunk: string | undefined;
-      if (chunk.type === 'response.output_text.delta') {
-        textChunk = (chunk as any).delta || (chunk.data?.delta);
-      } else if (chunk.response?.output_text?.delta) {
-        textChunk = chunk.response.output_text.delta;
-      } // Add other legacy formats if necessary
-
-      if (textChunk !== undefined) {
-        fullText += textChunk;
-        sseController.enqueue(textEncoder.encode(`event: textDelta\ndata: ${JSON.stringify({ value: textChunk })}\n\n`));
-      }
-
-      if (chunk.finish_reason) {
-        logger.info(`[HANDLE_RESPONSE_STREAM_CAC] OpenAI stream finished. Reason: ${chunk.finish_reason}`);
-        // This is a good place to ensure the final messageDone is sent.
-        break; // Exit loop as OpenAI stream is done.
-      }
-    }
-    logger.info("[HANDLE_RESPONSE_STREAM_CAC] Iteration over OpenAI stream completed.");
-  } catch (error) {
-    logger.error("[HANDLE_RESPONSE_STREAM_CAC_ERROR] Error during OpenAI stream iteration:", error);
-    // Propagate the error so the main controller can send an SSE error event and close.
-    throw error;
-  }
-
-  // Always send messageDone after loop, using accumulated text
-  if (currentOpenAIResponseId) {
-    const finalContent = fullText.trim() || "No textual answer was generated.";
-    logger.info(`[HANDLE_RESPONSE_STREAM_CAC] Sending messageDone. Response ID: ${currentOpenAIResponseId}, Content length: ${finalContent.length}`);
-    sseController.enqueue(
-      textEncoder.encode(
-        `event: messageDone\ndata: ${JSON.stringify({
-          id: currentOpenAIResponseId,
-          threadId: conversationKeyForKV, // The original key used for this conversation context
-          role: "assistant",
-          content: finalContent,
-          createdAt: Date.now(),
-        })}\n\n`
-      )
-    );
-  } else {
-    logger.error("[HANDLE_RESPONSE_STREAM_CAC_ERROR] No OpenAI Response ID was extracted. Cannot send messageDone.");
-    // If no ID, we can't form a proper messageDone. The stream will still be closed by the main handler.
-    // Consider sending a generic error event if this state is reached.
-     sseController.enqueue(
-        textEncoder.encode(
-          `event: error\ndata: ${JSON.stringify({ message: "Critical error: Could not determine response ID from OpenAI." })}\n\n`
-        )
-      );
-  }
-  logger.info("[HANDLE_RESPONSE_STREAM_CAC] Exiting.");
-}
 
 // Helper to check for legacy thread_ IDs if still needed by unifiedOpenAIService logic
 function isLegacyOpenAIThreadId(id: string): boolean {
@@ -187,29 +36,6 @@ function isLegacyOpenAIThreadId(id: string): boolean {
  * @param previousQuery Previous user query
  * @returns True if this is likely a new topic
  */
-function isNewTopicQuery(currentQuery: string, previousQuery: string): boolean {
-  if (!previousQuery || previousQuery.trim().length === 0) {
-    return true;
-  }
-  
-  // Simple semantic similarity check - if queries share very few words, likely new topic
-  const currentWords = new Set(currentQuery.toLowerCase().split(/\s+/).filter(w => w.length > 3));
-  const previousWords = new Set(previousQuery.toLowerCase().split(/\s+/).filter(w => w.length > 3));
-  
-  // Count overlap
-  let overlap = 0;
-  for (const word of currentWords) {
-    if (previousWords.has(word)) {
-      overlap++;
-    }
-  }
-  
-  // If very low word overlap ratio, it's likely a new topic
-  const overlapRatio = overlap / Math.max(currentWords.size, 1);
-  logger.info(`[TOPIC_CHECK] Query overlap ratio: ${overlapRatio.toFixed(2)} (${overlap}/${currentWords.size} words)`);
-  
-  return overlapRatio < 0.15; // Threshold for new topic
-}
 
 export async function postHandler(request: NextRequest) {
   const startTime = Date.now();
