@@ -29,6 +29,9 @@ import CollapsibleContent from "../../../components/CollapsibleContent";
 // Add the new AssistantSelector component
 import { sendHeightToParent } from "../../../utils/shared/iframe/iframe-resizer";
 
+// Enable debug logging based on environment
+export const DEBUG_LOGS = process.env.NEXT_PUBLIC_DEBUG_LOGS !== undefined ? process.env.NEXT_PUBLIC_DEBUG_LOGS === "true" : process.env.NODE_ENV !== "production";
+
 // Define interface for MarkdownErrorBoundary props and state
 interface MarkdownErrorBoundaryProps {
   children: React.ReactNode;
@@ -169,7 +172,7 @@ function Embed(props) {
 
   const [loading, setLoading] = useState(false);
   // Debug: log parent loading state
-  console.log("Embed render, loading:", loading);
+  if (DEBUG_LOGS) console.log("Embed render, loading:", loading);
   // Message being streamed
   const [streamingMessage, setStreamingMessage] = useState(null);
   // Whole chat
@@ -239,7 +242,7 @@ function Embed(props) {
         // Save to localStorage
         if (typeof window !== "undefined") {
           localStorage.setItem("threadDataCache", JSON.stringify(updatedCache));
-          console.log(
+          if (DEBUG_LOGS) console.log(
             `💾 Cache updated for thread ${threadId}: ${allFileIds.length} files`
           );
         }
@@ -256,15 +259,15 @@ function Embed(props) {
   useEffect(() => {
     if (threadId) {
       localStorage.setItem("chatThreadId", threadId);
-      console.log("🧵 THREAD ID SAVED TO LOCALSTORAGE:", threadId);
+      if (DEBUG_LOGS) console.log("🧵 THREAD ID SAVED TO LOCALSTORAGE:", threadId);
     }
   }, [threadId]);
 
   // Log thread data on init
   useEffect(() => {
-    console.log("🧵 THREAD DATA CACHE INITIALIZED:", threadDataCache);
+    if (DEBUG_LOGS) console.log("🧵 THREAD DATA CACHE INITIALIZED:", threadDataCache);
     if (threadId) {
-      console.log(
+      if (DEBUG_LOGS) console.log(
         "🧵 CURRENT THREAD CACHED FILES:",
         getCachedFilesForThread(threadId)
       );
@@ -273,11 +276,11 @@ function Embed(props) {
 
   // Add version and params logging
   useEffect(() => {
-    console.log("=== EMBED PAGE DIAGNOSTICS ===");
-    console.log("Version: 2025");
-    console.log("Assistant ID:", assistantId);
-    console.log("Initial Render Time:", new Date().toISOString());
-    console.log("========================");
+    if (DEBUG_LOGS) console.log("=== EMBED PAGE DIAGNOSTICS ===");
+    if (DEBUG_LOGS) console.log("Version: 2025");
+    if (DEBUG_LOGS) console.log("Assistant ID:", assistantId);
+    if (DEBUG_LOGS) console.log("Initial Render Time:", new Date().toISOString());
+    if (DEBUG_LOGS) console.log("========================");
   }, [assistantId]);
 
   // Starter question code support: check for ?starterQuestion=CODE and trigger assistant
@@ -295,7 +298,7 @@ function Embed(props) {
 
     if (starterCode) {
       starterTriggeredRef.current = true;
-      console.log(
+      if (DEBUG_LOGS) console.log(
         "[STARTER EFFECT] Triggering sendPrompt with starterCode:",
         starterCode
       );
@@ -303,7 +306,7 @@ function Embed(props) {
       sendPrompt(threadId, starterCode);
     } else if (questionText) {
       starterTriggeredRef.current = true;
-      console.log(
+      if (DEBUG_LOGS) console.log(
         "[STARTER EFFECT] Triggering sendPrompt with questionText:",
         questionText
       );
@@ -328,7 +331,7 @@ function Embed(props) {
   const [isAtBottom, setIsAtBottom] = useState(true);
 
   useEffect(() => {
-    console.log(
+    if (DEBUG_LOGS) console.log(
       `[EFFECT_LOADING_CHANGED] loading is now: ${loading}, isSendingPrompt.current: ${isSendingPrompt.current}`
     );
   }, [loading]);
@@ -339,7 +342,7 @@ function Embed(props) {
       localStorage.removeItem("chatThreadId");
       localStorage.removeItem("chatLastResponseId");
       localStorage.removeItem("threadDataCache");
-      console.log(
+      if (DEBUG_LOGS) console.log(
         "[INITIAL_MOUNT_EFFECT] Cleared session IDs & cache from localStorage."
       );
     }
@@ -351,7 +354,7 @@ function Embed(props) {
   ) => {
     const localThreadId = clientThreadId_param || threadId;
     const currentCallId = ++sendPromptCallId.current;
-    console.log(
+    if (DEBUG_LOGS) console.log(
       `[SEND_PROMPT_ENTER] Call ID: ${currentCallId}, Query: "${(
         immediateQuestion ||
         prompt ||
@@ -366,7 +369,7 @@ function Embed(props) {
 
     // Primary guard: if the main loading state is true, block immediately.
     if (loading) {
-      console.warn(
+      if (DEBUG_LOGS) console.warn(
         `[SEND_PROMPT_BLOCKED_BY_LOADING_STATE] Call ID: ${currentCallId}. 'loading' is true. isSendingPrompt.current was: ${isSendingPrompt.current}`
       );
       return;
@@ -376,7 +379,7 @@ function Embed(props) {
     // If loading was false, isSendingPrompt.current should ideally also be false.
     // If it's true, it implies a mismatch or incomplete reset from a previous call for the ref specifically.
     if (isSendingPrompt.current) {
-      console.warn(
+      if (DEBUG_LOGS) console.warn(
         `[SEND_PROMPT_BLOCKED_BY_REF_MISMATCH] Call ID: ${currentCallId}. 'loading' was false, but 'isSendingPrompt.current' was true. Blocking and resetting ref.`
       );
       isSendingPrompt.current = false; // Reset it to prevent getting stuck if this state is ever reached.
@@ -393,11 +396,11 @@ function Embed(props) {
 
     const finalizeStream = (reason = "unknown") => {
       const localCallId_finalize = currentCallId; // Use currentCallId from sendPrompt's scope
-      console.log(
+      if (DEBUG_LOGS) console.log(
         `[FINALIZE_STREAM_ENTER] Call ID: ${localCallId_finalize}, Reason: ${reason}, streamFinalizedThisCall: ${streamFinalizedThisCall}, Comp loading state: ${loading}`
       );
       if (streamFinalizedThisCall) {
-        console.log(
+        if (DEBUG_LOGS) console.log(
           `[FINALIZE_STREAM_BAIL_ALREADY_FINALIZED] Call ID: ${localCallId_finalize}, Reason: ${reason}.`
         );
         if (
@@ -413,7 +416,7 @@ function Embed(props) {
       if (watchdogThisCall) {
         clearTimeout(watchdogThisCall);
         watchdogThisCall = null;
-        console.log(
+        if (DEBUG_LOGS) console.log(
           `[FINALIZE_STREAM_CLEARED_WATCHDOG] Call ID: ${localCallId_finalize} (Reason: ${reason})`
         );
       }
@@ -428,14 +431,14 @@ function Embed(props) {
           `[FINALIZE_STREAM_UNEXPECTED_LOADING_FALSE] Call ID: ${localCallId_finalize}, Reason: ${reason}. Loading was false! Proceeding.`
         );
       } else if (!loading && !isPreStreamErrorReason(reason)) {
-        console.warn(
+        if (DEBUG_LOGS) console.warn(
           `[FINALIZE_STREAM_WARN_BAIL_STALE] Call ID: ${localCallId_finalize}, Reason: ${reason}. Loading false. Bailing out.`
         );
         return;
       }
       try {
         const finalContent = accumulatedText.current.trim();
-        console.log(
+        if (DEBUG_LOGS) console.log(
           `[FINALIZE_STREAM_CONTENT] Call ID: ${localCallId_finalize}, Content (len ${
             finalContent.length
           }): "${finalContent.substring(0, 100)}..."`
@@ -444,7 +447,7 @@ function Embed(props) {
           const newMessageId = (messageId.current + 1).toString();
           setMessages((prevMessages) => {
             if (prevMessages.find((msg) => msg.id === newMessageId)) {
-              console.warn(
+              if (DEBUG_LOGS) console.warn(
                 `[FINALIZE_STREAM_DUPLICATE_GUARD] Call ID: ${localCallId_finalize}, Msg ID ${newMessageId} exists. Not adding.`
               );
               return prevMessages;
@@ -456,19 +459,19 @@ function Embed(props) {
               content: finalContent,
               createdAt: new Date(),
             };
-            console.log(
+            if (DEBUG_LOGS) console.log(
               `[FINALIZE_STREAM_SET_MESSAGES] Call ID: ${localCallId_finalize}, ADDING (Reason: ${reason}):`,
               JSON.parse(JSON.stringify(newMessage))
             );
             const updatedMessages = [...prevMessages, newMessage];
-            console.log(
+            if (DEBUG_LOGS) console.log(
               `[FINALIZE_STREAM_SET_MESSAGES] Call ID: ${localCallId_finalize}, New count: ${updatedMessages.length}. IDs:`,
               updatedMessages.map((m) => m.id)
             );
             return updatedMessages;
           });
         } else {
-          console.log(
+          if (DEBUG_LOGS) console.log(
             `[FINALIZE_STREAM_SET_MESSAGES] Call ID: ${localCallId_finalize}, No content for '${reason}'. Skipping.`
           );
         }
@@ -478,28 +481,28 @@ function Embed(props) {
           error
         );
       } finally {
-        console.log(
+        if (DEBUG_LOGS) console.log(
           `[FINALIZE_STREAM_FINALLY] Call ID: ${localCallId_finalize}, Resetting states (Reason: ${reason}). Current loading state before setLoading(false): ${loading}`
         );
         setLoading(false);
-        console.log(
+        if (DEBUG_LOGS) console.log(
           `[FINALIZE_STREAM_FINALLY] Call ID: ${localCallId_finalize}, Called setLoading(false). isSendingPrompt.current is about to be set.`
         );
         accumulatedText.current = "";
         if (animationFrameId.current) {
           cancelAnimationFrame(animationFrameId.current);
           animationFrameId.current = null;
-          console.log(
+          if (DEBUG_LOGS) console.log(
             `[FINALIZE_STREAM_CLEANUP] Call ID: ${localCallId_finalize}, Cancelled anim frame.`
           );
         }
         if (localCallId_finalize === sendPromptCallId.current) {
           isSendingPrompt.current = false;
-          console.log(
+          if (DEBUG_LOGS) console.log(
             `[FINALIZE_STREAM_FINALLY] Call ID: ${localCallId_finalize}, Reset isSendingPrompt to false.`
           );
         } else {
-          console.warn(
+          if (DEBUG_LOGS) console.warn(
             `[FINALIZE_STREAM_FINALLY_STALE_CALL] Call ID: ${localCallId_finalize} not current ${sendPromptCallId.current}. Not resetting isSendingPrompt.`
           );
         }
@@ -522,7 +525,7 @@ function Embed(props) {
     if (!questionText.trim()) {
       setLoading(false);
       isSendingPrompt.current = false;
-      console.log(
+      if (DEBUG_LOGS) console.log(
         `[SEND_PROMPT_EXIT_NO_TEXT] Call ID: ${currentCallId}, Reset isSendingPrompt.`
       );
       return;
@@ -537,7 +540,7 @@ function Embed(props) {
       createdAt: new Date(),
     };
     setMessages((prevMessages) => [...prevMessages, userMessage]);
-    console.log("[UI] Added user message:", userMessage);
+    if (DEBUG_LOGS) console.log("[UI] Added user message:", userMessage);
     setStreamingMessage({
       id: "processing",
       role: "assistant",
@@ -549,7 +552,7 @@ function Embed(props) {
     try {
       let dataResult;
       try {
-        console.log("[SEND_PROMPT_API_QUERY] Preparing to call /api/query.");
+        if (DEBUG_LOGS) console.log("[SEND_PROMPT_API_QUERY] Preparing to call /api/query.");
         const cachedFiles = localThreadId
           ? getCachedFilesForThread(localThreadId)
           : { fileIds: [] };
@@ -564,17 +567,17 @@ function Embed(props) {
         if (lastResponseId) {
           queryApiBody.previous_response_id = lastResponseId;
           if (localThreadId) queryApiBody.threadId = localThreadId;
-          console.log(
+          if (DEBUG_LOGS) console.log(
             `[UI_TO_QUERY_API] Follow-up call to /api/query with prev_resp_id: ${lastResponseId}, threadId: ${localThreadId}`
           );
         } else {
-          console.log(
+          if (DEBUG_LOGS) console.log(
             "[UI_TO_QUERY_API] New chat call to /api/query. No prev_resp_id or threadId sent."
           );
           delete queryApiBody.threadId;
           delete queryApiBody.previous_response_id;
         }
-        console.log(
+        if (DEBUG_LOGS) console.log(
           "[SEND_PROMPT_API_QUERY] Body for /api/query:",
           JSON.stringify(queryApiBody)
         );
@@ -591,7 +594,7 @@ function Embed(props) {
         }
 
         dataResult = await dataRetrievalResponse.json();
-        console.log(
+        if (DEBUG_LOGS) console.log(
           "[UI] dataResult from /api/query (raw full object):",
           JSON.parse(JSON.stringify(dataResult))
         );
@@ -599,16 +602,16 @@ function Embed(props) {
           dataResult.finalAssistantPrompt &&
           typeof dataResult.finalAssistantPrompt === "string"
         ) {
-          console.log(
+          if (DEBUG_LOGS) console.log(
             "[UI] Received finalAssistantPrompt. Length:",
             dataResult.finalAssistantPrompt.length
           );
-          console.log(
+          if (DEBUG_LOGS) console.log(
             "[UI] finalAssistantPrompt (first 500 chars):",
             dataResult.finalAssistantPrompt.substring(0, 500)
           );
           if (dataResult.finalAssistantPrompt.length < 200) {
-            console.warn(
+            if (DEBUG_LOGS) console.warn(
               "[UI] WARNING: finalAssistantPrompt from backend is very short."
             );
           }
@@ -622,18 +625,18 @@ function Embed(props) {
           return;
         }
         if (dataResult.stats && Array.isArray(dataResult.stats)) {
-          console.log(
+          if (DEBUG_LOGS) console.log(
             `[UI] dataResult also contains .stats with ${dataResult.stats.length} items.`
           );
         }
         if (dataResult.files_used && Array.isArray(dataResult.files_used)) {
-          console.log(
+          if (DEBUG_LOGS) console.log(
             `[UI] dataResult.files_used contains: ${JSON.stringify(
               dataResult.files_used
             )}`
           );
         } else {
-          console.warn(
+          if (DEBUG_LOGS) console.warn(
             "[UI] dataResult.files_used is missing or not an array:",
             dataResult.files_used
           );
@@ -672,30 +675,30 @@ function Embed(props) {
       }));
 
       const assistantPrompt = dataResult.finalAssistantPrompt;
-      console.log(
+      if (DEBUG_LOGS) console.log(
         "[UI] Using assistantPrompt for /api/chat-assistant (first 500 chars):",
         assistantPrompt?.substring(0, 500)
       );
-      console.log("[UI] assistantPrompt FULL LENGTH:", assistantPrompt?.length);
+      if (DEBUG_LOGS) console.log("[UI] assistantPrompt FULL LENGTH:", assistantPrompt?.length);
 
       const assistantApiCallStart = Date.now();
       const controller = new AbortController();
       const assistantTimeoutId = setTimeout(() => {
-        console.warn("[SEND_PROMPT_TIMEOUT] Assistant API request timed out.");
+        if (DEBUG_LOGS) console.warn("[SEND_PROMPT_TIMEOUT] Assistant API request timed out.");
         controller.abort();
       }, OPENAI_ASSISTANT_TIMEOUT_MS);
 
       try {
         // VERIFY dataResult.files_used BEFORE assigning filesForChatAssistant
-        console.log(
+        if (DEBUG_LOGS) console.log(
           "[UI_PRE_FILES_FOR_CHAT_ASSISTANT] Verifying dataResult.files_used:",
           dataResult.files_used
         );
-        console.log(
+        if (DEBUG_LOGS) console.log(
           "[UI_PRE_FILES_FOR_CHAT_ASSISTANT] typeof dataResult.files_used:",
           typeof dataResult.files_used
         );
-        console.log(
+        if (DEBUG_LOGS) console.log(
           "[UI_PRE_FILES_FOR_CHAT_ASSISTANT] Array.isArray(dataResult.files_used):",
           Array.isArray(dataResult.files_used)
         );
@@ -705,7 +708,7 @@ function Embed(props) {
             ? dataResult.files_used
             : [];
 
-        console.log(
+        if (DEBUG_LOGS) console.log(
           "[UI_POST_FILES_FOR_CHAT_ASSISTANT] filesForChatAssistant assigned as:",
           JSON.parse(JSON.stringify(filesForChatAssistant))
         );
@@ -715,7 +718,7 @@ function Embed(props) {
           dataResult.stats &&
           dataResult.stats.length > 0
         ) {
-          console.warn(
+          if (DEBUG_LOGS) console.warn(
             "[UI_WARN_FILES_USED] dataResult.files_used was empty, but dataResult.stats was not. This might indicate an issue in /api/query response structure if files were indeed used for those stats."
           );
         }
@@ -728,12 +731,12 @@ function Embed(props) {
           files_used_for_this_prompt: filesForChatAssistant, // Use the verified/defaulted list
         };
 
-        console.log(
+        if (DEBUG_LOGS) console.log(
           "[UI_TO_CHAT_ASSISTANT_RAW_BODY_PRE_STRINGIFY] assistantApiBody object:",
           JSON.parse(JSON.stringify(assistantApiBody)) // Deep copy for reliable logging before stringify
         );
 
-        console.log(
+        if (DEBUG_LOGS) console.log(
           "[UI_TO_CHAT_ASSISTANT] Body for /api/chat-assistant (stringified preview):",
           JSON.stringify(assistantApiBody, (key, value) =>
             key === "content"
@@ -751,7 +754,7 @@ function Embed(props) {
           signal: controller.signal,
         });
         clearTimeout(assistantTimeoutId);
-        console.log(
+        if (DEBUG_LOGS) console.log(
           `[ASSISTANT_API_CALL_DURATION] ${
             Date.now() - assistantApiCallStart
           }ms`
@@ -765,14 +768,14 @@ function Embed(props) {
 
         const contentType = assistantResponse.headers.get("content-type");
         if (contentType?.includes("application/json")) {
-          console.log("[STREAM_HANDLER] Received JSON from assistant API.");
+          if (DEBUG_LOGS) console.log("[STREAM_HANDLER] Received JSON from assistant API.");
           const jsonData = await assistantResponse.json();
           accumulatedText.current =
             jsonData.message || "Received non-streamed JSON.";
           finalizeStream("jsonResponse");
           return;
         } else if (contentType?.includes("text/event-stream")) {
-          console.log(
+          if (DEBUG_LOGS) console.log(
             "[STREAM_HANDLER] Received text/event-stream. Processing."
           );
           if (!assistantResponse.body)
@@ -786,7 +789,7 @@ function Embed(props) {
           if (animationFrameId.current) {
             cancelAnimationFrame(animationFrameId.current);
             animationFrameId.current = null;
-            console.log(
+            if (DEBUG_LOGS) console.log(
               "[STREAM_HANDLER_CLEANUP] Cancelled pre-existing animation frame."
             );
           }
@@ -800,7 +803,7 @@ function Embed(props) {
           });
 
           if (watchdogThisCall) {
-            console.log(
+            if (DEBUG_LOGS) console.log(
               `[STREAM_HANDLER_PRE_WATCHDOG_CLEAR] Call ID: ${currentCallId}, Clearing existing watchdog ID: ${watchdogThisCall}`
             );
             clearTimeout(watchdogThisCall);
@@ -810,7 +813,7 @@ function Embed(props) {
             () => finalizeStream("watchdog_STREAM_HANDLER"),
             45000
           );
-          console.log(
+          if (DEBUG_LOGS) console.log(
             `[STREAM_HANDLER_WATCHDOG_SET] Call ID: ${currentCallId}, Watchdog SET: ID ${watchdogThisCall}`
           );
 
@@ -821,14 +824,14 @@ function Embed(props) {
                 const rawChunkForLogging = decoder.decode(value, {
                   stream: false,
                 });
-                console.log(
+                if (DEBUG_LOGS) console.log(
                   `[RAW_STREAM_CHUNK_IN_HANDLER] Decoded (len ${
                     rawChunkForLogging.length
                   }): "${rawChunkForLogging.substring(0, 100)}..."`
                 );
               }
               if (done) {
-                console.log(
+                if (DEBUG_LOGS) console.log(
                   `[STREAM_HANDLER_LOOP] Call ID: ${currentCallId}, Stream reported done: true.`
                 );
                 if (!streamFinalizedThisCall)
@@ -848,7 +851,7 @@ function Embed(props) {
                       animationFrameId.current = requestAnimationFrame(() => {
                         setStreamingMessage((prev) => {
                           if (!prev || prev.id !== "streaming_message_active") {
-                            console.warn(
+                            if (DEBUG_LOGS) console.warn(
                               `[RAF_SET_STREAMING_MSG] Call ID: ${currentCallId}, prev streamingMessage was null/unexpected. Re-initializing.`,
                               prev
                             );
@@ -879,7 +882,7 @@ function Embed(props) {
               while ((doneMatch = messageDoneRegex.exec(buffer)) !== null) {
                 try {
                   const eventData = JSON.parse(doneMatch[1]);
-                  console.log(
+                  if (DEBUG_LOGS) console.log(
                     `[STREAM_LOOP_EVENT] Call ID: ${currentCallId}, ✅ MessageDone:`,
                     eventData
                   );
@@ -927,7 +930,7 @@ function Embed(props) {
               if (lastCompleteEventIdx >= 0) {
                 buffer = buffer.substring(lastCompleteEventIdx + 2);
               } else if (buffer.length > 4096) {
-                console.warn(
+                if (DEBUG_LOGS) console.warn(
                   "[STREAM_BUFFER_TRIM] Buffer too large, trimming."
                 );
                 buffer = buffer.substring(buffer.length - 2048);
@@ -941,11 +944,11 @@ function Embed(props) {
             if (!streamFinalizedThisCall)
               finalizeStream("streamLoopError_STREAM_HANDLER");
           } finally {
-            console.log(
+            if (DEBUG_LOGS) console.log(
               `[STREAM_HANDLER_LOOP_FINALLY] Call ID: ${currentCallId}, Exited stream processing loop.`
             );
             if (!streamFinalizedThisCall && watchdogThisCall) {
-              console.warn(
+              if (DEBUG_LOGS) console.warn(
                 `[STREAM_HANDLER_LOOP_FINALLY_WARN] Call ID: ${currentCallId}, Clearing watchdog (ID: ${watchdogThisCall}), loop not finalized.`
               );
               clearTimeout(watchdogThisCall);
@@ -954,12 +957,12 @@ function Embed(props) {
             if (animationFrameId.current) {
               cancelAnimationFrame(animationFrameId.current);
               animationFrameId.current = null;
-              console.log(
+              if (DEBUG_LOGS) console.log(
                 "[STREAM_HANDLER_LOOP_FINALLY_CLEANUP] Cancelled animation frame."
               );
             }
             if (!streamFinalizedThisCall && loading) {
-              console.warn(
+              if (DEBUG_LOGS) console.warn(
                 `[STREAM_HANDLER_LOOP_FINALLY_WARN] Call ID: ${currentCallId}, Attempting EOF finalization post-loop.`
               );
               finalizeStream("loopFinallyEof_STREAM_HANDLER");
@@ -1073,7 +1076,7 @@ function Embed(props) {
 
   // Reset chat
   const refreshChat = () => {
-    console.log("Refreshing chat, clearing messages and thread ID");
+    if (DEBUG_LOGS) console.log("Refreshing chat, clearing messages and thread ID");
 
     // Reset messages to just the welcome message
     setMessages([
@@ -1113,7 +1116,7 @@ function Embed(props) {
     // Reset lastResponseId
     setLastResponseId(null);
 
-    console.log("Chat reset complete");
+    if (DEBUG_LOGS) console.log("Chat reset complete");
   };
 
   return (
