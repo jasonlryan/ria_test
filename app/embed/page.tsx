@@ -494,7 +494,9 @@ function Embed(props) {
             `[FINALIZE_STREAM_FINALLY_STALE_CALL] Call ID: ${localCallId_finalize} not current ${sendPromptCallId.current}. Not resetting isSendingPrompt.`
           );
         }
-        setTimeout(scrollToBottom, 0);
+        if (autoScrollRef.current) {
+          setTimeout(scrollToBottom, 0);
+        }
       }
     };
     const isPreStreamErrorReason = (reason: string) => {
@@ -518,6 +520,7 @@ function Embed(props) {
       );
       return;
     }
+    enableAutoScroll();
     track("Question", { question: questionText });
     if (!immediateQuestion) setPrompt("");
     messageId.current++;
@@ -528,6 +531,7 @@ function Embed(props) {
       createdAt: new Date(),
     };
     setMessages((prevMessages) => [...prevMessages, userMessage]);
+    if (autoScrollRef.current) scrollToBottom();
     console.log("[UI] Added user message:", userMessage);
     setStreamingMessage({
       id: "processing",
@@ -986,6 +990,15 @@ function Embed(props) {
   // Auto scroll to bottom of message list. Scroll as message is being streamed.
   const messageListRef = useRef<HTMLDivElement>(null);
   const lastMessageRef = useRef<HTMLDivElement>(null);
+  const autoScrollRef = useRef(true);
+
+  const enableAutoScroll = useCallback(() => {
+    autoScrollRef.current = true;
+  }, []);
+
+  const disableAutoScroll = useCallback(() => {
+    autoScrollRef.current = false;
+  }, []);
 
   // Scroll function that ONLY affects the chat messages panel
   const scrollToBottom = useCallback(() => {
@@ -1001,6 +1014,8 @@ function Embed(props) {
 
   // Auto-scroll when messages change or during streaming
   useEffect(() => {
+    if (!autoScrollRef.current) return;
+
     // Immediate scroll
     scrollToBottom();
 
@@ -1128,6 +1143,9 @@ function Embed(props) {
               <div
                 className="chat-messages flex-1"
                 ref={messageListRef}
+                onWheel={disableAutoScroll}
+                onTouchStart={disableAutoScroll}
+                onScroll={disableAutoScroll}
                 style={{
                   scrollBehavior: "smooth",
                   overflowY: "auto" /* ONLY THIS ELEMENT SCROLLS */,
