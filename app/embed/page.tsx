@@ -5,7 +5,7 @@ import { track } from "@vercel/analytics";
 
 // This ended up being a big refactor, but its much more up to date now, and has less guff.
 // Found this starting kit and used that as a reference: https://github.com/Superexpert/openai-assistant-starter-kit/tree/main
-// api/chat-assistant/route.ts is where we call the OpenAI API to get the response, there we can stream the response.
+// api/chat/route.ts is where we call the OpenAI API to get the response, there we can stream the response.
 
 // React
 import React, {
@@ -664,7 +664,7 @@ function Embed(props) {
 
       const assistantPrompt = dataResult.finalAssistantPrompt;
       console.log(
-        "[UI] Using assistantPrompt for /api/chat-assistant (first 500 chars):",
+        "[UI] Using assistantPrompt for /api/chat (first 500 chars):",
         assistantPrompt?.substring(0, 500)
       );
       console.log("[UI] assistantPrompt FULL LENGTH:", assistantPrompt?.length);
@@ -725,7 +725,7 @@ function Embed(props) {
         );
 
         console.log(
-          "[UI_TO_CHAT_ASSISTANT] Body for /api/chat-assistant (stringified preview):",
+          "[UI_TO_CHAT_ASSISTANT] Body for /api/chat (stringified preview):",
           JSON.stringify(assistantApiBody, (key, value) =>
             key === "content"
               ? `${String(value).substring(0, 100)}... (length ${
