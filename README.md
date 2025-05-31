@@ -150,3 +150,7 @@ For the assistant to work properly, ensure these files are present:
 ## Staging Deployment Timestamp
 
 Last deployed to staging: April 22, 2025
+
+// Test commit to trigger Vercel deployment - ignore this line.
+
+## About
