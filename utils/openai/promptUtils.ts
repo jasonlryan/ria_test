@@ -22,6 +22,8 @@ export interface PromptBuildingOptions {
   context?: {
     incomparableTopicMessages?: Record<string, string>;
     hasIncomparableTopics?: boolean;
+    /** Flag indicating this prompt is for a comparison query */
+    isComparisonQuery?: boolean;
   };
   /** Incomparable topic messages directly at root level */
   incomparableTopicMessages?: Record<string, string>;
@@ -291,9 +293,12 @@ export function buildPromptWithFilteredData(
 
   // Add specific incomparable topic messages if any topics were filtered out - do this FIRST
   if (
-    options.incomparableTopicMessages ||
-    (options.context && options.context.incomparableTopicMessages) ||
-    (options.context && options.context.hasIncomparableTopics)
+    (options.context?.isComparisonQuery !== false) &&
+    (
+      options.incomparableTopicMessages ||
+      (options.context && options.context.incomparableTopicMessages) ||
+      (options.context && options.context.hasIncomparableTopics)
+    )
   ) {
     const incomparableTopics =
       options.incomparableTopicMessages ||
@@ -323,7 +328,7 @@ export function buildPromptWithFilteredData(
   }
 
   // Add compatibility information if provided
-  if (options.compatibilityMetadata) {
+  if (options.compatibilityMetadata && options.context?.isComparisonQuery !== false) {
     const compatibilityVerbosity = options.compatibilityVerbosity || "standard";
     
     // If we have incomparable topics and this is a comparison query,
