@@ -12,6 +12,7 @@ import path from "path";
 import logger from "../../../utils/shared/logger";
 import { unifiedOpenAIService } from "../services/unifiedOpenAIService";
 import { isFeatureEnabled } from "../../../utils/shared/feature-flags";
+import { getTopicForFileId } from "../../../utils/data/topicMapping";
 
 export async function postHandler(request) {
   const startTime = Date.now();
@@ -48,12 +49,7 @@ export async function postHandler(request) {
           const fileContent = await fs.readFile(filePath, "utf8");
           const jsonData = JSON.parse(fileContent);
 
-          let topic = "Unknown";
-          if (file_id.includes("_1")) topic = "Attraction_Factors";
-          else if (file_id.includes("_2")) topic = "Retention_Factors";
-          else if (file_id.includes("_3")) topic = "Attrition_Factors";
-          else if (file_id.includes("_7")) topic = "Intention_to_Leave";
-          else if (file_id.includes("_12")) topic = "Work_Preferences";
+          const topic = getTopicForFileId(file_id);
 
           topics.add(topic);
           
