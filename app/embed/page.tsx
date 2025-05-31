@@ -991,30 +991,92 @@ function Embed(props) {
   const messageListRef = useRef<HTMLDivElement>(null);
   const lastMessageRef = useRef<HTMLDivElement>(null);
   const autoScrollRef = useRef(true);
+  const userScrolledUpRef = useRef(false); // Tracks if user has manually scrolled up
+  const autoScrollEnabledRef = useRef(true); // Controls whether auto-scroll is active
+  const [isAtBottom, setIsAtBottom] = useState(true); // Tracks if view is at the bottom
 
   const enableAutoScroll = useCallback(() => {
-    autoScrollRef.current = true;
+    autoScrollEnabledRef.current = true;
+    userScrolledUpRef.current = false; // Clear any previous user scroll state
+    console.log(
+      "[AutoScrollControl] ENABLED via enableAutoScroll (new query/starter). userScrolledUpRef=false"
+    );
   }, []);
 
   const disableAutoScroll = useCallback(() => {
-    autoScrollRef.current = false;
+    if (autoScrollEnabledRef.current) {
+      // Only act if it was enabled
+      autoScrollEnabledRef.current = false;
+      userScrolledUpRef.current = true; // User initiated this via wheel/touch
+      console.log(
+        "[AutoScrollControl] DISABLED via disableAutoScroll (wheel/touch). userScrolledUpRef=true"
+      );
+    }
   }, []);
 
   // Scroll function that ONLY affects the chat messages panel
   const scrollToBottom = useCallback(() => {
-    if (!messageListRef.current) return;
-
-    // Directly scroll the chat messages container ONLY
-    messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
-    console.log(
-      "Scrolling chat panel to:",
-      messageListRef.current.scrollHeight
-    );
+    if (autoScrollEnabledRef.current && messageListRef.current) {
+      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+    }
   }, []);
+
+  // Function to manually scroll to bottom and re-enable auto-scroll
+  const scrollToBottomManually = useCallback(() => {
+    if (messageListRef.current) {
+      autoScrollEnabledRef.current = true; // Re-enable auto-scroll
+      userScrolledUpRef.current = false; // Reset user scrolled up flag
+      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+      setIsAtBottom(true); // Explicitly set to at bottom
+      console.log(
+        "[AutoScrollControl] ENABLED via scrollToBottomManually (button). userScrolledUpRef=false"
+      );
+    }
+  }, []);
+
+  // Effect to check scroll position and manage isAtBottom state / userScrolledUpRef
+  useEffect(() => {
+    const container = messageListRef.current;
+    if (!container) return;
+
+    const checkScrollPosition = () => {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      const atBottom = scrollHeight - scrollTop - clientHeight < 10;
+
+      if (atBottom !== isAtBottom) {
+        setIsAtBottom(atBottom);
+      }
+
+      // If user manually scrolls back to bottom after having scrolled up
+      if (atBottom && userScrolledUpRef.current) {
+        userScrolledUpRef.current = false; // Clear the flag
+        if (!autoScrollEnabledRef.current) {
+          autoScrollEnabledRef.current = true; // Re-enable auto-scroll
+          console.log(
+            "[AutoScrollControl] ENABLED: User manually scrolled back to bottom. userScrolledUpRef=false"
+          );
+        }
+      }
+    };
+
+    container.addEventListener("scroll", checkScrollPosition);
+    // Initial check
+    checkScrollPosition();
+
+    return () => {
+      container.removeEventListener("scroll", checkScrollPosition);
+    };
+  }, [isAtBottom]);
 
   // Auto-scroll when messages change or during streaming
   useEffect(() => {
-    if (!autoScrollRef.current) return;
+    if (!autoScrollEnabledRef.current) {
+      console.log(
+        "[AutoScroll Effect] Skipped: autoScrollEnabledRef is false."
+      );
+      return;
+    }
+    console.log("[AutoScroll Effect] Running: autoScrollEnabledRef is true.");
 
     // Immediate scroll
     scrollToBottom();
@@ -1139,7 +1201,7 @@ function Embed(props) {
             style={{ maxHeight: "calc(100vh - 90px)" }}
           >
             {/* Chat Container - THE ONLY SCROLLABLE ELEMENT */}
-            <div className="chat-container flex-1 overflow-hidden flex flex-col bg-gray-50">
+            <div className="chat-container flex-1 overflow-hidden flex flex-col bg-gray-50 relative">
               <div
                 className="chat-messages flex-1"
                 ref={messageListRef}
@@ -1207,6 +1269,32 @@ function Embed(props) {
                   </div>
                 )}
               </div>
+
+              {/* Scroll to Bottom Button - MOVED HERE, and changed to absolute positioning */}
+              {!autoScrollEnabledRef.current && (
+                <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 pointer-events-none z-30">
+                  <button
+                    onClick={scrollToBottomManually}
+                    className="bg-primary hover:bg-primary-dark text-white rounded-full p-3 shadow-lg transition-all duration-300 ease-in-out pointer-events-auto focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 opacity-80"
+                    aria-label="Scroll to bottom"
+                    title="Scroll to bottom"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M12 5v14m7-7l-7 7-7-7" />
+                    </svg>
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Input Container - STICKY BOTTOM */}
@@ -1245,14 +1333,21 @@ function Embed(props) {
 
           {/* Collapsible Content Section */}
           <div className="w-full lg:w-auto lg:min-w-[300px] hidden md:block">
-            <CollapsibleContent
-              handleStarterQuestion={handleStarterQuestion}
-              loading={loading}
-            />
+            <div
+              style={{ maxHeight: "calc(100vh - 120px)", overflowY: "auto" }}
+            >
+              <CollapsibleContent
+                handleStarterQuestion={handleStarterQuestion}
+                loading={loading}
+              />
+            </div>
           </div>
 
           {/* Mobile version - this empty div ensures the fixed panel doesn't affect layout */}
-          <div className="block md:hidden">
+          <div
+            className="block md:hidden"
+            style={{ maxHeight: "40vh", overflowY: "auto" }}
+          >
             <CollapsibleContent
               handleStarterQuestion={handleStarterQuestion}
               loading={loading}
