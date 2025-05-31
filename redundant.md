@@ -1,6 +1,6 @@
 # RIA25 Responses API Migration - Redundancy Report
 
-**Last Updated:** Sun May 11 2025
+**Last Updated:** Sat May 31 09:25:57 UTC 2025
 
 ## 1. Overview
 
@@ -12,7 +12,7 @@ This document identifies redundant code after the migration from OpenAI's Assist
 - [x] Remove legacy Assistants API types, methods, and imports. (All RunStatus, Thread, Message, and related types/imports have been removed from the codebase.)
 - [x] Remove old controller logic for threads/runs. (All threadId, runId, threadContext, polling, and related logic have been removed from controllers.)
 - [x] Delete or archive redundant files as .bak (e.g., testOpenAIController.ts.bak, route.ts.bak, queryProcessing.ts.bak, legacy code in /utils/openai/). Files were archived as .bak instead of deleted for safety and rollback.
-- [x] Remove feature flags for API switching (USE_RESPONSES_API, UNIFIED_OPENAI_SERVICE, etc.); all code and config for these flags have been removed.
+- [ ] Feature flags for API switching remain in use (`USE_RESPONSES_API`, `UNIFIED_OPENAI_SERVICE`). They will be removed once the migration is fully complete.
 - [x] Update or remove legacy tests and migration scripts (all obsolete test files have been deleted or archived).
 - [x] Refactor cache/session logic to use only response/session IDs (key schema now uses responseId/sessionId; threadId-based keys are deprecated).
 - [ ] Update documentation to reflect the new architecture
@@ -73,3 +73,4 @@ The migration to the Responses API represents a significant simplification oppor
 ---
 
 _This document should be updated as the optimization progresses to track completed items and any new discoveries._
+_Last updated: Sat May 31 09:25:57 UTC 2025_
