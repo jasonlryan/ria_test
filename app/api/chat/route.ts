@@ -1,7 +1,7 @@
 /**
  * Chat Assistant API Route Handler
  * Manages HTTP requests for the chat assistant endpoint, handles CORS,
- * delegates to chatAssistantController, and formats responses.
+ * delegates to chatController, and formats responses.
  * Primary entry point for all assistant interactions.
  */
 
