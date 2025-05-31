@@ -27,7 +27,7 @@
     ],
     "target": "es2015",
     "downlevelIteration": true,
-    "types": ["node", "jest"]
+    "types": ["node"]
   },
   "include": [
     "next-env.d.ts",
