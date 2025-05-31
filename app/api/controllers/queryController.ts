@@ -71,6 +71,17 @@ async function renderAssistantPrompt(userQuestion: string, dataResult: any): Pro
   }
 }
 
+// Extract year references from a query string
+function extractYearsFromQuery(query: string): number[] {
+  const yearRegex = /(2024|2025)/g;
+  const years = new Set<number>();
+  let match;
+  while ((match = yearRegex.exec(query)) !== null) {
+    years.add(parseInt(match[1], 10));
+  }
+  return Array.from(years);
+}
+
 export async function postHandler(request) {
   const startTime = Date.now();
   try {
@@ -250,20 +261,12 @@ async function handleComparisonCompatibility(
   compatibilitySummary?: Record<string, { years: number[]; comparable: boolean; userMessage?: string }>;
 }> {
   try {
-    // Since detectComparisonQuery just returns a boolean in the current implementation,
-    // we need to manually extract the years from the query
+    // Determine if the query is seeking a year-on-year comparison
     const isComparison = detectComparisonQuery(query);
-    const years = [2024, 2025]; // Hard-code the years as we're specifically handling 2024 vs 2025 comparison
-    
-    if (!isComparison) {
-      // Not a comparison query, so no compatibility check needed
-      return { error: false };
-    }
+    const yearsMentioned = extractYearsFromQuery(query);
 
-    // Check if years mention both 2024 and 2025
-    if (!query.includes("2024") || !query.includes("2025")) {
-      // Non-explicit year comparison, continue with normal processing
-      logger.info(`[COMPATIBILITY] Detected non-explicit year comparison`);
+    if (!isComparison || yearsMentioned.length === 0) {
+      // Not enough context to perform compatibility checks
       return { error: false };
     }
 
