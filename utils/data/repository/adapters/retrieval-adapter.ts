@@ -13,7 +13,7 @@
  * Last Updated: Mon May 06 2025
  */
 
-import { FileRepository, QueryProcessor, QueryContext, FileIdentificationResult, DataFile } from '../interfaces';
+import { QueryProcessor, QueryContext, DataFile } from '../interfaces';
 import { FileSystemRepository, QueryProcessorImpl, PromptRepository } from '../implementations';
 import logger from '../../../shared/logger';
 import { QueryContext as QueryContextImpl } from '../implementations/QueryContext';
@@ -29,28 +29,9 @@ import {
   detectComparisonQuery
 } from '../../../../utils/openai/starterHelpers';
 
-/**
- * Feature flags and rollout configuration - FORCED to true for repository pattern
- */
-// Setting environment variables directly in code
-const USE_REPOSITORY_PATTERN = true; // Forced to true
-const TRAFFIC_PERCENTAGE = 100; // 100% traffic to repository
-const ENABLE_RETRIEVAL_ADAPTER = true; // Forced to true
-
-// Guard against recursive calls
+// Guard against recursive calls (legacy placeholder, retained for possible
+// future recursion protections)
 const CALL_STACK = new Set<string>();
-
-/**
- * Helper to determine if a request should use the repository implementation
- * based on feature flags and traffic percentage
- * 
- * @param threadId Thread ID for consistent user experience
- * @returns Boolean indicating whether to use repository implementation
- */
-function shouldUseRepositoryImplementation(threadId?: string): boolean {
-  // Always use repository implementation
-  return true;
-}
 
 /**
  * Create default repository instances if none provided
@@ -195,11 +176,7 @@ export async function identifyRelevantFiles(
   }
 }
 
-// Helper to determine if we should use the repository based on traffic percentage
-function determineIfShouldUseRepository() {
-  // Always use repository implementation
-  return true;
-}
+
 
 // Map options from old format to QueryContext
 function mapToQueryContext(query: string, options: any): QueryContext {
