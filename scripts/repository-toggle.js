@@ -8,7 +8,6 @@
  *   node scripts/repository-toggle.js [mode]
  *
  * Modes:
- *   - shadow: Shadow mode (logs both implementations, uses original)
  *   - test5: Test mode with 5% traffic
  *   - test10: Test mode with 10% traffic
  *   - test25: Test mode with 25% traffic
@@ -35,65 +34,50 @@ const currentEnv = fs.existsSync(ENV_FILE)
 
 // Available modes with their settings
 const modes = {
-  shadow: {
-    USE_REPOSITORY_PATTERN: "true",
-    REPOSITORY_SHADOW_MODE: "true",
-    REPOSITORY_TRAFFIC_PERCENTAGE: "0",
-    ENABLE_RETRIEVAL_ADAPTER: "true",
-    ENABLE_SERVICE_ADAPTER: "true",
-  },
   test5: {
     USE_REPOSITORY_PATTERN: "true",
-    REPOSITORY_SHADOW_MODE: "false",
     REPOSITORY_TRAFFIC_PERCENTAGE: "5",
     ENABLE_RETRIEVAL_ADAPTER: "true",
     ENABLE_SERVICE_ADAPTER: "true",
   },
   test10: {
     USE_REPOSITORY_PATTERN: "true",
-    REPOSITORY_SHADOW_MODE: "false",
     REPOSITORY_TRAFFIC_PERCENTAGE: "10",
     ENABLE_RETRIEVAL_ADAPTER: "true",
     ENABLE_SERVICE_ADAPTER: "true",
   },
   test25: {
     USE_REPOSITORY_PATTERN: "true",
-    REPOSITORY_SHADOW_MODE: "false",
     REPOSITORY_TRAFFIC_PERCENTAGE: "25",
     ENABLE_RETRIEVAL_ADAPTER: "true",
     ENABLE_SERVICE_ADAPTER: "true",
   },
   test50: {
     USE_REPOSITORY_PATTERN: "true",
-    REPOSITORY_SHADOW_MODE: "false",
     REPOSITORY_TRAFFIC_PERCENTAGE: "50",
     ENABLE_RETRIEVAL_ADAPTER: "true",
     ENABLE_SERVICE_ADAPTER: "true",
   },
   full: {
     USE_REPOSITORY_PATTERN: "true",
-    REPOSITORY_SHADOW_MODE: "false",
     REPOSITORY_TRAFFIC_PERCENTAGE: "100",
     ENABLE_RETRIEVAL_ADAPTER: "true",
     ENABLE_SERVICE_ADAPTER: "true",
   },
   off: {
     USE_REPOSITORY_PATTERN: "false",
-    REPOSITORY_SHADOW_MODE: "false",
     REPOSITORY_TRAFFIC_PERCENTAGE: "0",
     ENABLE_RETRIEVAL_ADAPTER: "false",
     ENABLE_SERVICE_ADAPTER: "false",
   },
   retrieval_only: {
     USE_REPOSITORY_PATTERN: "true",
-    REPOSITORY_SHADOW_MODE: "false",
     REPOSITORY_TRAFFIC_PERCENTAGE: "100",
     ENABLE_RETRIEVAL_ADAPTER: "true",
     ENABLE_SERVICE_ADAPTER: "false",
   },
   service_only: {
     USE_REPOSITORY_PATTERN: "true",
-    REPOSITORY_SHADOW_MODE: "false",
     REPOSITORY_TRAFFIC_PERCENTAGE: "100",
     ENABLE_RETRIEVAL_ADAPTER: "false",
     ENABLE_SERVICE_ADAPTER: "true",
@@ -131,9 +115,6 @@ function getCurrentMode() {
     return "off";
   }
 
-  if (currentEnv.REPOSITORY_SHADOW_MODE === "true") {
-    return "shadow";
-  }
 
   // Check for adapter-specific modes
   const retrievalEnabled = currentEnv.ENABLE_RETRIEVAL_ADAPTER === "true";
