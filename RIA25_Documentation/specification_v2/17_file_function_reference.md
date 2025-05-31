@@ -1,6 +1,6 @@
 # RIA25 File and Function Reference
 
-**Last Updated:** Tue May 13 11:30:22 BST 2025
+**Last Updated:** Sat May 31 2025
 
 > **Target Audience:** Developers, System Architects  
 > **Related Documents:**
@@ -65,7 +65,7 @@ This document provides a comprehensive mapping of all major files and functions 
 
 ### Controllers
 
-- `app/api/controllers/chatAssistantController.ts`
+- `app/api/controllers/chatController.ts`
 
   - `postHandler(request)`: Handles chat assistant POST requests
   - `putHandler(request)`: Handles chat assistant PUT requests
@@ -508,4 +508,4 @@ This document provides a comprehensive mapping of all major files and functions 
 
 ---
 
-_Last updated: Tue May 13 11:30:22 BST 2025_
+_Last updated: Sat May 31 2025_

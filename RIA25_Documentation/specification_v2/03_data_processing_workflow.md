@@ -1,6 +1,6 @@
 # RIA25 Data Processing Workflow
 
-**Last Updated:** Tue May 6 11:16:22 BST 2025
+**Last Updated:** Sat May 31 2025
 
 > **Target Audience:** Developers, System Architects, Technical Stakeholders  
 > **Related Documents:**
@@ -174,7 +174,7 @@ Client → API Routes → Controllers → Services → Repository Pattern → Da
    - Orchestrate business logic
    - Delegate to appropriate services
    - Follow standardized controller pattern
-   - Example: `app/api/controllers/chatAssistantController.ts`
+   - Example: `app/api/controllers/chatController.ts`
 
 3. **Services**
 
@@ -302,7 +302,7 @@ User Query → API Route → Controller → Service → Repository Pattern (Quer
 
    - User submits a query through the client interface
    - Request is routed to appropriate API endpoint (e.g., `app/api/chat-assistant/route.ts`)
-   - API route delegates to controller (e.g., `chatAssistantController.ts`)
+   - API route delegates to controller (e.g., `chatController.ts`)
 
 2. **Controller Orchestration**
 
@@ -656,4 +656,4 @@ The repository pattern implementation has delivered significant improvements:
 
 ---
 
-_Last updated: Tue May 6 11:16:22 BST 2025_
+_Last updated: Sat May 31 2025_
