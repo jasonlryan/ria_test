@@ -574,33 +574,21 @@ export function getComparablePairs(files: FileMetadata[]): ComparablePairsResult
     Object.entries(topicGroups).forEach(([topicId, topicFiles]) => {
       // Get all distinct years for this topic
       const years = new Set(topicFiles.map(file => file.year));
-      
-      // Check if topic has both 2024 and 2025 data
+
       if (years.has(2024) && years.has(2025)) {
-        // Get files from each year
-        const files2024 = topicFiles.filter(file => file.year === 2024);
-        const files2025 = topicFiles.filter(file => file.year === 2025);
-        
-        // Check if any file is marked as non-comparable
-        const hasIncomparable = topicFiles.some(file => file.comparable === false);
-        
-        if (hasIncomparable) {
-          // Add all files from this topic to invalid list
-          files2024.concat(files2025).forEach(file => {
+        // Mixed year topic – evaluate each file individually
+        topicFiles.forEach(file => {
+          if (file.comparable) {
+            result.valid.push(file.fileId);
+          } else {
             result.invalid.push(file.fileId);
             if (file.userMessage) {
               userMessages.add(file.userMessage);
             }
-          });
-        } else {
-          // Add all files from this topic to valid list
-          files2024.concat(files2025).forEach(file => {
-            result.valid.push(file.fileId);
-          });
-        }
+          }
+        });
       } else {
         // Topic doesn't have files from both years, so add them all to valid
-        // (this is not a comparison between years)
         topicFiles.forEach(file => {
           result.valid.push(file.fileId);
         });
