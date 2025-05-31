@@ -11,7 +11,7 @@ import logger from "../../../utils/shared/logger";
 import { normalizeQueryText } from "../../../utils/shared/queryUtils";
 import { UnifiedCache } from "../../../utils/cache/cache-utils";
 import { threadMetaKey, TTL } from "../../../utils/cache/key-schema";
-import { getComparablePairs, FileMetadata, summarizeTopicFiles } from "../../../utils/compatibility/compatibility";
+import { getComparablePairs, FileMetadata, summarizeTopicFiles, getAvailableYears } from "../../../utils/compatibility/compatibility";
 // Import detectComparisonQuery from the adapter where it's re-exported
 import { detectComparisonQuery } from "../../../utils/data/repository/adapters/retrieval-adapter";
 import fs from "fs/promises"; // Use promises version of fs
@@ -71,9 +71,13 @@ async function renderAssistantPrompt(userQuestion: string, dataResult: any): Pro
   }
 }
 
-// Extract year references from a query string
-function extractYearsFromQuery(query: string): number[] {
-  const yearRegex = /(2024|2025)/g;
+// Extract year references from a query string based on available years
+function extractYearsFromQuery(query: string, validYears: number[]): number[] {
+  if (!validYears || validYears.length === 0) return [];
+
+  const pattern = validYears.join("|");
+  const yearRegex = new RegExp(`(${pattern})`, "g");
+
   const years = new Set<number>();
   let match;
   while ((match = yearRegex.exec(query)) !== null) {
@@ -263,7 +267,8 @@ async function handleComparisonCompatibility(
   try {
     // Determine if the query is seeking a year-on-year comparison
     const isComparison = detectComparisonQuery(query);
-    const yearsMentioned = extractYearsFromQuery(query);
+    const availableYears = getAvailableYears();
+    const yearsMentioned = extractYearsFromQuery(query, availableYears);
 
     if (!isComparison || yearsMentioned.length === 0) {
       // Not enough context to perform compatibility checks

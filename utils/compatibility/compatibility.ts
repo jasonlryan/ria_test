@@ -641,6 +641,29 @@ export function summarizeTopicFiles(files: FileMetadata[]): Record<string, { yea
 }
 
 /**
+ * Get all distinct years present in the compatibility mapping
+ * @returns Sorted array of years
+ */
+export function getAvailableYears(): number[] {
+  try {
+    const mapping = loadCompatibilityMapping();
+    const years = new Set<number>();
+
+    Object.keys(mapping.files).forEach((fileId) => {
+      const match = fileId.match(/^(\d{4})/);
+      if (match) {
+        years.add(parseInt(match[1], 10));
+      }
+    });
+
+    return Array.from(years).sort();
+  } catch (error) {
+    logger.error(`Error getting available years: ${(error as Error).message}`);
+    return [];
+  }
+}
+
+/**
  * Extract year from file ID
  * @param fileId File ID to extract year from
  * @returns Extracted year or default (2025)
@@ -676,7 +699,8 @@ export default {
   getFileIncomparabilityReason,
   lookupFiles,
   getComparablePairs,
-  summarizeTopicFiles
+  summarizeTopicFiles,
+  getAvailableYears
 };
 
 // Last updated: Sat May 31 12:26:45 UTC 2025
