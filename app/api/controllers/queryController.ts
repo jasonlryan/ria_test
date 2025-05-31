@@ -220,7 +220,7 @@ export async function postHandler(request) {
       currentContextId: threadId,
     };
 
-    logger.info(`[QUERY_CTRL_NO_KV_UPDATE] Deferring KV update to chatAssistantController.`);
+    logger.info(`[QUERY_CTRL_NO_KV_UPDATE] Deferring KV update to chatController.`);
 
     const processingTime = Date.now() - startTime;
     logger.info(`[QUERY_CTRL_END] Query processed in ${processingTime}ms. Returning data with rendered prompt.`);
