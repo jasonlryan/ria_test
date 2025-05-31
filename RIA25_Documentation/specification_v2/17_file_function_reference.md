@@ -141,7 +141,7 @@ This document provides a comprehensive mapping of all major files and functions 
 - `app/api/services/dataRetrievalService.ts`
   - `processQueryWithData(query, context, cachedFileIds, threadId, isFollowUp, previousQuery, previousResponse)`: Orchestrates data processing
   - `getPrecompiledStarterData(code)`: Retrieves starter question data
-  - `isStarterQuestion(prompt)`: Detects starter question codes
+  - `isStarterQuestion(query)`: Detects starter question codes or general starter queries
   - `getCachedFiles(threadId)`: Gets cached files using the CacheRepository
   - `updateThreadCache(threadId, fileIds)`: Updates cached files using the CacheRepository
 - `app/api/services/queryService.ts`

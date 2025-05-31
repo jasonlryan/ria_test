@@ -85,23 +85,49 @@ export function normalizeQuery(query: string): string {
  */
 export function isStarterQuestion(query: string): boolean {
   if (!query) return false;
-  
+
   const normalizedQuery = query.toLowerCase().trim();
-  
-  // Short queries likely to be starters
-  if (normalizedQuery.length < 15) return true;
-  
-  // Common starter patterns
+
+  // Check for starter question codes like "SQ1"
+  if (/^sq\d+$/i.test(normalizedQuery)) {
+    return true;
+  }
+
+  // Short queries are generally introductory
+  if (normalizedQuery.length < 15) {
+    return true;
+  }
+
   const starterPatterns = [
     /^(hi|hello|hey)/i,
     /^what can you/i,
     /^tell me about/i,
     /^help me/i,
     /^what do you know/i,
-    /^what can i ask/i
+    /^what can i ask/i,
+    /\bwhat are\b.*\bkey\b|\bimportant\b|\bmain\b.*\b(points|topics|facts|insights|findings)\b/i,
+    /\bwhat is\b.*\boverview\b/i,
+    /\bgive me an overview\b/i,
+    /\bsummarize\b/i,
+    /\bsummary\b/i,
+    /\bhighlights\b/i,
+    /\bwhat should i know\b/i,
+    /\bwhat do i need to know\b/i,
+    /\btell me more\b/i,
+    /\bintroduction\b/i,
+    /\bintroduce me\b/i,
+    /\bexplain\b/i,
+    /\bwhat are\b/i,
+    /\bhow would you describe\b/i,
+    /\bprovide context\b/i
   ];
-  
-  return starterPatterns.some(pattern => pattern.test(normalizedQuery));
+
+  if (starterPatterns.some((pattern) => pattern.test(normalizedQuery))) {
+    return true;
+  }
+
+  const wordCount = normalizedQuery.split(/\s+/).filter(Boolean).length;
+  return wordCount < 5;
 }
 
 /**
