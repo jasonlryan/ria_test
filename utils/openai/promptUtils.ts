@@ -3,7 +3,7 @@
  * 
  * @file promptUtils.ts
  * @description Formats filtered data and compatibility metadata into structured prompts.
- * @last_updated Mon May 5 2025
+ * @last_updated Sat May 31 12:26:45 UTC 2025
  */
 
 import logger from "../shared/logger";
@@ -529,6 +529,18 @@ function formatStandardCompatibilityMessage(metadata: any): string {
 
     if (nonComparableTopics) {
       message += `⚠️ CRITICAL - DIRECT YEAR COMPARISON PROHIBITED FOR THESE TOPICS ⚠️\n${nonComparableTopics}\n\nWhen analyzing the above topics, you MUST NOT make direct comparisons between years. Present data for each year separately if requested, but explicitly state the comparison limitation.\n\n`;
+    }
+
+    // Topics that only have data for a single year
+    const singleYearTopics = Object.entries(
+      metadata.topicCompatibility || {}
+    )
+      .filter(([_, info]: [string, any]) => info.availableYears.length === 1)
+      .map(([topic, info]: [string, any]) => `- ${topic}: only ${info.availableYears[0]} data available. ${info.userMessage || ''}`)
+      .join("\n");
+
+    if (singleYearTopics) {
+      message += `Topics with data for one year only:\n${singleYearTopics}\n`;
     }
 
     // Add non-comparable segments
