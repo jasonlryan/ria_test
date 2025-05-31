@@ -12,7 +12,6 @@ This directory contains cross-cutting utility functions and modules used across 
 - `helpers.tsx` - General helper utilities for response parsing and timing operations
 - `logger.js` - Logging utilities
 - `loggerHelpers.js` - Helper functions for logging
-- `monitoring.ts` - Migration monitoring system
 - `polling.js` and `polling-manager.ts` - Utilities for data polling
 - `rollback.ts` - Rollback management for migrations
 - `utils.js` - General utility functions
@@ -53,4 +52,4 @@ All moved files maintain adapter files in their original locations to ensure bac
 - `/utils/compatibility/` - For data compatibility checking
 - `/utils/data/` - For data processing utilities
 
-_Last updated: Mon Apr 28 13:58:38 BST 2025_
+_Last updated: Sat May 31 11:29:40 UTC 2025_

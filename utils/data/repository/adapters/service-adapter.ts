@@ -17,7 +17,6 @@ import { FileRepository, QueryProcessor, QueryContext, SegmentTrackingData } fro
 import { FileSystemRepository, QueryProcessorImpl, PromptRepository } from '../implementations';
 import { ThreadCacheManager } from '../implementations/ThreadCacheManager';
 import logger from '../../../shared/logger';
-import { startTimer, endTimer, recordError } from '../monitoring';
 
 /**
  * Feature flags and rollout configuration
@@ -114,10 +113,7 @@ export async function identifyRelevantFiles(
   logger.info(`[ADAPTER] Service identifyRelevantFiles called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%, shadow: ${isShadowMode}`);
   
   // Always run original implementation in shadow mode or when feature flag is off
-  const originalTimer = startTimer('original', 'service.identifyRelevantFiles', { 
-    threadId: options.threadId,
-    queryLength: query.length
-  });
+  // Track original implementation performance
   
   let originalResult;
   try {
@@ -129,10 +125,8 @@ export async function identifyRelevantFiles(
       options.previousQuery,
       options.previousResponse
     );
-    endTimer(originalTimer, true, { filesProcessed: originalResult?.length || 0 });
+    // Original implementation succeeded
   } catch (error) {
-    endTimer(originalTimer, false);
-    recordError('original', 'service.identifyRelevantFiles');
     logger.error(`[ADAPTER] Error in original service.identifyRelevantFiles: ${error.message}`);
     throw error; // Re-throw if we're not using the repository as fallback
   }
@@ -143,10 +137,7 @@ export async function identifyRelevantFiles(
   }
   
   // Start timer for repository implementation
-  const repoTimer = startTimer('repository', 'service.identifyRelevantFiles', { 
-    threadId: options.threadId,
-    queryLength: query.length
-  });
+  // Use repository implementation
   
   try {
     // Create or use repository
@@ -169,8 +160,7 @@ export async function identifyRelevantFiles(
     };
     
     // Call repository method
-    const repoResult = await repository.getFilesByQuery(context);
-    endTimer(repoTimer, true, { filesProcessed: repoResult.relevantFiles.length || 0 });
+      const repoResult = await repository.getFilesByQuery(context);
     
     // In shadow mode, log comparison but return original result
     if (isShadowMode) {
@@ -180,10 +170,8 @@ export async function identifyRelevantFiles(
     
     // Otherwise return repository result
     return repoResult.relevantFiles;
-  } catch (error) {
-    endTimer(repoTimer, false);
-    recordError('repository', 'service.identifyRelevantFiles');
-    logger.error(`[ADAPTER] Error in repository service.identifyRelevantFiles: ${error.message}`);
+    } catch (error) {
+      logger.error(`[ADAPTER] Error in repository service.identifyRelevantFiles: ${error.message}`);
     
     // Return original result on error
     return originalResult;
@@ -210,18 +198,11 @@ export async function loadDataFiles(
   logger.info(`[ADAPTER] Service loadDataFiles called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%, shadow: ${isShadowMode}`);
   
   // Always run original implementation in shadow mode or when feature flag is off
-  const originalTimer = startTimer('original', 'service.loadDataFiles', { 
-    queryLength: fileIds.length
-  });
-  
   let originalResult;
   try {
     const service = await getOriginalService();
     originalResult = await service.loadDataFiles(fileIds);
-    endTimer(originalTimer, true, { filesProcessed: fileIds.length });
   } catch (error) {
-    endTimer(originalTimer, false);
-    recordError('original', 'service.loadDataFiles');
     logger.error(`[ADAPTER] Error in original service.loadDataFiles: ${error.message}`);
     throw error; // Re-throw if we're not using the repository as fallback
   }
@@ -231,10 +212,7 @@ export async function loadDataFiles(
     return originalResult;
   }
   
-  // Start timer for repository implementation
-  const repoTimer = startTimer('repository', 'service.loadDataFiles', { 
-    queryLength: fileIds.length
-  });
+  // Run repository implementation
   
   try {
     // Create or use repository
@@ -243,8 +221,7 @@ export async function loadDataFiles(
       : getDefaultImplementations();
     
     // Call repository method
-    const repoResult = await repository.getFilesByIds(fileIds);
-    endTimer(repoTimer, true, { filesProcessed: fileIds.length });
+      const repoResult = await repository.getFilesByIds(fileIds);
     
     // In shadow mode, log comparison but return original result
     if (isShadowMode) {
@@ -254,10 +231,8 @@ export async function loadDataFiles(
     
     // Otherwise return repository result
     return repoResult;
-  } catch (error) {
-    endTimer(repoTimer, false);
-    recordError('repository', 'service.loadDataFiles');
-    logger.error(`[ADAPTER] Error in repository service.loadDataFiles: ${error.message}`);
+    } catch (error) {
+      logger.error(`[ADAPTER] Error in repository service.loadDataFiles: ${error.message}`);
     
     // Return original result on error
     return originalResult;
@@ -284,10 +259,7 @@ export async function processQueryWithData(
   logger.info(`[ADAPTER] Service processQueryWithData called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%, shadow: ${isShadowMode}`);
   
   // Always run original implementation in shadow mode or when feature flag is off
-  const originalTimer = startTimer('original', 'service.processQueryWithData', { 
-    threadId: options.threadId,
-    queryLength: query.length
-  });
+  // Track original implementation performance
   
   let originalResult;
   try {
@@ -301,10 +273,8 @@ export async function processQueryWithData(
       options.previousQuery,
       options.previousResponse
     );
-    endTimer(originalTimer, true);
+    // Original implementation succeeded
   } catch (error) {
-    endTimer(originalTimer, false);
-    recordError('original', 'service.processQueryWithData');
     logger.error(`[ADAPTER] Error in original service.processQueryWithData: ${error.message}`);
     throw error; // Re-throw if we're not using the repository as fallback
   }
@@ -314,12 +284,7 @@ export async function processQueryWithData(
     return originalResult;
   }
   
-  // Start timer for repository implementation
-  const repoTimer = startTimer('repository', 'service.processQueryWithData', { 
-    threadId: options.threadId,
-    queryLength: query.length,
-    hasSegments: options.segments ? true : false
-  });
+  // Run repository implementation
   
   try {
     // Create or use processor
@@ -352,10 +317,6 @@ export async function processQueryWithData(
     };
     
     const result = await processor.processQueryWithData(context, processingOptions);
-    endTimer(repoTimer, true, { 
-      filesProcessed: result.relevantFiles.length,
-      segmentsProcessed: context.segmentTracking.requestedSegments.length
-    });
     
     // In shadow mode, log comparison but return original result
     if (isShadowMode) {
@@ -374,8 +335,6 @@ export async function processQueryWithData(
       }
     };
   } catch (error) {
-    endTimer(repoTimer, false);
-    recordError('repository', 'service.processQueryWithData');
     logger.error(`[ADAPTER] Error in repository service.processQueryWithData: ${error.message}`);
     
     // Return original result on error
@@ -403,20 +362,15 @@ export async function cacheFilesForThread(
   logger.info(`[ADAPTER] Service cacheFilesForThread called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%, shadow: ${isShadowMode}`);
   
   // Always run original implementation in shadow mode or when feature flag is off
-  const originalTimer = startTimer('original', 'service.cacheFilesForThread', { 
-    threadId,
-    fileCount: fileIds.length
-  });
+  // Track original implementation performance
   
   let originalResult = false;
   try {
     const service = await getOriginalService();
     originalResult = await service.cacheFilesForThread(threadId, fileIds);
-    endTimer(originalTimer, true);
+      // Original implementation succeeded
   } catch (error) {
-    endTimer(originalTimer, false);
-    recordError('original', 'service.cacheFilesForThread');
-    logger.error(`[ADAPTER] Error in original service.cacheFilesForThread: ${error.message}`);
+      logger.error(`[ADAPTER] Error in original service.cacheFilesForThread: ${error.message}`);
     // Original implementation failed, don't rethrow as we'll try repository if enabled
   }
   
@@ -426,10 +380,7 @@ export async function cacheFilesForThread(
   }
   
   // Start timer for repository implementation
-  const repoTimer = startTimer('repository', 'service.cacheFilesForThread', { 
-    threadId,
-    fileCount: fileIds.length
-  });
+  // Run repository implementation
   
   try {
     // Create or use repository
@@ -443,7 +394,6 @@ export async function cacheFilesForThread(
     }
     
     const result = await cacheManager.setThreadFiles(threadId, fileIds);
-    endTimer(repoTimer, true, { filesProcessed: fileIds.length });
     
     // In shadow mode, log comparison but return original result
     if (isShadowMode) {
@@ -454,8 +404,6 @@ export async function cacheFilesForThread(
     // Otherwise return repository result
     return result;
   } catch (error) {
-    endTimer(repoTimer, false);
-    recordError('repository', 'service.cacheFilesForThread');
     logger.error(`[ADAPTER] Error in repository service.cacheFilesForThread: ${error.message}`);
     
     // Return original result on error
@@ -481,18 +429,14 @@ export async function getCachedFilesForThread(
   logger.info(`[ADAPTER] Service getCachedFilesForThread called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%, shadow: ${isShadowMode}`);
   
   // Always run original implementation in shadow mode or when feature flag is off
-  const originalTimer = startTimer('original', 'service.getCachedFilesForThread', { 
-    threadId
-  });
+  // Track original implementation performance
   
   let originalResult = [];
   try {
     const service = await getOriginalService();
     originalResult = await service.getCachedFilesForThread(threadId);
-    endTimer(originalTimer, true, { filesReturned: originalResult.length });
+    // Original implementation succeeded
   } catch (error) {
-    endTimer(originalTimer, false);
-    recordError('original', 'service.getCachedFilesForThread');
     logger.error(`[ADAPTER] Error in original service.getCachedFilesForThread: ${error.message}`);
     // Original implementation failed, don't rethrow as we'll try repository if enabled
   }
@@ -503,9 +447,7 @@ export async function getCachedFilesForThread(
   }
   
   // Start timer for repository implementation
-  const repoTimer = startTimer('repository', 'service.getCachedFilesForThread', { 
-    threadId
-  });
+  // Run repository implementation
   
   try {
     // Create or use repository
@@ -519,7 +461,6 @@ export async function getCachedFilesForThread(
     }
     
     const cachedFiles = await cacheManager.getThreadFiles(threadId);
-    endTimer(repoTimer, true, { filesReturned: cachedFiles.length });
     
     // In shadow mode, log comparison but return original result
     if (isShadowMode) {
@@ -530,8 +471,6 @@ export async function getCachedFilesForThread(
     // Otherwise return repository result
     return cachedFiles;
   } catch (error) {
-    endTimer(repoTimer, false);
-    recordError('repository', 'service.getCachedFilesForThread');
     logger.error(`[ADAPTER] Error in repository service.getCachedFilesForThread: ${error.message}`);
     
     // Return original result on error

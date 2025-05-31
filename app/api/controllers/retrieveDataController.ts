@@ -12,7 +12,6 @@ import path from "path";
 import logger from "../../../utils/shared/logger";
 import { unifiedOpenAIService } from "../services/unifiedOpenAIService";
 import { isFeatureEnabled } from "../../../utils/shared/feature-flags";
-import { migrationMonitor } from "../../../utils/shared/monitoring";
 
 export async function postHandler(request) {
   const startTime = Date.now();

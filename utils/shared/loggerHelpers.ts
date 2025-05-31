@@ -2,7 +2,7 @@
  * Logger Helper Utilities
  * Provides functions for performance metrics logging,
  * structured logging formats, and file-based logging.
- * Helps with monitoring and debugging application performance.
+ * Helps with debugging application performance.
  */
 
 import * as fs from 'fs';

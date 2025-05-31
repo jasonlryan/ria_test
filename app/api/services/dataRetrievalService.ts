@@ -27,7 +27,6 @@ import {
 // Updated import to use the TypeScript implementation
 import { SmartFilteringProcessor } from "../../../utils/data/repository/implementations/SmartFiltering";
 import { unifiedOpenAIService } from "./unifiedOpenAIService";
-import { migrationMonitor } from "../../../utils/shared/monitoring";
 import { FilterResult } from "../../../utils/data/repository/interfaces/FilterProcessor";
 import OpenAI from 'openai';
 
@@ -100,11 +99,6 @@ export class DataRetrievalService {
     } catch (error) {
       logger.error(
         `[DATA_RETRIEVAL] Error processing with unified service: ${error.message}`
-      );
-      migrationMonitor.trackError(
-        "unified",
-        "processWithUnifiedService",
-        error
       );
       throw error;
     }
