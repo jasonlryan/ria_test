@@ -11,7 +11,7 @@ import logger from "../../../utils/shared/logger";
 import { normalizeQueryText } from "../../../utils/shared/queryUtils";
 import { UnifiedCache } from "../../../utils/cache/cache-utils";
 import { threadMetaKey, TTL } from "../../../utils/cache/key-schema";
-import { getComparablePairs, FileMetadata } from "../../../utils/compatibility/compatibility";
+import { getComparablePairs, FileMetadata, summarizeTopicFiles } from "../../../utils/compatibility/compatibility";
 // Import detectComparisonQuery from the adapter where it's re-exported
 import { detectComparisonQuery } from "../../../utils/data/repository/adapters/retrieval-adapter";
 import fs from "fs/promises"; // Use promises version of fs
@@ -69,6 +69,17 @@ async function renderAssistantPrompt(userQuestion: string, dataResult: any): Pro
     logger.error("[PROMPT_RENDER_ERROR] Failed to load or render assistant_prompt.md:", error);
     return `User Question: ${userQuestion}\nData: ${JSON.stringify(dataResult?.stats?.slice(0,10) || dataResult?.raw_data || "Error: Prompt template rendering failed. No data available.")}`;
   }
+}
+
+// Extract year references from a query string
+function extractYearsFromQuery(query: string): number[] {
+  const yearRegex = /(2024|2025)/g;
+  const years = new Set<number>();
+  let match;
+  while ((match = yearRegex.exec(query)) !== null) {
+    years.add(parseInt(match[1], 10));
+  }
+  return Array.from(years);
 }
 
 export async function postHandler(request) {
@@ -243,26 +254,19 @@ async function handleComparisonCompatibility(
   query: string, 
   threadId: string,
   threadMetadata: ThreadMetadata | null
-): Promise<{ 
-  error: boolean; 
-  message?: string; 
+): Promise<{
+  error: boolean;
+  message?: string;
   fileIds?: string[];
+  compatibilitySummary?: Record<string, { years: number[]; comparable: boolean; userMessage?: string }>;
 }> {
   try {
-    // Since detectComparisonQuery just returns a boolean in the current implementation,
-    // we need to manually extract the years from the query
+    // Determine if the query is seeking a year-on-year comparison
     const isComparison = detectComparisonQuery(query);
-    const years = [2024, 2025]; // Hard-code the years as we're specifically handling 2024 vs 2025 comparison
-    
-    if (!isComparison) {
-      // Not a comparison query, so no compatibility check needed
-      return { error: false };
-    }
+    const yearsMentioned = extractYearsFromQuery(query);
 
-    // Check if years mention both 2024 and 2025
-    if (!query.includes("2024") || !query.includes("2025")) {
-      // Non-explicit year comparison, continue with normal processing
-      logger.info(`[COMPATIBILITY] Detected non-explicit year comparison`);
+    if (!isComparison || yearsMentioned.length === 0) {
+      // Not enough context to perform compatibility checks
       return { error: false };
     }
 
@@ -300,6 +304,7 @@ async function handleComparisonCompatibility(
     
     // Check if we have comparable pairs
     const { valid, invalid, message } = getComparablePairs(mergedFileMetadata);
+    const compatibilitySummary = summarizeTopicFiles(mergedFileMetadata);
 
     if (invalid.length > 0 && valid.length === 0) {
       // All requested files are incompatible
@@ -321,7 +326,8 @@ async function handleComparisonCompatibility(
     return {
       error: false,
       fileIds: valid,
-      message: invalid.length > 0 ? message : undefined
+      message: invalid.length > 0 ? message : undefined,
+      compatibilitySummary
     };
   } catch (error) {
     logger.error(`[COMPATIBILITY] Error handling comparison compatibility: ${error.message}`);
