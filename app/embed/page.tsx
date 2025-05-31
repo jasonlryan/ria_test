@@ -21,13 +21,13 @@ import { AssistantStream } from "openai/lib/AssistantStream";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 // Components
-import PromptInput from "../../../components/PromptInput";
+import PromptInput from "../../components/PromptInput";
 // Helpers
-import { parseResponse } from "../../../utils/shared/helpers";
-import chatConfig from "../../../config/chat.config.json";
-import CollapsibleContent from "../../../components/CollapsibleContent";
+import { parseResponse } from "../../utils/shared/helpers";
+import chatConfig from "../../config/chat.config.json";
+import CollapsibleContent from "../../components/CollapsibleContent";
 // Add the new AssistantSelector component
-import { sendHeightToParent } from "../../../utils/shared/iframe/iframe-resizer";
+import { sendHeightToParent } from "../../utils/shared/iframe/iframe-resizer";
 
 // Define interface for MarkdownErrorBoundary props and state
 interface MarkdownErrorBoundaryProps {
@@ -735,7 +735,7 @@ function Embed(props) {
           )
         );
 
-        const assistantResponse = await fetch("/api/chat-assistant", {
+        const assistantResponse = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(assistantApiBody),
