@@ -48,7 +48,7 @@
     "redirects": [
         {
             "source": "/",
-            "destination": "/embed/asst_D0BPAJjvg3UK6Lcb1lqIM1xS",
+            "destination": "/embed",
             "permanent": false
         }
     ],
@@ -58,7 +58,7 @@
         "iad1"
     ],
     "functions": {
-        "app/api/chat-assistant/route.ts": {
+        "app/api/chat/route.ts": {
             "memory": 1024,
             "maxDuration": 60
         },
