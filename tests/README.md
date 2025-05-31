@@ -18,8 +18,6 @@ tests/
 ├── manual_tests/      # Manual test scripts (not in automated test suite)
 │   ├── test_compatibility_pipeline.js # End-to-end compatibility tests
 │   └── README.md          # Test descriptions and status
-├── legacy/            # Deprecated test scripts kept for reference
-│   └── compatibility_smoke_test.js    # Legacy compatibility module tests
 ├── setup.ts           # Vitest setup configuration
 ├── index.js           # Main test runner for OpenAI Assistant tests
 ├── index-tests.js     # OpenAI Assistant test implementation

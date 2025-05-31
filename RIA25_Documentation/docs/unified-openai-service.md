@@ -1,6 +1,6 @@
 # Unified OpenAI Service Architecture
 
-**Last Updated:** Sat May 25 2025
+**Last Updated:** Sat May 31 09:51:54 UTC 2025
 
 ## Overview
 
@@ -12,8 +12,7 @@ This document explains the architecture of the unified OpenAI service implementa
 
 The implementation uses a **direct integration approach** rather than a separate adapter pattern as originally planned. This means:
 
-- The `unifiedOpenAIService.ts` file contains both legacy and Responses API implementations
-- Feature flags directly control which code path is executed within each method
+- The `unifiedOpenAIService.ts` file now contains the finalized Responses API implementation
 - No separate `responses-adapter.ts` file was created
 
 ### Rationale
@@ -98,11 +97,9 @@ The service implements timeout protection to prevent long-running operations:
 
 ## Feature Flag Strategy
 
-The service uses feature flags to control which implementation is used:
-
+The service uses feature flags to control certain options:
 - `USE_RESPONSES_API`: Master toggle for using the Responses API
 - `MODEL_FALLBACK`: Controls falling back to simpler models when needed
-- `FALLBACK_TO_LEGACY`: Controls whether to fall back to legacy implementation on errors
 
 Feature flags can be configured via environment variables or the feature flag service.
 
@@ -119,7 +116,6 @@ The service includes comprehensive monitoring:
 2. **Automatic Rollback**:
 
    - Automatic detection of issues
-   - Rollback to legacy implementation when needed
    - Team notification on critical issues
 
 3. **Logging**:
@@ -173,19 +169,15 @@ try {
 
 When adding new methods to the service:
 
-1. Implement both API paths (legacy and Responses API)
-2. Use feature flag to determine which path to use
-3. Add comprehensive error handling using `executeWithMonitoring`
-4. Add unit tests for both paths
-5. Export convenience functions for simple usage
-
-## Testing Strategy
-
+1. Implement the method using the Responses API
+2. Add comprehensive error handling using `executeWithMonitoring`
+3. Add unit tests
+4. Export convenience functions for simple usage
 The service is tested using the following approach:
 
 1. **Unit Tests**:
 
-   - Tests for each API path (legacy and Responses API)
+   - Tests for all service methods
    - Error simulation tests
    - Timeout and cancellation tests
 
@@ -231,4 +223,4 @@ The unified service implementation follows this timeline:
 5. Documentation ✅ (This Document)
 6. Production Rollout 🔄 (Planned)
 
-_Last updated: Sat May 25 2025_
+_Last updated: Sat May 31 09:51:54 UTC 2025_

@@ -4,15 +4,11 @@ globs:
 alwaysApply: false
 ---
 RIA25 Project Context
-This project is a Next.js application with an ongoing refactoring of the retrieval system.
+This project is a Next.js application. The retrieval system refactoring is complete.
 Architecture Standards
 Controller-Service pattern for API endpoints
 Vercel KV implementation with proper caching patterns
 Repository pattern being enforced for data access
-Current Refactoring (Retrieval System)
-Problem: 2024 data appearing when querying for 2025 data due to compatibility issues
-Root causes: Duplicated compatibility checks, race conditions with KV metadata, bypass of default filtering
-Six-phase refactoring plan in progress (Phase 0-5)
 Code Organization
 API routes: /app/api/{endpoint}/route.ts
 Controllers: /app/api/controllers/{name}Controller.ts
@@ -20,7 +16,4 @@ Services: /app/api/services/{name}Service.ts
 Repository pattern for data access
 KV client with local fallback in /lib/kvClient.ts
 Implementation Progress
-Refactoring document created (retrieval_system_refactoring.md)
 Migration log in utils/data/repository/migration-log.txt
-bin_refactor branch merged into bin
-Currently implementing Phase 0 fixes
