@@ -30,6 +30,7 @@ import {
 } from './SmartFiltering';
 import { QueryIntent, FilterResult } from '../interfaces/FilterProcessor';
 import logger from '../../../shared/logger';
+import { isStarterQuestion as detectStarterQuestion } from '../../../shared/queryUtils';
 
 /**
  * Implementation of the QueryProcessor interface
@@ -216,45 +217,7 @@ export default class QueryProcessorImpl implements QueryProcessor {
    * @returns Whether the query is a starter question
    */
   isStarterQuestion(query: string): boolean {
-    if (!query) return false;
-    
-    // Normalize the query
-    const normalizedQuery = query.toLowerCase().trim();
-    
-    // Starter question patterns
-    const starterPatterns = [
-      /\bwhat are\b.*\bkey\b|\bimportant\b|\bmain\b.*\b(points|topics|facts|insights|findings)\b/i,
-      /\bwhat is\b.*\boverview\b/i,
-      /\bgive me an overview\b/i,
-      /\bsummarize\b/i,
-      /\bsummary\b/i,
-      /\bhighlights\b/i,
-      /\bwhat should i know\b/i,
-      /\bwhat do i need to know\b/i,
-      /\btell me about\b/i,
-      /\btell me more\b/i,
-      /\bintroduction\b/i,
-      /\bintroduce me\b/i,
-      /\bexplain\b/i,
-      /\bwhat are\b/i,
-      /\bhow would you describe\b/i,
-      /\bprovide context\b/i,
-    ];
-    
-    // Check for starter patterns
-    for (const pattern of starterPatterns) {
-      if (pattern.test(normalizedQuery)) {
-        return true;
-      }
-    }
-    
-    // Short queries (less than 5 words) are often general questions
-    const wordCount = normalizedQuery.split(/\s+/).filter(Boolean).length;
-    if (wordCount < 5) {
-      return true;
-    }
-    
-    return false;
+    return detectStarterQuestion(query);
   }
 
   /**

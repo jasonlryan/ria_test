@@ -10,6 +10,7 @@
 import fs from 'fs';
 import path from 'path';
 import logger from '../shared/logger';
+import { isStarterQuestion } from '../shared/queryUtils';
 
 // Directory for precompiled starter data
 const PRECOMPILED_STARTERS_DIR = path.join(
@@ -80,17 +81,7 @@ export function getPrecompiledStarterData(code: string): any | null {
  * @param {string} prompt - The prompt or code to check
  * @returns {boolean} True if the prompt matches the starter question code pattern
  */
-export function isStarterQuestion(prompt: string): boolean {
-  if (!prompt || typeof prompt !== "string") {
-    return false;
-  }
-
-  const trimmed = prompt.trim();
-  // Simple regex to match SQ followed by one or more digits
-  const result = /^SQ\d+$/i.test(trimmed);
-  
-  return result;
-}
+export { isStarterQuestion };
 
 /**
  * Checks if a query is asking for a comparison between years
