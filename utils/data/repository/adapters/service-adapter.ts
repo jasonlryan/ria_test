@@ -22,7 +22,6 @@ import logger from '../../../shared/logger';
  * Feature flags and rollout configuration
  */
 const USE_REPOSITORY_PATTERN = process.env.USE_REPOSITORY_PATTERN === 'true';
-const SHADOW_MODE = process.env.REPOSITORY_SHADOW_MODE === 'true';
 const TRAFFIC_PERCENTAGE = parseInt(process.env.REPOSITORY_TRAFFIC_PERCENTAGE || '0', 10);
 const ENABLE_SERVICE_ADAPTER = process.env.ENABLE_SERVICE_ADAPTER === 'true';
 
@@ -108,11 +107,10 @@ export async function identifyRelevantFiles(
 ) {
   // Determine if this request should use repository implementation
   const useRepository = shouldUseRepositoryImplementation(options.threadId);
-  const isShadowMode = SHADOW_MODE && USE_REPOSITORY_PATTERN;
+
+  logger.info(`[ADAPTER] Service identifyRelevantFiles called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%`);
   
-  logger.info(`[ADAPTER] Service identifyRelevantFiles called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%, shadow: ${isShadowMode}`);
-  
-  // Always run original implementation in shadow mode or when feature flag is off
+  // Always run original implementation when feature flag is off
   // Track original implementation performance
   
   let originalResult;
@@ -131,8 +129,8 @@ export async function identifyRelevantFiles(
     throw error; // Re-throw if we're not using the repository as fallback
   }
   
-  // If not using repository implementation and not in shadow mode, return original result
-  if (!useRepository && !isShadowMode) {
+  // If not using repository implementation, return original result
+  if (!useRepository) {
     return originalResult;
   }
   
@@ -162,13 +160,7 @@ export async function identifyRelevantFiles(
     // Call repository method
       const repoResult = await repository.getFilesByQuery(context);
     
-    // In shadow mode, log comparison but return original result
-    if (isShadowMode) {
-      logger.info(`[SHADOW] service.identifyRelevantFiles comparison - original: ${originalResult.length} files, repository: ${repoResult.relevantFiles.length} files`);
-      return originalResult;
-    }
-    
-    // Otherwise return repository result
+    // Return repository result
     return repoResult.relevantFiles;
     } catch (error) {
       logger.error(`[ADAPTER] Error in repository service.identifyRelevantFiles: ${error.message}`);
@@ -193,11 +185,9 @@ export async function loadDataFiles(
 ) {
   // Determine if this request should use repository implementation
   const useRepository = shouldUseRepositoryImplementation();
-  const isShadowMode = SHADOW_MODE && USE_REPOSITORY_PATTERN;
+  logger.info(`[ADAPTER] Service loadDataFiles called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%`);
   
-  logger.info(`[ADAPTER] Service loadDataFiles called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%, shadow: ${isShadowMode}`);
-  
-  // Always run original implementation in shadow mode or when feature flag is off
+  // Always run original implementation when feature flag is off
   let originalResult;
   try {
     const service = await getOriginalService();
@@ -207,8 +197,8 @@ export async function loadDataFiles(
     throw error; // Re-throw if we're not using the repository as fallback
   }
   
-  // If not using repository implementation and not in shadow mode, return original result
-  if (!useRepository && !isShadowMode) {
+  // If not using repository implementation, return original result
+  if (!useRepository) {
     return originalResult;
   }
   
@@ -223,13 +213,7 @@ export async function loadDataFiles(
     // Call repository method
       const repoResult = await repository.getFilesByIds(fileIds);
     
-    // In shadow mode, log comparison but return original result
-    if (isShadowMode) {
-      logger.info(`[SHADOW] service.loadDataFiles comparison - original: ${originalResult.length} files, repository: ${repoResult.length} files`);
-      return originalResult;
-    }
-    
-    // Otherwise return repository result
+    // Return repository result
     return repoResult;
     } catch (error) {
       logger.error(`[ADAPTER] Error in repository service.loadDataFiles: ${error.message}`);
@@ -254,11 +238,10 @@ export async function processQueryWithData(
 ) {
   // Determine if this request should use repository implementation
   const useRepository = shouldUseRepositoryImplementation(options.threadId);
-  const isShadowMode = SHADOW_MODE && USE_REPOSITORY_PATTERN;
+
+  logger.info(`[ADAPTER] Service processQueryWithData called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%`);
   
-  logger.info(`[ADAPTER] Service processQueryWithData called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%, shadow: ${isShadowMode}`);
-  
-  // Always run original implementation in shadow mode or when feature flag is off
+  // Always run original implementation when feature flag is off
   // Track original implementation performance
   
   let originalResult;
@@ -279,8 +262,8 @@ export async function processQueryWithData(
     throw error; // Re-throw if we're not using the repository as fallback
   }
   
-  // If not using repository implementation and not in shadow mode, return original result
-  if (!useRepository && !isShadowMode) {
+  // If not using repository implementation, return original result
+  if (!useRepository) {
     return originalResult;
   }
   
@@ -318,13 +301,7 @@ export async function processQueryWithData(
     
     const result = await processor.processQueryWithData(context, processingOptions);
     
-    // In shadow mode, log comparison but return original result
-    if (isShadowMode) {
-      logger.info(`[SHADOW] service.processQueryWithData comparison - original: ${Object.keys(originalResult).length} properties, repository: ${Object.keys(result).length} properties`);
-      return originalResult;
-    }
-    
-    // Otherwise return repository result
+    // Return repository result
     return {
       ...result,
       // Add information about missing/available segments
@@ -357,11 +334,10 @@ export async function cacheFilesForThread(
 ) {
   // Determine if this request should use repository implementation
   const useRepository = shouldUseRepositoryImplementation(threadId);
-  const isShadowMode = SHADOW_MODE && USE_REPOSITORY_PATTERN;
+
+  logger.info(`[ADAPTER] Service cacheFilesForThread called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%`);
   
-  logger.info(`[ADAPTER] Service cacheFilesForThread called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%, shadow: ${isShadowMode}`);
-  
-  // Always run original implementation in shadow mode or when feature flag is off
+  // Always run original implementation when feature flag is off
   // Track original implementation performance
   
   let originalResult = false;
@@ -374,8 +350,8 @@ export async function cacheFilesForThread(
     // Original implementation failed, don't rethrow as we'll try repository if enabled
   }
   
-  // If not using repository implementation and not in shadow mode, return original result
-  if (!useRepository && !isShadowMode) {
+  // If not using repository implementation, return original result
+  if (!useRepository) {
     return originalResult;
   }
   
@@ -395,13 +371,7 @@ export async function cacheFilesForThread(
     
     const result = await cacheManager.setThreadFiles(threadId, fileIds);
     
-    // In shadow mode, log comparison but return original result
-    if (isShadowMode) {
-      logger.info(`[SHADOW] service.cacheFilesForThread comparison - original: ${originalResult}, repository: ${result}`);
-      return originalResult;
-    }
-    
-    // Otherwise return repository result
+    // Return repository result
     return result;
   } catch (error) {
     logger.error(`[ADAPTER] Error in repository service.cacheFilesForThread: ${error.message}`);
@@ -424,11 +394,10 @@ export async function getCachedFilesForThread(
 ) {
   // Determine if this request should use repository implementation
   const useRepository = shouldUseRepositoryImplementation(threadId);
-  const isShadowMode = SHADOW_MODE && USE_REPOSITORY_PATTERN;
+
+  logger.info(`[ADAPTER] Service getCachedFilesForThread called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%`);
   
-  logger.info(`[ADAPTER] Service getCachedFilesForThread called with feature flag: ${USE_REPOSITORY_PATTERN}, traffic: ${TRAFFIC_PERCENTAGE}%, shadow: ${isShadowMode}`);
-  
-  // Always run original implementation in shadow mode or when feature flag is off
+  // Always run original implementation when feature flag is off
   // Track original implementation performance
   
   let originalResult = [];
@@ -441,8 +410,8 @@ export async function getCachedFilesForThread(
     // Original implementation failed, don't rethrow as we'll try repository if enabled
   }
   
-  // If not using repository implementation and not in shadow mode, return original result
-  if (!useRepository && !isShadowMode) {
+  // If not using repository implementation, return original result
+  if (!useRepository) {
     return originalResult;
   }
   
@@ -462,13 +431,7 @@ export async function getCachedFilesForThread(
     
     const cachedFiles = await cacheManager.getThreadFiles(threadId);
     
-    // In shadow mode, log comparison but return original result
-    if (isShadowMode) {
-      logger.info(`[SHADOW] service.getCachedFilesForThread comparison - original: ${originalResult.length} files, repository: ${cachedFiles.length} files`);
-      return originalResult;
-    }
-    
-    // Otherwise return repository result
+    // Return repository result
     return cachedFiles;
   } catch (error) {
     logger.error(`[ADAPTER] Error in repository service.getCachedFilesForThread: ${error.message}`);

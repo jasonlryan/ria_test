@@ -25,7 +25,6 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "repo:status": "node scripts/repository-toggle.js",
-    "repo:shadow": "node scripts/repository-toggle.js shadow",
     "repo:test5": "node scripts/repository-toggle.js test5",
     "repo:test10": "node scripts/repository-toggle.js test10",
     "repo:test25": "node scripts/repository-toggle.js test25",

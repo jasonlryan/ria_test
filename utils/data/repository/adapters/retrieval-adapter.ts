@@ -34,7 +34,6 @@ import {
  */
 // Setting environment variables directly in code
 const USE_REPOSITORY_PATTERN = true; // Forced to true
-const SHADOW_MODE = false; // Disabled shadow mode
 const TRAFFIC_PERCENTAGE = 100; // 100% traffic to repository
 const ENABLE_RETRIEVAL_ADAPTER = true; // Forced to true
 

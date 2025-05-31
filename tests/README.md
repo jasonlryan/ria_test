@@ -1,6 +1,6 @@
 # Assistant Tests
 
-**Last Updated:** Tue May 6 2025
+**Last Updated:** Sat May 31 12:07:48 UTC 2025
 
 This directory contains test scripts for evaluating different aspects of the application.
 
@@ -75,7 +75,6 @@ The repository pattern has been fully implemented with a gradual rollout strateg
 3. **Feature Flag System**:
 
    - Environment variable: USE_REPOSITORY_PATTERN
-   - Shadow mode: REPOSITORY_SHADOW_MODE
    - Traffic percentage: REPOSITORY_TRAFFIC_PERCENTAGE
 
 4. **Monitoring System**:
@@ -89,7 +88,6 @@ The repository pattern implementation includes a toggle script for controlling t
 
 ```bash
 npm run repo:status      # Check current rollout status
-npm run repo:shadow      # Enable shadow mode (log both implementations)
 npm run repo:test5       # Test with 5% traffic
 npm run repo:test10      # Test with 10% traffic
 npm run repo:test25      # Test with 25% traffic
@@ -166,18 +164,16 @@ OpenAI tests use these environment variables from the root `.env` file:
 Repository pattern uses these environment variables:
 
 - `USE_REPOSITORY_PATTERN` - Main feature flag for repository pattern (true/false)
-- `REPOSITORY_SHADOW_MODE` - Enable shadow mode to run both implementations (true/false)
 - `REPOSITORY_TRAFFIC_PERCENTAGE` - Percentage of traffic to route through repository (0-100)
 
 ## Rollout Strategy
 
 The repository pattern implementation follows a phased rollout approach:
 
-1. **Shadow Mode**: Run both implementations, compare results, use original
-2. **Limited Testing**: Route small percentage of traffic (5-10%) through repository
-3. **Expanded Testing**: Increase traffic allocation (25-50%)
-4. **Full Implementation**: Switch all traffic to repository pattern implementation
-5. **Cleanup**: Remove original implementation code after stable period
+1. **Limited Testing**: Route small percentage of traffic (5-10%) through repository
+2. **Expanded Testing**: Increase traffic allocation (25-50%)
+3. **Full Implementation**: Switch all traffic to repository pattern implementation
+4. **Cleanup**: Remove original implementation code after stable period
 
 
-_Last updated: Sat May 31 11:29:40 UTC 2025_
+_Last updated: Sat May 31 12:07:48 UTC 2025_
