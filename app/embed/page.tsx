@@ -1145,7 +1145,6 @@ function Embed(props) {
                 ref={messageListRef}
                 onWheel={disableAutoScroll}
                 onTouchStart={disableAutoScroll}
-                onScroll={disableAutoScroll}
                 style={{
                   scrollBehavior: "smooth",
                   overflowY: "auto" /* ONLY THIS ELEMENT SCROLLS */,

@@ -184,7 +184,9 @@ export class SmartFilteringProcessor implements FilterProcessor {
     let segmentsToUse = segments.length > 0
       ? segments
           .map((d) => {
-            if (d.toLowerCase() === "country") return "region";
+            const lowerD = d.toLowerCase();
+            if (lowerD === "country") return "region";
+            if (lowerD === "marital_status") return "relationship_status";
             return d;
           })
           .filter((d) => CANONICAL_SEGMENTS.includes(d))
