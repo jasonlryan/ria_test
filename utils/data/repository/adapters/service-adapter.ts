@@ -14,7 +14,7 @@
  */
 
 import { FileRepository, QueryProcessor, QueryContext, SegmentTrackingData } from '../interfaces';
-import { FileSystemRepository, QueryProcessorImpl, PromptRepository } from '../implementations';
+import { QueryProcessorImpl, PromptRepository } from '../implementations';
 import { ThreadCacheManager } from '../implementations/ThreadCacheManager';
 import logger from '../../../shared/logger';
 
