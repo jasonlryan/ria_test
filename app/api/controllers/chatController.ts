@@ -71,7 +71,6 @@ interface ProcessedQueryResult {
 
 const OPENAI_TIMEOUT_MS = 90000;
 const isDirectMode = process.env.FILE_ACCESS_MODE === "direct";
-const forceStandardMode = true;
 const { DEFAULT_SEGMENTS, CANONICAL_SEGMENTS } = require("../../../utils/cache/segment_keys");
 
 // This will be called when filtering tool output results
@@ -186,29 +185,6 @@ function isLegacyOpenAIThreadId(id: string): boolean {
  * @param previousQuery Previous user query
  * @returns True if this is likely a new topic
  */
-function isNewTopicQuery(currentQuery: string, previousQuery: string): boolean {
-  if (!previousQuery || previousQuery.trim().length === 0) {
-    return true;
-  }
-  
-  // Simple semantic similarity check - if queries share very few words, likely new topic
-  const currentWords = new Set(currentQuery.toLowerCase().split(/\s+/).filter(w => w.length > 3));
-  const previousWords = new Set(previousQuery.toLowerCase().split(/\s+/).filter(w => w.length > 3));
-  
-  // Count overlap
-  let overlap = 0;
-  for (const word of currentWords) {
-    if (previousWords.has(word)) {
-      overlap++;
-    }
-  }
-  
-  // If very low word overlap ratio, it's likely a new topic
-  const overlapRatio = overlap / Math.max(currentWords.size, 1);
-  logger.info(`[TOPIC_CHECK] Query overlap ratio: ${overlapRatio.toFixed(2)} (${overlap}/${currentWords.size} words)`);
-  
-  return overlapRatio < 0.15; // Threshold for new topic
-}
 
 export async function postHandler(request: NextRequest) {
   const startTime = Date.now();
@@ -397,8 +373,3 @@ export async function postHandler(request: NextRequest) {
     return formatErrorResponse(error.message || "An unexpected error occurred.");
   }
 }
-
-// Ensure isLegacyThreadId helper is defined (it was at the end of the previous file snippet)
-// function isLegacyThreadId(id: string): boolean {
-//     return typeof id === 'string' && (id.startsWith('thread_') || !id.startsWith('resp_'));
-// }
