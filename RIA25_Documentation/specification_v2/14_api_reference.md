@@ -1,6 +1,6 @@
 # RIA25 API Reference Guide
 
-**Last Updated:** Tue May 6 10:09:42 BST 2025
+**Last Updated:** Sat May 31 2025
 
 > **Target Audience:** Developers, API Users  
 > **Related Documents:**
@@ -36,7 +36,7 @@ Client Request → API Routes → Controllers → Services → Repository Patter
    - Orchestrate business logic
    - Delegate to appropriate services
    - Follow standardized controller pattern
-   - Example: `app/api/controllers/chatAssistantController.ts`
+   - Example: `app/api/controllers/chatController.ts`
 
 3. **Services**
 
@@ -193,7 +193,7 @@ Authorization: Bearer YOUR_API_KEY
 
 **Purpose**: Process user queries using the OpenAI Assistant and provide responses with relevant data.
 
-**Controller**: `chatAssistantController.ts`
+**Controller**: `chatController.ts`
 
 **Services**:
 
@@ -257,7 +257,7 @@ async function queryChatAssistant(message: string, threadId?: string) {
 The chat assistant API uses the repository pattern for data retrieval:
 
 ```typescript
-// Simplified implementation in chatAssistantController.ts
+// Simplified implementation in chatController.ts
 export async function postHandler(request) {
   try {
     const { message, threadId } = await request.json();
@@ -997,4 +997,4 @@ https://your-domain.com/api/v2/chat-assistant
 
 ---
 
-_Last updated: Tue May 6 10:09:42 BST 2025_
+_Last updated: Sat May 31 2025_

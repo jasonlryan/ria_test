@@ -1,6 +1,6 @@
 # Thread and Data Cache Management
 
-**Last Updated:** Tue May 6 10:07:26 BST 2025
+**Last Updated:** Sat May 31 2025
 
 > **Target Audience:** Developers, System Architects  
 > **Related Documents:**
@@ -43,7 +43,7 @@ This document explains how the RIA25 system manages conversation threads and imp
 ### 2.2 Implementation Details
 
 ```typescript
-// Thread creation in app/api/controllers/chatAssistantController.ts
+// Thread creation in app/api/controllers/chatController.ts
 // Utilizing threadService
 const thread = await threadService.createThread();
 finalThreadId = thread.id;
@@ -769,4 +769,4 @@ The RIA25 thread and cache management system has been significantly enhanced thr
 
 ---
 
-_Last updated: Tue May 6 10:07:26 BST 2025_
+_Last updated: Sat May 31 2025_

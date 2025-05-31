@@ -1,6 +1,6 @@
 # System Architecture
 
-**Last Updated:** Tue May 6 09:50:45 BST 2025
+**Last Updated:** Sat May 31 2025
 
 > **Target Audience:** Developers, System Architects, Technical Stakeholders  
 > **Related Documents:**
@@ -99,7 +99,7 @@ The API layer follows a standardized controller-service architecture pattern:
 
 - **Purpose**: Orchestrate business logic and delegate to appropriate services
 - **Key Controllers**:
-  - `app/api/controllers/chatAssistantController.ts`: Handles chat assistant logic
+  - `app/api/controllers/chatController.ts`: Handles chat assistant logic
   - `app/api/controllers/queryController.ts`: Handles direct query processing
   - `app/api/controllers/retrieveDataController.ts`: Handles data file retrieval
   - Additional controllers for auxiliary functionalities
@@ -459,7 +459,7 @@ The repository pattern was implemented in a carefully planned, phased approach t
   - Fixed controllers/services to import only from utils/data/repository/adapters/retrieval-adapter
   - Modified retrieval-adapter.ts to re-export needed functions
   - Fixed method signatures to match expected usage
-  - Added temporary type definitions to chatAssistantController.ts
+  - Added temporary type definitions to chatController.ts
   - Removed legacy fall-back conditions in adapter
   - Created and ran behavioral tests to verify Phase 1 migration
 
@@ -1027,3 +1027,4 @@ To ensure proper knowledge transfer and maintenance capabilities, the following 
    - Shadow testing methodology
 
 This documentation ensures that the repository pattern implementation remains maintainable and extensible as the system continues to evolve.
+_Last updated: Sat May 31 2025_

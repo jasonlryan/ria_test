@@ -1,6 +1,6 @@
 # RIA25 Implementation Plan
 
-**Last Updated:** Tue May 6 11:18:51 BST 2025
+**Last Updated:** Sat May 31 2025
 
 > **Target Audience:** Developers, System Architects, Technical Stakeholders  
 > **Related Documents:**
@@ -142,7 +142,7 @@ This document outlines the implemented architecture, development workflow, and t
 3. Fix controllers/services to import only from utils/data/repository/adapters/retrieval-adapter
    - Modify retrieval-adapter.ts to re-export needed functions
    - Fix method signatures to match expected usage
-   - Add temporary type definitions to chatAssistantController.ts
+   - Add temporary type definitions to chatController.ts
 4. Remove legacy fall-back conditions in adapter
 5. Create and run tests to verify Phase 1 migration
 6. Add comprehensive null-checking and defensive coding practices
@@ -344,4 +344,4 @@ The v2 architecture has delivered significant performance improvements:
 
 ---
 
-_Last updated: Tue May 6 11:18:51 BST 2025_
+_Last updated: Sat May 31 2025_
