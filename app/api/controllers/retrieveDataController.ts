@@ -7,7 +7,7 @@
 
 import { NextResponse } from "next/server";
 import { formatBadRequestResponse, formatErrorResponse } from "../../../utils/shared/errorHandler";
-import fs from "fs";
+import fs from "fs/promises";
 import path from "path";
 import logger from "../../../utils/shared/logger";
 import { unifiedOpenAIService } from "../services/unifiedOpenAIService";
@@ -35,12 +35,17 @@ export async function postHandler(request) {
           const normalizedId = file_id.endsWith(".json") ? file_id : `${file_id}.json`;
           const filePath = path.join(dataDir, normalizedId);
 
-          if (!fs.existsSync(filePath)) {
-            logger.warn(`[RETRIEVE] File not found: ${filePath}`);
-            return { id: file_id, error: `File not found: ${filePath}` };
+          try {
+            await fs.stat(filePath);
+          } catch (err) {
+            if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
+              logger.warn(`[RETRIEVE] File not found: ${filePath}`);
+              return { id: file_id, error: `File not found: ${filePath}` };
+            }
+            throw err;
           }
 
-          const fileContent = fs.readFileSync(filePath, "utf8");
+          const fileContent = await fs.readFile(filePath, "utf8");
           const jsonData = JSON.parse(fileContent);
 
           let topic = "Unknown";

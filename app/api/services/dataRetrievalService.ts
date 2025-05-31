@@ -7,7 +7,7 @@
  * Last Updated: Sat June 1 2025
  */
 
-import fs from "fs";
+import fs from "fs/promises";
 import path from "path";
 import logger from "../../../utils/shared/logger";
 import { UnifiedCache } from "../../../utils/cache/cache-utils";
@@ -135,7 +135,7 @@ export class DataRetrievalService {
       fileIdentificationResult.segments || DEFAULT_SEGMENTS;
 
     // Assess compatibility for the identified topics and segments
-    const compatibilityMetadata = this.assessCompatibility(
+    const compatibilityMetadata = await this.assessCompatibility(
       relevantTopics,
       requestedSegments
     );
@@ -175,7 +175,7 @@ export class DataRetrievalService {
    * @param segments - Segment types to check for compatibility
    * @returns Compatibility metadata
    */
-  assessCompatibility(topics: string[], segments: string[]): CompatibilityMetadata {
+  async assessCompatibility(topics: string[], segments: string[]): Promise<CompatibilityMetadata> {
     try {
       const mappingPath = path.join(
         process.cwd(),
@@ -185,7 +185,7 @@ export class DataRetrievalService {
         "canonical_topic_mapping.json"
       );
 
-      const mappingData = fs.readFileSync(mappingPath, "utf8");
+      const mappingData = await fs.readFile(mappingPath, "utf8");
       const mapping = JSON.parse(mappingData);
       const mappingVersion = mapping.metadata?.version || "1.0";
 
@@ -339,11 +339,17 @@ export class DataRetrievalService {
       const filePath = path.join(dataDir, fileName);
 
       try {
-        if (!fs.existsSync(filePath)) {
-          logger.error(`File does not exist: ${filePath}`);
-          continue;
+        try {
+          await fs.stat(filePath);
+        } catch (err) {
+          if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
+            logger.error(`File does not exist: ${filePath}`);
+            continue;
+          }
+          throw err;
         }
-        const fileContent = fs.readFileSync(filePath, "utf8");
+
+        const fileContent = await fs.readFile(filePath, "utf8");
         const jsonData = JSON.parse(fileContent);
         files.push({
           id: fileId.replace(/\.json$/, ""),
