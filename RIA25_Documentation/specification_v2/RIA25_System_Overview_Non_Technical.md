@@ -149,6 +149,7 @@ When comparing data across years, RIA25:
 - Ensures the markets being compared exist in both years
 - Alerts you if you're trying to compare non-comparable data
 - Offers alternative comparable topics when possible
+- If only some questions within a topic are comparable, those results are still returned while incompatible questions are flagged
 
 ## How the System Can Scale
 

@@ -300,23 +300,28 @@ async function handleComparisonCompatibility(
     
     // Check if we have comparable pairs
     const { valid, invalid, message } = getComparablePairs(mergedFileMetadata);
-    
-    if (invalid.length > 0) {
-      // We have incompatible files, return error
+
+    if (invalid.length > 0 && valid.length === 0) {
+      // All requested files are incompatible
       logger.warn(`[COMPATIBILITY] Incompatible comparison files: ${invalid.join(', ')}`);
       logger.warn(`[COMPATIBILITY] User message: ${message}`);
-      
+
       return {
         error: true,
         message: message || "Year-on-year comparisons are not available for the requested topics due to methodology changes."
       };
     }
-    
-    // We have compatible files, return them
+
+    if (invalid.length > 0) {
+      logger.warn(`[COMPATIBILITY] Partial comparison. Invalid files: ${invalid.join(', ')}`);
+      if (message) logger.warn(`[COMPATIBILITY] User message: ${message}`);
+    }
+
     logger.info(`[COMPATIBILITY] Compatible comparison files: ${valid.join(', ')}`);
     return {
       error: false,
-      fileIds: valid
+      fileIds: valid,
+      message: invalid.length > 0 ? message : undefined
     };
   } catch (error) {
     logger.error(`[COMPATIBILITY] Error handling comparison compatibility: ${error.message}`);

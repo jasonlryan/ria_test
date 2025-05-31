@@ -192,5 +192,37 @@ describe("Compatibility Gate", () => {
       expect(result.valid).toContain("2025_8_1");
       expect(result.message).toBe("");
     });
+
+    it("should retain comparable files in a mixed topic", () => {
+      const fileMetadata: FileMetadata[] = [
+        {
+          fileId: "2024_q1",
+          topicId: "Mixed_Topic",
+          year: 2024,
+          comparable: true,
+          userMessage: "Data is comparable across years for this topic."
+        },
+        {
+          fileId: "2025_q1",
+          topicId: "Mixed_Topic",
+          year: 2025,
+          comparable: false,
+          userMessage: "No comparison"
+        },
+        {
+          fileId: "2025_q2",
+          topicId: "Mixed_Topic",
+          year: 2025,
+          comparable: true,
+          userMessage: "Data is comparable across years for this topic."
+        }
+      ];
+
+      const result = getComparablePairs(fileMetadata);
+
+      expect(result.valid).toContain("2024_q1");
+      expect(result.valid).toContain("2025_q2");
+      expect(result.invalid).toContain("2025_q1");
+    });
   });
-}); 
+});
