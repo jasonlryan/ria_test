@@ -1,6 +1,6 @@
 # RIA25 Glossary
 
-**Last Updated:** Tue May 13 10:15:47 BST 2025
+**Last Updated:** Sat May 31 14:15:59 UTC 2025
 
 > **Target Audience:** Developers, Data Scientists, Content Specialists  
 > **Related Documents:**
@@ -217,9 +217,9 @@ The architectural layer that contains business logic and orchestrates operations
 
 Categorical groupings of canonical topics in the mapping file, such as "Talent Attraction & Retention" or "Skills & Development".
 
-#### Two-Segment Rule
+#### Single-Segment Restriction
 
-A design principle in RIA25 that limits cross-segmentation analysis to a maximum of two demographic dimensions to maintain statistical validity.
+A design principle in RIA25 that disallows cross-segmentation. Analysis can only use one demographic dimension at a time to maintain statistical validity.
 
 #### Topic-Centric Structure
 
@@ -333,4 +333,4 @@ For more detailed information on specific topics, refer to:
 
 ---
 
-_Last updated: Tue May 13 10:15:47 BST 2025_
+_Last updated: Sat May 31 14:15:59 UTC 2025_

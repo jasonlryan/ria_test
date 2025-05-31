@@ -1,6 +1,6 @@
 # RIA25 Project Overview
 
-**Last Updated:** Tue May 6 11:15:20 BST 2025
+**Last Updated:** Sat May 31 14:15:59 UTC 2025
 
 > **Target Audience:** Developers, Stakeholders, Project Managers  
 > **Related Documents:**
@@ -122,7 +122,7 @@ interface CacheManager {
 - **Repository Pattern**: Clean separation of concerns through interfaces and implementations
 - **TypeScript Migration**: Enhanced type safety and developer experience
 - **Vercel KV Integration**: Performance optimization with Redis-based caching
-- **Two-Segment Rule**: Prevents invalid cross-segmentation of demographic data
+- **Single-Segment Restriction**: Prevents combining multiple demographic dimensions in a single analysis
 - **Anti-Fabrication Measures**: Ensures AI does not generate fictional data
 - **Canonical Topic Mapping**: Dynamic mapping of user queries to canonical survey topics
 - **Selective Year-over-Year Comparison**: Rules-based approach for valid comparisons
@@ -159,4 +159,4 @@ RIA25 v2 aims to:
 
 ---
 
-_Last updated: Tue May 6 11:15:20 BST 2025_
+_Last updated: Sat May 31 14:15:59 UTC 2025_

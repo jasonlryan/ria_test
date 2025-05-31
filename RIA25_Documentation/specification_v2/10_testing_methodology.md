@@ -1,6 +1,6 @@
 # RIA25 Testing Methodology
 
-**Last Updated:** Tue May 6 11:21:44 BST 2025
+**Last Updated:** Sat May 31 14:15:59 UTC 2025
 
 > **Target Audience:** Developers, QA Engineers, System Architects  
 > **Related Documents:**
@@ -317,7 +317,7 @@ describe("VercelKVCacheManager", () => {
 2. **Cross-Demographic Queries**: Testing handling of queries across multiple demographics
 
    - Example: "How did responses to Question 5 differ between men and women in APAC?"
-   - Success Criteria: Correct data or appropriate limiting of cross-segmentation
+   - Success Criteria: Correct data or an explanation that cross-segmentation is unsupported
 
 3. **Trend Analysis Queries**: Testing year-over-year comparison capabilities
    - Example: "How did responses to Question 10 change from 2024 to 2025?"
@@ -779,7 +779,7 @@ Planned testing improvements include:
 2. **Mock Repository Limitations**: Mock repositories cannot replicate all real-world edge cases
 3. **TypeScript Runtime Type Erasure**: Type safety only guaranteed at compile time
 4. **AI Response Variability**: Assistant responses can vary slightly even with identical inputs
-5. **Multiple Segment Limitation**: System intentionally limits cross-segmentation to two demographic dimensions
+5. **Single-Segment Limitation**: System does not support combining multiple demographic dimensions
 
 ## Continuous Improvement Approach
 
@@ -793,4 +793,4 @@ Planned testing improvements include:
 
 ---
 
-_Last updated: Tue May 6 11:21:44 BST 2025_
+_Last updated: Sat May 31 14:15:59 UTC 2025_

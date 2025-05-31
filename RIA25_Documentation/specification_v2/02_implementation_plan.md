@@ -1,6 +1,6 @@
 # RIA25 Implementation Plan
 
-**Last Updated:** Sat May 31 2025
+**Last Updated:** Sat May 31 14:15:59 UTC 2025
 
 > **Target Audience:** Developers, System Architects, Technical Stakeholders  
 > **Related Documents:**
@@ -289,10 +289,10 @@ This approach was chosen over alternatives (single large JSON file, database) fo
 
 ### Segment Handling
 
-The implementation enforces a two-segment maximum rule:
+The implementation prohibits combining multiple demographic segments:
 
-- Prevents invalid cross-segmentation
-- Maintains statistical validity
+- Prevents invalid cross-segmentation entirely
+- Maintains statistical validity by using single-dimension statistics only
 - Ensures response accuracy
 
 ### API Integration
@@ -311,7 +311,7 @@ OpenAI Assistants API was selected over alternatives due to:
 | Legacy code interdependencies       | Phased repository pattern implementation             |
 | TypeScript migration complexity     | Interface-first approach with incremental conversion |
 | File-based caching limitations      | Vercel KV integration with standardized key schema   |
-| Cross-segmentation validity         | Two-segment rule enforcement with repository pattern |
+| Cross-segmentation validity         | Single-segment restriction enforcement with repository pattern |
 | Compatibility validation            | Unified compatibility gate in repository layer       |
 | Development environment consistency | Local fallbacks for Vercel KV and other services     |
 | Code quality and type safety        | Comprehensive TypeScript interfaces and testing      |
@@ -344,4 +344,4 @@ The v2 architecture has delivered significant performance improvements:
 
 ---
 
-_Last updated: Sat May 31 2025_
+_Last updated: Sat May 31 14:15:59 UTC 2025_
