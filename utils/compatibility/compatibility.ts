@@ -610,6 +610,37 @@ export function getComparablePairs(files: FileMetadata[]): ComparablePairsResult
 }
 
 /**
+ * Summarize file compatibility by topic
+ * @param files Array of file metadata
+ * @returns Record of topicId to summary info
+ */
+export function summarizeTopicFiles(files: FileMetadata[]): Record<string, { years: number[]; comparable: boolean; userMessage?: string; }> {
+  const summary: Record<string, { years: number[]; comparable: boolean; userMessage?: string; }> = {};
+
+  files.forEach(file => {
+    if (!summary[file.topicId]) {
+      summary[file.topicId] = { years: [], comparable: true, userMessage: file.userMessage };
+    }
+
+    const topicInfo = summary[file.topicId];
+
+    if (!topicInfo.years.includes(file.year)) {
+      topicInfo.years.push(file.year);
+    }
+
+    if (!file.comparable) {
+      topicInfo.comparable = false;
+    }
+
+    if (file.userMessage && !topicInfo.userMessage) {
+      topicInfo.userMessage = file.userMessage;
+    }
+  });
+
+  return summary;
+}
+
+/**
  * Extract year from file ID
  * @param fileId File ID to extract year from
  * @returns Extracted year or default (2025)
@@ -644,7 +675,8 @@ export default {
   getFileIdsForTopic,
   getFileIncomparabilityReason,
   lookupFiles,
-  getComparablePairs
+  getComparablePairs,
+  summarizeTopicFiles
 };
 
-// Last updated: Sat May 25 2025 
+// Last updated: Sat May 31 12:26:45 UTC 2025

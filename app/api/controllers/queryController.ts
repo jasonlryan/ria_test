@@ -11,7 +11,7 @@ import logger from "../../../utils/shared/logger";
 import { normalizeQueryText } from "../../../utils/shared/queryUtils";
 import { UnifiedCache } from "../../../utils/cache/cache-utils";
 import { threadMetaKey, TTL } from "../../../utils/cache/key-schema";
-import { getComparablePairs, FileMetadata } from "../../../utils/compatibility/compatibility";
+import { getComparablePairs, FileMetadata, summarizeTopicFiles } from "../../../utils/compatibility/compatibility";
 // Import detectComparisonQuery from the adapter where it's re-exported
 import { detectComparisonQuery } from "../../../utils/data/repository/adapters/retrieval-adapter";
 import fs from "fs/promises"; // Use promises version of fs
@@ -243,10 +243,11 @@ async function handleComparisonCompatibility(
   query: string, 
   threadId: string,
   threadMetadata: ThreadMetadata | null
-): Promise<{ 
-  error: boolean; 
-  message?: string; 
+): Promise<{
+  error: boolean;
+  message?: string;
   fileIds?: string[];
+  compatibilitySummary?: Record<string, { years: number[]; comparable: boolean; userMessage?: string }>;
 }> {
   try {
     // Since detectComparisonQuery just returns a boolean in the current implementation,
@@ -300,6 +301,7 @@ async function handleComparisonCompatibility(
     
     // Check if we have comparable pairs
     const { valid, invalid, message } = getComparablePairs(mergedFileMetadata);
+    const compatibilitySummary = summarizeTopicFiles(mergedFileMetadata);
 
     if (invalid.length > 0 && valid.length === 0) {
       // All requested files are incompatible
@@ -321,7 +323,8 @@ async function handleComparisonCompatibility(
     return {
       error: false,
       fileIds: valid,
-      message: invalid.length > 0 ? message : undefined
+      message: invalid.length > 0 ? message : undefined,
+      compatibilitySummary
     };
   } catch (error) {
     logger.error(`[COMPATIBILITY] Error handling comparison compatibility: ${error.message}`);
