@@ -1,6 +1,6 @@
 # RIA25 System Overview for Non-Technical Users
 
-**Last Updated:** Tue May 13 16:00:45 BST 2025
+**Last Updated:** Sat May 31 14:15:59 UTC 2025
 
 > **Target Audience:** Business Stakeholders, Non-Technical Users, Content Specialists
 
@@ -133,13 +133,12 @@ RIA25 is designed to prevent making up information that isn't supported by the s
 - It won't generate fictional trends or numbers
 - It maintains the statistical integrity of the original research
 
-### Two-Segment Rule
+### Single-Segment Restriction
 
-To ensure statistical validity, RIA25 follows a two-segment rule:
+RIA25 does not support cross-segmenting multiple demographic dimensions:
 
-- Data can be filtered by a maximum of two demographic dimensions at once
-- This prevents creating segments with sample sizes too small for reliable analysis
-- For example, you can filter by "region and age" but not "region, age, and gender" simultaneously
+- Data can only be filtered by **one** demographic dimension at a time
+- Combining dimensions like "region and age" is not possible because the dataset only contains single-dimension statistics
 
 ### Year Compatibility Checking
 
@@ -242,4 +241,4 @@ Here are some effective questions to start with:
 
 ---
 
-_Last updated: Tue May 13 16:00:45 BST 2025_
+_Last updated: Sat May 31 14:15:59 UTC 2025_

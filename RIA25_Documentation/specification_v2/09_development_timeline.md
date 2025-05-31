@@ -1,6 +1,6 @@
 # RIA25 Development Timeline
 
-**Last Updated:** Tue May 13 14:45:21 BST 2025
+**Last Updated:** Sat May 31 14:15:59 UTC 2025
 
 > **Target Audience:** Developers, Project Managers, System Architects  
 > **Related Documents:**
@@ -61,7 +61,7 @@ This document chronicles the development of RIA25, capturing key milestones, cha
 - Segment detection rules implementation
 - Anti-fabrication measures testing
 - Response formatting guidelines
-- **Decision**: Implemented two-segment rule for demographic cross-sectioning
+- **Decision**: Implemented single-segment restriction for demographic cross-sectioning
 
 ### Testing and Optimization Phase (Q3-Q4 2024)
 
@@ -191,7 +191,7 @@ The repository pattern migration was implemented in five distinct phases:
 | Challenge                     | Solution                           | Impact                                                 |
 | ----------------------------- | ---------------------------------- | ------------------------------------------------------ |
 | CSV format inconsistencies    | Dynamic column mapping             | Resilient data processing regardless of format changes |
-| Cross-segmentation validity   | Two-segment rule enforcement       | Prevented statistically invalid combinations           |
+| Cross-segmentation validity   | Single-segment restriction enforcement       | Prevented statistically invalid combinations           |
 | Response fabrication          | Multi-layered verification prompts | Significant reduction in AI hallucinations             |
 | Vector retrieval accuracy     | Question-specific JSON files       | Improved relevance of retrieved context                |
 | Code duplication              | Repository pattern implementation  | Unified data access with consistent interfaces         |
@@ -341,4 +341,4 @@ Based on the current implementation status, the following priorities are recomme
 
 ---
 
-_Last updated: Tue May 13 14:45:21 BST 2025_
+_Last updated: Sat May 31 14:15:59 UTC 2025_

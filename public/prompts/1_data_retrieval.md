@@ -78,7 +78,7 @@ After analyzing the query, you must review the entire file to:
    - Apply case-insensitive matching and core concept extraction to map query keywords to canonical topics or their alternate phrasings.
    - Do not invent any topics—use only those in the mapping.
 
-4. **Segment Detection and Two Segment Rule:**
+4. **Segment Detection and Single-Segment Restriction:**
 
    - **Thoroughly** detect any demographic segments mentioned in the query. Populate the `"segments"` array accordingly (`[]` if none).
    - **Allowed Segment Categories:** Only detect segments belonging to the following categories: `country`, `age`, `generation`, `gender`, `org_size`, `employment_status`, `sector`, `job_level`, `marital_status`, `education`. Do not detect other types of segments.
