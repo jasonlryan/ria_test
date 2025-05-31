@@ -14,7 +14,7 @@
  */
 
 import { QueryProcessor, QueryContext, DataFile } from '../interfaces';
-import { FileSystemRepository, QueryProcessorImpl, PromptRepository } from '../implementations';
+import { QueryProcessorImpl, PromptRepository } from '../implementations';
 import logger from '../../../shared/logger';
 import { QueryContext as QueryContextImpl } from '../implementations/QueryContext';
 import path from 'path';
