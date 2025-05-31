@@ -96,17 +96,7 @@ npm run repo:test25      # Test with 25% traffic
 npm run repo:test50      # Test with 50% traffic
 npm run repo:full        # Full implementation (100%)
 npm run repo:off         # Turn off repository pattern
-npm run repo:monitor     # Run monitoring dashboard on port 3001
 ```
-
-### Monitoring Dashboard
-
-A monitoring dashboard is available at `/repository-monitor` that provides:
-
-1. Real-time performance comparison between original and repository implementations
-2. Error tracking and rate comparison
-3. Operation-specific metrics for detailed analysis
-4. Automatic refresh with configurable interval
 
 ## OpenAI Assistant Tests
 
@@ -185,10 +175,9 @@ The repository pattern implementation follows a phased rollout approach:
 
 1. **Shadow Mode**: Run both implementations, compare results, use original
 2. **Limited Testing**: Route small percentage of traffic (5-10%) through repository
-3. **Expanded Testing**: Increase traffic allocation (25-50%) with monitoring
+3. **Expanded Testing**: Increase traffic allocation (25-50%)
 4. **Full Implementation**: Switch all traffic to repository pattern implementation
 5. **Cleanup**: Remove original implementation code after stable period
 
-At each phase, performance metrics and error rates are monitored to ensure no regressions.
 
-_Last updated: Tue May 6 2025_
+_Last updated: Sat May 31 11:29:40 UTC 2025_

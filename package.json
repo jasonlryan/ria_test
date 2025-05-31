@@ -33,9 +33,7 @@
     "repo:full": "node scripts/repository-toggle.js full",
     "repo:off": "node scripts/repository-toggle.js off",
     "repo:retrieval": "node scripts/repository-toggle.js retrieval_only",
-    "repo:service": "node scripts/repository-toggle.js service_only",
-    "repo:monitor": "echo \"Repository monitor is available at http://localhost:3000/repository-monitor on the main server\"",
-    "openai:monitor": "node scripts/enable-openai-monitoring.js"
+    "repo:service": "node scripts/repository-toggle.js service_only"
   },
   "dependencies": {
     "@vercel/analytics": "^1.5.0",

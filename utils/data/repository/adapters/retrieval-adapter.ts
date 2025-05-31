@@ -16,7 +16,6 @@
 import { FileRepository, QueryProcessor, QueryContext, FileIdentificationResult, DataFile } from '../interfaces';
 import { FileSystemRepository, QueryProcessorImpl, PromptRepository } from '../implementations';
 import logger from '../../../shared/logger';
-import { startTimer, endTimer, recordError } from '../monitoring';
 import { QueryContext as QueryContextImpl } from '../implementations/QueryContext';
 import path from 'path';
 import { DEFAULT_SEGMENTS } from '../../../../utils/cache/segment_keys';
@@ -87,11 +86,7 @@ export async function identifyRelevantFiles(
     // Always use repository implementation
     logger.info(`[ADAPTER] identifyRelevantFiles called - always using repository implementation`);
     
-    // Start timer for repository implementation
-    const repoTimer = startTimer('repository', 'identifyRelevantFiles', {
-      threadId: options.threadId,
-      queryLength: query?.length || 0
-    });
+    // Start processing for repository implementation
     
     try {
       // Map options to QueryContext
@@ -184,19 +179,12 @@ export async function identifyRelevantFiles(
         logger.error(`[COMPATIBILITY GATE] Error applying compatibility gate: ${compatError instanceof Error ? compatError.message : String(compatError)}`);
       }
       
-      // End timer with success status
-      endTimer(repoTimer, true, { 
-        fileCount: formattedResult?.file_ids?.length || 0,
-        relevantFilesCount: result?.relevantFiles?.length || 0
-      });
-      logger.info(`[METRICS] Recorded repository identifyRelevantFiles: ${result?.relevantFiles?.length || 0} files in ${performance.now() - repoTimer.startTime}ms`);
+      // Processing succeeded
       
       return formattedResult;
     } catch (error) {
-      // Record error and end timer
-      recordError('repository', 'identifyRelevantFiles');
-      endTimer(repoTimer, false, { error: error.message });
-      logger.error(`[METRICS] Recorded repository identifyRelevantFiles error: ${error.message}`);
+      // Log error during processing
+      logger.error(`[ADAPTER] identifyRelevantFiles error: ${error.message}`);
       logger.error(`[ADAPTER] Error in identifyRelevantFiles: ${error.message}`);
       
       // Re-throw error since we're not using fallback
@@ -204,7 +192,6 @@ export async function identifyRelevantFiles(
     }
   } catch (error) {
     logger.error(`[ADAPTER] Unhandled error in identifyRelevantFiles adapter: ${error.message}`);
-    recordError('adapter', 'identifyRelevantFiles');
     throw error;
   }
 }
@@ -250,16 +237,14 @@ export async function retrieveDataFiles(fileIds: string[]) {
   try {
     logger.info(`[ADAPTER] retrieveDataFiles called - always using repository implementation`);
     
-    // Start timer
-    const timer = startTimer('repository', 'retrieveDataFiles', { fileCount: fileIds.length });
+    // Begin retrieving files
     
     try {
       const { repository } = getDefaultImplementations();
       // Use correct method name from FileRepository interface
       const result = await repository.getFilesByIds(fileIds);
       
-      // End timer with success
-      endTimer(timer, true, { filesRetrieved: result.length });
+      // Retrieval successful
       
       // Debug log the file structure to identify where responses are
       result.forEach((file: any, idx: number) => {
@@ -272,14 +257,11 @@ export async function retrieveDataFiles(fileIds: string[]) {
       logger.info(`[ADAPTER] Successfully retrieved ${result.length} files from repository`);
       return result;
     } catch (error) {
-      // End timer with failure
-      endTimer(timer, false, { error: error.message });
       logger.error(`[ADAPTER] Error retrieving files: ${error.message}`);
       throw error;
     }
   } catch (error) {
     logger.error(`[ADAPTER] Unhandled error in retrieveDataFiles: ${error.message}`);
-    recordError('adapter', 'retrieveDataFiles');
     throw error;
   }
 }
@@ -337,7 +319,7 @@ export async function processQueryWithData(
 ) {
   try {
     logger.info(`[ADAPTER] processQueryWithData called - always using repository implementation`);
-    const timer = startTimer('repository', 'processQueryWithData');
+    // Start repository query processing
     
     try {
       const queryContext = new QueryContextImpl({
@@ -353,7 +335,6 @@ export async function processQueryWithData(
       const processor = customProcessor || getDefaultImplementations().processor;
       const result = await processor.processQueryWithData(queryContext);
       
-      endTimer(timer, true);
       logger.info(`[ADAPTER] Successfully processed query with repository`);
       
       const processedData = result.processedData || [];
@@ -496,13 +477,11 @@ export async function processQueryWithData(
       
       return enhancedResult;
     } catch (error) {
-      endTimer(timer, false, { error: error.message });
       logger.error(`[ADAPTER] Error processing query with repository: ${error.message}`);
       throw error;
     }
   } catch (error) {
     logger.error(`[ADAPTER] Unhandled error in processQueryWithData: ${error.message}`);
-    recordError('adapter', 'processQueryWithData');
     throw error;
   }
 }

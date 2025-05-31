@@ -6,7 +6,7 @@
  * - Comprehensive error handling with type-specific recovery strategies
  * - Intelligent retry logic and fallback mechanisms
  * - Feature flag-controlled API path selection
- * - Performance monitoring and error tracking
+ * - Error tracking and robust logging
  * - Timeout protection and resource management
  * - Graceful degradation for error conditions
  * 
@@ -19,7 +19,6 @@ import OpenAI from 'openai';
 import { ChatCompletion, ChatCompletionChunk } from 'openai/resources/chat';
 import { pollingManager } from '../../../utils/shared/polling-manager';
 import logger from '../../../utils/shared/logger';
-import { migrationMonitor } from '../../../utils/shared/monitoring';
 import { rollbackManager } from '../../../utils/shared/rollback';
 import path from 'path';
 import fs from 'fs';
@@ -230,8 +229,6 @@ export class UnifiedOpenAIService {
       modelUsed: error.request?.body?.model
     });
     
-    // Record error in monitoring system for trending analysis
-    migrationMonitor.trackError('unified', method, error as Error);
     
     // Implement recovery strategies based on error type
     switch (errorType) {
@@ -319,7 +316,7 @@ export class UnifiedOpenAIService {
   }
 
   /**
-   * Execute a method with monitoring, retry logic, and fallback
+   * Execute a method with retry logic and fallback
    */
   private async executeWithMonitoring<T>(
     method: string,
@@ -370,7 +367,6 @@ export class UnifiedOpenAIService {
       
       // Track successful call
       const duration = Date.now() - startTime;
-      migrationMonitor.trackCall('unified', method, startTime);
       
       // Log performance for slow operations
       if (duration > 5000) {

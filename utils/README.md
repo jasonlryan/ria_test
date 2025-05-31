@@ -13,7 +13,6 @@ This directory contains utility modules organized into logical domains to enhanc
   - `/utils/shared/iframe/` - Iframe resizing and communication utilities
   - `/utils/shared/logger.js` - Logging utilities
   - `/utils/shared/feature-flags.ts` - Feature toggle system
-  - `/utils/shared/monitoring.ts` - Migration monitoring
   - `/utils/shared/rollback.ts` - Rollback management
   - `/utils/shared/helpers.tsx` - General helper utilities
 
@@ -40,11 +39,11 @@ The migration is being conducted incrementally to minimize risk:
 - Data system migration: Completed
 - Shared utilities migration: Completed
   - Core utilities moved: logger.js, iframe utilities
-  - Feature management moved: feature-flags.ts, monitoring.ts, rollback.ts
+  - Feature management moved: feature-flags.ts and rollback.ts
   - General utilities moved: helpers.tsx
 
 ## Legacy Adapters
 
 Adapter files in original locations will be maintained until all imports across the codebase have been updated. Do not remove adapters without thorough verification.
 
-_Last updated: Mon Apr 28 13:58:38 BST 2025_
+_Last updated: Sat May 31 11:29:40 UTC 2025_
