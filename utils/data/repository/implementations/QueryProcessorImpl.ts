@@ -151,31 +151,38 @@ export default class QueryProcessorImpl implements QueryProcessor {
    */
   isComparisonQuery(query: string): boolean {
     if (!query) return false;
-    
-    // Normalize the query
+
     const normalizedQuery = query.toLowerCase().trim();
-    
-    // Year-specific comparison patterns
-    const yearComparisonPatterns = [
-      /compare.*2024.*2025/i,
-      /compare.*2025.*2024/i,
-      /difference.*between.*2024.*2025/i,
-      /difference.*between.*2025.*2024/i,
-      /compare with 2024/i,
-      /compare with 2025/i,
-      /compare to 2024/i,
-      /compare to 2025/i,
-      /2024 vs 2025/i,
-      /2025 vs 2024/i,
-      /2024 versus 2025/i,
-      /2025 versus 2024/i,
-      /2024 compared to 2025/i,
-      /2025 compared to 2024/i,
-      /between 2024 and 2025/i,
-      /between 2025 and 2024/i,
+
+    // Detect explicit mention of two different years
+    const explicitYearComparison = /\b(19|20)\d{2}\b.*\b(19|20)\d{2}\b/;
+    if (explicitYearComparison.test(normalizedQuery)) {
+      return true;
+    }
+
+    // Year indicators used to qualify generic comparison patterns
+    const yearIndicators = [
+      /\b(19|20)\d{2}\b/,
+      /\b(last|this|next|previous|prior|past)\s+year\b/,
+      /\byear over year\b/,
+      /\byoy\b/,
     ];
-    
-    // Generic comparison patterns
+    const hasYear = yearIndicators.some((p) => p.test(normalizedQuery));
+
+    // If the query talks about countries/regions but not years, treat as non-YoY
+    const countryIndicators = [
+      /\bcountry\b/,
+      /\bcountries\b/,
+      /\bby country\b/,
+      /\bacross countries\b/,
+      /\bbetween countries\b/,
+      /\bby region\b/,
+      /\bacross regions\b/,
+    ];
+    if (!hasYear && countryIndicators.some((p) => p.test(normalizedQuery))) {
+      return false;
+    }
+
     const genericComparisonPatterns = [
       /\bcompare\b/i,
       /\bcompared\b/i,
@@ -188,21 +195,15 @@ export default class QueryProcessorImpl implements QueryProcessor {
       /\bhigher\b|\blower\b/i,
       /\bincrease(d)?\b|\bdecrease(d)?\b/i,
     ];
-    
-    // Check year-specific patterns first
-    for (const pattern of yearComparisonPatterns) {
-      if (pattern.test(normalizedQuery)) {
-        return true;
+
+    if (hasYear) {
+      for (const pattern of genericComparisonPatterns) {
+        if (pattern.test(normalizedQuery)) {
+          return true;
+        }
       }
     }
-    
-    // Check generic patterns if no year-specific match
-    for (const pattern of genericComparisonPatterns) {
-      if (pattern.test(normalizedQuery)) {
-        return true;
-      }
-    }
-    
+
     return false;
   }
 
