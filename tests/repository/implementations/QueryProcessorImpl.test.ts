@@ -80,8 +80,19 @@ describe("QueryProcessorImpl", () => {
   describe("isComparisonQuery", () => {
     it("should identify comparison queries correctly", () => {
       expect(queryProcessor.isComparisonQuery("Compare A and B")).toBe(true);
-      expect(queryProcessor.isComparisonQuery("What is the difference between A and B?")).toBe(true);
+      expect(
+        queryProcessor.isComparisonQuery("What is the difference between A and B?")
+      ).toBe(true);
       expect(queryProcessor.isComparisonQuery("Show me A")).toBe(false);
+
+      // New cases for YoY detection improvements
+      expect(queryProcessor.isComparisonQuery("Compare 2024 vs 2025")).toBe(true);
+      expect(
+        queryProcessor.isComparisonQuery("how does this change across countries?")
+      ).toBe(false);
+      expect(
+        queryProcessor.isComparisonQuery("How did this change from last year?")
+      ).toBe(true);
     });
   });
 
