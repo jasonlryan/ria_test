@@ -24,6 +24,7 @@ export interface FeatureFlagConfig {
 export interface FeatureFlags {
   ENHANCED_ERROR_HANDLING: FeatureFlagConfig;
   MONITOR_MIGRATION: FeatureFlagConfig;
+  FALLBACK_TO_LEGACY: FeatureFlagConfig;
 }
 
 /**
@@ -39,6 +40,11 @@ export const featureFlags: FeatureFlags = {
     enabled: true,
     envKey: 'MONITOR_MIGRATION',
     description: 'Controls whether to monitor migration progress and performance',
+  },
+  FALLBACK_TO_LEGACY: {
+    enabled: false,
+    envKey: 'FALLBACK_TO_LEGACY',
+    description: 'Allows rolling back to legacy implementation during migration',
   },
 };
 
