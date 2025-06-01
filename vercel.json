@@ -6,7 +6,7 @@
     "framework": "nextjs",
     "routes": [
         {
-            "src": "/embed/asst_:(id).*",
+            "src": "/embed/asst_(.*)",
             "status": 308,
             "headers": { "Location": "/embed/" }
         },
