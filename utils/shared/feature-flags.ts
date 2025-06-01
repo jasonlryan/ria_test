@@ -25,6 +25,7 @@ export interface FeatureFlags {
   ENHANCED_ERROR_HANDLING: FeatureFlagConfig;
   MONITOR_MIGRATION: FeatureFlagConfig;
   USE_RESPONSES_API: FeatureFlagConfig;
+  FALLBACK_TO_LEGACY: FeatureFlagConfig;
 }
 
 /**
@@ -45,6 +46,11 @@ export const featureFlags: FeatureFlags = {
     enabled: false, // Defaulting to false for now
     envKey: 'USE_RESPONSES_API',
     description: 'Controls whether to use the Responses API for data retrieval',
+  },
+  FALLBACK_TO_LEGACY: {
+    enabled: false,
+    envKey: 'FALLBACK_TO_LEGACY',
+    description: 'Allows rolling back to legacy implementation during migration',
   },
 };
 
