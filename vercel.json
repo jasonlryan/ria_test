@@ -22,36 +22,6 @@
             "dest": "/$1"
         }
     ],
-    "headers": [
-        {
-            "source": "/(.*)",
-            "headers": [
-                {
-                    "key": "Permissions-Policy",
-                    "value": "interest-cohort=()"
-                },
-                {
-                    "key": "X-Frame-Options",
-                    "value": "SAMEORIGIN"
-                },
-                {
-                    "key": "X-Content-Type-Options",
-                    "value": "nosniff"
-                },
-                {
-                    "key": "Referrer-Policy",
-                    "value": "same-origin"
-                }
-            ]
-        }
-    ],
-    "redirects": [
-        {
-            "source": "/",
-            "destination": "/embed",
-            "permanent": false
-        }
-    ],
     "installCommand": "npm install --legacy-peer-deps",
     "regions": [
         "iad1"
