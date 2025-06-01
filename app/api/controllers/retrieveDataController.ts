@@ -11,7 +11,6 @@ import fs from "fs/promises";
 import path from "path";
 import logger from "../../../utils/shared/logger";
 import { unifiedOpenAIService } from "../services/unifiedOpenAIService";
-import { isFeatureEnabled } from "../../../utils/shared/feature-flags";
 import { getTopicForFileId } from "../../../utils/data/topicMapping";
 
 export async function postHandler(request) {
@@ -54,7 +53,7 @@ export async function postHandler(request) {
           topics.add(topic);
           
           // If data enrichment is requested, use unified OpenAI service
-          if (enrichData && isFeatureEnabled('USE_RESPONSES_API')) {
+          if (enrichData) {
             await enrichFileDataWithAI(jsonData, topic, file_id);
           }
 
@@ -84,7 +83,7 @@ export async function postHandler(request) {
         total_data_points: totalDataPoints,
         processing_time_ms: processingTime,
         retrieved_at: new Date().toISOString(),
-        used_unified_service: isFeatureEnabled('USE_RESPONSES_API')
+        used_unified_service: enrichData
       },
     };
     
