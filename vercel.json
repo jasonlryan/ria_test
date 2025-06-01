@@ -4,14 +4,12 @@
     "buildCommand": "npm run build",
     "outputDirectory": ".next",
     "framework": "nextjs",
-    "redirects": [
-        {
-            "source": "/embed/asst_:(id).*",
-            "destination": "/embed/",
-            "permanent": true
-        }
-    ],
     "routes": [
+        {
+            "src": "/embed/asst_:(id).*",
+            "status": 308,
+            "headers": { "Location": "/embed/" }
+        },
         {
             "src": "/api/(.*)",
             "dest": "/api/$1",
