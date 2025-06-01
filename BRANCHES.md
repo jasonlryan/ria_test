@@ -1,12 +1,8 @@
 # Branch Status & Descriptions
 
+**Last Updated:** Sun Jun 01 2025
+
 ## Active Branches
-
-### staging_dev
-
-**Status**: 🟢 ActMost Recent Development
-**Description**: Current development branch for staging environment with latest features and fixes. Includes YoY comparison. Will wait to push to live after Responses API has been refactored in.
-**Last Updated**: 2025-04-28
 
 ### production
 
@@ -48,12 +44,6 @@
 **Description**: Backup of staging environment before major changes. Back up of Current Live Branch
 **Last Updated**: TBD
 
-### production_bu
-
-**Status**: 🟡 Backup
-**Description**: Backup of production environment before major releases. Not Used.
-**Last Updated**: TBD
-
 ## Maintenance
 
 This file should be updated whenever:
@@ -68,3 +58,5 @@ This file should be updated whenever:
 - 🟠 In Progress - Work ongoing, may have unstable features
 - 🟡 Backup/Archive - Reference only, not for active development
 - 🔴 Deprecated - Will be removed soon
+
+_Last updated: Sun Jun 01 2025_
