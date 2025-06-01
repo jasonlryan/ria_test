@@ -24,6 +24,7 @@ export interface FeatureFlagConfig {
 export interface FeatureFlags {
   ENHANCED_ERROR_HANDLING: FeatureFlagConfig;
   MONITOR_MIGRATION: FeatureFlagConfig;
+  USE_RESPONSES_API: FeatureFlagConfig;
 }
 
 /**
@@ -39,6 +40,11 @@ export const featureFlags: FeatureFlags = {
     enabled: true,
     envKey: 'MONITOR_MIGRATION',
     description: 'Controls whether to monitor migration progress and performance',
+  },
+  USE_RESPONSES_API: {
+    enabled: false, // Defaulting to false for now
+    envKey: 'USE_RESPONSES_API',
+    description: 'Controls whether to use the Responses API for data retrieval',
   },
 };
 
