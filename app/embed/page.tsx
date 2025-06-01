@@ -1299,13 +1299,15 @@ function Embed(props) {
 
             {/* Input Container - STICKY BOTTOM */}
             <div className="bg-white py-3 sticky bottom-0 z-10 border-t border-gray-200 mt-auto">
-              <PromptInput
-                prompt={prompt}
-                setPrompt={setPrompt}
-                sendPrompt={sendPrompt}
-                threadId={threadId}
-                loading={loading}
-              />
+              <Suspense fallback={null}>
+                <PromptInput
+                  prompt={prompt}
+                  setPrompt={setPrompt}
+                  sendPrompt={sendPrompt}
+                  threadId={threadId}
+                  loading={loading}
+                />
+              </Suspense>
 
               {/* Legal Text - centered */}
               <div className="text-xs text-gray-500 text-center mt-2">
