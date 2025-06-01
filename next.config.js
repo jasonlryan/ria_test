@@ -10,7 +10,11 @@ const nextConfig = {
   distDir: ".next",
   experimental: {
     outputFileTracingIncludes: {
-      "/**": ["utils/openai/*.md", "scripts/output/split_data/*.json"],
+      "/**": [
+        "utils/openai/*.md",
+        "utils/openai/precompiled_starters/*.json",
+        "scripts/output/split_data/*.json",
+      ],
     },
   },
 };
