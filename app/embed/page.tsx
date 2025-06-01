@@ -281,37 +281,63 @@ function Embed(props) {
   }, [assistantId]);
 
   // Starter question code support: check for ?starterQuestion=CODE and trigger assistant
-  // Use a ref to ensure this logic only runs once per mount, preventing duplicate question submissions and errors.
   const starterTriggeredRef = useRef(false);
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (starterTriggeredRef.current) return; // Prevent double-triggering
-    // Only trigger if chat is at initial state (welcome message only)
+    if (starterTriggeredRef.current) return;
     if (!messages || messages.length > 1) return;
 
     const params = new URLSearchParams(window.location.search);
     const starterCode = params.get("starterQuestion");
-    const questionText = params.get("question");
+    const directQuestionText = params.get("question"); // Renamed to avoid confusion
 
-    if (starterCode) {
-      starterTriggeredRef.current = true;
-      console.log(
-        "[STARTER EFFECT] Triggering sendPrompt with starterCode:",
-        starterCode
-      );
-      // Instead of loading the JSON and sending the question, send the starter code directly to the backend
-      sendPrompt(threadId, starterCode);
-    } else if (questionText) {
-      starterTriggeredRef.current = true;
-      console.log(
-        "[STARTER EFFECT] Triggering sendPrompt with questionText:",
-        questionText
-      );
-      sendPrompt(threadId, questionText);
-    }
+    const handleStarter = async () => {
+      if (starterCode) {
+        starterTriggeredRef.current = true;
+        console.log("[STARTER EFFECT] Processing starterCode:", starterCode);
+        try {
+          // Dynamically import the JSON file based on starterCode
+          const starterDataModule = await import(
+            `../../utils/openai/precompiled_starters/${starterCode.toUpperCase()}.json`
+          );
+          const actualQuestion =
+            starterDataModule.default?.question || starterDataModule.question;
+
+          if (actualQuestion) {
+            console.log(
+              "[STARTER EFFECT] Triggering sendPrompt with actual question for " +
+                starterCode +
+                ":",
+              actualQuestion
+            );
+            sendPrompt(threadId, actualQuestion);
+          } else {
+            console.warn(
+              `[STARTER EFFECT] Could not find 'question' in ${starterCode}.json or module. Sending code as fallback.`
+            );
+            sendPrompt(threadId, starterCode); // Fallback to sending code
+          }
+        } catch (error) {
+          console.error(
+            `[STARTER EFFECT] Error loading starter question JSON for ${starterCode}:`,
+            error
+          );
+          sendPrompt(threadId, starterCode); // Fallback to sending code on error
+        }
+      } else if (directQuestionText) {
+        starterTriggeredRef.current = true;
+        console.log(
+          "[STARTER EFFECT] Triggering sendPrompt with directQuestionText:",
+          directQuestionText
+        );
+        sendPrompt(threadId, directQuestionText);
+      }
+    };
+
+    handleStarter();
     // Only run on mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); // Dependencies: keep this empty to run only on mount
 
   // At the top of Embed component, after other useRef declarations:
   const sendPromptCallId = useRef(0);
